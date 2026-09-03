@@ -1,93 +1,92 @@
-# Template Core/Greenfield de Desenvolvimento Orientado a Agentes (ADD)
+# Central de Templates Orientados a Agentes (ADD - Agent-Driven Development)
 
-Este repositório é o starter kit canônico (**Core / Greenfield**) projetado para potencializar o desenvolvimento de software colaborativo do zero com **agentes de Inteligência Artificial** (ex: Antigravity, Claude Code, Cursor, Windsurf, Roo Code, Aider, etc.).
+Este repositório é o **Hub Central** de starters e padrões de governança para desenvolvimento de software colaborativo com **agentes de Inteligência Artificial** (ex: Antigravity, Claude Code, Cursor, Windsurf, Roo Code, Aider, etc.).
 
-A estrutura foi desenhada para resolver os maiores problemas no uso de agentes em projetos reais: **perda de contexto**, **alucinações em tarefas longas**, **violação de padrões de código** e **retrabalho**.
+A estrutura resolve os maiores gargalos no uso de agentes autônomos em ambientes reais: **perda de contexto em tarefas longas**, **alucinação de contratos**, **refatorações destrutivas em legados** e **ausência de Definition of Done (DoD)**.
 
 ---
 
-## 📁 Estrutura do Template
+## 🌿 Organização dos Templates por Branches
+
+Em vez de misturar múltiplos starters em uma árvore inchada, este repositório organiza seus templates em **branches especializadas e limpas**:
 
 ```text
-├── AGENTS.md                 # A "Constituição" do projeto (regras inegociáveis, stack, MCPs e comandos)
-├── .agent/
-│   ├── TASK.md               # Tarefa ativa, critérios de aceite e roadmap imediato
-│   ├── NOTES.md              # Decisões arquiteturais rápidas, contratos de dados e armadilhas
-│   ├── ARCHIVE.md            # Histórico de tarefas antigas (preserva contexto enxuto)
-│   ├── adr/                  # Registros de Decisões Arquiteturais complexas (ADRs formais)
-│   │   └── 000-template.md   # Template padrão de ADR
-│   └── skills/               # Habilidades procedurais especializadas do projeto
-│       ├── README.md         # Guia de quando e como criar skills
-│       └── 000-template.md   # Template padrão de SKILL.md
-├── .env.example              # Exemplo de variáveis de ambiente do projeto
-├── .gitignore                # Padrão amplo (Node, Python, Docker, caches de agentes)
-└── README.md                 # Este guia (para desenvolvedores humanos)
+                                  ┌───────────────────────────┐
+                                  │        branch main        │
+                                  │   (Documentação e Hub)    │
+                                  └─────────────┬─────────────┘
+                                                │
+                     ┌──────────────────────────┴──────────────────────────┐
+                     ▼                                                     ▼
+        ┌──────────────────────────┐                          ┌──────────────────────────┐
+        │    branch greenfield     │                          │    branch brownfield     │
+        │   Projetos do Zero       │                          │   Projetos Existentes    │
+        └──────────────────────────┘                          └──────────────────────────┘
 ```
+
+| Branch | Foco do Projeto | Principais Componentes | Quando Usar |
+| :--- | :--- | :--- | :--- |
+| **`greenfield`** | Projetos iniciados **do zero** | `.agent/adr/` (ADRs formais), `.agent/skills/` (Skills locais), setup arquitetural livre, contratos em aberto. | Quando você vai criar uma nova aplicação, microserviço ou biblioteca do zero. |
+| **`brownfield`** | Código **legado / já existente** | `.agent/INVARIANTS.md` (Cercas de Chesterton), `install.sh`, Task 00 de Discovery, foco em testes de caracterização. | Quando você quer colocar agentes para trabalhar com segurança em um projeto que já existe e roda em produção. |
+| **`main`** | **Governança & Hub** | Documentação geral, matriz de decisão, histórico de evolução dos templates. | Para manter e consultar este ecossistema. |
 
 ---
 
-## 🚀 Como Iniciar um Novo Projeto com este Template
+## 🚀 Como Utilizar
 
-### Passo 1: Inicializar o Repositório Git
-Se você clonou ou baixou este template, inicialize seu repositório local:
+### 1. Criando um Projeto do Zero (Greenfield)
+
+Clone diretamente a branch `greenfield` para uma nova pasta do seu projeto:
+
 ```bash
-git init
-git add .
-git commit -m "chore: initial template setup"
+git clone -b greenfield https://github.com/luisf-velez/template-agent.git meu-novo-projeto
+cd meu-novo-projeto
+git remote remove origin  # Desvincule do template e aponte para seu novo repositório
 ```
 
-### Passo 2: Configurar o `AGENTS.md`
-Abra o arquivo [`AGENTS.md`](./AGENTS.md) e substitua todos os campos entre `[COLCHETES]`:
-1. Nome do projeto e resumo da arquitetura.
-2. Sistema operacional e **Shell padrão** do ambiente (ex: PowerShell ou Bash).
-3. Stack tecnológico de cada serviço/módulo (linguagens, versões e gerenciadores de pacote).
-4. Servidores MCP autorizados e Habilidades (Skills) do projeto.
-5. Comandos exatos de validação (`testes`, `linter`, `checagem de tipos`, `build`).
-6. Apague as seções que não se aplicarem (ex: seção Docker se o projeto não utilizar contêineres).
-7. Remova a seção `Checklist Rápido de Adaptação` ao terminar.
-
-### Passo 3: Configurar Variáveis de Ambiente e MCPs
-Copie o arquivo de exemplo e ajuste os valores necessários para seu ambiente local:
-```bash
-cp .env.example .env
-```
-Se o projeto utilizar servidores MCP (ex: banco de dados local, APIs, observabilidade), configure-os no arquivo de configuração do seu agente/IDE (`antigravity`, `claude_desktop`, etc.).
-
-### Passo 4: Definir a Primeira Tarefa no `.agent/TASK.md`
-Abra [`.agent/TASK.md`](./.agent/TASK.md):
-1. Preencha a seção **📌 Tarefa Ativa** com o primeiro objetivo real (ex: `Setup do esqueleto da API`).
-2. Defina **Critérios de Aceite** claros e mensuráveis.
-3. Marque o status inicial como `PRONTO PARA PLANEJAMENTO`.
-
-### Passo 5: Iniciar o Trabalho com o Agente de IA
-No prompt da sua ferramenta de IA favorita, instrua o agente:
+**Primeiro prompt para o agente no projeto novo:**
 > *"Leia o AGENTS.md, .agent/TASK.md, .agent/NOTES.md e as skills em .agent/skills/. Apresente seu plano de implementação para a Tarefa Ativa do TASK.md antes de alterar qualquer código."*
 
 ---
 
-## 🔄 Fluxo de Trabalho (Ciclo de Vida de uma Tarefa)
+### 2. Adotando em um Projeto Existente (Brownfield)
+
+Você não precisa recriar seu projeto. Basta injetar a estrutura do agente na raiz do seu repositório existente:
+
+```bash
+# Estando na raiz do seu projeto legado existente:
+curl -fsSL https://raw.githubusercontent.com/luisf-velez/template-agent/brownfield/install.sh | bash
+```
+
+*Ou clone a branch `brownfield` e copie a pasta `.agent/` e `AGENTS.md` para o seu projeto.*
+
+**Primeiro prompt para o agente no projeto legado:**
+> *"Leia o AGENTS.md e o .agent/TASK.md. Apresente seu plano de implementação para a Tarefa [00.1] de Auditoria e Discovery do projeto antes de alterar qualquer código."*
+
+---
+
+## 🛡️ Comparativo de Filosofia e Governança
 
 ```mermaid
 graph TD
-    A[Usuário define Tarefa no TASK.md] --> B[Agente lê docs e muda status para EM PLANEJAMENTO]
-    B --> C[Agente elabora Plano de Implementação]
-    C --> D{Usuário aprovou?}
-    D -- Não / Ajustes --> C
-    D -- Sim --> E[Status: EM EXECUÇÃO]
-    E --> F[Implementação com Tipagem Estrita]
-    F --> G[Execução dos Comandos de Validação 100% OK]
-    G --> H[Commit Semântico em Inglês]
-    H --> I[Registro no Log de Concluídas do TASK.md]
-    I --> J[Promover Próxima Tarefa do Backlog]
+    A{Seu projeto já existe?}
+    A -- Não (Criar do Zero) --> B[Use branch greenfield]
+    B --> B1[Decisões registradas em ADRs formais]
+    B --> B2[Setup arquitetural e stack livre]
+    B --> B3[Skills de projeto em .agent/skills/]
+
+    A -- Sim (Código Legado) --> C[Use branch brownfield]
+    C --> C1[Sem ADRs do passado - Foco em INVARIANTS.md]
+    C --> C2[Task 00 de Discovery para mapear a stack]
+    C --> C3[Testes de Caracterização obrigatórios antes de refatorar]
+    C --> C4[Diffs cirúrgicos e sem refatoração oportunista]
 ```
 
 ---
 
-## 💡 Melhores Práticas para Trabalhar com Agentes
+## 🤝 Como Contribuir ou Evoluir os Templates
 
-1. **Uma coisa por vez:** Mantenha cada tarefa atômica. Se um pedido crescer, quebre em sub-tarefas no `TASK.md`.
-2. **Confie no DoD (Definition of Done):** Não aceite tarefas com testes ou linter pendentes.
-3. **Mantenha os arquivos enxutos:**
-   - O `TASK.md` deve conter apenas a tarefa atual e títulos das próximas.
-   - O `NOTES.md` guarda decisões e contratos que **não são óbvios olhando o diff do Git**.
-   - Detalhes profundos de implementação pertencem às mensagens de commit e ao histórico do Git.
+Ao efetuar melhorias nos templates:
+1. Mudanças que afetam exclusivamente a criação de novos projetos devem ser commitadas na branch **`greenfield`**.
+2. Mudanças voltadas à proteção e auditoria de sistemas legados devem ser commitadas na branch **`brownfield`**.
+3. Mudanças na documentação geral, novas branches ou matrizes de governança pertencem à branch **`main`**.

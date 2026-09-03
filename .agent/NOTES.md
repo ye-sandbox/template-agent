@@ -65,6 +65,16 @@
 - **Alternativas consideradas:** Usar o mesmo template Greenfield para legados (descartado por induzir o agente a refatorações perigosas e perda de tempo tentando documentar ADRs antigas).
 - **Consequências:** Estabelecida uma taxonomia clara: `Core` para projetos do zero e `Brownfield` para legados.
 
+### 2026-09-03 Adoção da Estratégia de Branches como Templates
+
+- **Contexto:** Manter múltiplos templates dentro de pastas no mesmo repositório gerava complexidade de exportação, poluição do diretório raiz e dificultava a clonagem limpa por desenvolvedores.
+- **Decisão:** Adotada a estratégia de **Branches Especializadas como Templates**:
+  - `main`: Hub central de documentação e governança.
+  - `greenfield`: Starter kit para projetos do zero na raiz.
+  - `brownfield`: Template para projetos legados com instalador na raiz.
+- **Alternativas consideradas:** Manter subpastas `templates/` (descartado por forçar o usuário a copiar pastas manualmente ou ter árvore inflada).
+- **Consequências:** Usuários podem clonar diretamente com `git clone -b greenfield ...` ou usar o script da branch `brownfield`, obtendo repositórios 100% limpos desde o primeiro commit.
+
 > Exemplo de preenchimento:
 >
 > ### [AAAA-MM-DD] [Padronização de comunicação entre Serviço A e Serviço B]
