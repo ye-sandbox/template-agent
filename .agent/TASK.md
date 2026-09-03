@@ -12,21 +12,21 @@
 
 ## Tarefa Ativa
 
-### 📌 Tarefa [00.3]: Criar Template Brownfield para Projetos Existentes
+### 📌 Tarefa [XX.Y]: [Título curto e descritivo]
 
-- **Descrição:** Estruturar a suíte completa de arquivos do repositório `template-agent-brownfield` dentro de `templates/brownfield/`, incluindo AGENTS.md adaptado, INVARIANTS.md, script install.sh e a Task 00 de Discovery.
-- **Sistema(s) Envolvido(s):** `templates`, `agent-governance`
+- **Descrição:** [O que precisa ser implementado, em 2-4 linhas. Detalhe o suficiente
+  para o agente montar um plano, sem reescrever a especificação inteira aqui.]
+- **Sistema(s) Envolvido(s):** [ex: `servico-api`, `servico-worker`, `frontend`]
 - **Tipo de Ação:**
-  - [x] Somente leitura / Documentação
+  - [ ] Somente leitura / Documentação
   - [ ] Escrita de código-fonte
-- **Status:** EM EXECUÇÃO
+- **Status:** [PRONTO PARA PLANEJAMENTO / EM PLANEJAMENTO / APROVADO / EM EXECUÇÃO]
   *(Fluxo: Definido como `PRONTO PARA PLANEJAMENTO` -> Agente assume como `EM PLANEJAMENTO` ao apresentar plano -> Usuário aprova -> Agente altera para `EM EXECUÇÃO` ao codificar)*
 
 ### Critérios de Aceite
-- [ ] Diretório `templates/brownfield/` criado com todos os arquivos do novo template.
-- [ ] `INVARIANTS.md` e Task [00.1] de Discovery estruturados para código legado.
-- [ ] Script `install.sh` implementado para injeção rápida em projetos existentes.
-- [ ] Validação da formatação e links relativos.
+- [ ] [Critério objetivo e verificável 1]
+- [ ] [Critério objetivo e verificável 2]
+- [ ] [Critério objetivo e verificável 3]
 
 ---
 
@@ -40,6 +40,7 @@
 |---|---|---|---|
 | [00.1] | [Setup inicial da arquitetura e template do repositório] | [`0000000`] | [AAAA-MM-DD] |
 | [00.2] | Refinar Template Core/Greenfield com Suporte a MCPs e Skills | [`031e7a6`] | 2026-09-03 |
+| [00.3] | Criar Template Brownfield para Projetos Existentes | [`dc842f7`] | 2026-09-03 |
 
 > Quando esta tabela passar de ~15-20 linhas, mova as mais antigas para
 > `.agent/ARCHIVE.md` (ou simplesmente apague — o Git já é a fonte da verdade).
