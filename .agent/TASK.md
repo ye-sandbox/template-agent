@@ -12,21 +12,21 @@
 
 ## Tarefa Ativa
 
-### 📌 Tarefa [XX.Y]: [Título curto e descritivo]
+### 📌 Tarefa [00.4]: Reorganizar Templates em Branches (main, greenfield, brownfield)
 
-- **Descrição:** [O que precisa ser implementado, em 2-4 linhas. Detalhe o suficiente
-  para o agente montar um plano, sem reescrever a especificação inteira aqui.]
-- **Sistema(s) Envolvido(s):** [ex: `servico-api`, `servico-worker`, `frontend`]
+- **Descrição:** Reestruturar o repositório para que cada template viva em sua própria branch isolada (greenfield e brownfield), transformando a branch main no hub central de documentação e governança do projeto.
+- **Sistema(s) Envolvido(s):** `git-workflow`, `docs`, `templates`
 - **Tipo de Ação:**
-  - [ ] Somente leitura / Documentação
+  - [x] Somente leitura / Documentação
   - [ ] Escrita de código-fonte
-- **Status:** [PRONTO PARA PLANEJAMENTO / EM PLANEJAMENTO / APROVADO / EM EXECUÇÃO]
+- **Status:** EM EXECUÇÃO
   *(Fluxo: Definido como `PRONTO PARA PLANEJAMENTO` -> Agente assume como `EM PLANEJAMENTO` ao apresentar plano -> Usuário aprova -> Agente altera para `EM EXECUÇÃO` ao codificar)*
 
 ### Critérios de Aceite
-- [ ] [Critério objetivo e verificável 1]
-- [ ] [Critério objetivo e verificável 2]
-- [ ] [Critério objetivo e verificável 3]
+- [ ] Branch `greenfield` criada contendo o starter kit puro para novos projetos.
+- [ ] Branch `brownfield` criada com arquivos na raiz prontos para projetos legados.
+- [ ] Pasta `templates/` removida da branch `main`.
+- [ ] `README.md` e `AGENTS.md` da branch `main` adaptados como hub de documentação dos templates.
 
 ---
 
