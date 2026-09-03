@@ -1,14 +1,7 @@
-# ARCHIVE.md — Arquivo Histórico de Tarefas Concluídas
+# ARCHIVE.md — Histórico de Tarefas Legadas Concluídas
 
-> Este arquivo armazena tarefas concluídas antigas que foram rotacionadas para fora
-> do `.agent/TASK.md` a fim de manter o contexto principal enxuto.
->
-> Para detalhes profundos de implementação, consulte o histórico do Git (`git log --oneline` ou `git show <commit>`).
+> Quando a tabela de "Log de Tarefas Concluídas" no `.agent/TASK.md` ultrapassar
+> ~15-20 linhas, transfira as entradas mais antigas para este arquivo para manter o contexto do agente enxuto.
 
----
-
-## Tarefas Arquivadas
-
-| Tarefa | Título | Commit(s) | Data Conclusão |
+| Tarefa | Título | Commit(s) | Data |
 |---|---|---|---|
-| [XX.X] | [Título da tarefa arquivada] | [`0000000`] | [AAAA-MM-DD] |

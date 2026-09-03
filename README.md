@@ -1,93 +1,70 @@
-# Template Core/Greenfield de Desenvolvimento Orientado a Agentes (ADD)
+# Template Brownfield para Desenvolvimento Orientado a Agentes (ADD)
 
-Este repositório é o starter kit canônico (**Core / Greenfield**) projetado para potencializar o desenvolvimento de software colaborativo do zero com **agentes de Inteligência Artificial** (ex: Antigravity, Claude Code, Cursor, Windsurf, Roo Code, Aider, etc.).
+> 🧱 **Focado em Código Legado e Projetos Já Existentes.**
+> Uma estrutura projetada para introduzir agentes de Inteligência Artificial (Antigravity, Claude Code, Cursor, Windsurf, Roo Code, Aider, etc.) em repositórios com código existente, sem correr o risco de quebrar contratos implícitos ou causar regressões silenciosas.
 
-A estrutura foi desenhada para resolver os maiores problemas no uso de agentes em projetos reais: **perda de contexto**, **alucinações em tarefas longas**, **violação de padrões de código** e **retrabalho**.
+---
+
+## 💡 Por que um template específico para Legados?
+
+Trabalhar com IA em projetos novos (Greenfield) é muito diferente de trabalhar em código legado (Brownfield):
+- **No Greenfield:** O agente projeta arquitetura do zero, cria ADRs e define contratos livres.
+- **No Brownfield:** Decisões já foram tomadas. O agente precisa agir com cautela cirúrgica (*Princípio de Chesterton*), escrever **testes de caracterização** antes de refatorar e respeitar contratos de sistemas legados.
 
 ---
 
 ## 📁 Estrutura do Template
 
 ```text
-├── AGENTS.md                 # A "Constituição" do projeto (regras inegociáveis, stack, MCPs e comandos)
-├── .agent/
-│   ├── TASK.md               # Tarefa ativa, critérios de aceite e roadmap imediato
-│   ├── NOTES.md              # Decisões arquiteturais rápidas, contratos de dados e armadilhas
-│   ├── ARCHIVE.md            # Histórico de tarefas antigas (preserva contexto enxuto)
-│   ├── adr/                  # Registros de Decisões Arquiteturais complexas (ADRs formais)
-│   │   └── 000-template.md   # Template padrão de ADR
-│   └── skills/               # Habilidades procedurais especializadas do projeto
-│       ├── README.md         # Guia de quando e como criar skills
-│       └── 000-template.md   # Template padrão de SKILL.md
-├── .env.example              # Exemplo de variáveis de ambiente do projeto
-├── .gitignore                # Padrão amplo (Node, Python, Docker, caches de agentes)
-└── README.md                 # Este guia (para desenvolvedores humanos)
+├── AGENTS.md                 # A "Constituição" para código legado (regras de não-regressão e escopo cirúrgico)
+├── install.sh                # Script para injetar este template em qualquer repositório existente
+└── .agent/
+    ├── TASK.md               # Tarefa ativa (iniciando com o Protocolo de Discovery)
+    ├── INVARIANTS.md         # Comportamentos intocáveis, dependências congeladas e bizarrices justificadas
+    ├── NOTES.md              # Contratos vigentes mapeados e armadilhas recentes
+    └── ARCHIVE.md            # Histórico de tarefas antigas para manter contexto enxuto
 ```
 
 ---
 
-## 🚀 Como Iniciar um Novo Projeto com este Template
+## 🚀 Como Injetar este Template em um Repositório Legado
 
-### Passo 1: Inicializar o Repositório Git
-Se você clonou ou baixou este template, inicialize seu repositório local:
+### Opção 1: Via Script Automático (Recomendado)
+Clone ou acesse este template e execute o `install.sh` apontando para o seu projeto:
+
 ```bash
-git init
-git add .
-git commit -m "chore: initial template setup"
+# Estando dentro do repositório do seu projeto legado:
+bash /caminho/para/template-agent-brownfield/install.sh .
 ```
 
-### Passo 2: Configurar o `AGENTS.md`
-Abra o arquivo [`AGENTS.md`](./AGENTS.md) e substitua todos os campos entre `[COLCHETES]`:
-1. Nome do projeto e resumo da arquitetura.
-2. Sistema operacional e **Shell padrão** do ambiente (ex: PowerShell ou Bash).
-3. Stack tecnológico de cada serviço/módulo (linguagens, versões e gerenciadores de pacote).
-4. Servidores MCP autorizados e Habilidades (Skills) do projeto.
-5. Comandos exatos de validação (`testes`, `linter`, `checagem de tipos`, `build`).
-6. Apague as seções que não se aplicarem (ex: seção Docker se o projeto não utilizar contêineres).
-7. Remova a seção `Checklist Rápido de Adaptação` ao terminar.
-
-### Passo 3: Configurar Variáveis de Ambiente e MCPs
-Copie o arquivo de exemplo e ajuste os valores necessários para seu ambiente local:
+Ou usando o comando direto do seu GitHub (quando este repo estiver publicado):
 ```bash
-cp .env.example .env
+curl -fsSL https://raw.githubusercontent.com/[SEU_USUARIO]/template-agent-brownfield/main/install.sh | bash
 ```
-Se o projeto utilizar servidores MCP (ex: banco de dados local, APIs, observabilidade), configure-os no arquivo de configuração do seu agente/IDE (`antigravity`, `claude_desktop`, etc.).
 
-### Passo 4: Definir a Primeira Tarefa no `.agent/TASK.md`
-Abra [`.agent/TASK.md`](./.agent/TASK.md):
-1. Preencha a seção **📌 Tarefa Ativa** com o primeiro objetivo real (ex: `Setup do esqueleto da API`).
-2. Defina **Critérios de Aceite** claros e mensuráveis.
-3. Marque o status inicial como `PRONTO PARA PLANEJAMENTO`.
-
-### Passo 5: Iniciar o Trabalho com o Agente de IA
-No prompt da sua ferramenta de IA favorita, instrua o agente:
-> *"Leia o AGENTS.md, .agent/TASK.md, .agent/NOTES.md e as skills em .agent/skills/. Apresente seu plano de implementação para a Tarefa Ativa do TASK.md antes de alterar qualquer código."*
+### Opção 2: Cópia Manual
+Copie o arquivo `AGENTS.md` e a pasta `.agent/` diretamente para a raiz do seu projeto existente.
 
 ---
 
-## 🔄 Fluxo de Trabalho (Ciclo de Vida de uma Tarefa)
+## 🔄 O Ciclo de Adoção: Task 00 (Discovery)
 
-```mermaid
-graph TD
-    A[Usuário define Tarefa no TASK.md] --> B[Agente lê docs e muda status para EM PLANEJAMENTO]
-    B --> C[Agente elabora Plano de Implementação]
-    C --> D{Usuário aprovou?}
-    D -- Não / Ajustes --> C
-    D -- Sim --> E[Status: EM EXECUÇÃO]
-    E --> F[Implementação com Tipagem Estrita]
-    F --> G[Execução dos Comandos de Validação 100% OK]
-    G --> H[Commit Semântico em Inglês]
-    H --> I[Registro no Log de Concluídas do TASK.md]
-    I --> J[Promover Próxima Tarefa do Backlog]
-```
+Assim que os arquivos forem copiados para o seu projeto legado:
+
+1. Abra seu editor com o agente de IA na raiz do projeto.
+2. Envie o prompt inicial:
+   > *"Leia o AGENTS.md e o .agent/TASK.md. Apresente seu plano de implementação para a Tarefa [00.1] de Auditoria e Discovery antes de alterar qualquer código."*
+3. O agente irá:
+   - Identificar linguagens, versões e gerenciador de pacotes nos arquivos de build (`package.json`, `pyproject.toml`, etc.).
+   - Preencher os comandos de teste, lint e run reais no `AGENTS.md`.
+   - Mapear pontos de entrada e variáveis de ambiente.
+   - Registrar as primeiras regras críticas em `.agent/INVARIANTS.md`.
+4. Uma vez concluído o Discovery, seu projeto estará 100% calibrado para receber novas tarefas, bugfixes e refatorações com segurança!
 
 ---
 
-## 💡 Melhores Práticas para Trabalhar com Agentes
+## 🛡️ Regras Fundamentais deste Template
 
-1. **Uma coisa por vez:** Mantenha cada tarefa atômica. Se um pedido crescer, quebre em sub-tarefas no `TASK.md`.
-2. **Confie no DoD (Definition of Done):** Não aceite tarefas com testes ou linter pendentes.
-3. **Mantenha os arquivos enxutos:**
-   - O `TASK.md` deve conter apenas a tarefa atual e títulos das próximas.
-   - O `NOTES.md` guarda decisões e contratos que **não são óbvios olhando o diff do Git**.
-   - Detalhes profundos de implementação pertencem às mensagens de commit e ao histórico do Git.
+1. **Testes de Caracterização:** Se uma função legada não tem testes e precisa ser alterada, o agente deve primeiro escrever um teste que comprove o comportamento atual antes de modificar a lógica.
+2. **Sem Refatoração Oportunista:** Diffs devem ser cirúrgicos. Proibido reformatar arquivos inteiros ou mudar estilo fora do escopo da tarefa.
+3. **Invariantes Respeitadas:** Decisões que parecem ruins ou redundantes devem ser verificadas no `INVARIANTS.md` antes de qualquer alteração.
