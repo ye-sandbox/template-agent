@@ -12,21 +12,21 @@
 
 ## Tarefa Ativa
 
-### 📌 Tarefa [00.2]: Refinar Template Core/Greenfield com Suporte a MCPs e Skills
+### 📌 Tarefa [XX.Y]: [Título curto e descritivo]
 
-- **Descrição:** Atualizar as diretrizes e estrutura do repositório template para suportar formalmente servidores MCP e Habilidades (Skills) de projeto e globais, além de consolidar o perfil Greenfield com ADRs.
-- **Sistema(s) Envolvido(s):** `docs`, `agent-governance`
+- **Descrição:** [O que precisa ser implementado, em 2-4 linhas. Detalhe o suficiente
+  para o agente montar um plano, sem reescrever a especificação inteira aqui.]
+- **Sistema(s) Envolvido(s):** [ex: `servico-api`, `servico-worker`, `frontend`]
 - **Tipo de Ação:**
-  - [x] Somente leitura / Documentação
+  - [ ] Somente leitura / Documentação
   - [ ] Escrita de código-fonte
-- **Status:** EM EXECUÇÃO
+- **Status:** [PRONTO PARA PLANEJAMENTO / EM PLANEJAMENTO / APROVADO / EM EXECUÇÃO]
   *(Fluxo: Definido como `PRONTO PARA PLANEJAMENTO` -> Agente assume como `EM PLANEJAMENTO` ao apresentar plano -> Usuário aprova -> Agente altera para `EM EXECUÇÃO` ao codificar)*
 
 ### Critérios de Aceite
-- [ ] `AGENTS.md` atualizado com seções claras para servidores MCP e governança de Skills.
-- [ ] Diretório `.agent/skills/` criado com documentação (`README.md`) e template (`000-template.md`).
-- [ ] `README.md` e `.agent/NOTES.md` atualizados refletindo a nova árvore e boas práticas.
-- [ ] Links relativos e formatação markdown verificados e consistentes.
+- [ ] [Critério objetivo e verificável 1]
+- [ ] [Critério objetivo e verificável 2]
+- [ ] [Critério objetivo e verificável 3]
 
 ---
 
@@ -39,6 +39,7 @@
 | Tarefa | Título | Commit(s) | Data |
 |---|---|---|---|
 | [00.1] | [Setup inicial da arquitetura e template do repositório] | [`0000000`] | [AAAA-MM-DD] |
+| [00.2] | Refinar Template Core/Greenfield com Suporte a MCPs e Skills | [`031e7a6`] | 2026-09-03 |
 
 > Quando esta tabela passar de ~15-20 linhas, mova as mais antigas para
 > `.agent/ARCHIVE.md` (ou simplesmente apague — o Git já é a fonte da verdade).
