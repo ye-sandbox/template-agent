@@ -54,7 +54,16 @@
   2. `.agent/skills/<nome>/SKILL.md`: manuais procedurais passo a passo para o agente, isolando fluxos repetitivos de domínio com template padronizado (`000-template.md`).
   3. Skills de infraestrutura compartilhada (ex: VictoriaLogs, Proxmox) devem preferencialmente residir no escopo global do ambiente, enquanto skills locais tratam exclusivamente da aplicação.
 - **Alternativas consideradas:** Centralizar tudo no `AGENTS.md` (descartado por poluição de contexto do agente e custo desnecessário de tokens) ou criar pastas dispersas (descartado por falta de padronização).
-- **Consequências:** Agentes agora têm um local dedicado para aprender e documentar procedimentos do projeto sem quebrar as regras de ouro.
+### 2026-09-03 Estruturação do Template Brownfield para Projetos Legados
+
+- **Contexto:** Necessidade de disponibilizar um template especializado para introdução segura de agentes em bases de código existentes, sem correr riscos de regressão e sem o overhead de criar ADRs retroativas do passado.
+- **Decisão:** Criada a suíte `templates/brownfield/` com os seguintes diferenciais em relação ao Core/Greenfield:
+  1. Remoção da pasta `.agent/adr/` em favor de `.agent/INVARIANTS.md` (Princípio do Muro de Chesterton).
+  2. Inclusão da regra obrigatória de "Testes de Caracterização" antes de refatorar código legado.
+  3. Pré-configuração da Tarefa [00.1] de Auditoria e Discovery no `TASK.md`.
+  4. Script de instalação one-liner `install.sh` para cópia segura em projetos existentes.
+- **Alternativas consideradas:** Usar o mesmo template Greenfield para legados (descartado por induzir o agente a refatorações perigosas e perda de tempo tentando documentar ADRs antigas).
+- **Consequências:** Estabelecida uma taxonomia clara: `Core` para projetos do zero e `Brownfield` para legados.
 
 > Exemplo de preenchimento:
 >
