@@ -1,6 +1,6 @@
-# Template de Desenvolvimento Orientado a Agentes (ADD - Agent-Driven Development)
+# Template Core/Greenfield de Desenvolvimento Orientado a Agentes (ADD)
 
-Este repositório é um starter kit projetado para potencializar o desenvolvimento de software colaborativo com **agentes de Inteligência Artificial** (ex: Claude Code, Antigravity, Cursor, Windsurf, Roo Code, Aider, etc.).
+Este repositório é o starter kit canônico (**Core / Greenfield**) projetado para potencializar o desenvolvimento de software colaborativo do zero com **agentes de Inteligência Artificial** (ex: Antigravity, Claude Code, Cursor, Windsurf, Roo Code, Aider, etc.).
 
 A estrutura foi desenhada para resolver os maiores problemas no uso de agentes em projetos reais: **perda de contexto**, **alucinações em tarefas longas**, **violação de padrões de código** e **retrabalho**.
 
@@ -9,13 +9,16 @@ A estrutura foi desenhada para resolver os maiores problemas no uso de agentes e
 ## 📁 Estrutura do Template
 
 ```text
-├── AGENTS.md                 # A "Constituição" do projeto para o agente (regras inegociáveis, stack e comandos)
+├── AGENTS.md                 # A "Constituição" do projeto (regras inegociáveis, stack, MCPs e comandos)
 ├── .agent/
 │   ├── TASK.md               # Tarefa ativa, critérios de aceite e roadmap imediato
 │   ├── NOTES.md              # Decisões arquiteturais rápidas, contratos de dados e armadilhas
 │   ├── ARCHIVE.md            # Histórico de tarefas antigas (preserva contexto enxuto)
-│   └── adr/                  # Registros de Decisões Arquiteturais complexas (ADRs formais)
-│       └── 000-template.md   # Template padrão de ADR
+│   ├── adr/                  # Registros de Decisões Arquiteturais complexas (ADRs formais)
+│   │   └── 000-template.md   # Template padrão de ADR
+│   └── skills/               # Habilidades procedurais especializadas do projeto
+│       ├── README.md         # Guia de quando e como criar skills
+│       └── 000-template.md   # Template padrão de SKILL.md
 ├── .env.example              # Exemplo de variáveis de ambiente do projeto
 ├── .gitignore                # Padrão amplo (Node, Python, Docker, caches de agentes)
 └── README.md                 # Este guia (para desenvolvedores humanos)
@@ -38,15 +41,17 @@ Abra o arquivo [`AGENTS.md`](./AGENTS.md) e substitua todos os campos entre `[CO
 1. Nome do projeto e resumo da arquitetura.
 2. Sistema operacional e **Shell padrão** do ambiente (ex: PowerShell ou Bash).
 3. Stack tecnológico de cada serviço/módulo (linguagens, versões e gerenciadores de pacote).
-4. Comandos exatos de validação (`testes`, `linter`, `checagem de tipos`, `build`).
-5. Apague as seções que não se aplicarem (ex: seção Docker se o projeto não utilizar contêineres).
-6. Remova a seção `Checklist Rápido de Adaptação` ao terminar.
+4. Servidores MCP autorizados e Habilidades (Skills) do projeto.
+5. Comandos exatos de validação (`testes`, `linter`, `checagem de tipos`, `build`).
+6. Apague as seções que não se aplicarem (ex: seção Docker se o projeto não utilizar contêineres).
+7. Remova a seção `Checklist Rápido de Adaptação` ao terminar.
 
-### Passo 3: Configurar Variáveis de Ambiente
+### Passo 3: Configurar Variáveis de Ambiente e MCPs
 Copie o arquivo de exemplo e ajuste os valores necessários para seu ambiente local:
 ```bash
 cp .env.example .env
 ```
+Se o projeto utilizar servidores MCP (ex: banco de dados local, APIs, observabilidade), configure-os no arquivo de configuração do seu agente/IDE (`antigravity`, `claude_desktop`, etc.).
 
 ### Passo 4: Definir a Primeira Tarefa no `.agent/TASK.md`
 Abra [`.agent/TASK.md`](./.agent/TASK.md):
@@ -56,7 +61,7 @@ Abra [`.agent/TASK.md`](./.agent/TASK.md):
 
 ### Passo 5: Iniciar o Trabalho com o Agente de IA
 No prompt da sua ferramenta de IA favorita, instrua o agente:
-> *"Leia o AGENTS.md, .agent/TASK.md e .agent/NOTES.md. Apresente seu plano de implementação para a Tarefa Ativa do TASK.md antes de alterar qualquer código."*
+> *"Leia o AGENTS.md, .agent/TASK.md, .agent/NOTES.md e as skills em .agent/skills/. Apresente seu plano de implementação para a Tarefa Ativa do TASK.md antes de alterar qualquer código."*
 
 ---
 
