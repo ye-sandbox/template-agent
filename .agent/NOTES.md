@@ -17,9 +17,10 @@
    descartada por um motivo, a menos que o usuário peça para revisitar.
 2. **Registre uma nova entrada quando:**
    - Uma escolha arquitetural foi feita entre duas ou mais alternativas plausíveis.
-   - Um contrato de dados (payload, schema, nome de fila/rota) foi definido ou alterado.
-   - Uma armadilha, limitação externa ou comportamento não-óbvio de uma lib/serviço
+   - Um contrato de dados (payload, schema, nome de fila/rota, query/resposta de MCP) foi definido ou alterado.
+   - Uma armadilha, limitação externa ou comportamento não-óbvio de uma lib/serviço/MCP
      foi descoberto (para não ser redescoberto/re-debugado no futuro).
+   - Uma nova Skill de projeto foi criada ou um procedimento operacional foi padronizado.
    - Um débito técnico foi assumido conscientemente (e por quê).
 3. **Não registre aqui:** listas de arquivos alterados, resumo de testes passando,
    changelog de features — isso é commit message / `.agent/TASK.md`.
@@ -45,12 +46,15 @@
 
 ### Decisões Rápidas e Contexto Técnico
 
-### [AAAA-MM-DD] [Título curto da decisão]
+### 2026-09-03 Estruturação de Governança para MCPs e Skills de Projeto
 
-- **Contexto:** [Qual problema/escolha estava em aberto]
-- **Decisão:** [O que foi decidido]
-- **Alternativas consideradas:** [O que mais foi cogitado e por que foi descartado]
-- **Consequências:** [Trade-offs assumidos, o que isso limita ou habilita]
+- **Contexto:** Necessidade de padronizar como agentes acessam ferramentas externas (MCPs) e fluxos procedurais complexos (Skills) sem inflar o `AGENTS.md` ou gerar overhead cognitivo em tarefas corriqueiras.
+- **Decisão:** Adotada a divisão canônica:
+  1. `AGENTS.md`: regras inegociáveis, stack, autorizações de MCPs e catálogo de skills.
+  2. `.agent/skills/<nome>/SKILL.md`: manuais procedurais passo a passo para o agente, isolando fluxos repetitivos de domínio com template padronizado (`000-template.md`).
+  3. Skills de infraestrutura compartilhada (ex: VictoriaLogs, Proxmox) devem preferencialmente residir no escopo global do ambiente, enquanto skills locais tratam exclusivamente da aplicação.
+- **Alternativas consideradas:** Centralizar tudo no `AGENTS.md` (descartado por poluição de contexto do agente e custo desnecessário de tokens) ou criar pastas dispersas (descartado por falta de padronização).
+- **Consequências:** Agentes agora têm um local dedicado para aprender e documentar procedimentos do projeto sem quebrar as regras de ouro.
 
 > Exemplo de preenchimento:
 >

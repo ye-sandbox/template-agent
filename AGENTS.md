@@ -2,7 +2,7 @@
 
 Você é o(a) engenheiro(a) sênior responsável pelo desenvolvimento deste projeto: **[NOME_DO_PROJETO]**. Siga rigorosamente as instruções abaixo.
 
-> 💡 Este arquivo é um template. Substitua todo o texto entre `[COLCHETES]` pelas informações reais do seu projeto e apague as seções que não se aplicarem.
+> 💡 Este repositório é a base canônica (**Core / Greenfield**) para criação de novos projetos do zero com foco em arquitetura consistente, contratos claros, decisões registradas (ADRs) e governança por agentes. Substitua todo o texto entre `[COLCHETES]` pelas informações reais do seu projeto e apague as seções que não se aplicarem.
 
 ---
 
@@ -91,6 +91,36 @@ Você é o(a) engenheiro(a) sênior responsável pelo desenvolvimento deste proj
 
 ---
 
+## Servidores MCP (Model Context Protocol)
+
+O agente deve utilizar os servidores MCP configurados no ambiente como fonte primária para inspeção de dados, documentações oficiais e interação padronizada com serviços externos.
+
+### Servidores MCP Disponíveis para este Projeto
+- **[Nome do MCP 1] (ex: postgres-mcp):** [Finalidade, ex: inspecionar schemas e rodar queries de leitura no banco local]
+- **[Nome do MCP 2] (ex: victorialogs-mcp):** [Finalidade, ex: consultar logs analíticos e de runtime para diagnóstico]
+- **[Nome do MCP 3] (ex: gemini-api-docs):** [Finalidade, ex: consulta a documentações oficiais de SDKs/APIs]
+
+### Regras de Uso de MCPs
+- **Preferência por Ferramentas de MCP:** Sempre que um MCP estiver disponível para um serviço (banco, logs, documentação), utilize as ferramentas do MCP em vez de scripts manuais ad-hoc ou comandos invasivos de shell.
+- **Operações Seguras (Read-First):** Mutações diretas de dados em bancos ou serviços via MCP devem ser estritamente restritas ao escopo da tarefa atual em ambiente de desenvolvimento local. Mutações em staging/produção são **estritamente proibidas** sem consentimento explícito.
+- **Isolamento de Credenciais:** As ferramentas MCP devem utilizar as credenciais providas pelo ambiente ou arquivo `.env`. Nunca exponha nem logue tokens e segredos retornados pelas ferramentas.
+
+---
+
+## Habilidades Especializadas (Skills)
+
+Skills ensinam ao agente **como** executar fluxos procedurais complexos, padrões de domínio e boas práticas específicas do projeto ou da infraestrutura.
+
+### 1. Localização e Escopo de Skills
+- **Skills de Projeto (`.agent/skills/<nome-da-skill>/SKILL.md`):** Procedimentos específicos deste repositório (ex: como instrumentar eventos, padrões de CRUD da aplicação, geração de migrations). Devem ser versionadas no repositório.
+- **Skills Globais / Homelab:** Conhecimento de ferramentas compartilhadas entre múltiplos projetos (ex: consultar VictoriaLogs, operar Proxmox, k3s). Residem na configuração global do agente na máquina host e são referenciadas pelo nome quando aplicável.
+
+### 2. Diretrizes de Uso de Skills
+- **Sempre consulte skills relevantes:** Se a tarefa envolver um domínio coberto por uma skill existente em `.agent/skills/` ou skill global do ambiente, leia o respectivo `SKILL.md` antes de planejar a implementação.
+- **Criação de Novas Skills de Projeto:** Ao identificar um padrão arquitetural ou fluxo operacional repetitivo (mais de 3 passos padronizados), crie uma nova pasta em `.agent/skills/<nome>/SKILL.md` baseando-se em `.agent/skills/000-template.md`.
+
+---
+
 ## Comandos de Validação
 
 ### No Serviço [A] (`[caminho]`):
@@ -119,6 +149,9 @@ Você é o(a) engenheiro(a) sênior responsável pelo desenvolvimento deste proj
 - **NUNCA** deixe código mockado, erros de sintaxe ou comentários `// TODO` / `# TODO` ao marcar uma tarefa como concluída.
 - **NUNCA** coloque regras de negócio diretamente em rotas HTTP, controllers ou nós de gateway. Use uma camada de serviços dedicada (ex: `core/modules/`, `use_cases/`, `services/`).
 - **NUNCA** apague arquivos existentes ou faça refatorações em larga escala fora do escopo da tarefa atual.
+- **NUNCA** execute mutações destrutivas ou altere schemas de banco de dados diretamente via MCP sem criar as devidas migrations versionadas no código.
+- **NUNCA** invente parâmetros, queries ou endpoints de serviços integrados sem consultar o respectivo servidor MCP ou documentação oficial.
+- **NUNCA** ignore procedimentos estabelecidos nas Skills do projeto (`.agent/skills/`) quando a tarefa pertencer ao domínio coberto por elas.
 - **CIRCUIT BREAKER (Prevenção de Loops):** Se um comando de validação (teste, linter, build) falhar mais de 2 vezes consecutivas com a mesma causa-raiz, **PARE** e solicite orientação ao usuário em vez de insistir em alterações cegas.
 - **SEGURANÇA DE ARQUIVOS:** **NUNCA** leia ou modifique arquivos fora da pasta do projeto, nem acesse chaves SSH, diretório `.git` interno ou credenciais locais da máquina host.
 
@@ -174,4 +207,6 @@ Você é o(a) engenheiro(a) sênior responsável pelo desenvolvimento deste proj
 - [ ] Revisei as Regras de Ouro para o contexto do projeto
 - [ ] Defini a convenção de organização de módulos/arquivos
 - [ ] Defini a política de branches e confirmei o padrão de commits
+- [ ] Configurei os servidores MCP necessários no ambiente e mapeei em `AGENTS.md`
+- [ ] Mapeei as Skills de projeto em `.agent/skills/` (ou criei novas para fluxos repetitivos)
 - [ ] Ajustei `.env.example` e `.gitignore` para a stack do projeto

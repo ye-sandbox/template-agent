@@ -12,21 +12,21 @@
 
 ## Tarefa Ativa
 
-### 📌 Tarefa [XX.Y]: [Título curto e descritivo]
+### 📌 Tarefa [00.2]: Refinar Template Core/Greenfield com Suporte a MCPs e Skills
 
-- **Descrição:** [O que precisa ser implementado, em 2-4 linhas. Detalhe o suficiente
-  para o agente montar um plano, sem reescrever a especificação inteira aqui.]
-- **Sistema(s) Envolvido(s):** [ex: `servico-api`, `servico-worker`, `frontend`]
+- **Descrição:** Atualizar as diretrizes e estrutura do repositório template para suportar formalmente servidores MCP e Habilidades (Skills) de projeto e globais, além de consolidar o perfil Greenfield com ADRs.
+- **Sistema(s) Envolvido(s):** `docs`, `agent-governance`
 - **Tipo de Ação:**
-  - [ ] Somente leitura / Documentação
+  - [x] Somente leitura / Documentação
   - [ ] Escrita de código-fonte
-- **Status:** [PRONTO PARA PLANEJAMENTO / EM PLANEJAMENTO / APROVADO / EM EXECUÇÃO]
+- **Status:** EM EXECUÇÃO
   *(Fluxo: Definido como `PRONTO PARA PLANEJAMENTO` -> Agente assume como `EM PLANEJAMENTO` ao apresentar plano -> Usuário aprova -> Agente altera para `EM EXECUÇÃO` ao codificar)*
 
 ### Critérios de Aceite
-- [ ] [Critério objetivo e verificável 1]
-- [ ] [Critério objetivo e verificável 2]
-- [ ] [Critério objetivo e verificável 3]
+- [ ] `AGENTS.md` atualizado com seções claras para servidores MCP e governança de Skills.
+- [ ] Diretório `.agent/skills/` criado com documentação (`README.md`) e template (`000-template.md`).
+- [ ] `README.md` e `.agent/NOTES.md` atualizados refletindo a nova árvore e boas práticas.
+- [ ] Links relativos e formatação markdown verificados e consistentes.
 
 ---
 
