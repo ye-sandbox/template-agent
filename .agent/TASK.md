@@ -12,22 +12,21 @@
 
 ## Tarefa Ativa
 
-### 📌 Tarefa [02.1]: Padronizar Numeração de Tarefas e Criar Branch Especializada Blackbox
+### 📌 Tarefa [XX.Y]: [Título curto e descritivo]
 
-- **Descrição:** Formalizar a convenção semântica de numeração de tarefas [XX.Y] no AGENTS.md e TASK.md. Criar e estruturar a nova branch especializada de template `blackbox` para engenharia reversa e integração de sistemas legados fechados (ex: SEI/SIP), contendo .agent/ENDPOINTS.md, skill de reverse-engineering, init.sh e README específico.
-- **Sistema(s) Envolvido(s):** `[hub]`, `[main]`, `[branch-blackbox]`
+- **Descrição:** [O que precisa ser implementado, em 2-4 linhas. Detalhe o suficiente
+  para o agente montar um plano, sem reescrever a especificação inteira aqui.]
+- **Sistema(s) Envolvido(s):** [ex: `docs`, `hub`, `branch-greenfield`, `branch-brownfield`, `branch-blackbox`]
 - **Tipo de Ação:**
-  - [x] Somente leitura / Documentação
-  - [x] Escrita de código-fonte
-- **Status:** EM EXECUÇÃO
+  - [ ] Somente leitura / Documentação
+  - [ ] Escrita de código-fonte
+- **Status:** [PRONTO PARA PLANEJAMENTO / EM PLANEJAMENTO / APROVADO / EM EXECUÇÃO]
+  *(Fluxo: Definido como `PRONTO PARA PLANEJAMENTO` -> Agente assume como `EM PLANEJAMENTO` ao apresentar plano -> Usuário aprova -> Agente altera para `EM EXECUÇÃO` ao codificar)*
 
 ### Critérios de Aceite
-- [ ] Regras semânticas de numeração de tarefas [XX.Y] formalizadas no AGENTS.md e template do TASK.md.
-- [ ] Branch especializada `blackbox` criada a partir de uma base limpa (sem histórico cruzado de templates).
-- [ ] Artefato canônico `.agent/ENDPOINTS.md` estruturado com modelo de dissecação de APIs legadas/fechadas.
-- [ ] Skill `.agent/skills/reverse-engineering/SKILL.md` criada com metodologia passo a passo de engenharia reversa.
-- [ ] Script de inicialização rápida `init.sh` para projetos blackbox adicionado à branch `blackbox`.
-- [ ] `README.md`, `AGENTS.md` e `.github/workflows/ci.yml` da `main` atualizados para incorporar `blackbox`.
+- [ ] [Critério objetivo e verificável 1]
+- [ ] [Critério objetivo e verificável 2]
+- [ ] [Critério objetivo e verificável 3]
 
 ---
 
@@ -48,6 +47,7 @@
 | [01.3] | Criar Script de Inicialização Rápida (One-Liner) para Greenfield | [`df6876e`] | 2026-09-03 |
 | [01.4] | Configurar CI com GitHub Actions para Validação de Templates | [`dbbcc1c`] | 2026-09-03 |
 | [01.5] | Documentar Protocolo de Sincronização e Suporte a Forks | [`e0513d0`] | 2026-09-03 |
+| [02.1] | Padronizar Numeração de Tarefas e Criar Branch Blackbox | [`67b59fc`] | 2026-09-04 |
 
 > Quando esta tabela passar de ~15-20 linhas, mova as mais antigas para
 > `.agent/ARCHIVE.md` (ou simplesmente apague — o Git já é a fonte da verdade).
