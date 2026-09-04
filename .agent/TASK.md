@@ -12,21 +12,22 @@
 
 ## Tarefa Ativa
 
-### 📌 Tarefa [XX.Y]: [Título curto e descritivo]
+### 📌 Tarefa [01.1]: Corrigir Execução Remota via `curl | bash` no `install.sh`
 
-- **Descrição:** [O que precisa ser implementado, em 2-4 linhas. Detalhe o suficiente
-  para o agente montar um plano, sem reescrever a especificação inteira aqui.]
-- **Sistema(s) Envolvido(s):** [ex: `docs`, `hub`, `branch-greenfield`, `branch-brownfield`]
+- **Descrição:** Refatorar o `install.sh` na branch `brownfield` para suportar tanto execução local quanto remota via `curl -fsSL ... | bash`, baixando os arquivos da branch raw do repositório caso executado sem clone local, adicionando suporte à flag `-y`/`--yes` e leitura de `/dev/tty` para confirmações interativas via pipe.
+- **Sistema(s) Envolvido(s):** `branch-brownfield`, `installer`, `docs`
 - **Tipo de Ação:**
   - [ ] Somente leitura / Documentação
-  - [ ] Escrita de código-fonte
-- **Status:** [PRONTO PARA PLANEJAMENTO / EM PLANEJAMENTO / APROVADO / EM EXECUÇÃO]
+  - [x] Escrita de código-fonte
+- **Status:** EM EXECUÇÃO
   *(Fluxo: Definido como `PRONTO PARA PLANEJAMENTO` -> Agente assume como `EM PLANEJAMENTO` ao apresentar plano -> Usuário aprova -> Agente altera para `EM EXECUÇÃO` ao codificar)*
 
 ### Critérios de Aceite
-- [ ] [Critério objetivo e verificável 1]
-- [ ] [Critério objetivo e verificável 2]
-- [ ] [Critério objetivo e verificável 3]
+- [ ] O script detecta se está em um clone local ou rodando via pipe (`stdin` / curl).
+- [ ] Quando rodando via pipe, baixa os arquivos da branch `brownfield` (`AGENTS.md`, `.agent/INVARIANTS.md`, `.agent/TASK.md`, `.agent/NOTES.md`, `.agent/ARCHIVE.md`) com tratamento de falhas.
+- [ ] Permite customizar a URL base através da variável `TEMPLATE_REPO_URL` para suportar forks.
+- [ ] Suporta flag `-y` / `--yes` para execução não interativa e lê de `/dev/tty` para confirmações interativas quando executado via pipe.
+- [ ] Testes locais passando tanto para `./install.sh` quanto para simulação via pipe `cat install.sh | bash -s -- <dir>`.
 
 ---
 
@@ -53,8 +54,10 @@
 > Uma linha por item. Só vira uma seção detalhada com "Descrição" e "Critérios de
 > Aceite" completos quando se tornar a Tarefa Ativa.
 
-- [ ] **[01.1]** [Título curto da próxima tarefa] — `[sistema envolvido]`
-- [ ] **[01.2]** [Título curto da tarefa subsequente] — `[sistema envolvido]`
+- [ ] **[01.2]** Adicionar exemplos práticos de Skills de projeto — `[branch-greenfield, skills]`
+- [ ] **[01.3]** Criar script de inicialização rápida (one-liner) para projetos novos — `[branch-greenfield, cli]`
+- [ ] **[01.4]** Configurar CI com GitHub Actions para validação de instalador e markdown — `[ci-cd, hub]`
+- [ ] **[01.5]** Documentar protocolo de sincronização inter-branches e suporte a forks — `[hub, docs]`
 
 ---
 
