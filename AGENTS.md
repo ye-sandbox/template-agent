@@ -84,9 +84,23 @@ Todas as tarefas no `.agent/TASK.md` devem seguir estritamente o formato **`[Ép
 
 ## Regras de Git e Commits
 
-- **Padrão Conventional Commits (em inglês):**
-  - `feat(auth): implement automatic session refresh for sei`
-  - `feat(endpoints): add process tree parser and fixture`
-  - `fix(client): handle 302 redirect on session expiration`
-  - `docs(endpoints): document sei document download endpoint`
-  - `test(fixtures): add mock response for protocol search`
+### 1. Commits Atômicos e Defensivos
+1. **Uma Responsabilidade por Commit:** Cada commit deve representar uma alteração única e coesa (ex: mapear endpoint, adicionar parser, criar fixture). Nunca misture fixtures mockadas com lógica de cliente HTTP no mesmo commit se puderem ser testadas isoladamente.
+2. **Ciclo por Etapa:** Para cada etapa concluída com sucesso (e testada hermeticamente contra fixtures), realize um commit local antes de iniciar a próxima.
+3. **Isolamento de Credenciais:** NUNCA inclua arquivos de sessão, dumps de rede (`*.har`, `*.pcap`) ou arquivos `.env` no `git add`.
+
+### 2. Mensagens de Commit (Conventional Commits em Inglês)
+Todas as mensagens de commit DEVEM seguir rigorosamente a sintaxe `<type>(<scope>): <descrição no imperativo/presente>` em inglês:
+
+| Tipo | Finalidade Principal | Exemplo em Engenharia Reversa |
+| :---: | :--- | :--- |
+| **`feat`** | Nova rota, parser ou recurso do cliente | `feat(endpoints): add process tree parser and model` |
+| **`fix`** | Correção de headers, parsing ou sessão | `fix(client): handle 302 redirect on session expiration` |
+| **`test`** | Fixtures mockadas ou testes unitários | `test(fixtures): add mocked response for protocol search` |
+| **`docs`** | Atualização de ENDPOINTS.md ou notas | `docs(endpoints): document sei document download endpoint` |
+| **`refactor`** | Otimização de parser ou retry logic | `refactor(retry): migrate exponential backoff to middleware` |
+| **`chore`** | Configurações, dependências ou linters | `chore(deps): add beautifulsoup4 and httpx dependencies` |
+
+### 3. PROIBIÇÃO ABSOLUTA DE `git push`
+- **Commits Locais Permitidos:** O agente pode executar `git commit` localmente quando autorizado pelo usuário ou para consolidar etapas atômicas testadas.
+- **`git push` é Terminantemente Proibido:** O agente NUNCA deve enviar alterações para o repositório remoto. Qualquer publicação de código exige revisão manual, validação de segredos e push executado pelo desenvolvedor humano.
