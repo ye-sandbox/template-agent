@@ -12,25 +12,21 @@
 
 ## Tarefa Ativa
 
-### 📌 Tarefa [03.1]: Criar Branch Especializada de Infraestrutura e Serviços (`infra`)
+### 📌 Tarefa [XX.Y]: [Título curto e descritivo]
 
-- **Descrição:** Desenvolver o quarto pilar de templates do Hub (branch `infra`), voltado para
-  orquestração de serviços, Homelab, Docker Compose e IaC (ex: VictoriaLogs, Uptime Kuma),
-  incluindo `.agent/SERVICES.md`, skills operacionais, guardrails de portas/volumes e CI.
-- **Sistema(s) Envolvido(s):** `hub`, `docs`, `branch-infra`, `ci`
+- **Descrição:** [O que precisa ser implementado, em 2-4 linhas. Detalhe o suficiente
+  para o agente montar um plano, sem reescrever a especificação inteira aqui.]
+- **Sistema(s) Envolvido(s):** [ex: `docs`, `hub`, `branch-greenfield`, `branch-brownfield`, `branch-blackbox`, `branch-infra`]
 - **Tipo de Ação:**
-  - [x] Somente leitura / Documentação
-  - [x] Escrita de código-fonte
-- **Status:** EM EXECUÇÃO
+  - [ ] Somente leitura / Documentação
+  - [ ] Escrita de código-fonte
+- **Status:** [PRONTO PARA PLANEJAMENTO / EM PLANEJAMENTO / APROVADO / EM EXECUÇÃO]
+  *(Fluxo: Definido como `PRONTO PARA PLANEJAMENTO` -> Agente assume como `EM PLANEJAMENTO` ao apresentar plano -> Usuário aprova -> Agente altera para `EM EXECUÇÃO` ao codificar)*
 
 ### Critérios de Aceite
-- [ ] Branch `infra` criada e isolada sem dependências desnecessárias de aplicação
-- [ ] Documento canônico `.agent/SERVICES.md` criado com controle de portas, volumes, redes e healthchecks
-- [ ] Skill de projeto `.agent/skills/compose-service/SKILL.md` documentada e funcional
-- [ ] Script de inicialização rápida `init.sh` testado e validado para projetos de infra
-- [ ] `AGENTS.md` e `README.md` da branch `infra` com regras de ouro específicas de infraestrutura
-- [ ] Branch `main` atualizada com governança (`AGENTS.md`), documentação (`README.md`) e registro (`NOTES.md`)
-- [ ] Workflow de CI (`.github/workflows/ci.yml`) atualizado com testes automatizados para a branch `infra`
+- [ ] [Critério objetivo e verificável 1]
+- [ ] [Critério objetivo e verificável 2]
+- [ ] [Critério objetivo e verificável 3]
 
 ---
 
@@ -53,6 +49,7 @@
 | [01.5] | Documentar Protocolo de Sincronização e Suporte a Forks | [`e0513d0`] | 2026-09-03 |
 | [02.1] | Padronizar Numeração de Tarefas e Criar Branch Blackbox | [`67b59fc`] | 2026-09-04 |
 | [02.2] | Equalizar Commits Atômicos, Conventional Commits e Numeração [XX.Y] | [`387471a`] | 2026-09-04 |
+| [03.1] | Criar Branch Especializada de Infraestrutura e Serviços (`infra`) | [`9f4de15`, `2e100f6`] | 2026-09-04 |
 
 > Quando esta tabela passar de ~15-20 linhas, mova as mais antigas para
 > `.agent/ARCHIVE.md` (ou simplesmente apague — o Git já é a fonte da verdade).
