@@ -75,6 +75,17 @@
 - **Alternativas consideradas:** Manter subpastas `templates/` (descartado por forçar o usuário a copiar pastas manualmente ou ter árvore inflada).
 - **Consequências:** Usuários podem clonar diretamente com `git clone -b greenfield ...` ou usar o script da branch `brownfield`, obtendo repositórios 100% limpos desde o primeiro commit.
 
+### 2026-09-03 Suporte a Execução Remota via Pipe e Idempotência no install.sh (Brownfield)
+
+- **Contexto:** O instalador one-liner `curl -fsSL ... | bash` falhava ao tentar copiar arquivos locais inexistentes e travava ao tentar ler confirmações interativas de sobrescrita pelo `stdin` consumido pelo bash.
+- **Decisão:** O `install.sh` foi refatorado para:
+  1. Detectar automaticamente se opera em modo local (cópia de arquivos existentes em `$SCRIPT_DIR`) ou modo remoto (download via `curl -fsSL` dos arquivos raw do GitHub).
+  2. Permitir customização da URL base via variável `TEMPLATE_REPO_URL` (garantindo compatibilidade com forks e mirrors privados).
+  3. Ler confirmações interativas diretamente de `/dev/tty` quando executado via pipe.
+  4. Suportar flags `-y` / `--yes` / `--force` para automações e CI.
+  5. Corrigir as URLs do repositório canônico para `ye-sandbox/template-agent`.
+- **Consequências:** O comando one-liner do README para legados passa a funcionar de forma confiável e idempotente.
+
 > Exemplo de preenchimento:
 >
 > ### [AAAA-MM-DD] [Padronização de comunicação entre Serviço A e Serviço B]
