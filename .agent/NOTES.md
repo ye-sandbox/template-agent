@@ -123,6 +123,12 @@
   3. Formalizada a parametrização via `TEMPLATE_REPO_URL` em `init.sh` e `install.sh`, permitindo o consumo de forks no GitHub Enterprise, GitLab ou servidores locais.
 - **Consequências:** Governança inter-branches protegida contra poluição acidental e suporte nativo a ambientes corporativos e privados.
 
+### 2026-09-03 Política Estrita de No-Push para Código Legado (Brownfield)
+
+- **Contexto:** Em bases de código existentes e em produção, permitir que agentes de IA enviem código diretamente para repositórios remotos (`git push`) traz riscos inaceitáveis de disparar pipelines de CI/CD ou deploys prematuros.
+- **Decisão:** Formalizada no `AGENTS.md` da branch `brownfield` a regra de que o agente pode commitar localmente se autorizado pelo usuário, mas é **terminantemente proibido de executar `git push`**. O envio para branches remotas, staging ou produção é uma atribuição exclusivamente humana após revisão manual dos diffs.
+- **Consequências:** Estabelecida uma barreira de proteção indispensável para a segurança de repositórios legados em produção.
+
 > Exemplo de preenchimento:
 >
 > ### [AAAA-MM-DD] [Padronização de comunicação entre Serviço A e Serviço B]
