@@ -36,12 +36,18 @@ Em vez de misturar múltiplos starters em uma árvore inchada, este repositório
 
 ### 1. Criando um Projeto do Zero (Greenfield)
 
-Clone diretamente a branch `greenfield` para uma nova pasta do seu projeto:
+Inicialize um novo projeto com repositório Git limpo via script one-liner:
 
 ```bash
-git clone -b greenfield https://github.com/ye-sandbox/template-agent.git meu-novo-projeto
+curl -fsSL https://raw.githubusercontent.com/ye-sandbox/template-agent/greenfield/init.sh | bash -s -- meu-novo-projeto
 cd meu-novo-projeto
-git remote remove origin  # Desvincule do template e aponte para seu novo repositório
+```
+
+*Ou via clone manual do Git:*
+```bash
+git clone --depth 1 -b greenfield https://github.com/ye-sandbox/template-agent.git meu-novo-projeto
+cd meu-novo-projeto
+rm -rf .git && git init -b main && git add . && git commit -m "chore: initial setup"
 ```
 
 **Primeiro prompt para o agente no projeto novo:**

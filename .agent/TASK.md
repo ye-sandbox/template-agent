@@ -12,25 +12,21 @@
 
 ## Tarefa Ativa
 
-### 📌 Tarefa [01.3]: Criar Script de Inicialização Rápida (One-Liner) para Greenfield
+### 📌 Tarefa [XX.Y]: [Título curto e descritivo]
 
-- **Descrição:** Criar um script `init.sh` na branch `greenfield` permitindo inicializar novos projetos com um único comando via `curl | bash` ou localmente, realizando clone raso da branch, reset do Git local para um repositório limpo e orientações no terminal.
-- **Sistema(s) Envolvido(s):** `branch-greenfield`, `cli`, `hub`, `docs`
+- **Descrição:** [O que precisa ser implementado, em 2-4 linhas. Detalhe o suficiente
+  para o agente montar um plano, sem reescrever a especificação inteira aqui.]
+- **Sistema(s) Envolvido(s):** [ex: `docs`, `hub`, `branch-greenfield`, `branch-brownfield`]
 - **Tipo de Ação:**
   - [ ] Somente leitura / Documentação
-  - [x] Escrita de código-fonte
-- **Status:** EM EXECUÇÃO
+  - [ ] Escrita de código-fonte
+- **Status:** [PRONTO PARA PLANEJAMENTO / EM PLANEJAMENTO / APROVADO / EM EXECUÇÃO]
   *(Fluxo: Definido como `PRONTO PARA PLANEJAMENTO` -> Agente assume como `EM PLANEJAMENTO` ao apresentar plano -> Usuário aprova -> Agente altera para `EM EXECUÇÃO` ao codificar)*
 
 ### Critérios de Aceite
-- [ ] Criar `init.sh` na branch `greenfield` com suporte a execução local e remota via `curl | bash`.
-- [ ] Aceitar nome/diretório de destino como argumento (`init.sh meu-novo-projeto`).
-- [ ] Realizar clone raso (`--depth 1 -b greenfield`) da branch do template.
-- [ ] Resetar histórico do Git (`rm -rf .git && git init`) criando commit inicial limpo desvinculado do template.
-- [ ] Suportar variável `TEMPLATE_REPO_URL` para compatibilidade com forks.
-- [ ] Suportar flag `-y` / `--yes` para automações e flags de ajuda (`-h` / `--help`).
-- [ ] Atualizar instruções no [README.md](file:///home/yegear/github/template-agent/README.md) da `main` e da `greenfield`.
-- [ ] Testar criação de novo projeto via script local e via pipe simulado.
+- [ ] [Critério objetivo e verificável 1]
+- [ ] [Critério objetivo e verificável 2]
+- [ ] [Critério objetivo e verificável 3]
 
 ---
 
@@ -48,6 +44,7 @@
 | [00.4] | Reorganizar Templates em Branches (main, greenfield, brownfield) | [`6df1e01`] | 2026-09-03 |
 | [01.1] | Corrigir Execução Remota via `curl \| bash` no `install.sh` | [`7a0fd03`] | 2026-09-03 |
 | [01.2] | Adicionar Exemplos Práticos de Skills de Projeto | [`2a0f61a`] | 2026-09-03 |
+| [01.3] | Criar Script de Inicialização Rápida (One-Liner) para Greenfield | [`df6876e`] | 2026-09-03 |
 
 > Quando esta tabela passar de ~15-20 linhas, mova as mais antigas para
 > `.agent/ARCHIVE.md` (ou simplesmente apague — o Git já é a fonte da verdade).

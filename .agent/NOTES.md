@@ -95,6 +95,16 @@
   Ambas foram adicionadas ao catálogo do `AGENTS.md` e do `README.md` de skills da branch `greenfield`.
 - **Consequências:** Usuários e agentes contam com modelos reais de alta fidelidade para orientar o desenvolvimento ou adaptar à sua stack específica.
 
+### 2026-09-03 Criação do Inicializador Rápido One-Liner (Greenfield)
+
+- **Contexto:** Desenvolvedores precisavam digitar múltiplos comandos manuais (`git clone -b greenfield ...`, `cd ...`, `git remote remove origin`, etc.) para iniciar um projeto, correndo o risco de herdar o histórico de commits do template.
+- **Decisão:** Criado o script `init.sh` na branch `greenfield` que:
+  1. Clona a branch de forma rasa (`--depth 1`).
+  2. Remove o `.git` do template e executa `git init -b main`, criando um primeiro commit limpo (`chore: initial agent-driven development setup`).
+  3. Remove o próprio script `init.sh` do projeto gerado para mantê-lo livre de resíduos de scaffold.
+  4. Suporta execução remota via `curl -fsSL ... | bash -s -- meu-projeto` e flags `-y`/`-f`.
+- **Consequências:** Adoção simplificada para um único comando no terminal, garantindo repositórios novos com histórico 100% limpo desde o primeiro segundo.
+
 > Exemplo de preenchimento:
 >
 > ### [AAAA-MM-DD] [Padronização de comunicação entre Serviço A e Serviço B]
