@@ -12,21 +12,25 @@
 
 ## Tarefa Ativa
 
-### 📌 Tarefa [XX.Y]: [Título curto e descritivo]
+### 📌 Tarefa [03.1]: Criar Branch Especializada de Infraestrutura e Serviços (`infra`)
 
-- **Descrição:** [O que precisa ser implementado, em 2-4 linhas. Detalhe o suficiente
-  para o agente montar um plano, sem reescrever a especificação inteira aqui.]
-- **Sistema(s) Envolvido(s):** [ex: `docs`, `hub`, `branch-greenfield`, `branch-brownfield`, `branch-blackbox`]
+- **Descrição:** Desenvolver o quarto pilar de templates do Hub (branch `infra`), voltado para
+  orquestração de serviços, Homelab, Docker Compose e IaC (ex: VictoriaLogs, Uptime Kuma),
+  incluindo `.agent/SERVICES.md`, skills operacionais, guardrails de portas/volumes e CI.
+- **Sistema(s) Envolvido(s):** `hub`, `docs`, `branch-infra`, `ci`
 - **Tipo de Ação:**
-  - [ ] Somente leitura / Documentação
-  - [ ] Escrita de código-fonte
-- **Status:** [PRONTO PARA PLANEJAMENTO / EM PLANEJAMENTO / APROVADO / EM EXECUÇÃO]
-  *(Fluxo: Definido como `PRONTO PARA PLANEJAMENTO` -> Agente assume como `EM PLANEJAMENTO` ao apresentar plano -> Usuário aprova -> Agente altera para `EM EXECUÇÃO` ao codificar)*
+  - [x] Somente leitura / Documentação
+  - [x] Escrita de código-fonte
+- **Status:** EM EXECUÇÃO
 
 ### Critérios de Aceite
-- [ ] [Critério objetivo e verificável 1]
-- [ ] [Critério objetivo e verificável 2]
-- [ ] [Critério objetivo e verificável 3]
+- [ ] Branch `infra` criada e isolada sem dependências desnecessárias de aplicação
+- [ ] Documento canônico `.agent/SERVICES.md` criado com controle de portas, volumes, redes e healthchecks
+- [ ] Skill de projeto `.agent/skills/compose-service/SKILL.md` documentada e funcional
+- [ ] Script de inicialização rápida `init.sh` testado e validado para projetos de infra
+- [ ] `AGENTS.md` e `README.md` da branch `infra` com regras de ouro específicas de infraestrutura
+- [ ] Branch `main` atualizada com governança (`AGENTS.md`), documentação (`README.md`) e registro (`NOTES.md`)
+- [ ] Workflow de CI (`.github/workflows/ci.yml`) atualizado com testes automatizados para a branch `infra`
 
 ---
 
