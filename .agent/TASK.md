@@ -12,21 +12,25 @@
 
 ## Tarefa Ativa
 
-### 📌 Tarefa [XX.Y]: [Título curto e descritivo]
+### 📌 Tarefa [01.3]: Criar Script de Inicialização Rápida (One-Liner) para Greenfield
 
-- **Descrição:** [O que precisa ser implementado, em 2-4 linhas. Detalhe o suficiente
-  para o agente montar um plano, sem reescrever a especificação inteira aqui.]
-- **Sistema(s) Envolvido(s):** [ex: `docs`, `hub`, `branch-greenfield`, `branch-brownfield`]
+- **Descrição:** Criar um script `init.sh` na branch `greenfield` permitindo inicializar novos projetos com um único comando via `curl | bash` ou localmente, realizando clone raso da branch, reset do Git local para um repositório limpo e orientações no terminal.
+- **Sistema(s) Envolvido(s):** `branch-greenfield`, `cli`, `hub`, `docs`
 - **Tipo de Ação:**
   - [ ] Somente leitura / Documentação
-  - [ ] Escrita de código-fonte
-- **Status:** [PRONTO PARA PLANEJAMENTO / EM PLANEJAMENTO / APROVADO / EM EXECUÇÃO]
+  - [x] Escrita de código-fonte
+- **Status:** EM EXECUÇÃO
   *(Fluxo: Definido como `PRONTO PARA PLANEJAMENTO` -> Agente assume como `EM PLANEJAMENTO` ao apresentar plano -> Usuário aprova -> Agente altera para `EM EXECUÇÃO` ao codificar)*
 
 ### Critérios de Aceite
-- [ ] [Critério objetivo e verificável 1]
-- [ ] [Critério objetivo e verificável 2]
-- [ ] [Critério objetivo e verificável 3]
+- [ ] Criar `init.sh` na branch `greenfield` com suporte a execução local e remota via `curl | bash`.
+- [ ] Aceitar nome/diretório de destino como argumento (`init.sh meu-novo-projeto`).
+- [ ] Realizar clone raso (`--depth 1 -b greenfield`) da branch do template.
+- [ ] Resetar histórico do Git (`rm -rf .git && git init`) criando commit inicial limpo desvinculado do template.
+- [ ] Suportar variável `TEMPLATE_REPO_URL` para compatibilidade com forks.
+- [ ] Suportar flag `-y` / `--yes` para automações e flags de ajuda (`-h` / `--help`).
+- [ ] Atualizar instruções no [README.md](file:///home/yegear/github/template-agent/README.md) da `main` e da `greenfield`.
+- [ ] Testar criação de novo projeto via script local e via pipe simulado.
 
 ---
 
@@ -55,7 +59,6 @@
 > Uma linha por item. Só vira uma seção detalhada com "Descrição" e "Critérios de
 > Aceite" completos quando se tornar a Tarefa Ativa.
 
-- [ ] **[01.3]** Criar script de inicialização rápida (one-liner) para projetos novos — `[branch-greenfield, cli]`
 - [ ] **[01.4]** Configurar CI com GitHub Actions para validação de instalador e markdown — `[ci-cd, hub]`
 - [ ] **[01.5]** Documentar protocolo de sincronização inter-branches e suporte a forks — `[hub, docs]`
 
