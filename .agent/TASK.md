@@ -12,21 +12,21 @@
 
 ## Tarefa Ativa
 
-### 📌 Tarefa [XX.Y]: [Título curto e descritivo]
+### 📌 Tarefa [02.2]: Equalizar Commits Atômicos, Conventional Commits e Numeração [XX.Y] nas Branches
 
-- **Descrição:** [O que precisa ser implementado, em 2-4 linhas. Detalhe o suficiente
-  para o agente montar um plano, sem reescrever a especificação inteira aqui.]
-- **Sistema(s) Envolvido(s):** [ex: `docs`, `hub`, `branch-greenfield`, `branch-brownfield`, `branch-blackbox`]
+- **Descrição:** Propagar a seção completa de Regras de Git e Commits (atomicidade, tabela canônica de Conventional Commits e inglês mandatório) e a padronização semântica de numeração [XX.Y] para todas as branches especializadas (main, greenfield, brownfield e blackbox), mantendo as salvaguardas de no-push onde aplicável.
+- **Sistema(s) Envolvido(s):** `[hub]`, `[main]`, `[greenfield]`, `[brownfield]`, `[blackbox]`
 - **Tipo de Ação:**
-  - [ ] Somente leitura / Documentação
+  - [x] Somente leitura / Documentação
   - [ ] Escrita de código-fonte
-- **Status:** [PRONTO PARA PLANEJAMENTO / EM PLANEJAMENTO / APROVADO / EM EXECUÇÃO]
-  *(Fluxo: Definido como `PRONTO PARA PLANEJAMENTO` -> Agente assume como `EM PLANEJAMENTO` ao apresentar plano -> Usuário aprova -> Agente altera para `EM EXECUÇÃO` ao codificar)*
+- **Status:** EM EXECUÇÃO
 
 ### Critérios de Aceite
-- [ ] [Critério objetivo e verificável 1]
-- [ ] [Critério objetivo e verificável 2]
-- [ ] [Critério objetivo e verificável 3]
+- [ ] `main:AGENTS.md` possui seção dedicada de Regras de Git e Commits com tabela completa.
+- [ ] `greenfield:AGENTS.md` e `greenfield:.agent/TASK.md` atualizados com a padronização semântica [XX.Y].
+- [ ] `brownfield:AGENTS.md` atualizado com a padronização [XX.Y] e as 6 regras estritas de commits atômicos / Conventional Commits (mantendo política no-push).
+- [ ] `blackbox:AGENTS.md` atualizado com as 6 regras estritas de commits atômicos / Conventional Commits (mantendo política no-push).
+- [ ] Todas as branches testadas com sucesso via CI e sincronizadas com o repositório remoto.
 
 ---
 
