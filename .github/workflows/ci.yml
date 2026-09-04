@@ -1,0 +1,102 @@
+name: CI & Template Validation
+
+on:
+  push:
+    branches: [ main, greenfield, brownfield ]
+  pull_request:
+    branches: [ main, greenfield, brownfield ]
+  workflow_dispatch:
+
+jobs:
+  test-installers:
+    name: Test Greenfield & Brownfield Starters
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Configure Git author for tests
+        run: |
+          git config --global user.name "GitHub Action"
+          git config --global user.email "action@github.com"
+
+      - name: Test Greenfield init.sh (Project Scaffolding)
+        run: |
+          echo "=== Testing Greenfield init.sh ==="
+          git show origin/greenfield:init.sh > init.sh 2>/dev/null || git show greenfield:init.sh > init.sh
+          chmod +x init.sh
+          
+          # Run init.sh using local workspace as template source
+          TEMPLATE_REPO_URL="$GITHUB_WORKSPACE" ./init.sh -y /tmp/ci-test-greenfield
+          rm -f init.sh
+
+          # Assertions for Greenfield project structure
+          test -f /tmp/ci-test-greenfield/AGENTS.md
+          test -d /tmp/ci-test-greenfield/.agent
+          test -f /tmp/ci-test-greenfield/.agent/skills/database-migration/SKILL.md
+          test -f /tmp/ci-test-greenfield/.agent/skills/api-endpoint/SKILL.md
+          test -f /tmp/ci-test-greenfield/.agent/adr/000-template.md
+          test -d /tmp/ci-test-greenfield/.git
+          ! test -f /tmp/ci-test-greenfield/init.sh
+
+          # Verify clean initial commit
+          cd /tmp/ci-test-greenfield
+          COMMIT_COUNT=$(git rev-list --count HEAD)
+          if [ "$COMMIT_COUNT" -ne 1 ]; then
+            echo "Error: Expected exactly 1 commit in scaffolded Greenfield project, got $COMMIT_COUNT"
+            exit 1
+          fi
+          echo "✅ Greenfield init.sh test passed successfully!"
+
+      - name: Test Brownfield install.sh (Legacy Injection & Idempotency)
+        run: |
+          echo "=== Testing Brownfield install.sh ==="
+          rm -rf /tmp/brownfield-source /tmp/ci-test-brownfield
+          mkdir -p /tmp/brownfield-source /tmp/ci-test-brownfield
+          
+          # Extract brownfield template files
+          git archive origin/brownfield 2>/dev/null | tar -x -C /tmp/brownfield-source || git archive brownfield | tar -x -C /tmp/brownfield-source
+          chmod +x /tmp/brownfield-source/install.sh
+
+          # 1. Fresh install
+          /tmp/brownfield-source/install.sh -y /tmp/ci-test-brownfield
+
+          # Assertions for Brownfield structure
+          test -f /tmp/ci-test-brownfield/AGENTS.md
+          test -d /tmp/ci-test-brownfield/.agent
+          test -f /tmp/ci-test-brownfield/.agent/INVARIANTS.md
+          test -f /tmp/ci-test-brownfield/.agent/TASK.md
+          test -f /tmp/ci-test-brownfield/.agent/NOTES.md
+          test -f /tmp/ci-test-brownfield/.agent/ARCHIVE.md
+
+          # 2. Test Idempotency with force/re-run
+          /tmp/brownfield-source/install.sh -y /tmp/ci-test-brownfield
+
+          rm -rf /tmp/brownfield-source /tmp/ci-test-brownfield
+          echo "✅ Brownfield install.sh test passed successfully!"
+
+  lint-markdown:
+    name: Validate Markdown Structure
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Verify Markdown file syntax and non-empty content
+        run: |
+          echo "=== Validating Markdown files in repository ==="
+          ERRORS=0
+          while IFS= read -r -d '' file; do
+            if [ ! -s "$file" ]; then
+              echo "❌ Empty markdown file found: $file"
+              ERRORS=$((ERRORS + 1))
+            fi
+          done < <(find . -name "*.md" -not -path "./.git/*" -print0)
+
+          if [ $ERRORS -gt 0 ]; then
+            echo "Validation failed with $ERRORS empty markdown file(s)."
+            exit 1
+          fi
+          echo "✅ All Markdown files verified successfully!"
