@@ -98,3 +98,34 @@ Ao efetuar melhorias nos templates:
 1. Mudanças que afetam exclusivamente a criação de novos projetos devem ser commitadas na branch **`greenfield`**.
 2. Mudanças voltadas à proteção e auditoria de sistemas legados devem ser commitadas na branch **`brownfield`**.
 3. Mudanças na documentação geral, novas branches ou matrizes de governança pertencem à branch **`main`**.
+4. **NUNCA** execute `git merge` entre branches de templates diferentes — use `git cherry-pick` para propagar commits pontuais (ver detalhes em [AGENTS.md](./AGENTS.md)).
+
+---
+
+## 🍴 Forks e Ambientes Corporativos (Self-Hosted)
+
+Se você ou sua organização mantêm um **fork privado** deste repositório (GitHub Enterprise, GitLab, Gitea ou infraestrutura local), os scripts `init.sh` e `install.sh` são 100% parametrizáveis via a variável de ambiente **`TEMPLATE_REPO_URL`**:
+
+### 1. Criar novo projeto Greenfield a partir do seu fork:
+```bash
+TEMPLATE_REPO_URL="https://github.com/SUA_ORGANIZACAO/template-agent.git" \
+curl -fsSL https://raw.githubusercontent.com/SUA_ORGANIZACAO/template-agent/greenfield/init.sh | bash -s -- meu-novo-projeto
+```
+
+### 2. Injetar Brownfield em legado a partir do seu fork:
+```bash
+TEMPLATE_REPO_URL="https://raw.githubusercontent.com/SUA_ORGANIZACAO/template-agent/brownfield" \
+curl -fsSL https://raw.githubusercontent.com/SUA_ORGANIZACAO/template-agent/brownfield/install.sh | bash
+```
+
+### Sincronização do Fork com o Upstream
+Para atualizar seu fork mantendo o isolamento estrito das branches:
+```bash
+git remote add upstream https://github.com/ye-sandbox/template-agent.git
+git fetch upstream
+
+# Atualize cada branch isoladamente (nunca faça merge entre branches de templates diferentes):
+git checkout main && git merge upstream/main
+git checkout greenfield && git merge upstream/greenfield
+git checkout brownfield && git merge upstream/brownfield
+```
