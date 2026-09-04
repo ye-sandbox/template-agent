@@ -33,6 +33,8 @@ Você é o(a) engenheiro(a) sênior responsável pela engenharia reversa, dissec
 
 Todas as tarefas no `.agent/TASK.md` devem seguir estritamente o formato **`[Épico/Fase].[Sequencial]`**:
 
+### 1. Tabela Semântica de Fases (`XX` com 2 dígitos)
+
 | Prefixo | Ciclo / Fase | Foco Operacional | Exemplos Típicos |
 | :---: | :--- | :--- | :--- |
 | **`00.x`** | **Discovery & Sessão** | Mapeamento inicial do sistema-alvo, isolamento de login, cookies de sessão e anti-CSRF. | `[00.1] Mapear autenticação e ciclo de sessão`<br>`[00.2] Mapear primeiro endpoint de negócio` |
@@ -40,6 +42,13 @@ Todas as tarefas no `.agent/TASK.md` devem seguir estritamente o formato **`[Ép
 | **`02.x` .. `89.x`** | **Épicos de Endpoints & Fluxos** | Mapeamento e implementação de fluxos de negócio específicos (ex: processos, anexos, assinaturas). | `[02.1] Endpoint de consulta de processos`<br>`[02.2] Download e validação de documentos PDF` |
 | **`90.x`** | **Otimização & Caching** | Cache de respostas, deduplicação de requisições, otimização de parsers. | `[90.1] Cache em memória de tokens de sessão` |
 | **`99.x`** | **Hardening & Auditoria** | Auditoria de vazamento de credenciais, sanitização de fixtures e documentação final. | `[99.1] Auditoria de segredos e release v1.0` |
+
+### 2. Regras de Ouro de Numeração
+
+1. **Dois dígitos no Épico (`XX`):** Use sempre `00`, `01`, `02` ... `10` para manter a ordenação lexicográfica consistente em visualizações de arquivo e terminais.
+2. **Subtarefas Atômicas (`XX.Y.Z`):** Se uma tarefa necessitar de decomposição granular durante o planejamento ou execução, utilize subtarefas numeradas (ex: `[00.1.1]`, `[00.1.2]`).
+3. **Imutabilidade de Histórico:** O ID de uma tarefa concluída é imutável. Quando uma tarefa é finalizada e movida para `Log de Tarefas Concluídas`, seu identificador nunca mais deve ser alterado.
+4. **Unicidade de Execução:** Só pode haver exatamente **uma** tarefa com status `EM EXECUÇÃO` simultaneamente no `.agent/TASK.md`.
 
 ---
 
