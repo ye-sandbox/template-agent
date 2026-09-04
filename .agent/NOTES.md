@@ -114,6 +114,15 @@
   3. `lint-markdown`: Varre todos os arquivos Markdown do repositório garantindo que nenhum documento vazio ou corrompido seja commitado.
 - **Consequências:** Regressões em scripts de automação são bloqueadas automaticamente antes de merge em `main`, `greenfield` ou `brownfield`.
 
+### 2026-09-03 Protocolo de Sincronização Inter-Branches e Suporte a Forks
+
+- **Contexto:** Por manter templates especializados com árvores de arquivos distintas na raiz de cada branch, comandos ingênuos como `git merge` entre branches de templates causariam poluição de arquivos e quebra estrutural. Além disso, forks privados necessitam apontar para repositórios próprios sem reescrever scripts.
+- **Decisão:**
+  1. Formalizada no `AGENTS.md` a proibição expressa de `git merge` entre branches de templates.
+  2. Padronizado o uso de `git cherry-pick <hash>` para backports de governança e `git checkout <branch> -- <file>` para sincronização pontual de arquivos comuns.
+  3. Formalizada a parametrização via `TEMPLATE_REPO_URL` em `init.sh` e `install.sh`, permitindo o consumo de forks no GitHub Enterprise, GitLab ou servidores locais.
+- **Consequências:** Governança inter-branches protegida contra poluição acidental e suporte nativo a ambientes corporativos e privados.
+
 > Exemplo de preenchimento:
 >
 > ### [AAAA-MM-DD] [Padronização de comunicação entre Serviço A e Serviço B]

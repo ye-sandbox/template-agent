@@ -46,6 +46,7 @@
 | [01.2] | Adicionar Exemplos Práticos de Skills de Projeto | [`2a0f61a`] | 2026-09-03 |
 | [01.3] | Criar Script de Inicialização Rápida (One-Liner) para Greenfield | [`df6876e`] | 2026-09-03 |
 | [01.4] | Configurar CI com GitHub Actions para Validação de Templates | [`dbbcc1c`] | 2026-09-03 |
+| [01.5] | Documentar Protocolo de Sincronização e Suporte a Forks | [`e0513d0`] | 2026-09-03 |
 
 > Quando esta tabela passar de ~15-20 linhas, mova as mais antigas para
 > `.agent/ARCHIVE.md` (ou simplesmente apague — o Git já é a fonte da verdade).
@@ -57,7 +58,7 @@
 > Uma linha por item. Só vira uma seção detalhada com "Descrição" e "Critérios de
 > Aceite" completos quando se tornar a Tarefa Ativa.
 
-- [ ] **[01.5]** Documentar protocolo de sincronização inter-branches e suporte a forks — `[hub, docs]`
+- [ ] **[02.1]** [Definir próxima iteração ou novas branches especializadas] — `[hub]`
 
 ---
 
