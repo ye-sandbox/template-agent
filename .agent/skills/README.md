@@ -56,6 +56,19 @@ description: Resumo conciso de uma linha sobre o que esta skill ensina e quando 
 
 ---
 
+## 📦 Catálogo de Skills de Referência Inclusas
+
+Este template inclui habilidades canônicas prontas que servem de modelo e podem ser adaptadas ou expandidas para a stack do seu projeto:
+
+| Skill | Descrição | Arquivo |
+| :--- | :--- | :--- |
+| **`database-migration`** | Procedimento seguro para planejamento, criação, testes e rollback de migrações relacionais (*Expand and Contract*). | [`database-migration/SKILL.md`](./database-migration/SKILL.md) |
+| **`api-endpoint`** | Implementação de rotas REST desacopladas (Router fino -> Service puro -> Repository) com tipagem estrita e testes. | [`api-endpoint/SKILL.md`](./api-endpoint/SKILL.md) |
+
+> 💡 **Como adaptar para sua stack:** Se o seu projeto utilizar um ORM ou framework específico (ex: Prisma, Django, FastAPI, NestJS, Go Fiber), ajuste as seções de exemplos e comandos nas skills acima para refletir as bibliotecas oficiais da sua equipe, ou simplesmente apague as pastas caso o projeto não utilize banco de dados ou APIs HTTP.
+
+---
+
 ## 🚀 Como Criar uma Nova Skill
 
 1. Copie o arquivo [`000-template.md`](./000-template.md) para uma nova pasta com o nome da habilidade:

@@ -119,6 +119,10 @@ Skills ensinam ao agente **como** executar fluxos procedurais complexos, padrõe
 - **Sempre consulte skills relevantes:** Se a tarefa envolver um domínio coberto por uma skill existente em `.agent/skills/` ou skill global do ambiente, leia o respectivo `SKILL.md` antes de planejar a implementação.
 - **Criação de Novas Skills de Projeto:** Ao identificar um padrão arquitetural ou fluxo operacional repetitivo (mais de 3 passos padronizados), crie uma nova pasta em `.agent/skills/<nome>/SKILL.md` baseando-se em `.agent/skills/000-template.md`.
 
+### 3. Catálogo de Skills Ativas do Projeto
+- **`database-migration` (`.agent/skills/database-migration/SKILL.md`):** Planejamento, criação, teste e reversão de migrações de banco de dados com compatibilidade retroativa.
+- **`api-endpoint` (`.agent/skills/api-endpoint/SKILL.md`):** Criação e evolução de rotas HTTP/REST com tipagem estrita, separação de camadas e testes de integração.
+
 ---
 
 ## Comandos de Validação
