@@ -23,6 +23,27 @@ Você é o(a) engenheiro(a) sênior responsável pela manutenção, evolução e
    - [ ] Um commit semântico (Conventional Commits em inglês) foi realizado com escopo isolado.
    - [ ] A tarefa foi registrada no log do `.agent/TASK.md` e qualquer nova descoberta/armadilha foi registrada em `.agent/INVARIANTS.md` ou `.agent/NOTES.md`.
 
+## 🔢 Padronização Semântica de Numeração de Tarefas ([XX.Y])
+
+Todas as tarefas no `.agent/TASK.md` devem seguir estritamente o formato **`[Épico/Fase].[Sequencial]`**:
+
+### 1. Tabela Semântica de Fases (`XX` com 2 dígitos)
+
+| Prefixo | Ciclo / Fase | Foco Operacional | Exemplos Típicos |
+| :---: | :--- | :--- | :--- |
+| **`00.x`** | **Discovery & Auditoria** | Task 00 de discovery, diagnóstico de dependências e linters, mapeamento de invariantes. | `[00.1] Auditoria de dependências e stack`<br>`[00.2] Mapeamento de invariantes do banco` |
+| **`01.x`** | **Estabilização & Caracterização** | Criação de testes de caracterização para código legado, guardrails e correção de bugs críticos. | `[01.1] Testes de caracterização no cálculo de frete`<br>`[01.2] Corrigir bug no header de auth legado` |
+| **`02.x` .. `89.x`** | **Épicos de Evolução Cirúrgica** | Novas funcionalidades implementadas de forma isolada, preservando contratos legados. | `[02.1] Adicionar rota v2 de clientes`<br>`[03.1] Integrar novo gateway de pagamento` |
+| **`90.x`** | **Refatoração Segura** | Modernização cirúrgica de código legado, sempre respaldada por testes de caracterização prévios. | `[90.1] Migrar queries raw SQL para query builder`<br>`[90.2] Isolar acoplamento de controller` |
+| **`99.x`** | **Hardening & Release** | Auditoria final de regressão, segurança, documentação e entrega de release. | `[99.1] Auditoria final de invariantes e release v1.0` |
+
+### 2. Regras de Ouro de Numeração
+
+1. **Dois dígitos no Épico (`XX`):** Use sempre `00`, `01`, `02` ... `10` para manter a ordenação lexicográfica consistente em visualizações de arquivo e terminais.
+2. **Subtarefas Atômicas (`XX.Y.Z`):** Se uma tarefa necessitar de decomposição granular durante o planejamento ou execução, utilize subtarefas numeradas (ex: `[01.1.1]`, `[01.1.2]`).
+3. **Imutabilidade de Histórico:** O ID de uma tarefa concluída é imutável. Quando uma tarefa é finalizada e movida para `Log de Tarefas Concluídas`, seu identificador nunca mais deve ser alterado.
+4. **Unicidade de Execução:** Só pode haver exatamente **uma** tarefa com status `EM EXECUÇÃO` simultaneamente no `.agent/TASK.md`.
+
 ---
 
 ## Stack Tecnológico e Descoberta de Ambiente
@@ -88,10 +109,23 @@ Utilize os servidores MCP configurados no ambiente como fonte primária para ins
 
 ## Regras de Git, Commits e Push
 
-- **Commits Locais Permitidos:** Realize commits locais apenas se orientado pelo usuário, mantendo granularidade atômica e testada.
-- **PROIBIÇÃO ABSOLUTA DE `git push`:** O agente NUNCA executa `git push`. A responsabilidade de publicar código legado em servidores remotos é 100% humana.
-- **Padrão Conventional Commits (em inglês):**
-  - `fix(modulo): fix bug in legacy auth header`
-  - `test(modulo): add characterization test for billing calculation`
-  - `feat(modulo): add endpoint X preserving legacy contract`
-  - `docs(agent): update invariants with ERP payload behavior`
+### 1. Commits Atômicos e Cirúrgicos
+1. **Uma Responsabilidade por Commit:** Cada commit deve conter apenas a alteração estritamente necessária para cumprir uma única etapa ou tarefa. Proibido agrupar refatorações cosméticas e correções no mesmo commit.
+2. **Ciclo por Etapa:** Para cada etapa concluída com sucesso (e validada por testes de caracterização), realize um commit local antes de iniciar a próxima.
+3. **Diffs Microscópicos:** Preserve linhas adjacentes e formatações originais do código legado para não poluir o `git blame`.
+
+### 2. Mensagens de Commit (Conventional Commits em Inglês)
+Todas as mensagens de commit locais DEVEM seguir rigorosamente a sintaxe `<type>(<scope>): <descrição no imperativo/presente>` em inglês:
+
+| Tipo | Finalidade Principal | Exemplo em Projeto Legado |
+| :---: | :--- | :--- |
+| **`fix`** | Correção de bug no comportamento legado | `fix(auth): fix bug in legacy session header validation` |
+| **`test`** | Testes de caracterização ou regressão | `test(billing): add characterization test for legacy calculation` |
+| **`feat`** | Nova funcionalidade preservando contratos | `feat(api): add endpoint v2 preserving legacy payload contract` |
+| **`docs`** | Documentação de invariantes ou notas | `docs(invariants): record undocumented ERP parameter behavior` |
+| **`refactor`** | Melhoria interna respaldada por testes | `refactor(db): streamline query execution without contract changes` |
+| **`chore`** | Dependências, build ou configurações | `chore(deps): update linter configuration` |
+
+### 3. PROIBIÇÃO ABSOLUTA DE `git push`
+- **Commits Locais Permitidos:** O agente pode executar `git commit` localmente quando autorizado pelo usuário ou para consolidar etapas atômicas testadas.
+- **`git push` é Terminantemente Proibido:** O agente NUNCA deve enviar alterações para o repositório remoto. Qualquer publicação de código legado exige revisão manual, inspeção de diffs e push executado pelo desenvolvedor humano.

@@ -47,3 +47,11 @@
 
 - [ ] [Mapear débitos técnicos prioritários para refatoração segura com testes]
 - [ ] [Aumentar cobertura de testes nos módulos críticos legados]
+
+---
+
+## Como manter este arquivo enxuto
+
+1. **Detalhe vive na tarefa ativa, não no histórico.** Ao concluir uma tarefa, reduza-a a uma linha na tabela de log (com ID original e hash do commit) e promova a próxima do backlog.
+2. **Backlog é lista de títulos, não de specs.** Mantenha apenas títulos e tags no backlog.
+3. **Use a numeração semântica [XX.Y]:** Siga estritamente a convenção de fases e regras de ouro descritas no `AGENTS.md`.
