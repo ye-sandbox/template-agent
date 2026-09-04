@@ -12,21 +12,21 @@
 
 ## Tarefa Ativa
 
-### 📌 Tarefa [02.2]: Equalizar Commits Atômicos, Conventional Commits e Numeração [XX.Y] nas Branches
+### 📌 Tarefa [XX.Y]: [Título curto e descritivo]
 
-- **Descrição:** Propagar a seção completa de Regras de Git e Commits (atomicidade, tabela canônica de Conventional Commits e inglês mandatório) e a padronização semântica de numeração [XX.Y] para todas as branches especializadas (main, greenfield, brownfield e blackbox), mantendo as salvaguardas de no-push onde aplicável.
-- **Sistema(s) Envolvido(s):** `[hub]`, `[main]`, `[greenfield]`, `[brownfield]`, `[blackbox]`
+- **Descrição:** [O que precisa ser implementado, em 2-4 linhas. Detalhe o suficiente
+  para o agente montar um plano, sem reescrever a especificação inteira aqui.]
+- **Sistema(s) Envolvido(s):** [ex: `docs`, `hub`, `branch-greenfield`, `branch-brownfield`, `branch-blackbox`]
 - **Tipo de Ação:**
-  - [x] Somente leitura / Documentação
+  - [ ] Somente leitura / Documentação
   - [ ] Escrita de código-fonte
-- **Status:** EM EXECUÇÃO
+- **Status:** [PRONTO PARA PLANEJAMENTO / EM PLANEJAMENTO / APROVADO / EM EXECUÇÃO]
+  *(Fluxo: Definido como `PRONTO PARA PLANEJAMENTO` -> Agente assume como `EM PLANEJAMENTO` ao apresentar plano -> Usuário aprova -> Agente altera para `EM EXECUÇÃO` ao codificar)*
 
 ### Critérios de Aceite
-- [ ] `main:AGENTS.md` possui seção dedicada de Regras de Git e Commits com tabela completa.
-- [ ] `greenfield:AGENTS.md` e `greenfield:.agent/TASK.md` atualizados com a padronização semântica [XX.Y].
-- [ ] `brownfield:AGENTS.md` atualizado com a padronização [XX.Y] e as 6 regras estritas de commits atômicos / Conventional Commits (mantendo política no-push).
-- [ ] `blackbox:AGENTS.md` atualizado com as 6 regras estritas de commits atômicos / Conventional Commits (mantendo política no-push).
-- [ ] Todas as branches testadas com sucesso via CI e sincronizadas com o repositório remoto.
+- [ ] [Critério objetivo e verificável 1]
+- [ ] [Critério objetivo e verificável 2]
+- [ ] [Critério objetivo e verificável 3]
 
 ---
 
@@ -48,6 +48,7 @@
 | [01.4] | Configurar CI com GitHub Actions para Validação de Templates | [`dbbcc1c`] | 2026-09-03 |
 | [01.5] | Documentar Protocolo de Sincronização e Suporte a Forks | [`e0513d0`] | 2026-09-03 |
 | [02.1] | Padronizar Numeração de Tarefas e Criar Branch Blackbox | [`67b59fc`] | 2026-09-04 |
+| [02.2] | Equalizar Commits Atômicos, Conventional Commits e Numeração [XX.Y] | [`387471a`] | 2026-09-04 |
 
 > Quando esta tabela passar de ~15-20 linhas, mova as mais antigas para
 > `.agent/ARCHIVE.md` (ou simplesmente apague — o Git já é a fonte da verdade).
