@@ -1,0 +1,27 @@
+# Arquivos de ambiente e segredos
+.env
+.env.local
+*.secret
+*.pem
+*.key
+*.crt
+
+# Dados de volumes locais e persistência de contêineres
+volumes/
+data/
+backups/
+logs/
+*.sock
+
+# Arquivos temporários e dumps
+*.tar.gz
+*.sql
+*.dump
+
+# Arquivos do sistema operacional e editores
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+*~
