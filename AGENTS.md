@@ -89,6 +89,37 @@ git commit -m "chore(sync): sync <arquivo> from <branch-origem>"
 
 ---
 
+## 📦 Regras de Git e Commits (Conventional Commits & Atomicidade)
+
+Para manter a rastreabilidade e a integridade de todas as alterações feitas neste Hub:
+
+### 1. Commits Atômicos
+1. **Uma Responsabilidade por Commit:** Cada commit deve representar uma alteração única, coesa e verificável. Nunca agrupe alterações de governança, documentação e correções de scripts no mesmo commit.
+2. **Ciclo por Etapa:** Para cada etapa concluída e validada (ex: ajuste documental, teste de CI), realize um commit atômico antes de iniciar a próxima etapa.
+3. **Diffs Cirúrgicos:** Nunca inclua arquivos acidentais, alterações cosméticas fora do escopo ou arquivos temporários no commit.
+
+### 2. Padrão Conventional Commits (em inglês)
+Todas as mensagens de commit DEVEM seguir rigorosamente a sintaxe `<type>(<scope>): <descrição no imperativo/presente>` em inglês:
+
+| Tipo | Finalidade Principal | Exemplo de Aplicação no Hub |
+| :---: | :--- | :--- |
+| **`feat`** | Nova funcionalidade ou novo template/branch | `feat(hub): add blackbox template branch to matrix` |
+| **`fix`** | Correção de bugs em scripts ou fluxos | `fix(installer): resolve remote execution flag parsing` |
+| **`docs`** | Alterações puramente documentais ou logs de tarefas | `docs(task): log task 02.1 completion` |
+| **`refactor`** | Reestruturação ou simplificação de código sem alterar comportamento | `refactor(ci): streamline multi-branch matrix testing` |
+| **`test`** | Inclusão ou ajuste de testes automatizados | `test(blackbox): add scaffolding verification step` |
+| **`chore`** | Tarefas de manutenção, sync inter-branches ou configs | `chore(sync): sync .gitignore from greenfield` |
+
+### 3. Convenção de Escopos Recomendados
+- `hub`: Mudanças que afetam a documentação global, README ou matriz do repositório.
+- `greenfield`: Alterações voltadas ao template de projetos novos.
+- `brownfield`: Alterações voltadas ao template de projetos legados (`install.sh`, etc.).
+- `blackbox`: Alterações voltadas ao template de engenharia reversa.
+- `ci`: Alterações no pipeline de automação (`.github/workflows/ci.yml`).
+- `task`: Atualizações no `.agent/TASK.md`.
+
+---
+
 ## Regras de Ouro deste Hub
 
 - **NUNCA** execute `git merge` entre as branches especializadas (`main`, `greenfield`, `brownfield`, `blackbox`). Propague melhorias exclusivamente via `git cherry-pick` ou checkout pontual de arquivos.
