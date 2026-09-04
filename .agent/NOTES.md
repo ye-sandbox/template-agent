@@ -105,6 +105,15 @@
   4. Suporta execução remota via `curl -fsSL ... | bash -s -- meu-projeto` e flags `-y`/`-f`.
 - **Consequências:** Adoção simplificada para um único comando no terminal, garantindo repositórios novos com histórico 100% limpo desde o primeiro segundo.
 
+### 2026-09-03 Configuração de CI com GitHub Actions para Starters e Markdown
+
+- **Contexto:** Necessidade de garantir que alterações futuras no repositório não quebrem os instaladores (`init.sh` e `install.sh`), nem deixem links quebrados ou markdowns inválidos nas branches especializadas.
+- **Decisão:** Configurado workflow `.github/workflows/ci.yml` na branch `main`:
+  1. `test-installers`: Testa a criação completa de projetos Greenfield (verificando scaffolding, skills e reset do Git) e a injeção em bases Brownfield (verificando idempotência e arquivos base).
+  2. Execução hermética: O teste de `init.sh` utiliza o repositório local do runner (`TEMPLATE_REPO_URL="$GITHUB_WORKSPACE"`), garantindo testes rápidos, determinísticos e sem dependência de commits já publicados no GitHub.
+  3. `lint-markdown`: Varre todos os arquivos Markdown do repositório garantindo que nenhum documento vazio ou corrompido seja commitado.
+- **Consequências:** Regressões em scripts de automação são bloqueadas automaticamente antes de merge em `main`, `greenfield` ou `brownfield`.
+
 > Exemplo de preenchimento:
 >
 > ### [AAAA-MM-DD] [Padronização de comunicação entre Serviço A e Serviço B]
