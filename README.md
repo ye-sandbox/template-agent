@@ -16,18 +16,19 @@ Em vez de misturar múltiplos starters em uma árvore inchada, este repositório
                                   │   (Documentação e Hub)    │
                                   └─────────────┬─────────────┘
                                                 │
-                     ┌──────────────────────────┴──────────────────────────┐
-                     ▼                                                     ▼
-        ┌──────────────────────────┐                          ┌──────────────────────────┐
-        │    branch greenfield     │                          │    branch brownfield     │
-        │   Projetos do Zero       │                          │   Projetos Existentes    │
-        └──────────────────────────┘                          └──────────────────────────┘
+         ┌──────────────────────────────────────┼──────────────────────────────────────┐
+         ▼                                      ▼                                      ▼
+┌──────────────────────────┐          ┌──────────────────────────┐          ┌──────────────────────────┐
+│    branch greenfield     │          │    branch brownfield     │          │     branch blackbox      │
+│     Projetos do Zero     │          │   Projetos Existentes    │          │    Engenharia Reversa    │
+└──────────────────────────┘          └──────────────────────────┘          └──────────────────────────┘
 ```
 
 | Branch | Foco do Projeto | Principais Componentes | Quando Usar |
 | :--- | :--- | :--- | :--- |
 | **`greenfield`** | Projetos iniciados **do zero** | `.agent/adr/` (ADRs formais), `.agent/skills/` (Skills locais), setup arquitetural livre, contratos em aberto. | Quando você vai criar uma nova aplicação, microserviço ou biblioteca do zero. |
 | **`brownfield`** | Código **legado / já existente** | `.agent/INVARIANTS.md` (Cercas de Chesterton), `install.sh`, Task 00 de Discovery, testes de caracterização, política estrita de *no-push* (revisão humana obrigatória). | Quando você quer colocar agentes para trabalhar com segurança em um projeto que já existe e roda em produção. |
+| **`blackbox`** | **Engenharia Reversa & Integração** | `.agent/ENDPOINTS.md` (Catálogo de rotas descobertas), `.agent/skills/reverse-engineering/`, `init.sh`, fixtures de replay e backoff defensivo. | Quando você precisa mapear, criar wrappers, scrapers ou integrar com sistemas legados/fechados sem documentação (ex: SEI/SIP). |
 | **`main`** | **Governança & Hub** | Documentação geral, matriz de decisão, histórico de evolução dos templates. | Para manter e consultar este ecossistema. |
 
 ---
@@ -73,21 +74,48 @@ curl -fsSL https://raw.githubusercontent.com/ye-sandbox/template-agent/brownfiel
 
 ---
 
+### 3. Engenharia Reversa e Integração com Sistemas Fechados (Blackbox)
+
+Para criar clientes, wrappers, scrapers ou integrações com sistemas sem documentação (como SEI, SIP ou ERPs monolíticos):
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/ye-sandbox/template-agent/blackbox/init.sh | bash -s -- meu-projeto-sei
+cd meu-projeto-sei
+```
+
+*Ou via clone manual do Git:*
+```bash
+git clone --depth 1 -b blackbox https://github.com/ye-sandbox/template-agent.git meu-projeto-sei
+cd meu-projeto-sei
+rm -rf .git && git init -b main && git add . && git commit -m "chore: initial setup"
+```
+
+**Primeiro prompt para o agente em engenharia reversa:**
+> *"Leia o AGENTS.md, .agent/TASK.md, .agent/ENDPOINTS.md e a skill em .agent/skills/reverse-engineering/SKILL.md. Apresente seu plano para a Tarefa [00.1] de descoberta de autenticação antes de rodar requisições."*
+
+---
+
 ## 🛡️ Comparativo de Filosofia e Governança
 
 ```mermaid
 graph TD
-    A{Seu projeto já existe?}
-    A -- Não (Criar do Zero) --> B[Use branch greenfield]
+    A{Qual o cenário do projeto?}
+    A -- Projeto Novo do Zero --> B[Use branch greenfield]
     B --> B1[Decisões registradas em ADRs formais]
     B --> B2[Setup arquitetural e stack livre]
     B --> B3[Skills de projeto em .agent/skills/]
 
-    A -- Sim (Código Legado) --> C[Use branch brownfield]
+    A -- Código Legado Existente --> C[Use branch brownfield]
     C --> C1[Sem ADRs do passado - Foco em INVARIANTS.md]
     C --> C2[Task 00 de Discovery para mapear a stack]
     C --> C3[Testes de Caracterização obrigatórios antes de refatorar]
     C --> C4[Diffs cirúrgicos e sem refatoração oportunista]
+
+    A -- Sistema Fechado / Sem Docs --> D[Use branch blackbox]
+    D --> D1[Catálogo canônico de rotas em .agent/ENDPOINTS.md]
+    D --> D2[Skill de engenharia reversa passo a passo]
+    D --> D3[Mocks de requisição/resposta antes de código final]
+    D --> D4[Taxas de requisição defensivas e proteção de sessão]
 ```
 
 ---
@@ -97,8 +125,9 @@ graph TD
 Ao efetuar melhorias nos templates:
 1. Mudanças que afetam exclusivamente a criação de novos projetos devem ser commitadas na branch **`greenfield`**.
 2. Mudanças voltadas à proteção e auditoria de sistemas legados devem ser commitadas na branch **`brownfield`**.
-3. Mudanças na documentação geral, novas branches ou matrizes de governança pertencem à branch **`main`**.
-4. **NUNCA** execute `git merge` entre branches de templates diferentes — use `git cherry-pick` para propagar commits pontuais (ver detalhes em [AGENTS.md](./AGENTS.md)).
+3. Mudanças voltadas a scrapers e engenharia reversa devem ser commitadas na branch **`blackbox`**.
+4. Mudanças na documentação geral, novas branches ou matrizes de governança pertencem à branch **`main`**.
+5. **NUNCA** execute `git merge` entre branches de templates diferentes — use `git cherry-pick` para propagar commits pontuais (ver detalhes em [AGENTS.md](./AGENTS.md)).
 
 ---
 
@@ -118,6 +147,12 @@ TEMPLATE_REPO_URL="https://raw.githubusercontent.com/SUA_ORGANIZACAO/template-ag
 curl -fsSL https://raw.githubusercontent.com/SUA_ORGANIZACAO/template-agent/brownfield/install.sh | bash
 ```
 
+### 3. Criar projeto Blackbox a partir do seu fork:
+```bash
+TEMPLATE_REPO_URL="https://github.com/SUA_ORGANIZACAO/template-agent.git" \
+curl -fsSL https://raw.githubusercontent.com/SUA_ORGANIZACAO/template-agent/blackbox/init.sh | bash -s -- meu-projeto-sei
+```
+
 ### Sincronização do Fork com o Upstream
 Para atualizar seu fork mantendo o isolamento estrito das branches:
 ```bash
@@ -128,4 +163,5 @@ git fetch upstream
 git checkout main && git merge upstream/main
 git checkout greenfield && git merge upstream/greenfield
 git checkout brownfield && git merge upstream/brownfield
+git checkout blackbox && git merge upstream/blackbox
 ```

@@ -12,21 +12,22 @@
 
 ## Tarefa Ativa
 
-### 📌 Tarefa [XX.Y]: [Título curto e descritivo]
+### 📌 Tarefa [02.1]: Padronizar Numeração de Tarefas e Criar Branch Especializada Blackbox
 
-- **Descrição:** [O que precisa ser implementado, em 2-4 linhas. Detalhe o suficiente
-  para o agente montar um plano, sem reescrever a especificação inteira aqui.]
-- **Sistema(s) Envolvido(s):** [ex: `docs`, `hub`, `branch-greenfield`, `branch-brownfield`]
+- **Descrição:** Formalizar a convenção semântica de numeração de tarefas [XX.Y] no AGENTS.md e TASK.md. Criar e estruturar a nova branch especializada de template `blackbox` para engenharia reversa e integração de sistemas legados fechados (ex: SEI/SIP), contendo .agent/ENDPOINTS.md, skill de reverse-engineering, init.sh e README específico.
+- **Sistema(s) Envolvido(s):** `[hub]`, `[main]`, `[branch-blackbox]`
 - **Tipo de Ação:**
-  - [ ] Somente leitura / Documentação
-  - [ ] Escrita de código-fonte
-- **Status:** [PRONTO PARA PLANEJAMENTO / EM PLANEJAMENTO / APROVADO / EM EXECUÇÃO]
-  *(Fluxo: Definido como `PRONTO PARA PLANEJAMENTO` -> Agente assume como `EM PLANEJAMENTO` ao apresentar plano -> Usuário aprova -> Agente altera para `EM EXECUÇÃO` ao codificar)*
+  - [x] Somente leitura / Documentação
+  - [x] Escrita de código-fonte
+- **Status:** EM EXECUÇÃO
 
 ### Critérios de Aceite
-- [ ] [Critério objetivo e verificável 1]
-- [ ] [Critério objetivo e verificável 2]
-- [ ] [Critério objetivo e verificável 3]
+- [ ] Regras semânticas de numeração de tarefas [XX.Y] formalizadas no AGENTS.md e template do TASK.md.
+- [ ] Branch especializada `blackbox` criada a partir de uma base limpa (sem histórico cruzado de templates).
+- [ ] Artefato canônico `.agent/ENDPOINTS.md` estruturado com modelo de dissecação de APIs legadas/fechadas.
+- [ ] Skill `.agent/skills/reverse-engineering/SKILL.md` criada com metodologia passo a passo de engenharia reversa.
+- [ ] Script de inicialização rápida `init.sh` para projetos blackbox adicionado à branch `blackbox`.
+- [ ] `README.md`, `AGENTS.md` e `.github/workflows/ci.yml` da `main` atualizados para incorporar `blackbox`.
 
 ---
 
@@ -58,7 +59,7 @@
 > Uma linha por item. Só vira uma seção detalhada com "Descrição" e "Critérios de
 > Aceite" completos quando se tornar a Tarefa Ativa.
 
-- [ ] **[02.1]** [Definir próxima iteração ou novas branches especializadas] — `[hub]`
+- [ ] **[02.2]** [Criar suite de testes de integração e mocks para a branch blackbox no CI] — `[hub]`
 
 ---
 

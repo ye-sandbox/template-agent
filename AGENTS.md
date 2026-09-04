@@ -11,6 +11,7 @@ Você é o(a) engenheiro(a) responsável pela governança, evolução e manuten�
 - **`main` (Esta Branch):** Central de documentação, matriz de decisão, guias de governança e histórico de evolução do ecossistema de templates.
 - **`greenfield`:** O starter kit puro para projetos criados do zero (com `.agent/adr/`, `.agent/skills/`, etc. na raiz).
 - **`brownfield`:** O template de injeção em projetos existentes/legados (com `install.sh`, `.agent/INVARIANTS.md`, Task 00 de Discovery).
+- **`blackbox`:** O template para engenharia reversa, scrapers, automações e integrações com sistemas fechados/legados sem documentação (com `.agent/ENDPOINTS.md`, `.agent/skills/reverse-engineering/` e `init.sh`).
 
 ---
 
@@ -20,6 +21,7 @@ Você é o(a) engenheiro(a) responsável pela governança, evolução e manuten�
 2. **Respeite o Isolamento das Branches:**
    - Se a tarefa for melhorar o fluxo de **projetos novos do zero**, alterne para a branch `greenfield` para aplicar e testar as mudanças.
    - Se a tarefa for melhorar o instalador ou guardrails de **código legado**, alterne para a branch `brownfield` para aplicar e testar as mudanças.
+   - Se a tarefa for sobre **engenharia reversa, scrapers ou APIs fechadas**, alterne para a branch `blackbox` para aplicar e testar as mudanças.
    - Se a tarefa for sobre a **documentação geral, criação de nova branch de template ou governança**, atue diretamente na branch `main`.
 3. **Modo Planejamento Primeiro:**
    - Altere o campo `Status` em `.agent/TASK.md` para `EM PLANEJAMENTO`.
@@ -34,16 +36,39 @@ Você é o(a) engenheiro(a) responsável pela governança, evolução e manuten�
 
 ---
 
+## 🔢 Padronização Semântica de Numeração de Tarefas ([XX.Y])
+
+Para assegurar previsibilidade e continuidade operacional entre diferentes sessões e agentes de IA, todas as tarefas no `.agent/TASK.md` devem seguir estritamente o formato **`[Épico/Fase].[Sequencial]`**:
+
+### 1. Tabela Semântica de Fases (`XX` com 2 dígitos)
+
+| Prefixo | Ciclo / Fase | Foco Operacional | Exemplos Típicos |
+| :---: | :--- | :--- | :--- |
+| **`00.x`** | **Bootstrap & Discovery** | Setup de ambiente, mapeamento de dependências, diagnóstico de linters, Task 00 de auditoria. | `[00.1] Setup de ferramentas e linters`<br>`[00.2] Mapeamento de autenticação e endpoints` |
+| **`01.x`** | **Fundação & Guardrails** | Estabilização inicial, correção de bugs críticos imediatos, criação de testes base e contratos canônicos. | `[01.1] Corrigir falhas do script de instalação`<br>`[01.2] Configurar CI hermético com validação` |
+| **`02.x` .. `89.x`** | **Épicos de Evolução (Features)** | Desenvolvimento de funcionalidades de negócio ou templates adicionais. Cada dezena representa um épico coeso. | `[02.1] Criar branch especializada blackbox`<br>`[03.1] Implementar parser resiliente de PDF` |
+| **`90.x`** | **Refatoração & Otimização** | Pagamento de dívida técnica acumulada, melhorias de performance e simplificação de código sem alterar contratos. | `[90.1] Otimizar pipeline de scraping`<br>`[90.2] Migrar parsing regex para parser AST` |
+| **`99.x`** | **Hardening & Release** | Auditoria final de segurança/segredos, documentação de encerramento, tagging de versão ou corte de release. | `[99.1] Auditoria final de invariantes e release v1.0` |
+
+### 2. Regras de Ouro de Numeração
+
+1. **Dois dígitos no Épico (`XX`):** Use sempre `00`, `01`, `02` ... `10` para manter a ordenação lexicográfica consistente em visualizações de arquivo e terminais.
+2. **Subtarefas Atômicas (`XX.Y.Z`):** Se uma tarefa `[02.1]` necessitar de decomposição granular durante o planejamento ou execução, utilize subtarefas numeradas (ex: `[02.1.1]`, `[02.1.2]`).
+3. **Imutabilidade de Histórico:** O ID de uma tarefa concluída é imutável. Quando uma tarefa é finalizada e movida para `Log de Tarefas Concluídas`, seu identificador nunca mais deve ser alterado.
+4. **Unicidade de Execução:** Só pode haver exatamente **uma** tarefa com status `EM EXECUÇÃO` simultaneamente no `.agent/TASK.md`.
+
+---
+
 ## 🔄 Protocolo de Sincronização e Manutenção Inter-Branches
 
-Como as branches `greenfield`, `brownfield` e `main` possuem árvores de arquivos intencionalmente distintas na raiz, **o comando `git merge` entre elas é estritamente proibido**, pois mesclaria arquivos de templates de forma desordenada e poluiria as raízes limpas.
+Como as branches `greenfield`, `brownfield`, `blackbox` e `main` possuem árvores de arquivos intencionalmente distintas na raiz, **o comando `git merge` entre elas é estritamente proibido**, pois mesclaria arquivos de templates de forma desordenada e poluiria as raízes limpas.
 
 Para propagar melhorias de governança ou infraestrutura comum entre as branches:
 
 ### 1. Propagação de Commits Atômicos (Cherry-Pick)
 Ao criar uma melhoria genérica aplicável a outras branches (ex: regras de formatação, ajustes no linter ou padrões de documentação), aplique o commit pontual:
 ```bash
-# Estando na branch de destino (ex: greenfield ou brownfield):
+# Estando na branch de destino (ex: greenfield, brownfield ou blackbox):
 git cherry-pick <commit-hash>
 ```
 
@@ -60,14 +85,14 @@ git commit -m "chore(sync): sync <arquivo> from <branch-origem>"
 - `.gitignore` e `.env.example`: Mantidos sincronizados em todas as branches.
 - `.agent/TASK.md` e `.agent/NOTES.md`:
   - Na `main`: Rastreiam as tarefas e decisões do ecossistema e Hub de Templates.
-  - Na `greenfield` e `brownfield`: Permanecem como templates canônicos limpos para o usuário final.
+  - Na `greenfield`, `brownfield` e `blackbox`: Permanecem como templates canônicos limpos para o usuário final.
 
 ---
 
 ## Regras de Ouro deste Hub
 
-- **NUNCA** execute `git merge` entre as branches especializadas (`main`, `greenfield`, `brownfield`). Propague melhorias exclusivamente via `git cherry-pick` ou checkout pontual de arquivos.
-- **NUNCA** misture arquivos de templates específicos (ex: pastas como `templates/brownfield/`) na branch `main`. Cada template deve residir na raiz de sua própria branch.
+- **NUNCA** execute `git merge` entre as branches especializadas (`main`, `greenfield`, `brownfield`, `blackbox`). Propague melhorias exclusivamente via `git cherry-pick` ou checkout pontual de arquivos.
+- **NUNCA** misture arquivos de templates específicos na branch `main`. Cada template deve residir exclusivamente na raiz de sua própria branch.
 - **NUNCA** force push (`git push --force`) nas branches principais sem autorização explícita do usuário.
-- **NUNCA** quebre a retrocompatibilidade do script `install.sh` na branch `brownfield` nem do `init.sh` na branch `greenfield`.
+- **NUNCA** quebre a retrocompatibilidade dos scripts `install.sh` e `init.sh` das branches especializadas.
 - **PRESERVE O CONTEXTO ENXUTO:** Mantenha os arquivos `.agent/TASK.md` e `NOTES.md` objetivos e limpos em todas as branches.
