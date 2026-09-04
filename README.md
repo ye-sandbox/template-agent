@@ -39,7 +39,7 @@ Em vez de misturar múltiplos starters em uma árvore inchada, este repositório
 Clone diretamente a branch `greenfield` para uma nova pasta do seu projeto:
 
 ```bash
-git clone -b greenfield https://github.com/luisf-velez/template-agent.git meu-novo-projeto
+git clone -b greenfield https://github.com/ye-sandbox/template-agent.git meu-novo-projeto
 cd meu-novo-projeto
 git remote remove origin  # Desvincule do template e aponte para seu novo repositório
 ```
@@ -55,10 +55,12 @@ Você não precisa recriar seu projeto. Basta injetar a estrutura do agente na r
 
 ```bash
 # Estando na raiz do seu projeto legado existente:
-curl -fsSL https://raw.githubusercontent.com/luisf-velez/template-agent/brownfield/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/ye-sandbox/template-agent/brownfield/install.sh | bash
 ```
 
-*Ou clone a branch `brownfield` e copie a pasta `.agent/` e `AGENTS.md` para o seu projeto.*
+> 💡 **Dica:** Para automações ou CI sem confirmações interativas, use `bash -s -- -y`. Para instalar em um diretório específico, passe o caminho como argumento (`bash -s -- ./outro-caminho`).
+
+*Ou clone a branch `brownfield` e execute `./install.sh /caminho/do/projeto` localmente.*
 
 **Primeiro prompt para o agente no projeto legado:**
 > *"Leia o AGENTS.md e o .agent/TASK.md. Apresente seu plano de implementação para a Tarefa [00.1] de Auditoria e Discovery do projeto antes de alterar qualquer código."*
