@@ -30,16 +30,25 @@ Trabalhar com IA em projetos novos (Greenfield) é muito diferente de trabalhar 
 ## 🚀 Como Injetar este Template em um Repositório Legado
 
 ### Opção 1: Via Script Automático (Recomendado)
-Clone ou acesse este template e execute o `install.sh` apontando para o seu projeto:
+
+Estando na raiz do seu projeto legado existente, execute o instalador one-liner via `curl`:
 
 ```bash
-# Estando dentro do repositório do seu projeto legado:
-bash /caminho/para/template-agent-brownfield/install.sh .
+curl -fsSL https://raw.githubusercontent.com/ye-sandbox/template-agent/brownfield/install.sh | bash
 ```
 
-Ou usando o comando direto do seu GitHub (quando este repo estiver publicado):
+> 💡 **Dica para automações ou CI:** Passe a flag `-y` para não solicitar confirmações interativas:
+> ```bash
+> curl -fsSL https://raw.githubusercontent.com/ye-sandbox/template-agent/brownfield/install.sh | bash -s -- -y
+> ```
+> Para instalar em um diretório específico:
+> ```bash
+> curl -fsSL https://raw.githubusercontent.com/ye-sandbox/template-agent/brownfield/install.sh | bash -s -- ./caminho/do/projeto
+> ```
+
+Ou, caso tenha clonado a branch `brownfield` localmente:
 ```bash
-curl -fsSL https://raw.githubusercontent.com/[SEU_USUARIO]/template-agent-brownfield/main/install.sh | bash
+./install.sh /caminho/para/seu-projeto-legado
 ```
 
 ### Opção 2: Cópia Manual
