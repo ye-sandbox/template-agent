@@ -28,12 +28,25 @@ A estrutura foi desenhada para resolver os maiores problemas no uso de agentes e
 
 ## 🚀 Como Iniciar um Novo Projeto com este Template
 
-### Passo 1: Inicializar o Repositório Git
-Se você clonou ou baixou este template, inicialize seu repositório local:
+### Opção 1: Via Inicializador Automático One-Liner (Recomendado)
+
+Crie um novo projeto instantaneamente a partir do seu terminal:
+
 ```bash
-git init
-git add .
-git commit -m "chore: initial template setup"
+curl -fsSL https://raw.githubusercontent.com/ye-sandbox/template-agent/greenfield/init.sh | bash -s -- meu-novo-projeto
+```
+
+O script clonará a branch `greenfield` e inicializará automaticamente um repositório Git novo e limpo, pronto para uso.
+
+---
+
+### Opção 2: Clone Manual do Git
+
+```bash
+git clone --depth 1 -b greenfield https://github.com/ye-sandbox/template-agent.git meu-novo-projeto
+cd meu-novo-projeto
+rm -rf .git && git init -b main
+git add . && git commit -m "chore: initial template setup"
 ```
 
 ### Passo 2: Configurar o `AGENTS.md`
