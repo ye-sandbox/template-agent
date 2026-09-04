@@ -12,21 +12,21 @@
 
 ## Tarefa Ativa
 
-### 📌 Tarefa [XX.Y]: [Título curto e descritivo]
+### 📌 Tarefa [01.2]: Adicionar Exemplos Práticos de Skills de Projeto
 
-- **Descrição:** [O que precisa ser implementado, em 2-4 linhas. Detalhe o suficiente
-  para o agente montar um plano, sem reescrever a especificação inteira aqui.]
-- **Sistema(s) Envolvido(s):** [ex: `docs`, `hub`, `branch-greenfield`, `branch-brownfield`]
+- **Descrição:** Adicionar skills de referência práticas e pedagógicas em `.agent/skills/` na branch `greenfield` (como migração de banco de dados segura e criação de endpoints com separação de camadas), além de atualizar o catálogo do README para orientar o desenvolvedor sobre como customizar ou criar novas skills.
+- **Sistema(s) Envolvido(s):** `branch-greenfield`, `skills`, `docs`
 - **Tipo de Ação:**
-  - [ ] Somente leitura / Documentação
+  - [x] Somente leitura / Documentação
   - [ ] Escrita de código-fonte
-- **Status:** [PRONTO PARA PLANEJAMENTO / EM PLANEJAMENTO / APROVADO / EM EXECUÇÃO]
+- **Status:** EM EXECUÇÃO
   *(Fluxo: Definido como `PRONTO PARA PLANEJAMENTO` -> Agente assume como `EM PLANEJAMENTO` ao apresentar plano -> Usuário aprova -> Agente altera para `EM EXECUÇÃO` ao codificar)*
 
 ### Critérios de Aceite
-- [ ] [Critério objetivo e verificável 1]
-- [ ] [Critério objetivo e verificável 2]
-- [ ] [Critério objetivo e verificável 3]
+- [ ] Criar `.agent/skills/database-migration/SKILL.md` detalhando fluxo de alteração de schema, compatibilidade retroativa (expand and contract), rollback e testes.
+- [ ] Criar `.agent/skills/api-endpoint/SKILL.md` detalhando fluxo de implementação de endpoint REST (schemas estritos, controller fino, service com regra de negócio, testes de integração).
+- [ ] Atualizar `.agent/skills/README.md` catalogando as novas skills de referência e instruindo como adaptá-las ou removê-las.
+- [ ] Validar formatação, links e consistência do cabeçalho YAML padronizado.
 
 ---
 
@@ -54,7 +54,6 @@
 > Uma linha por item. Só vira uma seção detalhada com "Descrição" e "Critérios de
 > Aceite" completos quando se tornar a Tarefa Ativa.
 
-- [ ] **[01.2]** Adicionar exemplos práticos de Skills de projeto — `[branch-greenfield, skills]`
 - [ ] **[01.3]** Criar script de inicialização rápida (one-liner) para projetos novos — `[branch-greenfield, cli]`
 - [ ] **[01.4]** Configurar CI com GitHub Actions para validação de instalador e markdown — `[ci-cd, hub]`
 - [ ] **[01.5]** Documentar protocolo de sincronização inter-branches e suporte a forks — `[hub, docs]`
