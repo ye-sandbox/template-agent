@@ -80,12 +80,16 @@ Utilize os servidores MCP configurados no ambiente como fonte primária para ins
    - Nunca altere colunas existentes no banco que possam quebrar versões anteriores da aplicação. Adições de colunas devem permitir valores nulos ou ter defaults seguros.
 6. **CIRCUIT BREAKER:**
    - Se uma validação ou teste falhar 2 vezes com a mesma causa-raiz, **PARE**, documente a divergência e consulte o desenvolvedor humano.
+7. **COMMITS LOCAIS AUTORIZADOS, MAS PROIBIDO GIT PUSH:**
+   - O agente pode realizar commits locais (`git commit`) quando instruído pelo usuário ou para consolidar etapas atômicas testadas.
+   - **É TERMINANTEMENTE PROIBIDO executar `git push`.** O agente NUNCA deve enviar alterações para o repositório remoto por conta própria. Qualquer push para branches remotas ou pipelines de deploy exige **avaliação, revisão de diffs e execução manual humana**.
 
 ---
 
-## Regras de Git e Commits
+## Regras de Git, Commits e Push
 
-- **Commits Cirúrgicos:** Um commit por alteração atômica.
+- **Commits Locais Permitidos:** Realize commits locais apenas se orientado pelo usuário, mantendo granularidade atômica e testada.
+- **PROIBIÇÃO ABSOLUTA DE `git push`:** O agente NUNCA executa `git push`. A responsabilidade de publicar código legado em servidores remotos é 100% humana.
 - **Padrão Conventional Commits (em inglês):**
   - `fix(modulo): fix bug in legacy auth header`
   - `test(modulo): add characterization test for billing calculation`
