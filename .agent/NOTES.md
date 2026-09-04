@@ -86,6 +86,15 @@
   5. Corrigir as URLs do repositório canônico para `ye-sandbox/template-agent`.
 - **Consequências:** O comando one-liner do README para legados passa a funcionar de forma confiável e idempotente.
 
+### 2026-09-03 Adição de Skills Canônicas de Referência (Greenfield)
+
+- **Contexto:** Apenas o template vazio `000-template.md` não era suficiente para demonstrar a profundidade e o rigor exigidos em procedimentos operacionais de agentes de IA.
+- **Decisão:** Foram criadas duas habilidades canônicas de referência em `.agent/skills/` na branch `greenfield`:
+  1. `database-migration`: Procedimento com padrão *Expand and Contract*, obrigatoriedade de rollback testado (`up -> down -> up`) e atualização de contratos.
+  2. `api-endpoint`: Procedimento de arquitetura desacoplada (Router fino -> Service puro -> Repository) com tipagem estrita de schemas e testes de integração automatizados.
+  Ambas foram adicionadas ao catálogo do `AGENTS.md` e do `README.md` de skills da branch `greenfield`.
+- **Consequências:** Usuários e agentes contam com modelos reais de alta fidelidade para orientar o desenvolvimento ou adaptar à sua stack específica.
+
 > Exemplo de preenchimento:
 >
 > ### [AAAA-MM-DD] [Padronização de comunicação entre Serviço A e Serviço B]
