@@ -12,6 +12,7 @@ Você é o(a) engenheiro(a) responsável pela governança, evolução e manuten�
 - **`greenfield`:** O starter kit puro para projetos criados do zero (com `.agent/adr/`, `.agent/skills/`, etc. na raiz).
 - **`brownfield`:** O template de injeção em projetos existentes/legados (com `install.sh`, `.agent/INVARIANTS.md`, Task 00 de Discovery).
 - **`blackbox`:** O template para engenharia reversa, scrapers, automações e integrações com sistemas fechados/legados sem documentação (com `.agent/ENDPOINTS.md`, `.agent/skills/reverse-engineering/` e `init.sh`).
+- **`infra`:** O template para infraestrutura como código (IaC), Docker Compose, orquestração de serviços e Homelab (com `.agent/SERVICES.md`, `.agent/skills/compose-service/`, `compose.yaml.example` e `init.sh`).
 
 ---
 
@@ -22,6 +23,7 @@ Você é o(a) engenheiro(a) responsável pela governança, evolução e manuten�
    - Se a tarefa for melhorar o fluxo de **projetos novos do zero**, alterne para a branch `greenfield` para aplicar e testar as mudanças.
    - Se a tarefa for melhorar o instalador ou guardrails de **código legado**, alterne para a branch `brownfield` para aplicar e testar as mudanças.
    - Se a tarefa for sobre **engenharia reversa, scrapers ou APIs fechadas**, alterne para a branch `blackbox` para aplicar e testar as mudanças.
+   - Se a tarefa for sobre **infraestrutura, Docker Compose ou serviços**, alterne para a branch `infra` para aplicar e testar as mudanças.
    - Se a tarefa for sobre a **documentação geral, criação de nova branch de template ou governança**, atue diretamente na branch `main`.
 3. **Modo Planejamento Primeiro:**
    - Altere o campo `Status` em `.agent/TASK.md` para `EM PLANEJAMENTO`.
@@ -68,7 +70,7 @@ Para propagar melhorias de governança ou infraestrutura comum entre as branches
 ### 1. Propagação de Commits Atômicos (Cherry-Pick)
 Ao criar uma melhoria genérica aplicável a outras branches (ex: regras de formatação, ajustes no linter ou padrões de documentação), aplique o commit pontual:
 ```bash
-# Estando na branch de destino (ex: greenfield, brownfield ou blackbox):
+# Estando na branch de destino (ex: greenfield, brownfield, blackbox ou infra):
 git cherry-pick <commit-hash>
 ```
 
@@ -85,7 +87,7 @@ git commit -m "chore(sync): sync <arquivo> from <branch-origem>"
 - `.gitignore` e `.env.example`: Mantidos sincronizados em todas as branches.
 - `.agent/TASK.md` e `.agent/NOTES.md`:
   - Na `main`: Rastreiam as tarefas e decisões do ecossistema e Hub de Templates.
-  - Na `greenfield`, `brownfield` e `blackbox`: Permanecem como templates canônicos limpos para o usuário final.
+  - Na `greenfield`, `brownfield`, `blackbox` e `infra`: Permanecem como templates canônicos limpos para o usuário final.
 
 ---
 
@@ -103,11 +105,11 @@ Todas as mensagens de commit DEVEM seguir rigorosamente a sintaxe `<type>(<scope
 
 | Tipo | Finalidade Principal | Exemplo de Aplicação no Hub |
 | :---: | :--- | :--- |
-| **`feat`** | Nova funcionalidade ou novo template/branch | `feat(hub): add blackbox template branch to matrix` |
+| **`feat`** | Nova funcionalidade ou novo template/branch | `feat(hub): add infra template branch to matrix` |
 | **`fix`** | Correção de bugs em scripts ou fluxos | `fix(installer): resolve remote execution flag parsing` |
-| **`docs`** | Alterações puramente documentais ou logs de tarefas | `docs(task): log task 02.1 completion` |
+| **`docs`** | Alterações puramente documentais ou logs de tarefas | `docs(task): log task 03.1 completion` |
 | **`refactor`** | Reestruturação ou simplificação de código sem alterar comportamento | `refactor(ci): streamline multi-branch matrix testing` |
-| **`test`** | Inclusão ou ajuste de testes automatizados | `test(blackbox): add scaffolding verification step` |
+| **`test`** | Inclusão ou ajuste de testes automatizados | `test(infra): add scaffolding verification step` |
 | **`chore`** | Tarefas de manutenção, sync inter-branches ou configs | `chore(sync): sync .gitignore from greenfield` |
 
 ### 3. Convenção de Escopos Recomendados
@@ -115,6 +117,7 @@ Todas as mensagens de commit DEVEM seguir rigorosamente a sintaxe `<type>(<scope
 - `greenfield`: Alterações voltadas ao template de projetos novos.
 - `brownfield`: Alterações voltadas ao template de projetos legados (`install.sh`, etc.).
 - `blackbox`: Alterações voltadas ao template de engenharia reversa.
+- `infra`: Alterações voltadas ao template de infraestrutura e serviços.
 - `ci`: Alterações no pipeline de automação (`.github/workflows/ci.yml`).
 - `task`: Atualizações no `.agent/TASK.md`.
 
@@ -122,7 +125,7 @@ Todas as mensagens de commit DEVEM seguir rigorosamente a sintaxe `<type>(<scope
 
 ## Regras de Ouro deste Hub
 
-- **NUNCA** execute `git merge` entre as branches especializadas (`main`, `greenfield`, `brownfield`, `blackbox`). Propague melhorias exclusivamente via `git cherry-pick` ou checkout pontual de arquivos.
+- **NUNCA** execute `git merge` entre as branches especializadas (`main`, `greenfield`, `brownfield`, `blackbox`, `infra`). Propague melhorias exclusivamente via `git cherry-pick` ou checkout pontual de arquivos.
 - **NUNCA** misture arquivos de templates específicos na branch `main`. Cada template deve residir exclusivamente na raiz de sua própria branch.
 - **NUNCA** force push (`git push --force`) nas branches principais sem autorização explícita do usuário.
 - **NUNCA** quebre a retrocompatibilidade dos scripts `install.sh` e `init.sh` das branches especializadas.

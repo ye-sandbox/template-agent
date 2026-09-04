@@ -129,6 +129,17 @@
 - **Decisão:** Formalizada no `AGENTS.md` da branch `brownfield` a regra de que o agente pode commitar localmente se autorizado pelo usuário, mas é **terminantemente proibido de executar `git push`**. O envio para branches remotas, staging ou produção é uma atribuição exclusivamente humana após revisão manual dos diffs.
 - **Consequências:** Estabelecida uma barreira de proteção indispensável para a segurança de repositórios legados em produção.
 
+### 2026-09-04 Criação da Branch Especializada de Infraestrutura e Serviços (infra)
+
+- **Contexto:** Os templates existentes (`greenfield`, `brownfield`, `blackbox`) foram concebidos com premissas de código de aplicação (rotas HTTP, testes unitários, migrations de banco). Quando utilizados para provisionar serviços de infraestrutura (ex: Docker Compose, VictoriaLogs, Uptime Kuma, bancos de dados e observabilidade), os agentes falhavam por falta de guardrails sobre conflito de portas no host, persistência de volumes, isolamento de redes e limites de recursos.
+- **Decisão:** Criada a quarta branch especializada de template: **`infra`**, com:
+  1. Fonte canônica de topologia em `.agent/SERVICES.md` (portas alocadas no host, persistência de volumes, redes virtuais e healthchecks).
+  2. Procedimento operacional padronizado em `.agent/skills/compose-service/SKILL.md`.
+  3. Regras de ouro estritas para infra no `AGENTS.md` (proibição de senhas em YAML, proibição de `docker compose down -v`, obrigatoriedade de healthchecks e limites de memória/CPU).
+  4. Script de inicialização rápida `init.sh` e `compose.yaml.example`.
+  5. Testes automatizados herméticos integrados no CI (`.github/workflows/ci.yml`).
+- **Consequências:** O ecossistema passa a cobrir formalmente a gestão de infraestrutura orientada a agentes com isolamento completo e sem poluir os starters de aplicação.
+
 > Exemplo de preenchimento:
 >
 > ### [AAAA-MM-DD] [Padronização de comunicação entre Serviço A e Serviço B]

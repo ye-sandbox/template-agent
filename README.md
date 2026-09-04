@@ -16,12 +16,12 @@ Em vez de misturar múltiplos starters em uma árvore inchada, este repositório
                                   │   (Documentação e Hub)    │
                                   └─────────────┬─────────────┘
                                                 │
-         ┌──────────────────────────────────────┼──────────────────────────────────────┐
-         ▼                                      ▼                                      ▼
-┌──────────────────────────┐          ┌──────────────────────────┐          ┌──────────────────────────┐
-│    branch greenfield     │          │    branch brownfield     │          │     branch blackbox      │
-│     Projetos do Zero     │          │   Projetos Existentes    │          │    Engenharia Reversa    │
-└──────────────────────────┘          └──────────────────────────┘          └──────────────────────────┘
+         ┌───────────────────┬──────────────────┴──────────────────┬───────────────────┐
+         ▼                   ▼                                     ▼                   ▼
+┌─────────────────┐ ┌─────────────────┐                   ┌─────────────────┐ ┌─────────────────┐
+│branch greenfield│ │branch brownfield│                   │ branch blackbox │ │  branch infra   │
+│Projetos do Zero │ │Projetos Exist.  │                   │Engenharia Rever.│ │ Serviços & IaC  │
+└─────────────────┘ └─────────────────┘                   └─────────────────┘ └─────────────────┘
 ```
 
 | Branch | Foco do Projeto | Principais Componentes | Quando Usar |
@@ -29,6 +29,7 @@ Em vez de misturar múltiplos starters em uma árvore inchada, este repositório
 | **`greenfield`** | Projetos iniciados **do zero** | `.agent/adr/` (ADRs formais), `.agent/skills/` (Skills locais), setup arquitetural livre, contratos em aberto. | Quando você vai criar uma nova aplicação, microserviço ou biblioteca do zero. |
 | **`brownfield`** | Código **legado / já existente** | `.agent/INVARIANTS.md` (Cercas de Chesterton), `install.sh`, Task 00 de Discovery, testes de caracterização, política estrita de *no-push* (revisão humana obrigatória). | Quando você quer colocar agentes para trabalhar com segurança em um projeto que já existe e roda em produção. |
 | **`blackbox`** | **Engenharia Reversa & Integração** | `.agent/ENDPOINTS.md` (Catálogo de rotas descobertas), `.agent/skills/reverse-engineering/`, `init.sh`, fixtures de replay e backoff defensivo. | Quando você precisa mapear, criar wrappers, scrapers ou integrar com sistemas legados/fechados sem documentação (ex: SEI/SIP). |
+| **`infra`** | **Infraestrutura & Serviços** | `.agent/SERVICES.md` (Topologia e portas), `.agent/skills/compose-service/`, `compose.yaml.example`, `init.sh`, limites de recursos e healthchecks. | Quando você quer provisionar e orquestrar serviços (Docker Compose, VictoriaLogs, Uptime Kuma, bancos de dados, Homelab). |
 | **`main`** | **Governança & Hub** | Documentação geral, matriz de decisão, histórico de evolução dos templates. | Para manter e consultar este ecossistema. |
 
 ---
@@ -95,6 +96,27 @@ rm -rf .git && git init -b main && git add . && git commit -m "chore: initial se
 
 ---
 
+### 4. Provisionando Infraestrutura e Serviços (Infra)
+
+Para gerenciar e orquestrar serviços com Docker Compose, Homelab e IaC (como VictoriaLogs, Uptime Kuma, bancos e observabilidade):
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/ye-sandbox/template-agent/infra/init.sh | bash -s -- meu-homelab
+cd meu-homelab
+```
+
+*Ou via clone manual do Git:*
+```bash
+git clone --depth 1 -b infra https://github.com/ye-sandbox/template-agent.git meu-homelab
+cd meu-homelab
+rm -rf .git && git init -b main && git add . && git commit -m "chore: initial setup"
+```
+
+**Primeiro prompt para o agente em infraestrutura:**
+> *"Leia o AGENTS.md, .agent/SERVICES.md, .agent/TASK.md e a skill em .agent/skills/compose-service/SKILL.md. Apresente seu plano para a Tarefa [00.1] de provisionamento base antes de alterar qualquer arquivo de configuração."*
+
+---
+
 ## 🛡️ Comparativo de Filosofia e Governança
 
 ```mermaid
@@ -116,6 +138,12 @@ graph TD
     D --> D2[Skill de engenharia reversa passo a passo]
     D --> D3[Mocks de requisição/resposta antes de código final]
     D --> D4[Taxas de requisição defensivas e proteção de sessão]
+
+    A -- Serviços / Homelab / IaC --> E[Use branch infra]
+    E --> E1[Topologia e portas em .agent/SERVICES.md]
+    E --> E2[Skill padronizada compose-service]
+    E --> E3[Healthchecks e limites de recursos obrigatórios]
+    E --> E4[Proteção contra exclusão acidental de volumes]
 ```
 
 ---
@@ -126,8 +154,9 @@ Ao efetuar melhorias nos templates:
 1. Mudanças que afetam exclusivamente a criação de novos projetos devem ser commitadas na branch **`greenfield`**.
 2. Mudanças voltadas à proteção e auditoria de sistemas legados devem ser commitadas na branch **`brownfield`**.
 3. Mudanças voltadas a scrapers e engenharia reversa devem ser commitadas na branch **`blackbox`**.
-4. Mudanças na documentação geral, novas branches ou matrizes de governança pertencem à branch **`main`**.
-5. **NUNCA** execute `git merge` entre branches de templates diferentes — use `git cherry-pick` para propagar commits pontuais (ver detalhes em [AGENTS.md](./AGENTS.md)).
+4. Mudanças voltadas a infraestrutura e Docker Compose devem ser commitadas na branch **`infra`**.
+5. Mudanças na documentação geral, novas branches ou matrizes de governança pertencem à branch **`main`**.
+6. **NUNCA** execute `git merge` entre branches de templates diferentes — use `git cherry-pick` para propagar commits pontuais (ver detalhes em [AGENTS.md](./AGENTS.md)).
 
 ---
 
@@ -153,6 +182,12 @@ TEMPLATE_REPO_URL="https://github.com/SUA_ORGANIZACAO/template-agent.git" \
 curl -fsSL https://raw.githubusercontent.com/SUA_ORGANIZACAO/template-agent/blackbox/init.sh | bash -s -- meu-projeto-sei
 ```
 
+### 4. Criar projeto Infra a partir do seu fork:
+```bash
+TEMPLATE_REPO_URL="https://github.com/SUA_ORGANIZACAO/template-agent.git" \
+curl -fsSL https://raw.githubusercontent.com/SUA_ORGANIZACAO/template-agent/infra/init.sh | bash -s -- meu-homelab
+```
+
 ### Sincronização do Fork com o Upstream
 Para atualizar seu fork mantendo o isolamento estrito das branches:
 ```bash
@@ -164,4 +199,5 @@ git checkout main && git merge upstream/main
 git checkout greenfield && git merge upstream/greenfield
 git checkout brownfield && git merge upstream/brownfield
 git checkout blackbox && git merge upstream/blackbox
+git checkout infra && git merge upstream/infra
 ```
