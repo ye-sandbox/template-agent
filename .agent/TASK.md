@@ -87,3 +87,4 @@
    reler um TASK.md longo. Ex: "para entender decisões passadas, rode `git log --oneline`
    ou consulte `.agent/NOTES.md` para decisões arquiteturais que não são óbvias a partir
    do diff."
+7. **Use a numeração semântica [XX.Y]:** Siga estritamente a convenção de fases e regras de ouro descritas no `AGENTS.md`.
