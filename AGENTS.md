@@ -25,6 +25,29 @@ Você é o(a) engenheiro(a) sênior responsável pelo desenvolvimento deste proj
 
 ---
 
+## 🔢 Padronização Semântica de Numeração de Tarefas ([XX.Y])
+
+Todas as tarefas no `.agent/TASK.md` devem seguir estritamente o formato **`[Épico/Fase].[Sequencial]`**:
+
+### 1. Tabela Semântica de Fases (`XX` com 2 dígitos)
+
+| Prefixo | Ciclo / Fase | Foco Operacional | Exemplos Típicos |
+| :---: | :--- | :--- | :--- |
+| **`00.x`** | **Bootstrap & Setup** | Setup de ambiente, linters, checagem de tipos, configuração de MCPs e skills base. | `[00.1] Setup de ferramentas e linters`<br>`[00.2] Configurar servidor MCP de banco` |
+| **`01.x`** | **Fundação & Arquitetura** | ADRs iniciais, contratos canônicos, infraestrutura base e testes de fumaça. | `[01.1] Esqueleto base da API e healthcheck`<br>`[01.2] Setup de migrations do banco` |
+| **`02.x` .. `89.x`** | **Épicos de Evolução (Features)** | Desenvolvimento de funcionalidades de negócio agrupadas por domínio/módulo. | `[02.1] Autenticação JWT e cadastro de usuários`<br>`[03.1] Endpoint de checkout` |
+| **`90.x`** | **Refatoração & Otimização** | Débitos técnicos, otimizações de query, melhorias de performance e modularização. | `[90.1] Migrar queries N+1 para batch load`<br>`[90.2] Otimizar pipeline de build` |
+| **`99.x`** | **Hardening & Release** | Auditoria final de segurança, cobertura de testes, documentação e corte de release. | `[99.1] Auditoria final de invariantes e release v1.0` |
+
+### 2. Regras de Ouro de Numeração
+
+1. **Dois dígitos no Épico (`XX`):** Use sempre `00`, `01`, `02` ... `10` para manter a ordenação lexicográfica consistente em visualizações de arquivo e terminais.
+2. **Subtarefas Atômicas (`XX.Y.Z`):** Se uma tarefa necessitar de decomposição granular durante o planejamento ou execução, utilize subtarefas numeradas (ex: `[02.1.1]`, `[02.1.2]`).
+3. **Imutabilidade de Histórico:** O ID de uma tarefa concluída é imutável. Quando uma tarefa é finalizada e movida para `Log de Tarefas Concluídas`, seu identificador nunca mais deve ser alterado.
+4. **Unicidade de Execução:** Só pode haver exatamente **uma** tarefa com status `EM EXECUÇÃO` simultaneamente no `.agent/TASK.md`.
+
+---
+
 ## Stack Tecnológico e Ferramentas
 
 - **Sistema Operacional e Shell Padrão:** **[ex: Windows (PowerShell 7) / Linux (Bash) / macOS (Zsh)]** — o agente DEVE respeitar a sintaxe desse shell ao rodar scripts e comandos de terminal.
