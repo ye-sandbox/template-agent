@@ -2,14 +2,14 @@ name: CI & Template Validation
 
 on:
   push:
-    branches: [ main, greenfield, brownfield, blackbox ]
+    branches: [ main, greenfield, brownfield, blackbox, infra ]
   pull_request:
-    branches: [ main, greenfield, brownfield, blackbox ]
+    branches: [ main, greenfield, brownfield, blackbox, infra ]
   workflow_dispatch:
 
 jobs:
   test-installers:
-    name: Test Greenfield, Brownfield & Blackbox Starters
+    name: Test Greenfield, Brownfield, Blackbox & Infra Starters
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -108,6 +108,39 @@ jobs:
             exit 1
           fi
           echo "✅ Blackbox init.sh test passed successfully!"
+
+      - name: Test Infra init.sh (Service & Homelab Scaffolding)
+        run: |
+          echo "=== Testing Infra init.sh ==="
+          git show origin/infra:init.sh > init-infra.sh 2>/dev/null || git show infra:init.sh > init-infra.sh
+          chmod +x init-infra.sh
+
+          # Run init.sh using local workspace as template source
+          TEMPLATE_REPO_URL="$GITHUB_WORKSPACE" ./init-infra.sh -y /tmp/ci-test-infra
+          rm -f init-infra.sh
+
+          # Assertions for Infra project structure
+          test -f /tmp/ci-test-infra/AGENTS.md
+          test -d /tmp/ci-test-infra/.agent
+          test -f /tmp/ci-test-infra/.agent/SERVICES.md
+          test -f /tmp/ci-test-infra/.agent/skills/compose-service/SKILL.md
+          test -f /tmp/ci-test-infra/.agent/TASK.md
+          test -f /tmp/ci-test-infra/.agent/NOTES.md
+          test -f /tmp/ci-test-infra/.agent/ARCHIVE.md
+          test -f /tmp/ci-test-infra/.env.example
+          test -f /tmp/ci-test-infra/.gitignore
+          test -f /tmp/ci-test-infra/compose.yaml.example
+          test -d /tmp/ci-test-infra/.git
+          ! test -f /tmp/ci-test-infra/init.sh
+
+          # Verify clean initial commit
+          cd /tmp/ci-test-infra
+          COMMIT_COUNT=$(git rev-list --count HEAD)
+          if [ "$COMMIT_COUNT" -ne 1 ]; then
+            echo "Error: Expected exactly 1 commit in scaffolded Infra project, got $COMMIT_COUNT"
+            exit 1
+          fi
+          echo "✅ Infra init.sh test passed successfully!"
 
   lint-markdown:
     name: Validate Markdown Structure
