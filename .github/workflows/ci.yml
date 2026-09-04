@@ -2,14 +2,14 @@ name: CI & Template Validation
 
 on:
   push:
-    branches: [ main, greenfield, brownfield ]
+    branches: [ main, greenfield, brownfield, blackbox ]
   pull_request:
-    branches: [ main, greenfield, brownfield ]
+    branches: [ main, greenfield, brownfield, blackbox ]
   workflow_dispatch:
 
 jobs:
   test-installers:
-    name: Test Greenfield & Brownfield Starters
+    name: Test Greenfield, Brownfield & Blackbox Starters
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -76,6 +76,38 @@ jobs:
 
           rm -rf /tmp/brownfield-source /tmp/ci-test-brownfield
           echo "✅ Brownfield install.sh test passed successfully!"
+
+      - name: Test Blackbox init.sh (Reverse Engineering Scaffolding)
+        run: |
+          echo "=== Testing Blackbox init.sh ==="
+          git show origin/blackbox:init.sh > init-bb.sh 2>/dev/null || git show blackbox:init.sh > init-bb.sh
+          chmod +x init-bb.sh
+
+          # Run init.sh using local workspace as template source
+          TEMPLATE_REPO_URL="$GITHUB_WORKSPACE" ./init-bb.sh -y /tmp/ci-test-blackbox
+          rm -f init-bb.sh
+
+          # Assertions for Blackbox project structure
+          test -f /tmp/ci-test-blackbox/AGENTS.md
+          test -d /tmp/ci-test-blackbox/.agent
+          test -f /tmp/ci-test-blackbox/.agent/ENDPOINTS.md
+          test -f /tmp/ci-test-blackbox/.agent/skills/reverse-engineering/SKILL.md
+          test -f /tmp/ci-test-blackbox/.agent/TASK.md
+          test -f /tmp/ci-test-blackbox/.agent/NOTES.md
+          test -f /tmp/ci-test-blackbox/.agent/ARCHIVE.md
+          test -f /tmp/ci-test-blackbox/.env.example
+          test -f /tmp/ci-test-blackbox/.gitignore
+          test -d /tmp/ci-test-blackbox/.git
+          ! test -f /tmp/ci-test-blackbox/init.sh
+
+          # Verify clean initial commit
+          cd /tmp/ci-test-blackbox
+          COMMIT_COUNT=$(git rev-list --count HEAD)
+          if [ "$COMMIT_COUNT" -ne 1 ]; then
+            echo "Error: Expected exactly 1 commit in scaffolded Blackbox project, got $COMMIT_COUNT"
+            exit 1
+          fi
+          echo "✅ Blackbox init.sh test passed successfully!"
 
   lint-markdown:
     name: Validate Markdown Structure
