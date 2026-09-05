@@ -12,21 +12,22 @@
 
 ## Tarefa Ativa
 
-### 📌 Tarefa [XX.Y]: [Título curto e descritivo]
+### 📌 Tarefa [03.3]: Padronizar Reset de Numeração por Release e Âncora [99.1] no Backlog Futuro
 
-- **Descrição:** [O que precisa ser implementado, em 2-4 linhas. Detalhe o suficiente
-  para o agente montar um plano, sem reescrever a especificação inteira aqui.]
-- **Sistema(s) Envolvido(s):** [ex: `docs`, `hub`, `branch-greenfield`, `branch-brownfield`, `branch-blackbox`, `branch-infra`]
+- **Descrição:** Atualizar o padrão de numeração e o protocolo pós-release para que a cada corte de versão o contador reinicie em [00.1] (corrigindo a numeração de eventual tarefa ativa) e incluir no Backlog Futuro de todos os templates a âncora padrão [99.1] de release/sanitização (com aviso explícito de execução apenas sob permissão).
+- **Sistema(s) Envolvido(s):** `[hub]`, `[main]`, `[greenfield]`, `[brownfield]`, `[blackbox]`, `[infra]`
 - **Tipo de Ação:**
-  - [ ] Somente leitura / Documentação
+  - [x] Somente leitura / Documentação
   - [ ] Escrita de código-fonte
-- **Status:** [PRONTO PARA PLANEJAMENTO / EM PLANEJAMENTO / APROVADO / EM EXECUÇÃO]
+- **Status:** EM EXECUÇÃO
   *(Fluxo: Definido como `PRONTO PARA PLANEJAMENTO` -> Agente assume como `EM PLANEJAMENTO` ao apresentar plano -> Usuário aprova -> Agente altera para `EM EXECUÇÃO` ao codificar)*
 
 ### Critérios de Aceite
-- [ ] [Critério objetivo e verificável 1]
-- [ ] [Critério objetivo e verificável 2]
-- [ ] [Critério objetivo e verificável 3]
+- [ ] Regra de reset do contador de tarefas (`[00.1]` ou `[01.1]`) e correção de tarefa ativa documentada no `AGENTS.md` de todas as 5 branches (`main`, `greenfield`, `brownfield`, `blackbox`, `infra`).
+- [ ] Âncora padrão `[99.1] Preparar Release (Tag Git) e Sanitizar Contexto (Apenas executar com permissão explícita do usuário)` adicionada no Backlog Futuro de `.agent/TASK.md` em todos os templates.
+- [ ] Seção "Como manter este arquivo enxuto" do `TASK.md` atualizada em todos os templates com a instrução de reset da contagem após arquivamento.
+- [ ] Validação hermética dos templates e suíte de CI executada localmente com 100% de sucesso.
+- [ ] Commits semânticos atômicos realizados e sincronizados nas respectivas branches remotas.
 
 ---
 
@@ -73,6 +74,7 @@
 > uma issue no tracker do projeto (GitHub Issues, Linear, etc.) em vez de inchar
 > este arquivo.
 
+- [ ] **[99.1]** Preparar Release (Tag Git) e Sanitizar Contexto (Apenas executar com permissão explícita do usuário)
 - [ ] [Ideia / feature futura 1]
 - [ ] [Ideia / feature futura 2]
 
@@ -88,7 +90,7 @@
 3. **Prefira issues/tracker externo para escopo grande.** Se uma ideia do "Backlog Futuro"
    cresce e ganha critérios de aceite, sub-tarefas etc., mova para o sistema de issues do
    projeto e deixe aqui só um link/referência.
-4. **Arquive por release e lote, não acumule.** Ao cortar uma release/tag Git (ou quando o log passar de ~15 linhas), mova as tarefas concluídas desse marco para `.agent/ARCHIVE.md` agrupadas por versão (ex: `## [v0.1.0] - AAAA-MM-DD`). O `git log` já preserva o histórico integral.
+4. **Arquive por release e lote, reiniciando o contador.** Ao cortar uma release/tag Git (ou quando o log passar de ~15 linhas), mova as tarefas concluídas desse marco para `.agent/ARCHIVE.md` agrupadas por versão (ex: `## [v0.1.0] - AAAA-MM-DD`). Em seguida, reinicie a numeração de tarefas a partir de `[00.1]` (ou `[01.1]`), reajustando a numeração de qualquer tarefa ativa remanescente. O `git log` preserva o histórico integral.
 5. **Nunca duplique o commit message aqui.** Se a mensagem de commit já segue Conventional
    Commits (`feat(module): ...`), ela já documenta o que mudou. Este arquivo só precisa
    apontar pra ela.
