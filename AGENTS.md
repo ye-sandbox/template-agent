@@ -46,6 +46,30 @@ Todas as tarefas no `.agent/TASK.md` devem seguir estritamente o formato **`[Ép
 
 ---
 
+## 🏷️ Protocolo de Higiene e Sanitização Pós-Release (Gatilho de Tag/Versão)
+
+> 🎯 **Princípio de Disparo por Evento:** Este protocolo NÃO depende de numeração rígida de tarefa (não é exclusivo da fase `99.x`). Ele DEVE ser executado sempre que uma **Release / Tag Git** for publicada no projeto legado (seja via `/github-releases`, pelo desenvolvedor humano ou via pipeline de CI).
+
+Sempre que uma versão (ex: `v0.1.0`, `v0.2.0`, `v1.0.0`) for cortada, o agente deve executar o ciclo de 4 etapas para sanitizar seu contexto de trabalho:
+
+### 1. Arquivamento em Lote no `.agent/ARCHIVE.md`
+- Mova o bloco de tarefas concluídas correspondente a essa versão do `.agent/TASK.md` para o `.agent/ARCHIVE.md`.
+- Agrupe sob o cabeçalho explícito da release: `## [vX.Y.Z] - AAAA-MM-DD`.
+- Mantenha no `TASK.md` apenas o registro sucinto da release e as tarefas do ciclo ativo.
+
+### 2. Higiene de Invariantes e Memória (`.agent/INVARIANTS.md` e `NOTES.md`)
+- **Promover Invariantes Descobertas:** Garanta que todas as regras não-óbvias ou contratos legados descobertos durante a versão estão consolidados no `.agent/INVARIANTS.md`.
+- **Descartar o Efêmero:** Apague rascunhos de testes, logs de depuração temporários ou anotações resolvidas do `.agent/NOTES.md`.
+
+### 3. Sincronia de Artefatos de Borda
+- **`.env.example`:** Audite se todas as novas variáveis de ambiente introduzidas na versão foram documentadas com valores exemplares seguros.
+- **`README.md`:** Verifique se as instruções de execução e testes refletem o estado funcional da tag lançada.
+
+### 4. Reset do Ciclo no `.agent/TASK.md`
+- Promova para a **Tarefa Ativa** o próximo objetivo do projeto legado (ex: nova funcionalidade cirúrgica ou refatoração segura), definindo o status como `PRONTO PARA PLANEJAMENTO`.
+
+---
+
 ## Stack Tecnológico e Descoberta de Ambiente
 
 > 🔍 Se este projeto ainda não teve seu ambiente auditado, execute a tarefa de **Discovery** no `.agent/TASK.md` para preencher os campos abaixo a partir dos arquivos reais (`package.json`, `pyproject.toml`, `Makefile`, etc.).
