@@ -1,10 +1,23 @@
-# Histórico de Tarefas Arquivadas (Infraestrutura)
+# ARCHIVE.md — Arquivo Histórico de Tarefas Concluídas (Infraestrutura)
 
-> Guarda o histórico antigo de tarefas do `.agent/TASK.md` para manter o contexto do agente enxuto.
-> O `git log` é a fonte canônica definitiva de detalhes históricos.
+> 📦 Este arquivo armazena lotes de tarefas concluídas arquivadas após o corte de releases (tags Git)
+> ou rotações periódicas do projeto, mantendo o `.agent/TASK.md` enxuto e focado no ciclo ativo.
+>
+> Para detalhes profundos de implementação, consulte o histórico do Git (`git log --oneline` ou `git show <commit>`).
 
 ---
 
-| Tarefa | Título | Commit(s) | Data |
+## [v0.1.0] - [AAAA-MM-DD]
+
+| Tarefa | Título | Commit(s) | Data Conclusão |
 |---|---|---|---|
-| `[XX.Y]` | `[ex: Setup inicial da infraestrutura]` | `[0000000]` | `AAAA-MM-DD` |
+| [00.1] | [Setup inicial da topologia e serviços base] | [`0000000`] | [AAAA-MM-DD] |
+| [01.1] | [Configuração do reverse-proxy e SSL] | [`1111111`] | [AAAA-MM-DD] |
+
+---
+
+## Tarefas Rotacionadas (Lotes Anteriores)
+
+| Tarefa | Título | Commit(s) | Data Conclusão |
+|---|---|---|---|
+| [XX.Y] | [Título da tarefa rotacionada] | [`0000000`] | [AAAA-MM-DD] |

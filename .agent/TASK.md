@@ -6,6 +6,7 @@
 >
 > **Regra de ouro deste arquivo:** ele guarda O QUE FAZER, não O QUE JÁ FOI FEITO.
 > Detalhes de implementação vivem no `git log`.
+> Ver seção "Como manter este arquivo enxuto" no final.
 
 ---
 
@@ -36,7 +37,7 @@
 ## Log de Tarefas Concluídas
 
 > Uma linha por tarefa. Nada de detalhes repetidos aqui — isso já está no commit.
-> Quando esta tabela passar de ~15-20 linhas, arquive em `.agent/ARCHIVE.md`.
+> Quando esta tabela passar de ~15-20 linhas (ou ao cortar uma release/tag Git), arquive em `.agent/ARCHIVE.md`.
 
 | Tarefa | Título | Commit(s) | Data |
 |---|---|---|---|
@@ -55,3 +56,18 @@
 
 - [ ] Integrar alertas de status do Uptime Kuma com webhook (Discord / Telegram)
 - [ ] Adicionar dashboard unificado de observabilidade com Grafana e VictoriaMetrics
+
+---
+
+## Como manter este arquivo enxuto
+
+1. **Detalhe vive na tarefa ativa, não no histórico.** Assim que uma tarefa é concluída,
+   reduza-a a uma linha na tabela de log (título + hash do commit) e promova a próxima
+   do backlog para "Tarefa Ativa" com o detalhe completo.
+2. **Backlog é lista de títulos, não de specs.** Escreva a especificação completa só
+   quando o item vira a tarefa ativa — evita manter duas fontes de verdade desatualizadas.
+3. **Prefira issues/tracker externo para escopo grande.** Se uma ideia do "Backlog Futuro"
+   cresce e ganha critérios de aceite, sub-tarefas etc., mova para o sistema de issues do
+   projeto e deixe aqui só um link/referência.
+4. **Arquive por release e lote, não acumule.** Ao cortar uma release/tag Git (ou quando o log passar de ~15 linhas), mova as tarefas concluídas desse marco para `.agent/ARCHIVE.md` agrupadas por versão (ex: `## [v0.1.0] - AAAA-MM-DD`). O `git log` já preserva o histórico integral.
+
