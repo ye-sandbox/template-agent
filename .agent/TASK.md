@@ -12,21 +12,20 @@
 
 ## Tarefa Ativa
 
-### 📌 Tarefa [XX.Y]: [Título curto e descritivo]
+### 📌 Tarefa [03.2]: Formalizar Protocolo de Higiene e Sanitização Pós-Release nos Templates
 
-- **Descrição:** [O que precisa ser implementado, em 2-4 linhas. Detalhe o suficiente
-  para o agente montar um plano, sem reescrever a especificação inteira aqui.]
-- **Sistema(s) Envolvido(s):** [ex: `docs`, `hub`, `branch-greenfield`, `branch-brownfield`, `branch-blackbox`, `branch-infra`]
+- **Descrição:** Documentar e formalizar o Protocolo de Higiene e Sanitização Pós-Release (gatilho de Tag/Versão) no AGENTS.md, TASK.md e ARCHIVE.md em todas as branches (main, greenfield, brownfield, blackbox e infra), garantindo arquivamento sistemático por versão e limpeza de memória do agente sem atrelamento rígido à fase 99.
+- **Sistema(s) Envolvido(s):** `[hub]`, `[main]`, `[greenfield]`, `[brownfield]`, `[blackbox]`, `[infra]`
 - **Tipo de Ação:**
-  - [ ] Somente leitura / Documentação
+  - [x] Somente leitura / Documentação
   - [ ] Escrita de código-fonte
-- **Status:** [PRONTO PARA PLANEJAMENTO / EM PLANEJAMENTO / APROVADO / EM EXECUÇÃO]
-  *(Fluxo: Definido como `PRONTO PARA PLANEJAMENTO` -> Agente assume como `EM PLANEJAMENTO` ao apresentar plano -> Usuário aprova -> Agente altera para `EM EXECUÇÃO` ao codificar)*
+- **Status:** EM EXECUÇÃO
 
 ### Critérios de Aceite
-- [ ] [Critério objetivo e verificável 1]
-- [ ] [Critério objetivo e verificável 2]
-- [ ] [Critério objetivo e verificável 3]
+- [ ] `AGENTS.md` de todas as 5 branches atualizado com o Protocolo de Higiene e Sanitização Pós-Release baseado em evento.
+- [ ] `.agent/TASK.md` de todas as 5 branches atualizado com a regra de arquivamento por lote de release.
+- [ ] `.agent/ARCHIVE.md` de todas as 5 branches estruturado com modelo canônico de agrupamento por tag de versão (`## [vX.Y.Z] - AAAA-MM-DD`).
+- [ ] Todas as branches testadas e sincronizadas com o repositório remoto.
 
 ---
 
@@ -87,8 +86,7 @@
 3. **Prefira issues/tracker externo para escopo grande.** Se uma ideia do "Backlog Futuro"
    cresce e ganha critérios de aceite, sub-tarefas etc., mova para o sistema de issues do
    projeto e deixe aqui só um link/referência.
-4. **Arquive, não acumule.** Ao ultrapassar ~15-20 linhas no log de concluídas, corte o
-   mais antigo para `.agent/ARCHIVE.md` ou remova — o `git log` já preserva tudo.
+4. **Arquive por release e lote, não acumule.** Ao cortar uma release/tag Git (ou quando o log passar de ~15 linhas), mova as tarefas concluídas desse marco para `.agent/ARCHIVE.md` agrupadas por versão (ex: `## [v0.1.0] - AAAA-MM-DD`). O `git log` já preserva o histórico integral.
 5. **Nunca duplique o commit message aqui.** Se a mensagem de commit já segue Conventional
    Commits (`feat(module): ...`), ela já documenta o que mudou. Este arquivo só precisa
    apontar pra ela.
@@ -96,3 +94,4 @@
    reler um TASK.md longo. Ex: "para entender decisões passadas, rode `git log --oneline`
    ou consulte `.agent/NOTES.md` para decisões arquiteturais que não são óbvias a partir
    do diff."
+7. **Use a numeração semântica [XX.Y]:** Siga estritamente a convenção de fases e regras de ouro descritas no `AGENTS.md`.
