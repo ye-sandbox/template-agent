@@ -54,6 +54,7 @@
 
 ## Backlog Futuro / Ideias (não priorizadas)
 
+- [ ] **[99.1]** Preparar Release (Tag Git) e Sanitizar Contexto (Apenas executar com permissão explícita do usuário)
 - [ ] Integrar alertas de status do Uptime Kuma com webhook (Discord / Telegram)
 - [ ] Adicionar dashboard unificado de observabilidade com Grafana e VictoriaMetrics
 
@@ -69,5 +70,5 @@
 3. **Prefira issues/tracker externo para escopo grande.** Se uma ideia do "Backlog Futuro"
    cresce e ganha critérios de aceite, sub-tarefas etc., mova para o sistema de issues do
    projeto e deixe aqui só um link/referência.
-4. **Arquive por release e lote, não acumule.** Ao cortar uma release/tag Git (ou quando o log passar de ~15 linhas), mova as tarefas concluídas desse marco para `.agent/ARCHIVE.md` agrupadas por versão (ex: `## [v0.1.0] - AAAA-MM-DD`). O `git log` já preserva o histórico integral.
+4. **Arquive por release e lote, reiniciando o contador.** Ao cortar uma release/tag Git (ou quando o log passar de ~15 linhas), mova as tarefas concluídas desse marco para `.agent/ARCHIVE.md` agrupadas por versão (ex: `## [v0.1.0] - AAAA-MM-DD`). Em seguida, reinicie a numeração de tarefas a partir de `[00.1]` (ou `[01.1]`), reajustando a numeração de qualquer tarefa ativa remanescente. O `git log` já preserva o histórico integral.
 
