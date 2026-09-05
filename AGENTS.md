@@ -41,8 +41,10 @@ Todas as tarefas no `.agent/TASK.md` devem seguir estritamente o formato **`[Ép
 
 1. **Dois dígitos no Épico (`XX`):** Use sempre `00`, `01`, `02` ... `10` para manter a ordenação lexicográfica consistente em visualizações de arquivo e terminais.
 2. **Subtarefas Atômicas (`XX.Y.Z`):** Se uma tarefa necessitar de decomposição granular durante o planejamento ou execução, utilize subtarefas numeradas (ex: `[01.1.1]`, `[01.1.2]`).
-3. **Imutabilidade de Histórico:** O ID de uma tarefa concluída é imutável. Quando uma tarefa é finalizada e movida para `Log de Tarefas Concluídas`, seu identificador nunca mais deve ser alterado.
-4. **Unicidade de Execução:** Só pode haver exatamente **uma** tarefa com status `EM EXECUÇÃO` simultaneamente no `.agent/TASK.md`.
+3. **Imutabilidade de Histórico por Release:** O ID de uma tarefa é imutável dentro do escopo da sua respectiva versão/release arquivada no `.agent/ARCHIVE.md`.
+4. **Reset do Contador por Ciclo/Release:** A cada versão publicada e sanitização concluída, o contador no `.agent/TASK.md` é reiniciado a partir de `[00.1]` (ou `[01.1]`), impedindo o crescimento infinito de identificadores. Se houver uma tarefa ativa remanescente no momento do corte, sua numeração deve ser corrigida para o novo ciclo.
+5. **Âncora Padrão `[99.1]` no Backlog Futuro:** Por padrão, o `.agent/TASK.md` deve conter no Backlog Futuro a tarefa `[99.1] Preparar Release (Tag Git) e Sanitizar Contexto (Apenas executar com permissão explícita do usuário)`. Essa tarefa serve como balizador para o encerramento do ciclo, mas o agente **NUNCA** deve iniciá-la sem autorização explícita do usuário.
+6. **Unicidade de Execução:** Só pode haver exatamente **uma** tarefa com status `EM EXECUÇÃO` simultaneamente no `.agent/TASK.md`.
 
 ---
 
@@ -66,7 +68,10 @@ Sempre que uma versão (ex: `v0.1.0`, `v0.2.0`, `v1.0.0`) for cortada, o agente 
 - **`README.md`:** Verifique se as instruções de execução e testes refletem o estado funcional da tag lançada.
 
 ### 4. Reset do Ciclo no `.agent/TASK.md`
-- Promova para a **Tarefa Ativa** o próximo objetivo do projeto legado (ex: nova funcionalidade cirúrgica ou refatoração segura), definindo o status como `PRONTO PARA PLANEJAMENTO`.
+- **Reinício da Contagem:** Com o lote arquivado no `ARCHIVE.md`, reinicie o contador de tarefas a partir de `[00.1]` (para nova fase de discovery/estabilização) ou `[01.1]` (para o próximo ciclo de negócio).
+- **Correção da Tarefa Ativa:** Se houver uma tarefa ativa em andamento ou planejada durante o corte, reajuste seu identificador para refletir o novo ciclo (ex: renumerando-a para `[00.1]` ou `[01.1]`).
+- **Promoção da Meta:** Promova para a **Tarefa Ativa** o próximo objetivo do projeto legado, definindo o status como `PRONTO PARA PLANEJAMENTO`.
+- **Manutenção da Âncora `[99.1]`:** Certifique-se de que a tarefa `[99.1] Preparar Release (Tag Git) e Sanitizar Contexto` permaneça presente no Backlog Futuro para o próximo encerramento.
 
 ---
 
