@@ -61,9 +61,33 @@ Para assegurar previsibilidade e continuidade operacional entre diferentes sess�
 
 ---
 
+## 🏷️ Protocolo de Higiene e Sanitização Pós-Release (Gatilho de Tag/Versão)
+
+> 🎯 **Princípio de Disparo por Evento:** Este protocolo NÃO depende de numeração rígida de tarefa (não é exclusivo da fase `99.x`). Ele DEVE ser executado sempre que uma **Release / Tag Git** for publicada no projeto (seja via `/github-releases`, pelo desenvolvedor humano ou via pipeline de CI).
+
+Sempre que uma versão (ex: `v0.1.0`, `v0.2.0`, `v1.0.0`) for cortada, o agente deve executar o ciclo de 4 etapas para sanitizar seu contexto de trabalho:
+
+### 1. Arquivamento em Lote no `.agent/ARCHIVE.md`
+- Mova o bloco de tarefas concluídas correspondente a essa versão do `.agent/TASK.md` para o `.agent/ARCHIVE.md`.
+- Agrupe sob o cabeçalho explícito da release: `## [vX.Y.Z] - AAAA-MM-DD`.
+- Mantenha no `TASK.md` apenas o registro sucinto da release e as tarefas do ciclo ativo.
+
+### 2. Higiene e Consolidação de Memória no `.agent/NOTES.md`
+- **Promover o que é Definitivo:** Decisões arquiteturais estruturais tomadas durante a versão devem ser consolidadas em ADRs formais (`.agent/adr/`) ou invariantes canônicos.
+- **Descartar o Efêmero:** Apague rascunhos de payloads, logs de depuração temporários ou anotações de exploração que já foram absorvidas e testadas no código-fonte.
+
+### 3. Sincronia de Artefatos de Borda
+- **`.env.example`:** Audite se todas as novas variáveis de ambiente introduzidas na versão foram documentadas com valores exemplares.
+- **`README.md`:** Verifique se as instruções de instalação, badges e Quick Start funcionam exatamente como documentado para a versão lançada.
+
+### 4. Reset do Ciclo no `.agent/TASK.md`
+- Promova para a **Tarefa Ativa** o próximo objetivo do projeto (ex: nova funcionalidade do roadmap ou débitos técnicos prioritários), definindo o status como `PRONTO PARA PLANEJAMENTO`.
+
+---
+
 ## 🔄 Protocolo de Sincronização e Manutenção Inter-Branches
 
-Como as branches `greenfield`, `brownfield`, `blackbox` e `main` possuem árvores de arquivos intencionalmente distintas na raiz, **o comando `git merge` entre elas é estritamente proibido**, pois mesclaria arquivos de templates de forma desordenada e poluiria as raízes limpas.
+Como as branches `greenfield`, `brownfield`, `blackbox`, `infra` e `main` possuem árvores de arquivos intencionalmente distintas na raiz, **o comando `git merge` entre elas é estritamente proibido**, pois mesclaria arquivos de templates de forma desordenada e poluiria as raízes limpas.
 
 Para propagar melhorias de governança ou infraestrutura comum entre as branches:
 
