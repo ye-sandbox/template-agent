@@ -45,6 +45,7 @@
 
 ## Backlog Futuro / Ideias (não priorizadas)
 
+- [ ] **[99.1]** Preparar Release (Tag Git) e Sanitizar Contexto (Apenas executar com permissão explícita do usuário)
 - [ ] [Mapear débitos técnicos prioritários para refatoração segura com testes]
 - [ ] [Aumentar cobertura de testes nos módulos críticos legados]
 
@@ -53,6 +54,6 @@
 ## Como manter este arquivo enxuto
 
 1. **Detalhe vive na tarefa ativa, não no histórico.** Ao concluir uma tarefa, reduza-a a uma linha na tabela de log (com ID original e hash do commit) e promova a próxima do backlog.
-2. **Arquive por release e lote, não acumule.** Ao cortar uma release/tag Git (ou quando o log passar de ~15 linhas), mova as tarefas concluídas desse marco para `.agent/ARCHIVE.md` agrupadas por versão (ex: `## [v0.1.0] - AAAA-MM-DD`).
+2. **Arquive por release e lote, reiniciando o contador.** Ao cortar uma release/tag Git (ou quando o log passar de ~15 linhas), mova as tarefas concluídas desse marco para `.agent/ARCHIVE.md` agrupadas por versão (ex: `## [v0.1.0] - AAAA-MM-DD`). Em seguida, reinicie a numeração de tarefas a partir de `[00.1]` (ou `[01.1]`), reajustando a numeração de qualquer tarefa ativa remanescente.
 3. **Backlog é lista de títulos, não de specs.** Mantenha apenas títulos e tags no backlog.
 4. **Use a numeração semântica [XX.Y]:** Siga estritamente a convenção de fases e regras de ouro descritas no `AGENTS.md`.
