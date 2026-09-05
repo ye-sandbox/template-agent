@@ -52,6 +52,31 @@ Todas as tarefas no `.agent/TASK.md` devem seguir estritamente o formato **`[Ép
 
 ---
 
+## 🏷️ Protocolo de Higiene e Sanitização Pós-Release (Gatilho de Tag/Versão)
+
+> 🎯 **Princípio de Disparo por Evento:** Este protocolo NÃO depende de numeração rígida de tarefa (não é exclusivo da fase `99.x`). Ele DEVE ser executado sempre que uma **Release / Tag Git** for publicada no projeto (seja via `/github-releases`, pelo desenvolvedor humano ou via pipeline de CI).
+
+Sempre que uma versão (ex: `v0.1.0`, `v0.2.0`, `v1.0.0`) for cortada, o agente deve executar o ciclo de 4 etapas para sanitizar seu contexto de trabalho:
+
+### 1. Arquivamento em Lote no `.agent/ARCHIVE.md`
+- Mova o bloco de tarefas concluídas correspondente a essa versão do `.agent/TASK.md` para o `.agent/ARCHIVE.md`.
+- Agrupe sob o cabeçalho explícito da release: `## [vX.Y.Z] - AAAA-MM-DD`.
+- Mantenha no `TASK.md` apenas o registro sucinto da release e as tarefas do ciclo ativo.
+
+### 2. Higiene de Endpoints e Fixtures (`.agent/ENDPOINTS.md` e `tests/fixtures/`)
+- **Consolidação de Endpoints:** Garanta que todas as rotas e particularidades descobertas durante a versão estão catalogadas e com status `Validado` no `.agent/ENDPOINTS.md`.
+- **Sanitização Rigorosa de Fixtures:** Audite `tests/fixtures/` para certificar que nenhum dado pessoal, cookie real ou token de produção foi commitado por engano.
+- **Descarte de Efêmeros:** Apague dumps temporários (`*.har`, logs de depuração) e limpe anotações de exploração resolvidas no `.agent/NOTES.md`.
+
+### 3. Sincronia de Artefatos de Borda
+- **`.env.example`:** Audite se todas as novas variáveis de ambiente e headers configuráveis da versão foram documentados.
+- **`README.md`:** Verifique se as instruções de execução e exemplos cURL funcionam exatamente como documentado para a tag lançada.
+
+### 4. Reset do Ciclo no `.agent/TASK.md`
+- Promova para a **Tarefa Ativa** o próximo objetivo do projeto (ex: novo endpoint ou melhoria de resiliência), definindo o status como `PRONTO PARA PLANEJAMENTO`.
+
+---
+
 ## Stack Tecnológica e Ferramental Recomendado
 
 - **Cliente HTTP Resiliente:** [ex: httpx / aiohttp / axios / got] configurado com timeouts explícitos e retries.
