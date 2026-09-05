@@ -12,22 +12,21 @@
 
 ## Tarefa Ativa
 
-### 📌 Tarefa [03.3]: Padronizar Reset de Numeração por Release e Âncora [99.1] no Backlog Futuro
+### 📌 Tarefa [XX.Y]: [Título curto e descritivo]
 
-- **Descrição:** Atualizar o padrão de numeração e o protocolo pós-release para que a cada corte de versão o contador reinicie em [00.1] (corrigindo a numeração de eventual tarefa ativa) e incluir no Backlog Futuro de todos os templates a âncora padrão [99.1] de release/sanitização (com aviso explícito de execução apenas sob permissão).
-- **Sistema(s) Envolvido(s):** `[hub]`, `[main]`, `[greenfield]`, `[brownfield]`, `[blackbox]`, `[infra]`
+- **Descrição:** [O que precisa ser implementado, em 2-4 linhas. Detalhe o suficiente
+  para o agente montar um plano, sem reescrever a especificação inteira aqui.]
+- **Sistema(s) Envolvido(s):** [ex: `docs`, `hub`, `branch-greenfield`, `branch-brownfield`, `branch-blackbox`, `branch-infra`]
 - **Tipo de Ação:**
-  - [x] Somente leitura / Documentação
+  - [ ] Somente leitura / Documentação
   - [ ] Escrita de código-fonte
-- **Status:** EM EXECUÇÃO
+- **Status:** [PRONTO PARA PLANEJAMENTO / EM PLANEJAMENTO / APROVADO / EM EXECUÇÃO]
   *(Fluxo: Definido como `PRONTO PARA PLANEJAMENTO` -> Agente assume como `EM PLANEJAMENTO` ao apresentar plano -> Usuário aprova -> Agente altera para `EM EXECUÇÃO` ao codificar)*
 
 ### Critérios de Aceite
-- [ ] Regra de reset do contador de tarefas (`[00.1]` ou `[01.1]`) e correção de tarefa ativa documentada no `AGENTS.md` de todas as 5 branches (`main`, `greenfield`, `brownfield`, `blackbox`, `infra`).
-- [ ] Âncora padrão `[99.1] Preparar Release (Tag Git) e Sanitizar Contexto (Apenas executar com permissão explícita do usuário)` adicionada no Backlog Futuro de `.agent/TASK.md` em todos os templates.
-- [ ] Seção "Como manter este arquivo enxuto" do `TASK.md` atualizada em todos os templates com a instrução de reset da contagem após arquivamento.
-- [ ] Validação hermética dos templates e suíte de CI executada localmente com 100% de sucesso.
-- [ ] Commits semânticos atômicos realizados e sincronizados nas respectivas branches remotas.
+- [ ] [Critério objetivo e verificável 1]
+- [ ] [Critério objetivo e verificável 2]
+- [ ] [Critério objetivo e verificável 3]
 
 ---
 
@@ -52,6 +51,7 @@
 | [02.2] | Equalizar Commits Atômicos, Conventional Commits e Numeração [XX.Y] | [`387471a`] | 2026-09-04 |
 | [03.1] | Criar Branch Especializada de Infraestrutura e Serviços (`infra`) | [`9f4de15`, `2e100f6`] | 2026-09-04 |
 | [03.2] | Formalizar Protocolo de Higiene e Sanitização Pós-Release nos Templates | [`0a87934`, `1107c67`, `1abbfd6`, `fd0cf01`, `33df53d`] | 2026-09-04 |
+| [03.3] | Padronizar Reset de Numeração por Release e Âncora [99.1] no Backlog Futuro | [`c310997`, `bab484d`, `efb6a89`, `a2da17c`, `abdb522`] | 2026-09-05 |
 
 > Quando esta tabela passar de ~15-20 linhas, mova as mais antigas para
 > `.agent/ARCHIVE.md` (ou simplesmente apague — o Git já é a fonte da verdade).

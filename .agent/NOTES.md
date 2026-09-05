@@ -150,6 +150,14 @@
   4. **Reset do ciclo:** Promoção da próxima meta de negócio no `TASK.md` com status `PRONTO PARA PLANEJAMENTO`.
 - **Consequências:** Prevenção garantida contra inchaço de contexto em todas as sessões de agentes de IA, com histórico preservado sem poluir a memória ativa.
 
+### 2026-09-05 Reset de Numeração de Tarefas por Release e Âncora Padrão [99.1]
+
+- **Contexto:** Risco de identificadores de tarefas acumularem valores contínuos excessivos (ex: `[150.2]`) e agentes alucinarem sobre quando ou como encerrar ciclos de entrega ou dispararem cortes de versão de forma autônoma.
+- **Decisão:**
+  1. **Reset do Contador por Release:** A cada corte de tag Git e arquivamento em lote no `ARCHIVE.md`, o contador do `TASK.md` recomeça a partir de `[00.1]` (ou `[01.1]`). Se houver uma tarefa ativa remanescente no momento do corte, seu identificador é corrigido para o novo ciclo. A regra de imutabilidade de histórico é delimitada pelo escopo da release no `ARCHIVE.md`.
+  2. **Âncora Padrão `[99.1]` no Backlog Futuro:** Inclusão fixa nos templates de: `- [ ] **[99.1]** Preparar Release (Tag Git) e Sanitizar Contexto (Apenas executar com permissão explícita do usuário)`. Serve como guia visual para agentes identificarem o encerramento do ciclo, com trava explícita de permissão humana obrigatória no `AGENTS.md`.
+- **Consequências:** Numeração sempre concisa e previsível por versão (`00.x` a `99.x`), com salvaguarda ativa contra execuções não autorizadas de release por agentes.
+
 > Exemplo de preenchimento:
 >
 > ### [AAAA-MM-DD] [Padronização de comunicação entre Serviço A e Serviço B]
