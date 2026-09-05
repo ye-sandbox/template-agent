@@ -78,8 +78,7 @@
 3. **Prefira issues/tracker externo para escopo grande.** Se uma ideia do "Backlog Futuro"
    cresce e ganha critérios de aceite, sub-tarefas etc., mova para o sistema de issues do
    projeto e deixe aqui só um link/referência.
-4. **Arquive, não acumule.** Ao ultrapassar ~15-20 linhas no log de concluídas, corte o
-   mais antigo para `.agent/ARCHIVE.md` ou remova — o `git log` já preserva tudo.
+4. **Arquive por release e lote, não acumule.** Ao cortar uma release/tag Git (ou quando o log passar de ~15 linhas), mova as tarefas concluídas desse marco para `.agent/ARCHIVE.md` agrupadas por versão (ex: `## [v0.1.0] - AAAA-MM-DD`). O `git log` já preserva o histórico integral.
 5. **Nunca duplique o commit message aqui.** Se a mensagem de commit já segue Conventional
    Commits (`feat(module): ...`), ela já documenta o que mudou. Este arquivo só precisa
    apontar pra ela.
