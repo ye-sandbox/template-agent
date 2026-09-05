@@ -140,6 +140,16 @@
   5. Testes automatizados herméticos integrados no CI (`.github/workflows/ci.yml`).
 - **Consequências:** O ecossistema passa a cobrir formalmente a gestão de infraestrutura orientada a agentes com isolamento completo e sem poluir os starters de aplicação.
 
+### 2026-09-04 Formalização do Protocolo de Higiene e Sanitização Pós-Release
+
+- **Contexto:** Dúvidas comuns no ciclo de vida de projetos orientados a agentes sobre quando e como sanitizar a documentação após o corte de uma versão (ex: `v0.1.0`), e se o lançamento de releases estaria rigidamente condicionado à fase de Hardening `99.x`.
+- **Decisão:** Desacoplar a release de numeração rígida de fases. A release é um evento do produto disparado por Tag Git que pode ocorrer em qualquer ciclo (ex: MVP em `01.3` ou hotfix emergencial). Foi formalizado em todas as branches (`main`, `greenfield`, `brownfield`, `blackbox`, `infra`) o protocolo de 4 etapas:
+  1. **Arquivamento em lote:** Transferência das tarefas do marco para `.agent/ARCHIVE.md` sob o cabeçalho canônico `## [vX.Y.Z] - AAAA-MM-DD`.
+  2. **Higiene e consolidação:** Promoção de contratos/ADRs definitivos e descarte de dados efêmeros de depuração no `.agent/NOTES.md` (ou `INVARIANTS.md`).
+  3. **Sincronia de borda:** Validação estrita do `.env.example`, documentação de portas e `README.md`.
+  4. **Reset do ciclo:** Promoção da próxima meta de negócio no `TASK.md` com status `PRONTO PARA PLANEJAMENTO`.
+- **Consequências:** Prevenção garantida contra inchaço de contexto em todas as sessões de agentes de IA, com histórico preservado sem poluir a memória ativa.
+
 > Exemplo de preenchimento:
 >
 > ### [AAAA-MM-DD] [Padronização de comunicação entre Serviço A e Serviço B]

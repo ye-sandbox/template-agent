@@ -12,20 +12,21 @@
 
 ## Tarefa Ativa
 
-### 📌 Tarefa [03.2]: Formalizar Protocolo de Higiene e Sanitização Pós-Release nos Templates
+### 📌 Tarefa [XX.Y]: [Título curto e descritivo]
 
-- **Descrição:** Documentar e formalizar o Protocolo de Higiene e Sanitização Pós-Release (gatilho de Tag/Versão) no AGENTS.md, TASK.md e ARCHIVE.md em todas as branches (main, greenfield, brownfield, blackbox e infra), garantindo arquivamento sistemático por versão e limpeza de memória do agente sem atrelamento rígido à fase 99.
-- **Sistema(s) Envolvido(s):** `[hub]`, `[main]`, `[greenfield]`, `[brownfield]`, `[blackbox]`, `[infra]`
+- **Descrição:** [O que precisa ser implementado, em 2-4 linhas. Detalhe o suficiente
+  para o agente montar um plano, sem reescrever a especificação inteira aqui.]
+- **Sistema(s) Envolvido(s):** [ex: `docs`, `hub`, `branch-greenfield`, `branch-brownfield`, `branch-blackbox`, `branch-infra`]
 - **Tipo de Ação:**
-  - [x] Somente leitura / Documentação
+  - [ ] Somente leitura / Documentação
   - [ ] Escrita de código-fonte
-- **Status:** EM EXECUÇÃO
+- **Status:** [PRONTO PARA PLANEJAMENTO / EM PLANEJAMENTO / APROVADO / EM EXECUÇÃO]
+  *(Fluxo: Definido como `PRONTO PARA PLANEJAMENTO` -> Agente assume como `EM PLANEJAMENTO` ao apresentar plano -> Usuário aprova -> Agente altera para `EM EXECUÇÃO` ao codificar)*
 
 ### Critérios de Aceite
-- [ ] `AGENTS.md` de todas as 5 branches atualizado com o Protocolo de Higiene e Sanitização Pós-Release baseado em evento.
-- [ ] `.agent/TASK.md` de todas as 5 branches atualizado com a regra de arquivamento por lote de release.
-- [ ] `.agent/ARCHIVE.md` de todas as 5 branches estruturado com modelo canônico de agrupamento por tag de versão (`## [vX.Y.Z] - AAAA-MM-DD`).
-- [ ] Todas as branches testadas e sincronizadas com o repositório remoto.
+- [ ] [Critério objetivo e verificável 1]
+- [ ] [Critério objetivo e verificável 2]
+- [ ] [Critério objetivo e verificável 3]
 
 ---
 
@@ -49,6 +50,7 @@
 | [02.1] | Padronizar Numeração de Tarefas e Criar Branch Blackbox | [`67b59fc`] | 2026-09-04 |
 | [02.2] | Equalizar Commits Atômicos, Conventional Commits e Numeração [XX.Y] | [`387471a`] | 2026-09-04 |
 | [03.1] | Criar Branch Especializada de Infraestrutura e Serviços (`infra`) | [`9f4de15`, `2e100f6`] | 2026-09-04 |
+| [03.2] | Formalizar Protocolo de Higiene e Sanitização Pós-Release nos Templates | [`0a87934`, `1107c67`, `1abbfd6`, `fd0cf01`, `33df53d`] | 2026-09-04 |
 
 > Quando esta tabela passar de ~15-20 linhas, mova as mais antigas para
 > `.agent/ARCHIVE.md` (ou simplesmente apague — o Git já é a fonte da verdade).
