@@ -35,6 +35,53 @@ O documento canônico da topologia deste repositório é o **[`.agent/SERVICES.m
 
 ---
 
+## 🔢 Padronização Semântica de Numeração de Tarefas ([XX.Y])
+
+Todas as tarefas no `.agent/TASK.md` devem seguir estritamente o formato **`[Épico/Fase].[Sequencial]`**:
+
+### 1. Tabela Semântica de Fases (`XX` com 2 dígitos)
+
+| Prefixo | Ciclo / Fase | Foco Operacional | Exemplos Típicos |
+| :---: | :--- | :--- | :--- |
+| **`00.x`** | **Bootstrap & Topologia** | Setup de ambiente, mapeamento de portas e volumes, catálogo inicial em `.agent/SERVICES.md`. | `[00.1] Setup de variáveis e catálogo de portas`<br>`[00.2] Provisionar banco e volumes persistentes` |
+| **`01.x`** | **Fundação & Serviços Core** | Reverse-proxy, roteamento base, certificados SSL, rede Docker e healthchecks essenciais. | `[01.1] Configurar Traefik com SSL automático`<br>`[01.2] Implementar rede isolada de banco` |
+| **`02.x` .. `89.x`** | **Épicos de Evolução (Serviços)** | Provisionamento de novas stacks de serviços e integrações agrupadas por domínio. | `[02.1] Provisionar stack de logs (VictoriaLogs)`<br>`[03.1] Integrar monitoramento com Uptime Kuma` |
+| **`90.x`** | **Refatoração & Otimização** | Ajuste de limites de CPU/RAM, otimização de imagens Docker, simplificação de redes e compose. | `[90.1] Padronizar limites de recursos nos contêineres`<br>`[90.2] Migrar volumes locais para storage dedicado` |
+| **`99.x`** | **Hardening & Release** | Auditoria de segurança de portas, rotação de segredos, rotinas de backup e corte de release. | `[99.1] Auditoria final de portas expostas e release v1.0` |
+
+### 2. Regras de Ouro de Numeração
+
+1. **Dois dígitos no Épico (`XX`):** Use sempre `00`, `01`, `02` ... `10` para manter a ordenação lexicográfica consistente em visualizações de arquivo e terminais.
+2. **Subtarefas Atômicas (`XX.Y.Z`):** Se uma tarefa necessitar de decomposição granular durante o planejamento ou execução, utilize subtarefas numeradas (ex: `[02.1.1]`, `[02.1.2]`).
+3. **Imutabilidade de Histórico:** O ID de uma tarefa concluída é imutável. Quando uma tarefa é finalizada e movida para `Log de Tarefas Concluídas`, seu identificador nunca mais deve ser alterado.
+4. **Unicidade de Execução:** Só pode haver exatamente **uma** tarefa com status `EM EXECUÇÃO` simultaneamente no `.agent/TASK.md`.
+
+---
+
+## 🏷️ Protocolo de Higiene e Sanitização Pós-Release (Gatilho de Tag/Versão)
+
+> 🎯 **Princípio de Disparo por Evento:** Este protocolo NÃO depende de numeração rígida de tarefa (não é exclusivo da fase `99.x`). Ele DEVE ser executado sempre que uma **Release / Tag Git** for publicada no projeto (seja via `/github-releases`, pelo desenvolvedor humano ou via pipeline de CI).
+
+Sempre que uma versão (ex: `v0.1.0`, `v0.2.0`, `v1.0.0`) for cortada, o agente deve executar o ciclo de 4 etapas para sanitizar seu contexto de trabalho:
+
+### 1. Arquivamento em Lote no `.agent/ARCHIVE.md`
+- Mova o bloco de tarefas concluídas correspondente a essa versão do `.agent/TASK.md` para o `.agent/ARCHIVE.md`.
+- Agrupe sob o cabeçalho explícito da release: `## [vX.Y.Z] - AAAA-MM-DD`.
+- Mantenha no `TASK.md` apenas o registro sucinto da release e as tarefas do ciclo ativo.
+
+### 2. Higiene e Consolidação de Memória no `.agent/NOTES.md` e `.agent/SERVICES.md`
+- **Promover o que é Definitivo:** Topologias, volumes e portas consolidadas devem ser formalmente registrados no `.agent/SERVICES.md`.
+- **Descartar o Efêmero:** Apague rascunhos de testes manuais, logs efêmeros de depuração ou anotações temporárias do `NOTES.md`.
+
+### 3. Sincronia de Artefatos de Borda
+- **`.env.example`:** Audite se todas as novas variáveis de portas, senhas fictícias e caminhos foram documentadas.
+- **`README.md` e `compose.yaml`:** Verifique se os comandos de subida e portas descritos no README condizem com a versão lançada.
+
+### 4. Reset do Ciclo no `.agent/TASK.md`
+- Promova para a **Tarefa Ativa** o próximo objetivo de infraestrutura do backlog, definindo o status como `PRONTO PARA PLANEJAMENTO`.
+
+---
+
 ## 🚫 Regras de Ouro (Anti-Padrões Proibidos em Infraestrutura)
 
 - **NUNCA** versione senhas, tokens de API ou credenciais de banco de dados em arquivos `.yaml`, `.yml` ou scripts. Utilize exclusivamente variáveis de ambiente (`${VAR_NAME}`) com placeholders no `.env.example`.
@@ -68,9 +115,15 @@ O documento canônico da topologia deste repositório é o **[`.agent/SERVICES.m
 2. **Ciclo por Etapa:** Valide a sintaxe do compose antes de commitar.
 3. **Diffs Cirúrgicos:** Nunca inclua arquivos acidentais de dados de volumes (`volumes/`, `data/`) ou `.env` real no commit.
 
-### 2. Padrão Conventional Commits (em inglês)
-- `feat(service): add victorialogs service with healthcheck`
-- `fix(network): resolve port collision on reverse proxy`
-- `docs(topology): document uptime-kuma volume persistence in SERVICES.md`
-- `refactor(compose): standardize resource limits across monitoring stack`
-- `chore(deps): bump postgres image tag to v16.3`
+### 2. Mensagens de Commit (Conventional Commits em Inglês)
+Todas as mensagens de commit DEVEM seguir rigorosamente a sintaxe `<type>(<scope>): <descrição no imperativo/presente>` em inglês:
+
+| Tipo | Finalidade Principal | Exemplo em Infraestrutura / Compose |
+| :---: | :--- | :--- |
+| **`feat`** | Novo serviço provisionado ou stack integrada | `feat(service): add victorialogs service with healthcheck` |
+| **`fix`** | Correção de portas, rede, volumes ou flags | `fix(network): resolve port collision on reverse proxy` |
+| **`docs`** | Atualização de SERVICES.md, topologia ou notas | `docs(topology): document uptime-kuma volume persistence in SERVICES.md` |
+| **`refactor`** | Limites de recursos ou simplificação de compose | `refactor(compose): standardize resource limits across monitoring stack` |
+| **`test`** | Testes de fumaça, curl ou checagem de portas | `test(smoke): add curl healthcheck verification script` |
+| **`chore`** | Atualização de imagens, configs ou dependências | `chore(deps): bump postgres image tag to v16.3` |
+
