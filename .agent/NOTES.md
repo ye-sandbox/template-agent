@@ -31,6 +31,7 @@
 | 2026-09-05 | Reset do contador + âncora `[99.1]` trava humana | Evita IDs `[150.2]` e release autônoma por agente. |
 | 2026-09-06 | Processo curto no `AGENTS.md`; starters sem memória do hub | Numeração/higiene em ensaio ocupavam ~40% do contexto always-on. |
 | 2026-09-06 | CI afirma **contratos do molde**, não parser/app | Blackbox/greenfield não têm runtime. Âncoras curtas no artefato gerado pegam regressão de guardrail sem inflar o starter. |
+| 2026-09-06 | Checklist greenfield só no template; `init.sh` apaga no projeto gerado | Evita constituir permanente de um item “apague ao terminar”. |
 
 ### Índice de ADRs formais
 
