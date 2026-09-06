@@ -94,6 +94,13 @@ rm -f "$TARGET_DIR/init.sh"
 # Entrar no diretório do projeto e reinicializar um histórico Git limpo
 cd "$TARGET_DIR"
 rm -rf .git
+
+# Drop the one-shot adaptation checklist so it is not baked into the generated repo
+if [ -f AGENTS.md ]; then
+    awk '/^## Checklist de adaptação/{exit} {print}' AGENTS.md > AGENTS.md.tmp
+    mv AGENTS.md.tmp AGENTS.md
+fi
+
 git init -b main >/dev/null 2>&1
 
 # Configurar git commit com fallback de autor caso não configurado globalmente
