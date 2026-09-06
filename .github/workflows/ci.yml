@@ -55,6 +55,10 @@ jobs:
           grep -qiE 'circuit breaker' AGENTS.md
           grep -qF '.env' .gitignore
           grep -qF '!.env.example' .gitignore
+          if grep -q 'Checklist de adaptação' AGENTS.md; then
+            echo "❌ Adaptation checklist leaked into generated AGENTS.md"
+            exit 1
+          fi
           echo "✅ Greenfield init.sh test passed successfully!"
 
       - name: Test Brownfield install.sh (Legacy Injection & Idempotency)
