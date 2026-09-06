@@ -11,23 +11,19 @@
 
 ## Tarefa Ativa
 
-### 📌 Tarefa [04.2]: Asserções de contrato no CI dos starters
+### 📌 Tarefa [XX.Y]: [Título curto e descritivo]
 
-- **Descrição:** O job `test-installers` só afirma que os arquivos existem. Depois do
-  scaffold, o CI deve falhar se o projeto gerado perder âncoras inegociáveis
-  (no-push, caracterização, `.gitignore` de segredos, `healthcheck`, `:latest`,
-  `docker compose config`). Sem código de aplicação e sem HTTP ao vivo.
-- **Sistema(s) Envolvido(s):** `ci`, `hub`, `branch-greenfield`, `branch-brownfield`, `branch-blackbox`, `branch-infra`
+- **Descrição:** [2–4 linhas para o agente montar um plano.]
+- **Sistema(s) Envolvido(s):** [ex: `docs`, `hub`, `branch-greenfield`]
 - **Tipo de Ação:**
   - [ ] Somente leitura / Documentação
-  - [x] Escrita de código-fonte
-- **Status:** EM EXECUÇÃO
+  - [ ] Escrita de código-fonte
+- **Status:** PRONTO PARA PLANEJAMENTO
+  *(Fluxo: `PRONTO PARA PLANEJAMENTO` → `EM PLANEJAMENTO` ao apresentar plano → aprovação → `EM EXECUÇÃO`)*
 
 ### Critérios de Aceite
-- [ ] Após `init.sh`/`install.sh`, o CI afirma âncoras curtas em `AGENTS.md` / `.gitignore` / compose de cada starter
-- [ ] `compose.yaml.example` da `infra` passa em `docker compose config` e não usa `:latest`
-- [ ] Scaffold blackbox sem JWT-like em claro; `.gitignore` cobre `.env`, `*.har`, `tests/fixtures/real/`
-- [ ] Job continua hermético (`TEMPLATE_REPO_URL="$GITHUB_WORKSPACE"`); âncoras estáveis (não o ensaio inteiro do `AGENTS.md`)
+- [ ] [Critério verificável 1]
+- [ ] [Critério verificável 2]
 
 ---
 
@@ -52,6 +48,7 @@
 | [03.2] | Formalizar Protocolo de Higiene e Sanitização Pós-Release nos Templates | [`0a87934`, `1107c67`, `1abbfd6`, `fd0cf01`, `33df53d`] | 2026-09-04 |
 | [03.3] | Padronizar Reset de Numeração por Release e Âncora [99.1] no Backlog Futuro | [`c310997`, `bab484d`, `efb6a89`, `a2da17c`, `abdb522`] | 2026-09-05 |
 | [04.1] | Enxugar guardrails e corrigir incoerências de contexto | [`b25715e`, `d615950`, `254a3ef`, `2bdd0eb`, `2ea2d63`, `0231b5e`, `58a1fc3`, `376adbc`, `ae7c529`, `4c6c90c`, `6b2a7e4`] | 2026-09-06 |
+| [04.2] | Asserções de contrato no CI dos starters | [`c582fd1`, `0397624`, `e575ec0`] | 2026-09-06 |
 
 > Quando esta tabela passar de ~15-20 linhas, mova as mais antigas para `.agent/ARCHIVE.md`.
 
@@ -59,7 +56,7 @@
 
 ## Backlog (Próximas, em ordem)
 
-*(vazio — próxima entrega é a tarefa ativa [04.2])*
+*(vazio)*
 
 ---
 
