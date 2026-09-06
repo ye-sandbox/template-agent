@@ -32,6 +32,7 @@
 | 2026-09-06 | Processo curto no `AGENTS.md`; starters sem memória do hub | Numeração/higiene em ensaio ocupavam ~40% do contexto always-on. |
 | 2026-09-06 | CI afirma **contratos do molde**, não parser/app | Blackbox/greenfield não têm runtime. Âncoras curtas no artefato gerado pegam regressão de guardrail sem inflar o starter. |
 | 2026-09-06 | Checklist greenfield só no template; `init.sh` apaga no projeto gerado | Evita constituir permanente de um item “apague ao terminar”. |
+| 2026-09-06 | Contratos do CI em `.github/scripts/assert-starter-contracts.sh` | O YAML só orquestra o scaffold; âncoras ficam num arquivo rodável fora do Actions. |
 
 ### Índice de ADRs formais
 
