@@ -38,55 +38,28 @@ Você é o(a) engenheiro(a) responsável pela governança, evolução e manuten�
 
 ---
 
-## 🔢 Padronização Semântica de Numeração de Tarefas ([XX.Y])
+## Numeração de Tarefas (`[XX.Y]`)
 
-Para assegurar previsibilidade e continuidade operacional entre diferentes sessões e agentes de IA, todas as tarefas no `.agent/TASK.md` devem seguir estritamente o formato **`[Épico/Fase].[Sequencial]`**:
+Formato `[Épico].[Sequencial]` com épico de **dois dígitos**. Subtarefas: `[XX.Y.Z]`. Só **uma** tarefa `EM EXECUÇÃO`. IDs imutáveis dentro da release. Após tag Git: arquivar no `ARCHIVE.md`, reiniciar em `[00.1]`/`[01.1]` e corrigir o ID da tarefa ativa. O Backlog Futuro deve ter `[99.1] Preparar Release (Tag Git) e Sanitizar Contexto` — o agente **NUNCA** a inicia sem permissão explícita.
 
-### 1. Tabela Semântica de Fases (`XX` com 2 dígitos)
-
-| Prefixo | Ciclo / Fase | Foco Operacional | Exemplos Típicos |
-| :---: | :--- | :--- | :--- |
-| **`00.x`** | **Bootstrap & Discovery** | Setup de ambiente, mapeamento de dependências, diagnóstico de linters, Task 00 de auditoria. | `[00.1] Setup de ferramentas e linters`<br>`[00.2] Mapeamento de autenticação e endpoints` |
-| **`01.x`** | **Fundação & Guardrails** | Estabilização inicial, correção de bugs críticos imediatos, criação de testes base e contratos canônicos. | `[01.1] Corrigir falhas do script de instalação`<br>`[01.2] Configurar CI hermético com validação` |
-| **`02.x` .. `89.x`** | **Épicos de Evolução (Features)** | Desenvolvimento de funcionalidades de negócio ou templates adicionais. Cada dezena representa um épico coeso. | `[02.1] Criar branch especializada blackbox`<br>`[03.1] Implementar parser resiliente de PDF` |
-| **`90.x`** | **Refatoração & Otimização** | Pagamento de dívida técnica acumulada, melhorias de performance e simplificação de código sem alterar contratos. | `[90.1] Otimizar pipeline de scraping`<br>`[90.2] Migrar parsing regex para parser AST` |
-| **`99.x`** | **Hardening & Release** | Auditoria final de segurança/segredos, documentação de encerramento, tagging de versão ou corte de release. | `[99.1] Auditoria final de invariantes e release v1.0` |
-
-### 2. Regras de Ouro de Numeração
-
-1. **Dois dígitos no Épico (`XX`):** Use sempre `00`, `01`, `02` ... `10` para manter a ordenação lexicográfica consistente em visualizações de arquivo e terminais.
-2. **Subtarefas Atômicas (`XX.Y.Z`):** Se uma tarefa `[02.1]` necessitar de decomposição granular durante o planejamento ou execução, utilize subtarefas numeradas (ex: `[02.1.1]`, `[02.1.2]`).
-3. **Imutabilidade de Histórico por Release:** O ID de uma tarefa é imutável dentro do escopo da sua respectiva versão/release arquivada no `.agent/ARCHIVE.md`.
-4. **Reset do Contador por Ciclo/Release:** A cada versão publicada e sanitização concluída, o contador no `.agent/TASK.md` é reiniciado a partir de `[00.1]` (ou `[01.1]`), impedindo o crescimento infinito de identificadores. Se houver uma tarefa ativa remanescente no momento do corte, sua numeração deve ser corrigida para o novo ciclo.
-5. **Âncora Padrão `[99.1]` no Backlog Futuro:** Por padrão, o `.agent/TASK.md` deve conter no Backlog Futuro a tarefa `[99.1] Preparar Release (Tag Git) e Sanitizar Contexto (Apenas executar com permissão explícita do usuário)`. Essa tarefa serve como balizador para o encerramento do ciclo, mas o agente **NUNCA** deve iniciá-la sem autorização explícita do usuário.
-6. **Unicidade de Execução:** Só pode haver exatamente **uma** tarefa com status `EM EXECUÇÃO` simultaneamente no `.agent/TASK.md`.
+| Prefixo | Fase | Foco neste hub |
+| :---: | :--- | :--- |
+| **`00.x`** | Bootstrap & Discovery | Setup, linters, auditoria inicial |
+| **`01.x`** | Fundação & Guardrails | Bugs críticos, CI, contratos canônicos |
+| **`02.x`–`89.x`** | Épicos | Novos templates, features do hub (cada dezena = um épico) |
+| **`90.x`** | Refatoração | Dívida técnica sem mudar contratos |
+| **`99.x`** | Hardening & Release | Auditoria final e tag — só com permissão humana |
 
 ---
 
-## 🏷️ Protocolo de Higiene e Sanitização Pós-Release (Gatilho de Tag/Versão)
+## Higiene Pós-Release (gatilho: tag Git, qualquer fase)
 
-> 🎯 **Princípio de Disparo por Evento:** Este protocolo NÃO depende de numeração rígida de tarefa (não é exclusivo da fase `99.x`). Ele DEVE ser executado sempre que uma **Release / Tag Git** for publicada no projeto (seja via `/github-releases`, pelo desenvolvedor humano ou via pipeline de CI).
+Não está preso à fase `99.x`. Ao publicar `vX.Y.Z`:
 
-Sempre que uma versão (ex: `v0.1.0`, `v0.2.0`, `v1.0.0`) for cortada, o agente deve executar o ciclo de 4 etapas para sanitizar seu contexto de trabalho:
-
-### 1. Arquivamento em Lote no `.agent/ARCHIVE.md`
-- Mova o bloco de tarefas concluídas correspondente a essa versão do `.agent/TASK.md` para o `.agent/ARCHIVE.md`.
-- Agrupe sob o cabeçalho explícito da release: `## [vX.Y.Z] - AAAA-MM-DD`.
-- Mantenha no `TASK.md` apenas o registro sucinto da release e as tarefas do ciclo ativo.
-
-### 2. Higiene e Consolidação de Memória no `.agent/NOTES.md`
-- **Promover o que é Definitivo:** Decisões arquiteturais estruturais tomadas durante a versão devem ser consolidadas em ADRs formais (`.agent/adr/`) ou invariantes canônicos.
-- **Descartar o Efêmero:** Apague rascunhos de payloads, logs de depuração temporários ou anotações de exploração que já foram absorvidas e testadas no código-fonte.
-
-### 3. Sincronia de Artefatos de Borda
-- **`.env.example`:** Audite se todas as novas variáveis de ambiente introduzidas na versão foram documentadas com valores exemplares.
-- **`README.md`:** Verifique se as instruções de instalação, badges e Quick Start funcionam exatamente como documentado para a versão lançada.
-
-### 4. Reset do Ciclo no `.agent/TASK.md`
-- **Reinício da Contagem:** Com o lote arquivado no `ARCHIVE.md`, reinicie o contador de tarefas a partir de `[00.1]` (para discovery/planejamento do novo ciclo) ou `[01.1]` (para o primeiro épico de entrega).
-- **Correção da Tarefa Ativa:** Se houver uma tarefa ativa em andamento ou planejada durante o corte, reajuste seu identificador para refletir o novo ciclo (ex: renumerando-a para `[00.1]` ou `[01.1]`).
-- **Promoção da Meta:** Promova para a **Tarefa Ativa** o próximo objetivo do projeto, definindo o status como `PRONTO PARA PLANEJAMENTO`.
-- **Manutenção da Âncora `[99.1]`:** Certifique-se de que a tarefa `[99.1] Preparar Release (Tag Git) e Sanitizar Contexto` permaneça presente no Backlog Futuro para o próximo encerramento.
+1. **Arquivar:** mover o log do ciclo de `TASK.md` → `ARCHIVE.md` sob `## [vX.Y.Z] - AAAA-MM-DD`.
+2. **Consolidar:** promover decisões definitivas para ADRs; apagar dumps e notas efêmeras no `NOTES.md`.
+3. **Borda:** `.env.example` e `README.md` alinhados à tag.
+4. **Reset:** reiniciar numeração; corrigir ID da tarefa ativa; promover a próxima meta (`PRONTO PARA PLANEJAMENTO`); manter `[99.1]` no Backlog Futuro.
 
 ---
 
