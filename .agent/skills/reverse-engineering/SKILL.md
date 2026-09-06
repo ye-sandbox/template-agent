@@ -79,6 +79,27 @@ Assim que a chamada for validada no terminal:
    - Snippet cURL reproduzível testado.
    - Identificação de pegadinhas (ex: encoding ISO-8859-1, parâmetros obrigatórios porém ocultos).
 
+### Exemplo canônico (SEI) — não copie dados reais para o Git
+
+Use só como anatomia. No `ENDPOINTS.md` do projeto, substitua pelos contratos do alvo.
+
+```markdown
+### 📌 [POST] `controlador.php?acao=procedimento_trabalhar`
+
+- **Headers:** `Cookie: SEI_SESSION=<token-sessao>` · `Content-Type: application/x-www-form-urlencoded`
+- **Body:** `id_procedimento` (int) · `infra_hash` (CSRF da tela anterior)
+- **Sucesso 200:** HTML `ISO-8859-1`; `#divArvoreHtml [data-id-documento]`; `#txtNumeroProcesso`
+- **Sessão morta:** 302 ou 200 com `<input id="txtUsuario">`
+- **cURL:**
+  ```bash
+  curl -s -X POST "$TARGET_BASE_URL/controlador.php?acao=procedimento_trabalhar" \
+    -H "Content-Type: application/x-www-form-urlencoded" \
+    -b "SEI_SESSION=$TARGET_SESSION_COOKIE" \
+    -d "id_procedimento=1234567&infra_hash=$TARGET_CSRF_HASH"
+  ```
+- **Pegadinhas:** encoding ISO-8859-1; `id_procedimento` vazio devolve a tela inicial sem erro HTTP.
+```
+
 ---
 
 ## Passo 5: Criação de Fixtures Mockadas para Testes
