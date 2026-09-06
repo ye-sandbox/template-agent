@@ -74,25 +74,6 @@
 
 ---
 
-## 4. Template para Novos Endpoints (Copie e Preencha)
+## 4. Novos endpoints
 
-```markdown
-### 📌 [MÉTODO] `caminho/do/endpoint`
-
-- **Descrição:** [O que a chamada faz e para que serve]
-- **Headers Mandatórios:**
-  - `Header-Name: value`
-- **Parâmetros de Entrada:**
-  | Campo | Tipo | Local (Query/Body/Header) | Obrigatório? | Descrição |
-  | :--- | :---: | :---: | :---: | :--- |
-  | `campo` | `string` | Query | Sim | Exemplo |
-- **Respostas Conhecidas:**
-  - **Sucesso (200 OK):** [Estrutura JSON esperada ou seletores DOM para HTML]
-  - **Erros Típicos:** [Status e formato de erro]
-- **Snippet cURL Mínimo:**
-  ```bash
-  curl -s -X METHOD "https://host/endpoint" -H "..." -d "..."
-  ```
-- **Fixture de Teste Associada:** `tests/fixtures/nome_da_fixture.json`
-- **Invariantes e Pegadinhas:** [Comportamentos inesperados, encodings, rate-limits, etc.]
-```
+Copie a anatomia da seção 3 (descrição, headers, parâmetros, respostas, cURL, fixture, pegadinhas). Procedimento completo: `.agent/skills/reverse-engineering/SKILL.md`. Substitua os exemplos SEI pelos contratos reais do alvo.
