@@ -26,9 +26,8 @@
 
 ## Armadilhas e Comportamentos Não-Óbvios
 
-- **Permissões em Volumes de Log/DB:** Algumas imagens rodam como usuário não-root (ex: UID 1000 ou 65534). Se usar bind mount, o diretório no host deve possuir permissão compatível.
-- **Remoção de Volumes com `down`:** NUNCA execute `docker compose down -v`. A flag `-v` remove os volumes persistentes destruindo os dados de produção.
-- **Conflito de Portas no Host:** Sempre consulte `.agent/SERVICES.md` antes de atribuir uma porta no `ports:`.
+- **UID em bind mount:** imagens não-root (1000, 65534) exigem permissão compatível no host. Named volume para DB/logs evita isso — a regra `down -v` está no `AGENTS.md`.
+- **Porta no host:** consulte `SERVICES.md` antes de `ports:`; colisão aparece como `bind: address already in use`.
 
 ---
 

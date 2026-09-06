@@ -22,7 +22,7 @@
   - [x] Somente leitura / Documentação
   - [x] Escrita de código-fonte
 - **Status:** PRONTO PARA PLANEJAMENTO
-  *(Fluxo: Definido como `PRONTO PARA PLANEJAMENTO` -> Agente assume como `EM PLANEJAMENTO` ao apresentar plano -> Usuário aprova -> Agente altera para `EM EXECUÇÃO` ao codificar)*
+  *(Fluxo: `PRONTO PARA PLANEJAMENTO` → `EM PLANEJAMENTO` ao apresentar plano → aprovação → `EM EXECUÇÃO`)*
 
 ### Critérios de Aceite
 - [ ] Arquivo `compose.yaml` criado e validado com `docker compose config`
@@ -62,13 +62,6 @@
 
 ## Como manter este arquivo enxuto
 
-1. **Detalhe vive na tarefa ativa, não no histórico.** Assim que uma tarefa é concluída,
-   reduza-a a uma linha na tabela de log (título + hash do commit) e promova a próxima
-   do backlog para "Tarefa Ativa" com o detalhe completo.
-2. **Backlog é lista de títulos, não de specs.** Escreva a especificação completa só
-   quando o item vira a tarefa ativa — evita manter duas fontes de verdade desatualizadas.
-3. **Prefira issues/tracker externo para escopo grande.** Se uma ideia do "Backlog Futuro"
-   cresce e ganha critérios de aceite, sub-tarefas etc., mova para o sistema de issues do
-   projeto e deixe aqui só um link/referência.
-4. **Arquive por release e lote, reiniciando o contador.** Ao cortar uma release/tag Git (ou quando o log passar de ~15 linhas), mova as tarefas concluídas desse marco para `.agent/ARCHIVE.md` agrupadas por versão (ex: `## [v0.1.0] - AAAA-MM-DD`). Em seguida, reinicie a numeração de tarefas a partir de `[00.1]` (ou `[01.1]`), reajustando a numeração de qualquer tarefa ativa remanescente. O `git log` já preserva o histórico integral.
+1. Detalhe só na tarefa ativa. Concluída → uma linha no log e promover o backlog.
+2. Numeração, arquivo pós-release e `[99.1]`: ver `AGENTS.md`.
 
