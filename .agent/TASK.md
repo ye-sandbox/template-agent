@@ -11,22 +11,23 @@
 
 ## Tarefa Ativa
 
-### 📌 Tarefa [04.2]: Suite de testes herméticos para a branch blackbox no CI
+### 📌 Tarefa [04.2]: Asserções de contrato no CI dos starters
 
-- **Descrição:** O job `test-installers` só afirma que o `init.sh` da `blackbox` gera
-  arquivos. Falta validar o ciclo caixa-preta no CI: fixture mockada, parser contra
-  o mock (sem rede) e ausência de segredos em fixtures de exemplo.
-- **Sistema(s) Envolvido(s):** `ci`, `branch-blackbox`, `hub`
+- **Descrição:** O job `test-installers` só afirma que os arquivos existem. Depois do
+  scaffold, o CI deve falhar se o projeto gerado perder âncoras inegociáveis
+  (no-push, caracterização, `.gitignore` de segredos, `healthcheck`, `:latest`,
+  `docker compose config`). Sem código de aplicação e sem HTTP ao vivo.
+- **Sistema(s) Envolvido(s):** `ci`, `hub`, `branch-greenfield`, `branch-brownfield`, `branch-blackbox`, `branch-infra`
 - **Tipo de Ação:**
   - [ ] Somente leitura / Documentação
   - [x] Escrita de código-fonte
-- **Status:** PRONTO PARA PLANEJAMENTO
-  *(Fluxo: `PRONTO PARA PLANEJAMENTO` → `EM PLANEJAMENTO` ao apresentar plano → aprovação → `EM EXECUÇÃO`)*
+- **Status:** EM EXECUÇÃO
 
 ### Critérios de Aceite
-- [ ] CI executa pelo menos um teste hermético (fixture local, sem HTTP ao vivo) no projeto gerado pela `blackbox`
-- [ ] Falha se fixture de exemplo contiver cookie/token/PII óbvios
-- [ ] Job continua hermético (`TEMPLATE_REPO_URL="$GITHUB_WORKSPACE"`), sem `git merge` entre branches
+- [ ] Após `init.sh`/`install.sh`, o CI afirma âncoras curtas em `AGENTS.md` / `.gitignore` / compose de cada starter
+- [ ] `compose.yaml.example` da `infra` passa em `docker compose config` e não usa `:latest`
+- [ ] Scaffold blackbox sem JWT-like em claro; `.gitignore` cobre `.env`, `*.har`, `tests/fixtures/real/`
+- [ ] Job continua hermético (`TEMPLATE_REPO_URL="$GITHUB_WORKSPACE"`); âncoras estáveis (não o ensaio inteiro do `AGENTS.md`)
 
 ---
 
