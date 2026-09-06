@@ -48,6 +48,13 @@ jobs:
             echo "Error: Expected exactly 1 commit in scaffolded Greenfield project, got $COMMIT_COUNT"
             exit 1
           fi
+
+          # Contract anchors (generated project, not the hub branch)
+          grep -qF '.agent/TASK.md' AGENTS.md
+          grep -qF '.agent/NOTES.md' AGENTS.md
+          grep -qiE 'circuit breaker' AGENTS.md
+          grep -qF '.env' .gitignore
+          grep -qF '!.env.example' .gitignore
           echo "✅ Greenfield init.sh test passed successfully!"
 
       - name: Test Brownfield install.sh (Legacy Injection & Idempotency)
@@ -73,6 +80,11 @@ jobs:
 
           # 2. Test Idempotency with force/re-run
           /tmp/brownfield-source/install.sh -y /tmp/ci-test-brownfield
+
+          grep -qF '.agent/INVARIANTS.md' /tmp/ci-test-brownfield/AGENTS.md
+          grep -qiE 'caracteriza' /tmp/ci-test-brownfield/AGENTS.md
+          grep -qiF 'git push' /tmp/ci-test-brownfield/AGENTS.md
+          grep -qF 'Chesterton' /tmp/ci-test-brownfield/.agent/INVARIANTS.md
 
           rm -rf /tmp/brownfield-source /tmp/ci-test-brownfield
           echo "✅ Brownfield install.sh test passed successfully!"
@@ -105,6 +117,17 @@ jobs:
           COMMIT_COUNT=$(git rev-list --count HEAD)
           if [ "$COMMIT_COUNT" -ne 1 ]; then
             echo "Error: Expected exactly 1 commit in scaffolded Blackbox project, got $COMMIT_COUNT"
+            exit 1
+          fi
+
+          grep -qiF 'git push' AGENTS.md
+          grep -qiE 'fixture' AGENTS.md
+          grep -qF '.env' .gitignore
+          grep -qF '*.har' .gitignore
+          grep -qF 'tests/fixtures/real/' .gitignore
+          grep -qF '$TARGET_SESSION_COOKIE' .agent/ENDPOINTS.md
+          if grep -RIE --exclude-dir=.git 'eyJ[A-Za-z0-9_-]{20,}\.[A-Za-z0-9_-]+\.' .; then
+            echo "❌ JWT-like token found in blackbox scaffold"
             exit 1
           fi
           echo "✅ Blackbox init.sh test passed successfully!"
@@ -140,6 +163,20 @@ jobs:
             echo "Error: Expected exactly 1 commit in scaffolded Infra project, got $COMMIT_COUNT"
             exit 1
           fi
+
+          grep -qF 'down -v' AGENTS.md
+          grep -qF ':latest' AGENTS.md
+          grep -qF 'healthcheck' AGENTS.md
+          HEALTHCHECK_COUNT=$(grep -c '^    healthcheck:' compose.yaml.example)
+          if [ "$HEALTHCHECK_COUNT" -lt 2 ]; then
+            echo "Error: expected at least 2 healthchecks in compose.yaml.example, got $HEALTHCHECK_COUNT"
+            exit 1
+          fi
+          if grep -qE 'image:[[:space:]]*[^[:space:]]+:latest' compose.yaml.example; then
+            echo "❌ :latest image tag found in compose.yaml.example"
+            exit 1
+          fi
+          docker compose --env-file .env.example -f compose.yaml.example config --quiet
           echo "✅ Infra init.sh test passed successfully!"
 
   lint-markdown:
