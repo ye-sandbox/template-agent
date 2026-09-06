@@ -6,35 +6,43 @@
 >
 > **Regra de ouro deste arquivo:** ele guarda O QUE FAZER, não O QUE JÁ FOI FEITO.
 > Detalhes de implementação de tarefas concluídas vivem no `git log`, não aqui.
-> Ver seção "Como manter este arquivo enxuto" no final.
 
 ---
 
 ## Tarefa Ativa
 
-### 📌 Tarefa [XX.Y]: [Título curto e descritivo]
+### 📌 Tarefa [04.1]: Enxugar guardrails e corrigir incoerências de contexto
 
-- **Descrição:** [O que precisa ser implementado, em 2-4 linhas. Detalhe o suficiente
-  para o agente montar um plano, sem reescrever a especificação inteira aqui.]
-- **Sistema(s) Envolvido(s):** [ex: `docs`, `hub`, `branch-greenfield`, `branch-brownfield`, `branch-blackbox`, `branch-infra`]
+- **Descrição:** Comprimir blocos de processo duplicados nos `AGENTS.md`, sanitizar
+  resíduos do hub nos starters, corrigir DoD/no-push assimétricos e eliminar a
+  colisão de ID `[02.2]` no backlog. Sem `git merge` entre branches.
+- **Sistema(s) Envolvido(s):** `docs`, `hub`, `branch-greenfield`, `branch-brownfield`, `branch-blackbox`, `branch-infra`
 - **Tipo de Ação:**
-  - [ ] Somente leitura / Documentação
+  - [x] Somente leitura / Documentação
   - [ ] Escrita de código-fonte
-- **Status:** [PRONTO PARA PLANEJAMENTO / EM PLANEJAMENTO / APROVADO / EM EXECUÇÃO]
-  *(Fluxo: Definido como `PRONTO PARA PLANEJAMENTO` -> Agente assume como `EM PLANEJAMENTO` ao apresentar plano -> Usuário aprova -> Agente altera para `EM EXECUÇÃO` ao codificar)*
+- **Status:** EM EXECUÇÃO
+
+### Subtarefas
+- [ ] **[04.1.1]** Registrar este épico e corrigir colisão `[02.2]` neste arquivo
+- [ ] **[04.1.2]** Comprimir numeração + higiene no `AGENTS.md` da `main`
+- [ ] **[04.1.3]** Enxugar `NOTES.md` e `ARCHIVE.md` da `main`
+- [ ] **[04.1.4]** Greenfield: comprimir `AGENTS.md` e sanitizar TASK/NOTES/ARCHIVE
+- [ ] **[04.1.5]** Brownfield: comprimir `AGENTS.md`, deduplicar no-push, sanitizar
+- [ ] **[04.1.6]** Blackbox: completar DoD, deduplicar no-push, comprimir, sanitizar
+- [ ] **[04.1.7]** Infra: comprimir `AGENTS.md`, política de push, sanitizar NOTES
 
 ### Critérios de Aceite
-- [ ] [Critério objetivo e verificável 1]
-- [ ] [Critério objetivo e verificável 2]
-- [ ] [Critério objetivo e verificável 3]
+- [ ] Backlog da `main` sem ID colidindo com o log de concluídas
+- [ ] Blocos de numeração + higiene em cada `AGENTS.md` cabem em ~20 linhas, com tabela de fases específica da branch
+- [ ] Starters sem log/decisões/arquivo do hub (`031e7a6`, decisão MCP de 2026-09-03, `ARCHIVE` fake)
+- [ ] Blackbox DoD inclui log no `TASK.md`; no-push aparece uma vez; infra tem política explícita de push
+- [ ] Commits atômicos Conventional Commits em inglês, um por branch/responsabilidade; sem `git merge`
 
 ---
 
 ## Log de Tarefas Concluídas
 
-> Uma linha por tarefa. Nada de "critérios verificados" repetidos aqui — isso já está
-> no commit. Use `git log --oneline --grep="Tarefa XX"` ou `git show <hash>` para
-> recuperar o detalhe quando precisar.
+> Uma linha por tarefa. Use `git log --oneline` ou `git show <hash>` para o detalhe.
 
 | Tarefa | Título | Commit(s) | Data |
 |---|---|---|---|
@@ -53,49 +61,26 @@
 | [03.2] | Formalizar Protocolo de Higiene e Sanitização Pós-Release nos Templates | [`0a87934`, `1107c67`, `1abbfd6`, `fd0cf01`, `33df53d`] | 2026-09-04 |
 | [03.3] | Padronizar Reset de Numeração por Release e Âncora [99.1] no Backlog Futuro | [`c310997`, `bab484d`, `efb6a89`, `a2da17c`, `abdb522`] | 2026-09-05 |
 
-> Quando esta tabela passar de ~15-20 linhas, mova as mais antigas para
-> `.agent/ARCHIVE.md` (ou simplesmente apague — o Git já é a fonte da verdade).
+> Quando esta tabela passar de ~15-20 linhas, mova as mais antigas para `.agent/ARCHIVE.md`.
 
 ---
 
 ## Backlog (Próximas, em ordem)
 
-> Uma linha por item. Só vira uma seção detalhada com "Descrição" e "Critérios de
-> Aceite" completos quando se tornar a Tarefa Ativa.
-
-- [ ] **[02.2]** [Criar suite de testes de integração e mocks para a branch blackbox no CI] — `[hub]`
+- [ ] **[04.2]** Criar suite de testes de integração e mocks para a branch blackbox no CI — `[hub]`
 
 ---
 
 ## Backlog Futuro / Ideias (não priorizadas)
 
-> Itens de escopo maior ou ainda não maduros o suficiente para entrar no backlog
-> ordenado. Uma linha cada — se crescer detalhe aqui, é sinal de que deveria virar
-> uma issue no tracker do projeto (GitHub Issues, Linear, etc.) em vez de inchar
-> este arquivo.
-
 - [ ] **[99.1]** Preparar Release (Tag Git) e Sanitizar Contexto (Apenas executar com permissão explícita do usuário)
-- [ ] [Ideia / feature futura 1]
-- [ ] [Ideia / feature futura 2]
 
 ---
 
 ## Como manter este arquivo enxuto
 
-1. **Detalhe vive na tarefa ativa, não no histórico.** Assim que uma tarefa é concluída,
-   reduza-a a uma linha na tabela de log (título + hash do commit) e promova a próxima
-   do backlog para "Tarefa Ativa" com o detalhe completo.
-2. **Backlog é lista de títulos, não de specs.** Escreva a especificação completa só
-   quando o item vira a tarefa ativa — evita manter duas fontes de verdade desatualizadas.
-3. **Prefira issues/tracker externo para escopo grande.** Se uma ideia do "Backlog Futuro"
-   cresce e ganha critérios de aceite, sub-tarefas etc., mova para o sistema de issues do
-   projeto e deixe aqui só um link/referência.
-4. **Arquive por release e lote, reiniciando o contador.** Ao cortar uma release/tag Git (ou quando o log passar de ~15 linhas), mova as tarefas concluídas desse marco para `.agent/ARCHIVE.md` agrupadas por versão (ex: `## [v0.1.0] - AAAA-MM-DD`). Em seguida, reinicie a numeração de tarefas a partir de `[00.1]` (ou `[01.1]`), reajustando a numeração de qualquer tarefa ativa remanescente. O `git log` preserva o histórico integral.
-5. **Nunca duplique o commit message aqui.** Se a mensagem de commit já segue Conventional
-   Commits (`feat(module): ...`), ela já documenta o que mudou. Este arquivo só precisa
-   apontar pra ela.
-6. **Instrua o agente a consultar o Git quando precisar de contexto histórico**, em vez de
-   reler um TASK.md longo. Ex: "para entender decisões passadas, rode `git log --oneline`
-   ou consulte `.agent/NOTES.md` para decisões arquiteturais que não são óbvias a partir
-   do diff."
-7. **Use a numeração semântica [XX.Y]:** Siga estritamente a convenção de fases e regras de ouro descritas no `AGENTS.md`.
+1. Detalhe só na tarefa ativa. Concluída → uma linha no log (título + hash) e promover o backlog.
+2. Backlog é lista de títulos. Spec completa só quando o item vira tarefa ativa.
+3. Escopo grande → issue no tracker; aqui só o link.
+4. Numeração, arquivo pós-release e âncora `[99.1]`: ver `AGENTS.md`. Não duplique o protocolo aqui.
+5. Não cole a mensagem de commit neste arquivo. Histórico profundo: `git log` / `.agent/NOTES.md`.
