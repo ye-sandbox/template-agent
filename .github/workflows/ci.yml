@@ -21,167 +21,46 @@ jobs:
         run: |
           git config --global user.name "GitHub Action"
           git config --global user.email "action@github.com"
+          chmod +x .github/scripts/assert-starter-contracts.sh
 
       - name: Test Greenfield init.sh (Project Scaffolding)
         run: |
           echo "=== Testing Greenfield init.sh ==="
           git show origin/greenfield:init.sh > init.sh 2>/dev/null || git show greenfield:init.sh > init.sh
           chmod +x init.sh
-          
-          # Run init.sh using local workspace as template source
           TEMPLATE_REPO_URL="$GITHUB_WORKSPACE" ./init.sh -y /tmp/ci-test-greenfield
           rm -f init.sh
-
-          # Assertions for Greenfield project structure
-          test -f /tmp/ci-test-greenfield/AGENTS.md
-          test -d /tmp/ci-test-greenfield/.agent
-          test -f /tmp/ci-test-greenfield/.agent/skills/database-migration/SKILL.md
-          test -f /tmp/ci-test-greenfield/.agent/skills/api-endpoint/SKILL.md
-          test -f /tmp/ci-test-greenfield/.agent/adr/000-template.md
-          test -d /tmp/ci-test-greenfield/.git
-          ! test -f /tmp/ci-test-greenfield/init.sh
-
-          # Verify clean initial commit
-          cd /tmp/ci-test-greenfield
-          COMMIT_COUNT=$(git rev-list --count HEAD)
-          if [ "$COMMIT_COUNT" -ne 1 ]; then
-            echo "Error: Expected exactly 1 commit in scaffolded Greenfield project, got $COMMIT_COUNT"
-            exit 1
-          fi
-
-          # Contract anchors (generated project, not the hub branch)
-          grep -qF '.agent/TASK.md' AGENTS.md
-          grep -qF '.agent/NOTES.md' AGENTS.md
-          grep -qiE 'circuit breaker' AGENTS.md
-          grep -qF '.env' .gitignore
-          grep -qF '!.env.example' .gitignore
-          if grep -q 'Checklist de adaptação' AGENTS.md; then
-            echo "❌ Adaptation checklist leaked into generated AGENTS.md"
-            exit 1
-          fi
-          echo "✅ Greenfield init.sh test passed successfully!"
+          .github/scripts/assert-starter-contracts.sh greenfield /tmp/ci-test-greenfield
 
       - name: Test Brownfield install.sh (Legacy Injection & Idempotency)
         run: |
           echo "=== Testing Brownfield install.sh ==="
           rm -rf /tmp/brownfield-source /tmp/ci-test-brownfield
           mkdir -p /tmp/brownfield-source /tmp/ci-test-brownfield
-          
-          # Extract brownfield template files
           git archive origin/brownfield 2>/dev/null | tar -x -C /tmp/brownfield-source || git archive brownfield | tar -x -C /tmp/brownfield-source
           chmod +x /tmp/brownfield-source/install.sh
-
-          # 1. Fresh install
           /tmp/brownfield-source/install.sh -y /tmp/ci-test-brownfield
-
-          # Assertions for Brownfield structure
-          test -f /tmp/ci-test-brownfield/AGENTS.md
-          test -d /tmp/ci-test-brownfield/.agent
-          test -f /tmp/ci-test-brownfield/.agent/INVARIANTS.md
-          test -f /tmp/ci-test-brownfield/.agent/TASK.md
-          test -f /tmp/ci-test-brownfield/.agent/NOTES.md
-          test -f /tmp/ci-test-brownfield/.agent/ARCHIVE.md
-
-          # 2. Test Idempotency with force/re-run
           /tmp/brownfield-source/install.sh -y /tmp/ci-test-brownfield
-
-          grep -qF '.agent/INVARIANTS.md' /tmp/ci-test-brownfield/AGENTS.md
-          grep -qiE 'caracteriza' /tmp/ci-test-brownfield/AGENTS.md
-          grep -qiF 'git push' /tmp/ci-test-brownfield/AGENTS.md
-          grep -qF 'Chesterton' /tmp/ci-test-brownfield/.agent/INVARIANTS.md
-
+          .github/scripts/assert-starter-contracts.sh brownfield /tmp/ci-test-brownfield
           rm -rf /tmp/brownfield-source /tmp/ci-test-brownfield
-          echo "✅ Brownfield install.sh test passed successfully!"
 
       - name: Test Blackbox init.sh (Reverse Engineering Scaffolding)
         run: |
           echo "=== Testing Blackbox init.sh ==="
           git show origin/blackbox:init.sh > init-bb.sh 2>/dev/null || git show blackbox:init.sh > init-bb.sh
           chmod +x init-bb.sh
-
-          # Run init.sh using local workspace as template source
           TEMPLATE_REPO_URL="$GITHUB_WORKSPACE" ./init-bb.sh -y /tmp/ci-test-blackbox
           rm -f init-bb.sh
-
-          # Assertions for Blackbox project structure
-          test -f /tmp/ci-test-blackbox/AGENTS.md
-          test -d /tmp/ci-test-blackbox/.agent
-          test -f /tmp/ci-test-blackbox/.agent/ENDPOINTS.md
-          test -f /tmp/ci-test-blackbox/.agent/skills/reverse-engineering/SKILL.md
-          test -f /tmp/ci-test-blackbox/.agent/TASK.md
-          test -f /tmp/ci-test-blackbox/.agent/NOTES.md
-          test -f /tmp/ci-test-blackbox/.agent/ARCHIVE.md
-          test -f /tmp/ci-test-blackbox/.env.example
-          test -f /tmp/ci-test-blackbox/.gitignore
-          test -d /tmp/ci-test-blackbox/.git
-          ! test -f /tmp/ci-test-blackbox/init.sh
-
-          # Verify clean initial commit
-          cd /tmp/ci-test-blackbox
-          COMMIT_COUNT=$(git rev-list --count HEAD)
-          if [ "$COMMIT_COUNT" -ne 1 ]; then
-            echo "Error: Expected exactly 1 commit in scaffolded Blackbox project, got $COMMIT_COUNT"
-            exit 1
-          fi
-
-          grep -qiF 'git push' AGENTS.md
-          grep -qiE 'fixture' AGENTS.md
-          grep -qF '.env' .gitignore
-          grep -qF '*.har' .gitignore
-          grep -qF 'tests/fixtures/real/' .gitignore
-          grep -qF '$TARGET_SESSION_COOKIE' .agent/ENDPOINTS.md
-          if grep -RIE --exclude-dir=.git 'eyJ[A-Za-z0-9_-]{20,}\.[A-Za-z0-9_-]+\.' .; then
-            echo "❌ JWT-like token found in blackbox scaffold"
-            exit 1
-          fi
-          echo "✅ Blackbox init.sh test passed successfully!"
+          .github/scripts/assert-starter-contracts.sh blackbox /tmp/ci-test-blackbox
 
       - name: Test Infra init.sh (Service & Homelab Scaffolding)
         run: |
           echo "=== Testing Infra init.sh ==="
           git show origin/infra:init.sh > init-infra.sh 2>/dev/null || git show infra:init.sh > init-infra.sh
           chmod +x init-infra.sh
-
-          # Run init.sh using local workspace as template source
           TEMPLATE_REPO_URL="$GITHUB_WORKSPACE" ./init-infra.sh -y /tmp/ci-test-infra
           rm -f init-infra.sh
-
-          # Assertions for Infra project structure
-          test -f /tmp/ci-test-infra/AGENTS.md
-          test -d /tmp/ci-test-infra/.agent
-          test -f /tmp/ci-test-infra/.agent/SERVICES.md
-          test -f /tmp/ci-test-infra/.agent/skills/compose-service/SKILL.md
-          test -f /tmp/ci-test-infra/.agent/TASK.md
-          test -f /tmp/ci-test-infra/.agent/NOTES.md
-          test -f /tmp/ci-test-infra/.agent/ARCHIVE.md
-          test -f /tmp/ci-test-infra/.env.example
-          test -f /tmp/ci-test-infra/.gitignore
-          test -f /tmp/ci-test-infra/compose.yaml.example
-          test -d /tmp/ci-test-infra/.git
-          ! test -f /tmp/ci-test-infra/init.sh
-
-          # Verify clean initial commit
-          cd /tmp/ci-test-infra
-          COMMIT_COUNT=$(git rev-list --count HEAD)
-          if [ "$COMMIT_COUNT" -ne 1 ]; then
-            echo "Error: Expected exactly 1 commit in scaffolded Infra project, got $COMMIT_COUNT"
-            exit 1
-          fi
-
-          grep -qF 'down -v' AGENTS.md
-          grep -qF ':latest' AGENTS.md
-          grep -qF 'healthcheck' AGENTS.md
-          HEALTHCHECK_COUNT=$(grep -c '^    healthcheck:' compose.yaml.example)
-          if [ "$HEALTHCHECK_COUNT" -lt 2 ]; then
-            echo "Error: expected at least 2 healthchecks in compose.yaml.example, got $HEALTHCHECK_COUNT"
-            exit 1
-          fi
-          if grep -qE 'image:[[:space:]]*[^[:space:]]+:latest' compose.yaml.example; then
-            echo "❌ :latest image tag found in compose.yaml.example"
-            exit 1
-          fi
-          docker compose --env-file .env.example -f compose.yaml.example config --quiet
-          echo "✅ Infra init.sh test passed successfully!"
+          .github/scripts/assert-starter-contracts.sh infra /tmp/ci-test-infra
 
   lint-markdown:
     name: Validate Markdown Structure
