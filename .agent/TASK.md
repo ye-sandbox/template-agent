@@ -11,32 +11,22 @@
 
 ## Tarefa Ativa
 
-### 📌 Tarefa [04.1]: Enxugar guardrails e corrigir incoerências de contexto
+### 📌 Tarefa [04.2]: Suite de testes herméticos para a branch blackbox no CI
 
-- **Descrição:** Comprimir blocos de processo duplicados nos `AGENTS.md`, sanitizar
-  resíduos do hub nos starters, corrigir DoD/no-push assimétricos e eliminar a
-  colisão de ID `[02.2]` no backlog. Sem `git merge` entre branches.
-- **Sistema(s) Envolvido(s):** `docs`, `hub`, `branch-greenfield`, `branch-brownfield`, `branch-blackbox`, `branch-infra`
+- **Descrição:** O job `test-installers` só afirma que o `init.sh` da `blackbox` gera
+  arquivos. Falta validar o ciclo caixa-preta no CI: fixture mockada, parser contra
+  o mock (sem rede) e ausência de segredos em fixtures de exemplo.
+- **Sistema(s) Envolvido(s):** `ci`, `branch-blackbox`, `hub`
 - **Tipo de Ação:**
-  - [x] Somente leitura / Documentação
-  - [ ] Escrita de código-fonte
-- **Status:** EM EXECUÇÃO
-
-### Subtarefas
-- [ ] **[04.1.1]** Registrar este épico e corrigir colisão `[02.2]` neste arquivo
-- [ ] **[04.1.2]** Comprimir numeração + higiene no `AGENTS.md` da `main`
-- [ ] **[04.1.3]** Enxugar `NOTES.md` e `ARCHIVE.md` da `main`
-- [ ] **[04.1.4]** Greenfield: comprimir `AGENTS.md` e sanitizar TASK/NOTES/ARCHIVE
-- [ ] **[04.1.5]** Brownfield: comprimir `AGENTS.md`, deduplicar no-push, sanitizar
-- [ ] **[04.1.6]** Blackbox: completar DoD, deduplicar no-push, comprimir, sanitizar
-- [ ] **[04.1.7]** Infra: comprimir `AGENTS.md`, política de push, sanitizar NOTES
+  - [ ] Somente leitura / Documentação
+  - [x] Escrita de código-fonte
+- **Status:** PRONTO PARA PLANEJAMENTO
+  *(Fluxo: `PRONTO PARA PLANEJAMENTO` → `EM PLANEJAMENTO` ao apresentar plano → aprovação → `EM EXECUÇÃO`)*
 
 ### Critérios de Aceite
-- [ ] Backlog da `main` sem ID colidindo com o log de concluídas
-- [ ] Blocos de numeração + higiene em cada `AGENTS.md` cabem em ~20 linhas, com tabela de fases específica da branch
-- [ ] Starters sem log/decisões/arquivo do hub (`031e7a6`, decisão MCP de 2026-09-03, `ARCHIVE` fake)
-- [ ] Blackbox DoD inclui log no `TASK.md`; no-push aparece uma vez; infra tem política explícita de push
-- [ ] Commits atômicos Conventional Commits em inglês, um por branch/responsabilidade; sem `git merge`
+- [ ] CI executa pelo menos um teste hermético (fixture local, sem HTTP ao vivo) no projeto gerado pela `blackbox`
+- [ ] Falha se fixture de exemplo contiver cookie/token/PII óbvios
+- [ ] Job continua hermético (`TEMPLATE_REPO_URL="$GITHUB_WORKSPACE"`), sem `git merge` entre branches
 
 ---
 
@@ -60,6 +50,7 @@
 | [03.1] | Criar Branch Especializada de Infraestrutura e Serviços (`infra`) | [`9f4de15`, `2e100f6`] | 2026-09-04 |
 | [03.2] | Formalizar Protocolo de Higiene e Sanitização Pós-Release nos Templates | [`0a87934`, `1107c67`, `1abbfd6`, `fd0cf01`, `33df53d`] | 2026-09-04 |
 | [03.3] | Padronizar Reset de Numeração por Release e Âncora [99.1] no Backlog Futuro | [`c310997`, `bab484d`, `efb6a89`, `a2da17c`, `abdb522`] | 2026-09-05 |
+| [04.1] | Enxugar guardrails e corrigir incoerências de contexto | [`b25715e`, `d615950`, `254a3ef`, `2bdd0eb`, `2ea2d63`, `0231b5e`, `58a1fc3`, `376adbc`, `ae7c529`, `4c6c90c`, `6b2a7e4`] | 2026-09-06 |
 
 > Quando esta tabela passar de ~15-20 linhas, mova as mais antigas para `.agent/ARCHIVE.md`.
 
@@ -67,7 +58,7 @@
 
 ## Backlog (Próximas, em ordem)
 
-- [ ] **[04.2]** Criar suite de testes de integração e mocks para a branch blackbox no CI — `[hub]`
+*(vazio — próxima entrega é a tarefa ativa [04.2])*
 
 ---
 
