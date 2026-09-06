@@ -11,23 +11,19 @@
 
 ## Tarefa Ativa
 
-### 📌 Tarefa [04.3]: Enxugar leftovers de contexto (arquivo, checklist, endpoints, gitignore, skills README)
+### 📌 Tarefa [XX.Y]: [Título curto e descritivo]
 
-- **Descrição:** Arquivar o log 00–03; o `init.sh` greenfield remove o checklist do
-  `AGENTS.md` gerado; `ENDPOINTS.md` vira molde curto (SEI na skill); `.gitignore`
-  núcleo curto; `skills/README.md` greenfield no tamanho da infra.
-- **Sistema(s) Envolvido(s):** `docs`, `hub`, `ci`, `branch-greenfield`, `branch-brownfield`, `branch-blackbox`
+- **Descrição:** [2–4 linhas para o agente montar um plano.]
+- **Sistema(s) Envolvido(s):** [ex: `docs`, `hub`, `branch-greenfield`]
 - **Tipo de Ação:**
-  - [x] Somente leitura / Documentação
-  - [x] Escrita de código-fonte
-- **Status:** EM EXECUÇÃO
+  - [ ] Somente leitura / Documentação
+  - [ ] Escrita de código-fonte
+- **Status:** PRONTO PARA PLANEJAMENTO
+  *(Fluxo: `PRONTO PARA PLANEJAMENTO` → `EM PLANEJAMENTO` ao apresentar plano → aprovação → `EM EXECUÇÃO`)*
 
 ### Critérios de Aceite
-- [ ] `TASK.md` da `main` só com o ciclo 04.x; 00–03 no `ARCHIVE.md`
-- [ ] Projeto gerado pelo `init.sh` greenfield **sem** seção Checklist; CI afirma isso
-- [ ] `ENDPOINTS.md` blackbox é molde; exemplo SEI está na skill; `$TARGET_SESSION_COOKIE` permanece
-- [ ] `.gitignore` de `main`/`greenfield`/`brownfield` é núcleo curto + blocos opcionais
-- [ ] `skills/README.md` greenfield ~tamanho do da `infra` (catálogo + como criar)
+- [ ] [Critério verificável 1]
+- [ ] [Critério verificável 2]
 
 ---
 
@@ -39,6 +35,7 @@
 |---|---|---|---|
 | [04.1] | Enxugar guardrails e corrigir incoerências de contexto | [`b25715e`, `d615950`, `254a3ef`, `2bdd0eb`, `2ea2d63`, `0231b5e`, `58a1fc3`, `376adbc`, `ae7c529`, `4c6c90c`, `6b2a7e4`] | 2026-09-06 |
 | [04.2] | Asserções de contrato no CI dos starters | [`c582fd1`, `0397624`, `e575ec0`] | 2026-09-06 |
+| [04.3] | Enxugar leftovers de contexto | [`2621de4`, `c9acedd`, `9747f16`, `19d2c08`, `f0a0619`, `5172f7b`, `eadb9e9`, `dbdecb7`, `375407c`] | 2026-09-06 |
 
 ---
 
