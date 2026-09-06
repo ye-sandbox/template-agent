@@ -11,46 +11,34 @@
 
 ## Tarefa Ativa
 
-### 📌 Tarefa [XX.Y]: [Título curto e descritivo]
+### 📌 Tarefa [04.3]: Enxugar leftovers de contexto (arquivo, checklist, endpoints, gitignore, skills README)
 
-- **Descrição:** [2–4 linhas para o agente montar um plano.]
-- **Sistema(s) Envolvido(s):** [ex: `docs`, `hub`, `branch-greenfield`]
+- **Descrição:** Arquivar o log 00–03; o `init.sh` greenfield remove o checklist do
+  `AGENTS.md` gerado; `ENDPOINTS.md` vira molde curto (SEI na skill); `.gitignore`
+  núcleo curto; `skills/README.md` greenfield no tamanho da infra.
+- **Sistema(s) Envolvido(s):** `docs`, `hub`, `ci`, `branch-greenfield`, `branch-brownfield`, `branch-blackbox`
 - **Tipo de Ação:**
-  - [ ] Somente leitura / Documentação
-  - [ ] Escrita de código-fonte
-- **Status:** PRONTO PARA PLANEJAMENTO
-  *(Fluxo: `PRONTO PARA PLANEJAMENTO` → `EM PLANEJAMENTO` ao apresentar plano → aprovação → `EM EXECUÇÃO`)*
+  - [x] Somente leitura / Documentação
+  - [x] Escrita de código-fonte
+- **Status:** EM EXECUÇÃO
 
 ### Critérios de Aceite
-- [ ] [Critério verificável 1]
-- [ ] [Critério verificável 2]
+- [ ] `TASK.md` da `main` só com o ciclo 04.x; 00–03 no `ARCHIVE.md`
+- [ ] Projeto gerado pelo `init.sh` greenfield **sem** seção Checklist; CI afirma isso
+- [ ] `ENDPOINTS.md` blackbox é molde; exemplo SEI está na skill; `$TARGET_SESSION_COOKIE` permanece
+- [ ] `.gitignore` de `main`/`greenfield`/`brownfield` é núcleo curto + blocos opcionais
+- [ ] `skills/README.md` greenfield ~tamanho do da `infra` (catálogo + como criar)
 
 ---
 
 ## Log de Tarefas Concluídas
 
-> Uma linha por tarefa. Use `git log --oneline` ou `git show <hash>` para o detalhe.
+> Ciclos 00–03: `.agent/ARCHIVE.md`. Detalhe: `git log`.
 
 | Tarefa | Título | Commit(s) | Data |
 |---|---|---|---|
-| [00.1] | [Setup inicial da arquitetura e template do repositório] | [`0000000`] | [AAAA-MM-DD] |
-| [00.2] | Refinar Template Core/Greenfield com Suporte a MCPs e Skills | [`031e7a6`] | 2026-09-03 |
-| [00.3] | Criar Template Brownfield para Projetos Existentes | [`dc842f7`] | 2026-09-03 |
-| [00.4] | Reorganizar Templates em Branches (main, greenfield, brownfield) | [`6df1e01`] | 2026-09-03 |
-| [01.1] | Corrigir Execução Remota via `curl \| bash` no `install.sh` | [`7a0fd03`] | 2026-09-03 |
-| [01.2] | Adicionar Exemplos Práticos de Skills de Projeto | [`2a0f61a`] | 2026-09-03 |
-| [01.3] | Criar Script de Inicialização Rápida (One-Liner) para Greenfield | [`df6876e`] | 2026-09-03 |
-| [01.4] | Configurar CI com GitHub Actions para Validação de Templates | [`dbbcc1c`] | 2026-09-03 |
-| [01.5] | Documentar Protocolo de Sincronização e Suporte a Forks | [`e0513d0`] | 2026-09-03 |
-| [02.1] | Padronizar Numeração de Tarefas e Criar Branch Blackbox | [`67b59fc`] | 2026-09-04 |
-| [02.2] | Equalizar Commits Atômicos, Conventional Commits e Numeração [XX.Y] | [`387471a`] | 2026-09-04 |
-| [03.1] | Criar Branch Especializada de Infraestrutura e Serviços (`infra`) | [`9f4de15`, `2e100f6`] | 2026-09-04 |
-| [03.2] | Formalizar Protocolo de Higiene e Sanitização Pós-Release nos Templates | [`0a87934`, `1107c67`, `1abbfd6`, `fd0cf01`, `33df53d`] | 2026-09-04 |
-| [03.3] | Padronizar Reset de Numeração por Release e Âncora [99.1] no Backlog Futuro | [`c310997`, `bab484d`, `efb6a89`, `a2da17c`, `abdb522`] | 2026-09-05 |
 | [04.1] | Enxugar guardrails e corrigir incoerências de contexto | [`b25715e`, `d615950`, `254a3ef`, `2bdd0eb`, `2ea2d63`, `0231b5e`, `58a1fc3`, `376adbc`, `ae7c529`, `4c6c90c`, `6b2a7e4`] | 2026-09-06 |
 | [04.2] | Asserções de contrato no CI dos starters | [`c582fd1`, `0397624`, `e575ec0`] | 2026-09-06 |
-
-> Quando esta tabela passar de ~15-20 linhas, mova as mais antigas para `.agent/ARCHIVE.md`.
 
 ---
 
