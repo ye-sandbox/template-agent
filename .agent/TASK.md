@@ -46,9 +46,14 @@
 
 ---
 
+## Encerramento de ciclo (não é a próxima tarefa)
+
+Release/tag só com pedido explícito. Nessa hora o ID é `[99.1]`. Não numere feature, hygiene ou CI como `99.x`. Não calcule o próximo ID a partir desta seção.
+
+---
+
 ## Backlog Futuro / Ideias (não priorizadas)
 
-- [ ] **[99.1]** Preparar Release (Tag Git) e Sanitizar Contexto (Apenas executar com permissão explícita do usuário)
 - [ ] Cache em memória/Redis de sessões válidas
 - [ ] Proxy rotation e evasão de rate-limit
 - [ ] Exportação de dados para PostgreSQL ou fila de mensagens
@@ -58,4 +63,4 @@
 ## Como manter este arquivo enxuto
 
 1. Detalhe só na tarefa ativa. Concluída → uma linha no log e promover o backlog.
-2. Numeração, arquivo pós-release e `[99.1]`: ver `AGENTS.md`.
+2. Próximo ID = último do log (ou da ativa). Encerramento de ciclo e `[99.1]`: ver `AGENTS.md`.
