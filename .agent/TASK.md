@@ -11,20 +11,19 @@
 
 ## Tarefa Ativa
 
-### 📌 Tarefa [04.5]: Sucessão de IDs a partir do log, não do [99.1]
+### 📌 Tarefa [XX.Y]: [Título curto e descritivo]
 
-- **Descrição:** Documentar que o próximo `[XX.Y]` sai da Tarefa Ativa + Log do ciclo. Isolar a âncora de release para o agente não tratar `[99.1]` como próxima da fila.
-- **Sistema(s) Envolvido(s):** `AGENTS.md` e `.agent/TASK.md` em `main`, `greenfield`, `brownfield`, `blackbox`, `infra`
+- **Descrição:** [2–4 linhas para o agente montar um plano.]
+- **Sistema(s) Envolvido(s):** [ex: `docs`, `hub`, `branch-greenfield`]
 - **Tipo de Ação:**
-  - [x] Somente leitura / Documentação
+  - [ ] Somente leitura / Documentação
   - [ ] Escrita de código-fonte
-- **Status:** EM EXECUÇÃO
+- **Status:** PRONTO PARA PLANEJAMENTO
   *(Fluxo: `PRONTO PARA PLANEJAMENTO` → `EM PLANEJAMENTO` ao apresentar plano → aprovação → `EM EXECUÇÃO`)*
 
 ### Critérios de Aceite
-- [ ] Bloco de numeração no `AGENTS.md` (cinco branches) define sucessão pelo log e proíbe usar Backlog Futuro / `99.x` como teto
-- [ ] `TASK.md` não lista `[99.1]` como checkbox; aviso de encerramento separado
-- [ ] Log `[04.5]` na `main` após os commits
+- [ ] [Critério verificável 1]
+- [ ] [Critério verificável 2]
 
 ---
 
@@ -38,6 +37,7 @@
 | [04.2] | Asserções de contrato no CI dos starters | [`c582fd1`, `0397624`, `e575ec0`] | 2026-09-06 |
 | [04.3] | Enxugar leftovers de contexto | [`2621de4`, `c9acedd`, `9747f16`, `19d2c08`, `f0a0619`, `5172f7b`, `eadb9e9`, `dbdecb7`, `375407c`] | 2026-09-06 |
 | [04.4] | Extrair asserções de contrato do CI para um script | [`06c3416`, `bb50e90`] | 2026-09-06 |
+| [04.5] | Sucessão de IDs a partir do log, não do [99.1] | [`714b8ed`, `4308eb7`, `9abad68`, `09352d1`, `6e15adf`] | 2026-09-07 |
 
 ---
 
