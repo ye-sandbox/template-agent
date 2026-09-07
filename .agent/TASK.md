@@ -11,19 +11,20 @@
 
 ## Tarefa Ativa
 
-### 📌 Tarefa [XX.Y]: [Título curto e descritivo]
+### 📌 Tarefa [04.5]: Sucessão de IDs a partir do log, não do [99.1]
 
-- **Descrição:** [2–4 linhas para o agente montar um plano.]
-- **Sistema(s) Envolvido(s):** [ex: `docs`, `hub`, `branch-greenfield`]
+- **Descrição:** Documentar que o próximo `[XX.Y]` sai da Tarefa Ativa + Log do ciclo. Isolar a âncora de release para o agente não tratar `[99.1]` como próxima da fila.
+- **Sistema(s) Envolvido(s):** `AGENTS.md` e `.agent/TASK.md` em `main`, `greenfield`, `brownfield`, `blackbox`, `infra`
 - **Tipo de Ação:**
-  - [ ] Somente leitura / Documentação
+  - [x] Somente leitura / Documentação
   - [ ] Escrita de código-fonte
-- **Status:** PRONTO PARA PLANEJAMENTO
+- **Status:** EM EXECUÇÃO
   *(Fluxo: `PRONTO PARA PLANEJAMENTO` → `EM PLANEJAMENTO` ao apresentar plano → aprovação → `EM EXECUÇÃO`)*
 
 ### Critérios de Aceite
-- [ ] [Critério verificável 1]
-- [ ] [Critério verificável 2]
+- [ ] Bloco de numeração no `AGENTS.md` (cinco branches) define sucessão pelo log e proíbe usar Backlog Futuro / `99.x` como teto
+- [ ] `TASK.md` não lista `[99.1]` como checkbox; aviso de encerramento separado
+- [ ] Log `[04.5]` na `main` após os commits
 
 ---
 
@@ -46,9 +47,15 @@
 
 ---
 
+## Encerramento de ciclo (não é a próxima tarefa)
+
+Release/tag só com pedido explícito. Nessa hora o ID é `[99.1]`. Não numere feature, hygiene ou CI como `99.x`. Não calcule o próximo ID a partir desta seção.
+
+---
+
 ## Backlog Futuro / Ideias (não priorizadas)
 
-- [ ] **[99.1]** Preparar Release (Tag Git) e Sanitizar Contexto (Apenas executar com permissão explícita do usuário)
+*(vazio)*
 
 ---
 
@@ -57,5 +64,5 @@
 1. Detalhe só na tarefa ativa. Concluída → uma linha no log (título + hash) e promover o backlog.
 2. Backlog é lista de títulos. Spec completa só quando o item vira tarefa ativa.
 3. Escopo grande → issue no tracker; aqui só o link.
-4. Numeração, arquivo pós-release e âncora `[99.1]`: ver `AGENTS.md`. Não duplique o protocolo aqui.
+4. Próximo ID = último do log (ou da ativa). Encerramento de ciclo e `[99.1]`: ver `AGENTS.md`.
 5. Não cole a mensagem de commit neste arquivo. Histórico profundo: `git log` / `.agent/NOTES.md`.
