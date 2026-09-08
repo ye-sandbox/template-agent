@@ -35,6 +35,7 @@
 | 2026-09-06 | Checklist greenfield só no template; `init.sh` apaga no projeto gerado | Evita constituir permanente de um item “apague ao terminar”. |
 | 2026-09-06 | Contratos do CI em `.github/scripts/assert-starter-contracts.sh` | O YAML só orquestra o scaffold; âncoras ficam num arquivo rodável fora do Actions. |
 | 2026-09-08 | Requisitos de UI = skill `ui-contract`, não branch | Gerar `.agent/INTERFACE.md` é procedimento transversal (como VictoriaLogs). Quinta branch só faria sentido se o produto fosse um starter de app com constituição própria. |
+| 2026-09-08 | Chrome ≠ NFR de domínio | Tema (`light`/`system`/`dark`) é default do hub, não deriva de rota. Locale rascunho = `fixed` `en`; acordo humano na conclusão. 2+ idiomas → seletor com bandeira por território. Não inventar `/settings` nem catálogo. |
 
 ### Índice de ADRs formais
 

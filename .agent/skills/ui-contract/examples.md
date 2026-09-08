@@ -18,6 +18,10 @@ Ilustra classificação. Não é o contrato completo — o agente preenche `INTE
 
 `scr-ops` `/` — superfície única: status + live + curva. `has_data: false` no live → estado de domínio “repouso / sem leitura”, não erro genérico (README/API já descrevem sono noturno do dongle).
 
+## Chrome (seção 8 — não vem das rotas)
+
+Tema: `light` | `system` | `dark`, default `system`, persistência local no chrome (não há `PUT` de preferências na API). Locale no rascunho: `fixed` `en`. No Passo 5 o humano confirma inglês só, ou p.ex. `en` + `pt-BR` → `selectable` com bandeiras `US` e `BR`. `Accept-Language` não aparece nos handlers.
+
 ## NFR com evidência
 
 - `nfr-quota`: `POST /api/notifications/test` → `429` + `Retry-After` (`routes.py`).
