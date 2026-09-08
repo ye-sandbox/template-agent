@@ -13,7 +13,7 @@ Fonte canônica: `template-agent` (branch `main`) `.agent/skills/ui-contract/`. 
 
 ## 1. Objetivo
 
-Padronizar o handoff backend → UI: telas, ações, campos obrigatórios, bindings HTTP e NFRs **derivados de evidência**, não de persona inventada.
+Padronizar o handoff backend → UI: telas, ações, campos obrigatórios, bindings HTTP e NFRs **derivados de evidência**, não de persona inventada. Chrome de tema e locale (`fixed` `en` até acordo humano) são **defaults do hub** (seção 8), não telas derivadas de rota.
 
 ---
 
@@ -50,7 +50,7 @@ Se o arquivo já existir, **atualize** (diff de telas/rotas); não apague seçõ
 3. `.agent/ENDPOINTS.md` — **só rotas desta aplicação**. Ignore alvos de engenharia reversa (hardware, terceiros) a menos que a UI chame esses hosts.
 4. README / docs de arquitetura — para NFRs e estados de domínio (ex. “repouso noturno”)
 
-Não invente tela para “completar o produto”. Sem evidência → seção **Fora de escopo** ou **Adiado**, não tela nova.
+Não invente tela para “completar o produto”. Sem evidência → seção **Fora de escopo** ou **Adiado**, não tela nova. Chrome (seção 8) é a única superfície que **não** precisa de rota: tema sempre; locale começa `fixed` `en` e só muda no acordo do Passo 5.
 
 ### Passo 3 — Classificar cada rota
 
@@ -74,13 +74,23 @@ Copie [`INTERFACE.template.md`](INTERFACE.template.md) e preencha. Por tela, obr
 - Estados: `loading`, `empty`, `error`, e estados de **domínio** documentados no backend
 - Auth: header/cookie/query iguais ao backend
 
-NFRs só com evidência: rate limit (`429` + `Retry-After`), cooldown, polling vs push, chave de API opcional, timeouts.
+NFRs de domínio só com evidência: rate limit (`429` + `Retry-After`), cooldown, polling vs push, chave de API opcional, timeouts.
 
-### Passo 5 — Parar
+**Seção 8 — Chrome** (sempre, mesmo sem rota):
+
+- **Tema:** `light` \| `system` \| `dark`; default `system`; persistência local; chrome global. Não prescreva o controle visual.
+- **Locale (rascunho):** `fixed` `en`. Não invente outros idiomas nesta etapa.
+- Perfil de usuário com tema/locale no schema → binding na tela de conta, não chrome duplicado.
+
+### Passo 5 — Parar e acordar locale
 
 1. Não gere app, componentes, CSS nem cliente HTTP de produção.
-2. Mostre o mapa (lista de telas + o que ficou de fora) e peça **aprovação humana**.
-3. Se pedirem implementação no mesmo turno: recuse até o `INTERFACE.md` estar aprovado.
+2. Mostre o mapa (telas + fora de escopo) e peça **aprovação humana**.
+3. **Locale (obrigatório neste passo):** propor `fixed` `en`. Perguntar se a UI fica **só em inglês** ou se há outros idiomas.
+   - Um idioma (inglês ou outro combinado) → `fixed` nesse BCP-47; sem seletor.
+   - Dois ou mais → `selectable`: lista fechada pelo humano; no chrome, seletor com **bandeira do território + rótulo** por item; fallback `en` se inglês estiver na lista. Não acrescente idioma que o humano não listou.
+4. Marque `Acordo humano: sim` na seção 8. Sem esse acordo o contrato não está aprovado.
+5. Se pedirem implementação no mesmo turno: recuse até o `INTERFACE.md` (incluindo locale) estar aprovado.
 
 ---
 
@@ -91,6 +101,7 @@ NFRs só com evidência: rate limit (`429` + `Retry-After`), cooldown, polling v
 - **Widget** — região que não merece rota própria
 - **Binding** — método HTTP + path + schema
 - **NFR** — restrição observável (auth, quota, estado offline, latência documentada)
+- **Chrome** — preferência de superfície (tema, política de locale). Não é tela. Não deriva de inventário de rotas.
 
 ---
 
@@ -100,6 +111,11 @@ NFRs só com evidência: rate limit (`429` + `Retry-After`), cooldown, polling v
 - ⚠️ **NÃO** misture API do produto com endpoints de dispositivo/terceiro no mesmo mapa sem dizer o host.
 - ⚠️ **NÃO** marque campo opcional no schema como obrigatório na UI (e o inverso).
 - ⚠️ **NÃO** escolha stack (React, HTMX, …) neste documento.
+- ⚠️ **NÃO** crie `/settings` nem `scr-settings` só para tema/idioma.
+- ⚠️ **NÃO** marque locale `selectable` sem lista BCP-47 + território da bandeira (isso inventa i18n).
+- ⚠️ **NÃO** aprove o contrato com locale `pendente`.
+- ⚠️ **NÃO** reduza tema a claro/escuro: os três modos são o contrato.
+- 💡 **FAÇA:** seletor de idioma só com 2+ locales acordados; cada opção = bandeira do território + rótulo.
 - 💡 **FAÇA:** uma ação assíncrona (discover, job) com estado de progresso, não uma tela “de loading” extra.
 - 💡 **FAÇA:** ações destrutivas ou de teste (ex. disparo WhatsApp) como ação explícita, nunca como tela home.
 
@@ -111,5 +127,8 @@ NFRs só com evidência: rate limit (`429` + `Retry-After`), cooldown, polling v
 - [ ] Toda rota do backend está em tela, widget, ação, adiado ou fora de escopo
 - [ ] Campos obrigatórios = `required` do schema (ou equivalente)
 - [ ] Estados vazio / loading / erro (+ domínio, se houver) em cada tela
+- [ ] Seção 8: tema `light` \| `system` \| `dark` (default `system`)
+- [ ] Seção 8: locale `fixed` `en` no rascunho; acordo humano no Passo 5
+- [ ] Se `selectable`: lista 2+ com BCP-47, território (bandeira) e rótulo
 - [ ] Zero arquivos de UI gerados nesta execução
-- [ ] Mapa apresentado para revisão humana
+- [ ] Mapa + locale apresentados para revisão humana

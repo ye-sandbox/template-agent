@@ -2,6 +2,7 @@
 
 > Fonte da verdade para um agente de implementação. Sem tela/ação aqui, não há UI.
 > Preenchido pela skill `ui-contract`. Stack fica em ADR do repo de frontend, não neste arquivo.
+> Chrome (seção 8) é obrigatório mesmo sem rota de preferências.
 
 **Status do contrato:** `Rascunho` | `Aprovado` | `Desatualizado`  
 **Backend:** `[repo / nome]`  
@@ -81,3 +82,47 @@ Toda rota do backend aparece **uma** vez.
 ## 7. Adiado
 
 - `[rotas reais sem fluxo de usuário ainda]`
+
+---
+
+## 8. Chrome (não deriva de rota)
+
+Preferências de superfície. **Não** é tela de produto: não criar `scr-settings` nem rota `/settings` só por isto. Tema: especifique comportamento, não o widget. Locale `selectable`: o seletor **leva bandeira por território** (ver abaixo).
+
+Se o backend **já** tiver perfil com tema/locale, o binding vai na ficha da tela de conta — não duplicar aqui como chrome-only.
+
+### Tema (obrigatório)
+
+| Campo | Valor |
+| :--- | :--- |
+| Valores | `light` \| `system` \| `dark` (três modos; nunca só claro/escuro) |
+| Default | `system` (`prefers-color-scheme` + override) |
+| Persistência | `local` (cliente) — só `binding` se existir rota de perfil |
+| Onde | chrome global (header, overflow, rodapé) |
+
+### Locale (obrigatório — acordar no Passo 5)
+
+Rascunho da skill: `fixed` `en`. Só muda depois de acordo **explícito** com o humano (conclusão do contrato). Um idioma → `fixed`. Dois ou mais → `selectable` (seletor no chrome, **bandeira + rótulo** por item; sem bandeira solta sem BCP-47).
+
+| Política | Quando | UI |
+| :--- | :--- | :--- |
+| `fixed` | Um idioma (default: inglês) | Sem seletor. Um BCP-47. |
+| `selectable` | Humano listou **2+** idiomas | Seletor no chrome: bandeira do território + rótulo curto |
+
+| Campo | Valor |
+| :--- | :--- |
+| Política | `fixed` \| `selectable` |
+| Acordo humano | `pendente` \| `sim` (data / o que foi combinado) |
+| Locales | `en` (rascunho). Se `selectable`: uma linha por idioma |
+| Fallback | `en` se a lista tiver inglês; senão o primeiro da lista |
+| Persistência | `local` — só `binding` se existir no schema |
+| `Accept-Language` nas requests | `não` \| `sim` (só com evidência no OpenAPI/handlers) |
+
+Tabela se `selectable` (uma linha por idioma; território ISO 3166 só para a bandeira):
+
+| BCP-47 | Território (bandeira) | Rótulo |
+| :--- | :---: | :--- |
+| `en` | `US` | English |
+| `[ex.: pt-BR]` | `BR` | Português |
+
+Copy e traduções **não** entram neste arquivo. Fichas de tela no idioma de trabalho do contrato; a UI implementada segue os locales acordados.
