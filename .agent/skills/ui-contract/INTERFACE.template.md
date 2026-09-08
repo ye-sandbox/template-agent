@@ -3,6 +3,7 @@
 > Fonte da verdade para um agente de implementação. Sem tela/ação aqui, não há UI.
 > Preenchido pela skill `ui-contract`. Stack fica em ADR do repo de frontend, não neste arquivo.
 > Chrome (seção 8) é obrigatório mesmo sem rota de preferências.
+> Duas cópias (backend e frontend) devem ser o **mesmo** arquivo após cada aprovação. API mudou → `Desatualizado` até o Passo 6 da skill.
 
 **Status do contrato:** `Rascunho` | `Aprovado` | `Desatualizado`  
 **Backend:** `[repo / nome]`  
@@ -126,3 +127,17 @@ Tabela se `selectable` (uma linha por idioma; território ISO 3166 só para a ba
 | `[ex.: pt-BR]` | `BR` | Português |
 
 Copy e traduções **não** entram neste arquivo. Fichas de tela no idioma de trabalho do contrato; a UI implementada segue os locales acordados.
+
+---
+
+## 9. Âncoras de implementação (stack-agnóstico)
+
+O proto HTML e o porte (Svelte ou outro) **reutilizam** estes identificadores. Sem âncora aqui, o implementador não inventa `id`.
+
+**Documento:** `<html data-theme="system">` (valores: `light` \| `system` \| `dark`). Se locale `selectable`, o seletor de bandeira vive no chrome global (mesmo markup em todas as telas).
+
+**Por região** (preencha a partir das fichas):
+
+| Tela | Região / widget | `id` DOM | `name` dos campos (schema) | `data-state` usados |
+| :--- | :--- | :--- | :--- | :--- |
+| `scr-…` | `[ex. wdg-live]` | `[igual ao widget]` | `[prop1, prop2]` | `loading` \| `empty` \| `error` \| `[domínio]` |
