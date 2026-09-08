@@ -49,10 +49,18 @@ description: Resumo conciso de uma linha sobre o que esta skill ensina e quando 
 - Houver um procedimento de **debug ou validação especializado** (ex: como validar queries pesadas, como reproduzir fluxos assíncronos locais).
 - Houver ferramentas auxiliares ou servidores MCP específicos que exigem sequência correta de chamadas.
 
+### Skills globais versionadas neste hub
+
+Procedimento que vale para **vários repositórios** (não só o starter gerado) fica aqui e é exposto no Cursor por symlink em `~/.cursor/skills/<nome>` → `.agent/skills/<nome>/` deste clone. Não copie a pasta para `greenfield`/`brownfield`.
+
+| Skill | Quando |
+| :--- | :--- |
+| [`ui-contract`](./ui-contract/SKILL.md) | Derivar `.agent/INTERFACE.md` (telas, ações, NFRs) a partir de um backend. Sem código de UI. |
+
 ### ❌ NÃO crie uma Skill quando:
 - For uma regra geral de código ou estilo (use `AGENTS.md`).
 - For uma decisão arquitetural pontual ou registro de débito técnico (use `.agent/NOTES.md`).
-- For uma ferramenta de infraestrutura geral do seu ambiente/homelab que se aplica a múltiplos repositórios (ex: consulta geral ao VictoriaLogs, controle de containers Proxmox). Nesses casos, prefira **Skills Globais** configuradas no ambiente da sua máquina/IDE.
+- For uma ferramenta de infraestrutura geral do seu ambiente/homelab que se aplica a múltiplos repositórios (ex: consulta geral ao VictoriaLogs, controle de containers Proxmox). Nesses casos, prefira **Skills Globais** no host. Se a fonte canônica for este hub, versionar em `.agent/skills/` e expor por symlink (como `ui-contract`).
 
 ---
 
