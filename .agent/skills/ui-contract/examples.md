@@ -22,6 +22,10 @@ Ilustra classificação. Não é o contrato completo — o agente preenche `INTE
 
 Tema: `light` | `system` | `dark`, default `system`, persistência local no chrome (não há `PUT` de preferências na API). Locale no rascunho: `fixed` `en`. No Passo 5 o humano confirma inglês só, ou p.ex. `en` + `pt-BR` → `selectable` com bandeiras `US` e `BR`. `Accept-Language` não aparece nos handlers.
 
+## Âncoras (seção 9)
+
+`scr-ops` → `id="scr-ops"`; widgets `wdg-status`, `wdg-live`, `wdg-today`. Estados no live: `loading`, `empty`, `error`, `idle-night` (`has_data: false`). `html data-theme`. Sem seletor de idioma no rascunho.
+
 ## NFR com evidência
 
 - `nfr-quota`: `POST /api/notifications/test` → `429` + `Retry-After` (`routes.py`).
