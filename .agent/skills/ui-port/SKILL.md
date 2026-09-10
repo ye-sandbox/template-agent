@@ -1,6 +1,6 @@
 ---
 name: ui-port
-description: Ports approved proto/ HTML/CSS plus .agent/INTERFACE.md into a frontend app. Default stack is Svelte. Use when the user wants to convert static screens to Svelte, wire API bindings, or generate the frontend from HTML mockups. Does not invent screens or redesign the proto.
+description: Ports approved proto (Stitch `proto/scr-<id>/code.html` or flat `proto/scr-….html`) plus .agent/INTERFACE.md into a frontend app. Default stack is Svelte. Use when converting HTML mockups or Stitch exports to Svelte. Does not invent screens or regenerate Stitch.
 ---
 
 # Porte proto → app (`ui-port`)
@@ -27,7 +27,7 @@ Ative quando a tarefa for:
 - Ligar API nas telas já prototipadas
 - Delta: contrato atualizado (cópia do backend) e bindings/rotas a ajustar no app
 
-**Não** ative sem `INTERFACE.md` **Aprovado** no frontend (a mesma revisão do backend). **Não** ative para desenhar telas novas — se o mapa ganhou `scr-*`, rode `ui-prototype` primeiro. **Não** descubra OpenAPI/rotas do backend neste repo.
+**Não** ative sem `INTERFACE.md` **Aprovado** no frontend. Se o mapa do frontend **diverge** do backend de propósito (ADR / Stitch), o arquivo **deste** git vence — não exija byte-a-byte o `INTERFACE.md` do backend. **Não** ative para desenhar telas novas: HTML Stitch novo ou `ui-prototype` primeiro. **Não** descubra OpenAPI neste repo. **Não** regenere `proto/` (Stitch ou HTML da skill).
 
 ---
 
@@ -45,21 +45,44 @@ Ative quando a tarefa for:
 No **repo de frontend** (novo ou existente):
 
 ```text
-.agent/INTERFACE.md
-proto/                  # HTML/CSS aprovados
+.agent/INTERFACE.md          # Aprovado
+proto/                       # um dos layouts abaixo
 ```
 
-Faltou um dos dois: pare. Não regenere o proto aqui (isso é `ui-prototype`).
+**Layout A — Stitch (preferir se existir):**
 
-Stack: leia `.agent/adr/` do frontend. Sem ADR de UI: **Svelte**, e registre uma ADR de uma página (“UI = Svelte; proto = fonte visual até o porte”).
+```text
+proto/scr-<id>/code.html     # um HTML completo por tela do mapa
+proto/scr-<id>/screen.png    # opcional (preview Stitch)
+proto/bonus/DESIGN.md        # tokens; aceitar também proto/<tema>/DESIGN.md
+```
+
+Slugs Stitch com acento quebrado (`vis_o_geral_…`) **não** são IDs. Só porte pastas `scr-<id>` iguais ao mapa. Se o drop ainda estiver com slug: pare e peça rename (não invente tela extra).
+
+**Layout B — proto da skill `ui-prototype`:**
+
+```text
+proto/scr-<id>.html
+proto/css/chrome.css
+proto/css/screens.css
+```
+
+Resolver: se existir `proto/scr-*/code.html` para os IDs do mapa → **A**. Senão, se existir `proto/scr-*.html` → **B**. Mistura A+B no mesmo ID: pare e pergunte. Faltou HTML para algum `scr-*` do mapa: pare (não gere HTML aqui).
+
+Tokens: `DESIGN.md` (A) ou `chrome.css` (B). Não inventar paleta. Tailwind CDN no Stitch → equivalente no bundler do app (classes/tokens), sem redesenhar.
+
+Faltou `INTERFACE.md` ou `proto/`: pare. Não chame `ui-prototype` se o visual canônico for Stitch.
+
+Stack: ADR do frontend. Sem ADR: **Svelte** + ADR de uma página (“UI = Svelte; proto = Stitch ou HTML até o porte”).
 
 ### Passo 2 — Mapa 1:1
 
 | Contrato / proto | App |
 | :--- | :--- |
-| `proto/scr-….html` | Uma rota / um componente de página |
-| `id` / `name` / `data-state` / `data-theme` | Os mesmos atributos no markup gerado |
-| `proto/css/chrome.css` | Tokens/variáveis equivalentes; não uma paleta nova |
+| `proto/scr-<id>/code.html` **ou** `proto/scr-<id>.html` | Uma rota / uma página |
+| `id` / `name` / `data-state` / `data-theme` (seção 9) | Os mesmos no markup gerado. Stitch pode usar `html.dark` sem `data-theme` — no app use o default da §8 |
+| `DESIGN.md` ou `chrome.css` | Tokens equivalentes |
+| Preview `btn-mode-*` / simuladores no HTML | **Não** portear como controle se o contrato disser que o estado vem da API (poll) |
 
 Não funda duas telas do mapa numa só. Não invente rota que não está no mapa. Adiado permanece fora.
 
@@ -67,7 +90,7 @@ Não funda duas telas do mapa numa só. Não invente rota que não está no mapa
 
 Só agora: cliente HTTP, `fetch`/load functions, headers de auth iguais ao contrato, mapeamento `429` → copy do contrato, estados `loading`/`empty`/`error`/domínio.
 
-Tema: três modos, default `system`, persistência local (salvo binding de perfil no schema). Locale: `fixed` sem seletor; `selectable` = bandeira + rótulo por linha da seção 8.
+Tema: três modos se a §8 pedir; **default = valor da §8** (não forçar `system` se o contrato disser `dark`). Locale: `fixed` sem seletor; `selectable` = bandeira + rótulo.
 
 ### Passo 4 — Conflito proto vs contrato
 
@@ -86,11 +109,11 @@ Tema: três modos, default `system`, persistência local (salvo binding de perfi
 
 Tabela canônica: [`ui-contract` Passo 6](../ui-contract/SKILL.md).
 
-1. Exija o `INTERFACE.md` **copiado** do backend após aprovação. Se o do frontend for mais velho: pare.
-2. Binding/NFR/campo: ajuste o Svelte; proto só se o humano quiser zero deriva visual.
-3. Tela ou widget novo: o HTML da `ui-prototype` já tem de existir neste repo. Porte só o delta; não redesenhe páginas intactas.
-4. Tela removida do mapa: apague a rota do app (e o `scr-*.html` se ainda estiver no `proto/`).
-5. **NÃO** adicione `fetch` a path que não está no inventário do contrato.
+1. Se o contrato do frontend for o mapa Stitch (ADR): **não** exija cópia idêntica do backend. Se o fluxo for backend-canônico: exija `INTERFACE.md` copiado após aprovação; se o do frontend for mais velho, pare.
+2. Binding/NFR/campo: ajuste o Svelte; proto só se o humano quiser zero deriva visual. **Não** regenere Stitch.
+3. Tela nova: o HTML (Stitch `code.html` ou `ui-prototype`) já tem de existir. Porte só o delta.
+4. Tela removida: apague a rota (e a pasta/`html` do proto se ainda estiver lá).
+5. **NÃO** adicione `fetch` fora do inventário. Controles só-proto (simulador) não viram endpoint.
 
 ---
 
@@ -104,13 +127,15 @@ Tabela canônica: [`ui-contract` Passo 6](../ui-contract/SKILL.md).
 
 ## 6. Armadilhas
 
+- ⚠️ **NÃO** regenere nem “achate” export Stitch (`code.html` → um arquivo plano) no turno do porte.
+- ⚠️ **NÃO** porte slug Stitch (`vis_o_geral_…`) como rota; só `scr-<id>`.
 - ⚠️ **NÃO** “alinhe o contrato” depois de ter mudado o Svelte.
 - ⚠️ **NÃO** redesenhe “no estilo Svelte”.
-- ⚠️ **NÃO** chame rotas que o contrato classificou `ops-only` ou Adiado.
-- ⚠️ **NÃO** inventa i18n além da seção 8.
-- ⚠️ **NÃO** apague `proto/` para “limpar o repo” no mesmo turno do porte.
-- 💡 **FAÇA:** componentes por **região** (`id` da seção 9), não um blob por página se o HTML já tinha widgets.
-- 💡 **FAÇA:** Base URL da API = a do contrato / env, não hardcode de produção.
+- ⚠️ **NÃO** chame rotas `ops-only` ou Adiado.
+- ⚠️ **NÃO** invente i18n além da seção 8.
+- ⚠️ **NÃO** apague `proto/` no mesmo turno do porte.
+- 💡 **FAÇA:** componentes por região (`id` da seção 9).
+- 💡 **FAÇA:** Base URL = contrato / env.
 
 ---
 
@@ -118,8 +143,9 @@ Tabela canônica: [`ui-contract` Passo 6](../ui-contract/SKILL.md).
 
 - [ ] `INTERFACE.md` + `proto/` presentes e aprovados
 - [ ] Stack = ADR ou Svelte default + ADR mínima
-- [ ] Uma rota de app por `scr-*`
-- [ ] Âncoras da seção 9 intactas
+- [ ] Uma rota por `scr-*` (`code.html` **ou** `scr-*.html`)
+- [ ] Stitch: pastas = IDs do mapa; `DESIGN.md` usado para tokens
+- [ ] Âncoras da seção 9; simuladores do HTML não viram controle se o contrato ligar estado à API
 - [ ] Bindings HTTP só do inventário do contrato
 - [ ] `proto/` não apagado
 - [ ] Tabela tela → arquivo apresentada para revisão no app
