@@ -56,13 +56,14 @@ Procedimento que vale para **vários repositórios** (não só o starter gerado)
 | Skill | Quando |
 | :--- | :--- |
 | [`ui-contract`](./ui-contract/SKILL.md) | Derivar `.agent/INTERFACE.md` (telas, ações, NFRs) a partir de um backend. Sem código de UI. |
+| [`component-contract`](./component-contract/SKILL.md) | Derivar `.agent/COMPONENTS.md` (peças reutilizáveis, props, bindings). Sem telas e sem código de UI. |
 | [`ui-prototype`](./ui-prototype/SKILL.md) | `INTERFACE.md` **aprovado** → `proto/` HTML/CSS. Sem framework, sem fetch. |
 | [`ui-port`](./ui-port/SKILL.md) | `proto/` + contrato → app. Default Svelte. Não redesenhar. |
 
 ### ❌ NÃO crie uma Skill quando:
 - For uma regra geral de código ou estilo (use `AGENTS.md`).
 - For uma decisão arquitetural pontual ou registro de débito técnico (use `.agent/NOTES.md`).
-- For uma ferramenta de infraestrutura geral do seu ambiente/homelab que se aplica a múltiplos repositórios (ex: consulta geral ao VictoriaLogs, controle de containers Proxmox). Nesses casos, prefira **Skills Globais** no host. Se a fonte canônica for este hub, versionar em `.agent/skills/` e expor por symlink (como `ui-contract`, `ui-prototype`, `ui-port`).
+- For uma ferramenta de infraestrutura geral do seu ambiente/homelab que se aplica a múltiplos repositórios (ex: consulta geral ao VictoriaLogs, controle de containers Proxmox). Nesses casos, prefira **Skills Globais** no host. Se a fonte canônica for este hub, versionar em `.agent/skills/` e expor por symlink (como `ui-contract`, `component-contract`, `ui-prototype`, `ui-port`).
 
 ---
 
