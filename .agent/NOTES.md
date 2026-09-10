@@ -37,6 +37,7 @@
 | 2026-09-08 | Requisitos de UI = skill `ui-contract`, não branch | Gerar `.agent/INTERFACE.md` é procedimento transversal (como VictoriaLogs). Quinta branch só faria sentido se o produto fosse um starter de app com constituição própria. |
 | 2026-09-08 | Chrome ≠ NFR de domínio | Tema (`light`/`system`/`dark`) é default do hub, não deriva de rota. Locale rascunho = `fixed` `en`; acordo humano na conclusão. 2+ idiomas → seletor com bandeira por território. Não inventar `/settings` nem catálogo. |
 | 2026-09-08 | Pipeline UI = 3 skills, não branch | Contrato → proto HTML → porte. `INTERFACE.md` viaja com `proto/`. Svelte é default do porte; stack oficial na ADR do frontend. Delta: backend → contrato → proto só se o visual mudar → porte. Svelte não descobre endpoint. |
+| 2026-09-10 | Kit de peças = skill `component-contract`, irmã de `ui-contract` | Telas (`INTERFACE.md`) e componentes (`COMPONENTS.md`) são handoffs distintos. Misturar no mesmo molde faz o agente inventar rotas de SPA. Nenhuma das duas skills gera código. |
 
 ### Índice de ADRs formais
 
