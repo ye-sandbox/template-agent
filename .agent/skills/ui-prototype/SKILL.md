@@ -26,6 +26,8 @@ Ative quando a tarefa for:
 
 **Não** ative se o contrato estiver `Rascunho`, `Desatualizado` ou locale `pendente`. **Não** ative para Svelte, Vite, fetch — isso é `ui-port`. **Não** ative só porque um path HTTP mudou sem mudança visual (isso é só `ui-port`).
 
+**Não** ative se o visual canônico já for **Stitch** (`proto/scr-<id>/code.html` e/ou ADR “proto = Stitch”). Não regenere, não achate, não substitua `code.html`. O humano atualiza o drop; o próximo passo é `ui-port`.
+
 ---
 
 ## 3. Ferramentas
@@ -41,7 +43,9 @@ Ative quando a tarefa for:
 
 Exija `.agent/INTERFACE.md` com **Status `Aprovado`** e seção 8 com acordo de locale. Sem isso: pare e mande o humano voltar à `ui-contract`.
 
-Onde escrever: `proto/` na raiz do workspace. Na primeira vez pode ser pasta só de proto; **depois da cópia**, o default é `proto/` no **repo de frontend** (ao lado do app). Esta skill **não** edita `.svelte`.
+Onde escrever: `proto/` na raiz (layout B: `scr-<id>.html` + `css/`). Esta skill **não** edita `.svelte` e **não** escreve `proto/scr-<id>/code.html` (isso é export Stitch).
+
+Se já existir layout A (Stitch) para os IDs do mapa: **pare**. Não misture B em cima de A.
 
 ### Passo 2 — Um arquivo por tela
 
@@ -76,9 +80,9 @@ Não crie tela que não está no mapa. Não implemente Adiado.
 
 Tabela canônica: [`ui-contract` Passo 6](../ui-contract/SKILL.md).
 
-- Tela/widget novo ou removido, ou copy/layout: atualize **só** os `scr-*.html` afetados. Não regenere o proto inteiro.
+- Tela/widget novo ou copy/layout **neste** formato B: atualize só os `scr-*.html` afetados.
 - Binding/NFR sem mudança visual: **não rode** esta skill.
-- `proto/` no frontend pode estar atrás do Svelte se o humano aceitou débito; se for mexer no HTML, alinhe ao contrato **aprovado** atual (o copiado do backend), não ao HTML velho.
+- Visual Stitch (layout A): **não rode** esta skill; peça um novo export ao humano.
 
 ---
 
@@ -95,7 +99,7 @@ Tabela canônica: [`ui-contract` Passo 6](../ui-contract/SKILL.md).
 - ⚠️ **NÃO** chame o backend.
 - ⚠️ **NÃO** invente `scr-*` fora do mapa.
 - ⚠️ **NÃO** mude `id`/`name` “para ficar mais semântico”.
-- ⚠️ **NÃO** regenere todas as telas por um campo novo numa ficha.
+- ⚠️ **NÃO** regenere proto Stitch (`code.html`) nem apague `DESIGN.md`.
 - 💡 **FAÇA:** CSS variables para os três temas, para o porte reusar.
 - 💡 **FAÇA:** o mesmo chrome (header/tema/bandeiras) em todas as telas.
 
@@ -104,7 +108,7 @@ Tabela canônica: [`ui-contract` Passo 6](../ui-contract/SKILL.md).
 ## 7. Checklist
 
 - [ ] `INTERFACE.md` aprovado (locale acordado)
-- [ ] Um `proto/scr-*.html` por tela do mapa
+- [ ] Layout B: um `proto/scr-*.html` por tela **ou** skill não rodou porque o proto é Stitch
 - [ ] Âncoras da seção 9 presentes no DOM
 - [ ] Três temas no CSS; seletor de idioma só se `selectable`
 - [ ] Zero framework, zero fetch
