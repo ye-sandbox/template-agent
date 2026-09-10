@@ -42,6 +42,7 @@
 | [05.2] | Chrome de tema e política de locale na `ui-contract` | [`d0233c8`] | 2026-09-08 |
 | [05.3] | Pipeline UI (`ui-prototype`, `ui-port`, delta) | [`8cc03cd`] | 2026-09-08 |
 | [05.4] | Skill `component-contract` (inventário de componentes, não telas) | [`51e134d`, `47bef3a`] | 2026-09-10 |
+| [05.5] | `ui-port` / `ui-prototype` aceitam proto Stitch (`code.html`) | [`6d5fa9b`] | 2026-09-10 |
 
 ---
 
