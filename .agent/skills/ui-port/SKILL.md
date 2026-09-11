@@ -1,6 +1,6 @@
 ---
 name: ui-port
-description: Ports approved proto (Stitch `proto/scr-<id>/code.html` or flat `proto/scr-….html`) plus .agent/INTERFACE.md into a frontend app. Default stack is Svelte 5 (runes, layout/components — not a single HTML dump). Use when converting HTML mockups or Stitch exports to Svelte. Does not invent screens or regenerate Stitch.
+description: Ports approved proto (Stitch `proto/scr-<id>/code.html` or flat `proto/scr-….html`) plus .agent/INTERFACE.md into a frontend app. Default stack is Svelte 5. Copy class/keyframes/grid from proto; extract runes and components without redesigning. Does not invent screens or regenerate Stitch.
 ---
 
 # Porte proto → app (`ui-port`)
@@ -72,7 +72,7 @@ proto/css/screens.css
 
 Resolver: se existir `proto/scr-*/code.html` para os IDs do mapa → **A**. Senão, se existir `proto/scr-*.html` → **B**. Mistura A+B no mesmo ID: pare e pergunte. Faltou HTML para algum `scr-*` do mapa: pare (não gere HTML aqui).
 
-Tokens: `DESIGN.md` (A) ou `chrome.css` (B). Não inventar paleta. Tailwind CDN no Stitch → equivalente no bundler do app (classes/tokens), sem redesenhar.
+Tokens: `DESIGN.md` (A) ou `chrome.css` (B). **Também** o `<style>` / `@keyframes` e o `tailwind.config` **dentro do HTML** (Stitch costuma minificar isso no `<head>`). Não inventar paleta. Tailwind CDN → mesmo `theme.extend` no bundler. Classes utilitárias do nó **não** se “traduzem” para outro breakpoint.
 
 Faltou `INTERFACE.md` ou `proto/`: pare. Não chame `ui-prototype` se o visual canônico for Stitch.
 
@@ -92,9 +92,25 @@ Stack: ADR do frontend. Sem ADR: **Svelte 5** + ADR de uma página (“UI = Svel
 
 Não funda duas telas do mapa numa só. Não invente rota que não está no mapa. Adiado permanece fora.
 
-### Passo 3 — Estrutura da stack (Svelte)
+### Passo 3 — Fidelidade de markup (antes de extrair)
 
-Siga [`svelte.md`](svelte.md). Extraia **antes** de ligar HTTP, nesta ordem:
+O Stitch vem **minificado**. Antes de escrever Svelte, abra a árvore por `id` (seção 9) — não recrie o layout de memória.
+
+Por cada `scr-*`:
+
+1. **Casca da página** = o wrapper do `<main>` / primeiro `div` de conteúdo (`max-w-[…]`, `px-grid-margin-*`, `grid` / `flex` / `gap-*` da **raiz**). Esse esqueleto fica na **página**. Peças preenchem regiões; **não** substituem o grid pai (`xl:grid-cols-12` + `col-span-*` não vira uma coluna de componentes empilhados).
+2. **`class` literal** de cada nó com `id` e dos ancestrais de posicionamento (`relative`, `absolute`, `fixed`, `inset-*`, `z-*`, `overflow-*`, `blur-*`). Copie a string. Não troque `md:grid-cols-3` por `xl:grid-cols-4`. Não acrescente `sm:`/`lg:`/`border-*` que o HTML não tem.
+3. **Motion:** todo `@keyframes` e classe custom no `<style>` do proto (`curve-stream`, `telemetry-card`, `zenith-beacon`, …) vai para o CSS do app **com o mesmo nome**, e a classe permanece no **mesmo tipo de nó** (SVG `path`, card, ping). `animate-ping` / `animate-pulse` / `transition-*` do `class` também.
+4. **SVG:** `viewBox`, `d`, `stroke-dasharray`, círculos de ping — copie. Não substitua por Chart.js / Recharts “equivalente”.
+5. **Proibido neste passo:** drawer, card extra, hover/`transition` novos, tipografia “mobile-first” que o proto não tem, `preview.html` paralelo.
+
+`btn-mode-*` / simuladores: **não** virem controle se o contrato ligar o estado à API — mas o **visual** dos estados (`idle-night`, overlays, shades) continua no markup.
+
+Falha típica: componente bem extraído com **outro** grid. Extração sem esta cópia **não** é porte.
+
+### Passo 4 — Estrutura da stack (Svelte)
+
+Siga [`svelte.md`](svelte.md). Extraia **depois** da casca fiel, **antes** de ligar HTTP, nesta ordem:
 
 1. **Chrome** compartilhado (header, nav, footer) → `src/layout/`. Uma vez; páginas não copiam o bloco.
 2. **Átomos** repetidos no proto (botão, badge, card) ou fichas `cmp-*` → `src/components/`.
@@ -103,37 +119,39 @@ Siga [`svelte.md`](svelte.md). Extraia **antes** de ligar HTTP, nesta ordem:
 
 Idioma Svelte 5: `$props()`, `$state`, `$derived`, `$effect`. Sem `export let`. Sem `$:`. `onMount` só para listeners do browser que não são reativos.
 
-Porte que só gera `src/pages/*.svelte` monolíticos (header/footer/botões colados) **não** está concluído. Extraia e só então o Passo 4.
+Porte que só gera `src/pages/*.svelte` monolíticos (header/footer/botões colados) **não** está concluído. Extraia e só então o Passo 5.
 
 Outra stack (ADR): o mesmo recorte (chrome / átomos / página) com o idioma **dessa** stack; não invente Svelte no repo se a ADR proibir.
 
-### Passo 4 — Comportamento
+### Passo 5 — Comportamento
 
 Só agora: cliente HTTP, `fetch`/load functions, headers de auth iguais ao contrato, mapeamento `429` → copy do contrato, estados `loading`/`empty`/`error`/domínio.
 
 Tema: três modos se a §8 pedir; **default = valor da §8** (não forçar `system` se o contrato disser `dark`). Locale: `fixed` sem seletor; `selectable` = bandeira + rótulo.
 
-### Passo 5 — Conflito proto vs contrato
+### Passo 6 — Conflito proto vs contrato
 
 - Visual (espaçamento, hierarquia, chrome, classes): **HTML ganha**.
 - Campo obrigatório, ação, path HTTP: **contrato ganha**.
 - Árvore de arquivos, runes, extração de peças: **stack ganha** (não é “redesenho”).
+- Grid, `absolute`/`fixed`, `@keyframes`, `class` utilitária: **HTML ganha**. Extração **não** autoriza outro breakpoint nem card extra.
 - Divergência visual vs contrato: reporte e não “média”. Não altere o proto neste turno a menos que o humano peça correção de proto.
 
-### Passo 6 — Parar
+### Passo 7 — Parar
 
 1. `proto/` permanece no git como referência (não apague no porte).
 2. Mostre tabela `scr-*` → arquivo de rota **e** tabela peça (layout/`cmp-*`/átomo) → arquivo.
-3. Peça revisão humana (browser no app, não só o HTML).
-4. Não volte a gerar `INTERFACE.md`.
+3. Mostre tabela de fidelidade: região/`id` → `class` da raiz no proto vs no app; lista de `@keyframes` (proto vs app).
+4. Peça revisão humana (browser no app **ao lado** do HTML/`screen.png`, não só o app).
+5. Não volte a gerar `INTERFACE.md`.
 
-### Passo 7 — Delta
+### Passo 8 — Delta
 
 Tabela canônica: [`ui-contract` Passo 6](../ui-contract/SKILL.md).
 
 1. Se o contrato do frontend for o mapa Stitch (ADR): **não** exija cópia idêntica do backend. Se o fluxo for backend-canônico: exija `INTERFACE.md` copiado após aprovação; se o do frontend for mais velho, pare.
 2. Binding/NFR/campo: ajuste o Svelte; proto só se o humano quiser zero deriva visual. **Não** regenere Stitch.
-3. Tela nova: o HTML (Stitch `code.html` ou `ui-prototype`) já tem de existir. Porte só o delta; extraia peças novas se o HTML repetir chrome/átomos.
+3. Tela nova: o HTML (Stitch `code.html` ou `ui-prototype`) já tem de existir. Porte só o delta; extraia peças novas se o HTML repetir chrome/átomos. **Não** mude a casca de grid das telas que não saíram no delta.
 4. Tela removida: apague a rota (e a pasta/`html` do proto se ainda estiver lá). Peças ainda usadas por outras telas **ficam**.
 5. **NÃO** adicione `fetch` fora do inventário. Controles só-proto (simulador) não viram endpoint.
 
@@ -146,6 +164,7 @@ Tabela canônica: [`ui-contract` Passo 6](../ui-contract/SKILL.md).
 - **Fonte de comportamento** — `INTERFACE.md`
 - **Fonte de peças** — `COMPONENTS.md` se aprovado; senão, repetição no proto
 - **Dump** — um `.svelte` (ou equivalente) que é o HTML da tela inteira sem extração — falha do porte
+- **Redesenho** — mesmo com peças extraídas: outro `grid-cols-*`, motion inventado, drawer/card que o proto não tem — falha do porte
 
 ---
 
@@ -156,6 +175,9 @@ Tabela canônica: [`ui-contract` Passo 6](../ui-contract/SKILL.md).
 - ⚠️ **NÃO** “alinhe o contrato” depois de ter mudado o Svelte.
 - ⚠️ **NÃO** mude espaçamento, hierarquia, copy ou tokens “para ficar Svelte”.
 - ⚠️ **NÃO** cole o `code.html` (ou `scr-*.html`) inteiro numa única página.
+- ⚠️ **NÃO** recrie grid/posição/animação de memória: copie `class` e `<style>` do proto (Stitch é minificado; abra por `id`).
+- ⚠️ **NÃO** empilhe componentes no lugar de `xl:grid-cols-12` / `col-span-*`.
+- ⚠️ **NÃO** invente drawer, card extra, `sm:`/`xl:` ou hover que o HTML não tem.
 - ⚠️ **NÃO** use `export let` / `$: ` no default Svelte 5.
 - ⚠️ **NÃO** chame rotas `ops-only` ou Adiado.
 - ⚠️ **NÃO** invente i18n além da seção 8.
@@ -163,6 +185,7 @@ Tabela canônica: [`ui-contract` Passo 6](../ui-contract/SKILL.md).
 - ⚠️ **NÃO** troque Svelte por React/Vue sem ADR no repo alvo.
 - ⚠️ **NÃO** exija `COMPONENTS.md` para começar o porte; **NÃO** ignore se estiver aprovado.
 - 💡 **FAÇA:** runes (`$props` / `$state` / `$derived` / `$effect`) e extração header/footer/nav + átomos. Ver [`svelte.md`](svelte.md).
+- 💡 **FAÇA:** `class` literal + `@keyframes` do `<style>` do HTML nos mesmos nós; casca de grid na página.
 - 💡 **FAÇA:** âncoras da seção 9 no DOM da peça dona.
 - 💡 **FAÇA:** Base URL = contrato / env.
 
@@ -173,6 +196,8 @@ Tabela canônica: [`ui-contract` Passo 6](../ui-contract/SKILL.md).
 - [ ] `INTERFACE.md` + `proto/` presentes e aprovados
 - [ ] Stack = ADR ou Svelte 5 default + ADR mínima (não React/Vue neste turno)
 - [ ] Uma rota por `scr-*` (`code.html` **ou** `scr-*.html`); página **compõe**, não é dump
+- [ ] Casca de grid/`class` da raiz = proto; sem card extra nem breakpoint inventado
+- [ ] `@keyframes` e classes custom do `<style>` do proto no app, nos mesmos nós
 - [ ] Chrome em `src/layout/` (header, nav, footer); átomos em `src/components/`
 - [ ] Svelte 5: `$props` / `$state` / `$derived` / `$effect`; sem `export let`
 - [ ] `COMPONENTS.md` aprovado → cada `cmp-*` tem arquivo; senão, átomos extraídos do proto
@@ -180,5 +205,5 @@ Tabela canônica: [`ui-contract` Passo 6](../ui-contract/SKILL.md).
 - [ ] Âncoras da seção 9; simuladores do HTML não viram controle se o contrato ligar estado à API
 - [ ] Bindings HTTP só do inventário do contrato
 - [ ] `proto/` não apagado
-- [ ] Tabelas tela → rota **e** peça → arquivo apresentadas para revisão no app
+- [ ] Tabelas tela → rota, peça → arquivo **e** `id`/`class`/`@keyframes` proto vs app
 - [ ] Se delta: contrato frontend = backend aprovado (fluxo canônico); sem endpoint fora do inventário

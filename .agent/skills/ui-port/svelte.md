@@ -72,6 +72,8 @@ Não cole `code.html` inteiro numa página. Extraia nesta ordem:
 
 A página **usa** as peças; não duplica o header.
 
+A **casca** (`grid`, `col-span-*`, `max-w-[…]`) fica na página, copiada do proto. O componente **não** inventa outro `grid-cols-*`. A string `class="…"` do botão/card no HTML vai inteira para o `.svelte` (incluindo `absolute`, `animate-*`, `blur-*`). `@keyframes` do `<style>` do proto: mesmo nome, mesma classe no mesmo tipo de nó.
+
 ---
 
 ## Anti-exemplos
