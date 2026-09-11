@@ -9,7 +9,7 @@ Gera **só** o documento `.agent/COMPONENTS.md`. Outro agente implementa os comp
 
 Fonte canônica: `template-agent` (branch `main`) `.agent/skills/component-contract/`. No Cursor: symlink `~/.cursor/skills/component-contract` → esta pasta. Não copie para starters.
 
-Irmã de [`ui-contract`](../ui-contract/SKILL.md): aquela skill mapeia **telas**; esta pede **peças reutilizáveis**. Não misture os artefatos.
+Irmã de [`ui-contract`](../ui-contract/SKILL.md): aquela skill mapeia **telas**; esta pede **peças reutilizáveis**. Não misture os artefatos. Depois de **aprovado**, o [`ui-port`](../ui-port/SKILL.md) **pode** mapear `cmp-*` → `src/components/`; esta skill **não** gera código.
 
 ---
 
@@ -90,7 +90,7 @@ NFRs só com evidência: rate limit (`429` + `Retry-After`), cooldown, polling v
 
 1. Não gere app, componentes em código, CSS nem cliente HTTP de produção.
 2. Mostre o mapa (lista de `cmp-…` + o que ficou de fora) e peça **aprovação humana**.
-3. Se pedirem implementação no mesmo turno: recuse até o `COMPONENTS.md` estar aprovado.
+3. Se pedirem implementação no mesmo turno: recuse até o `COMPONENTS.md` estar aprovado. Implementação = `ui-port` (com telas + proto) ou um turno só de kit, **depois** da aprovação.
 
 ---
 
