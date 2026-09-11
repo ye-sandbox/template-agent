@@ -151,7 +151,7 @@ Tabela canônica: [`ui-contract` Passo 6](../ui-contract/SKILL.md).
 
 1. Se o contrato do frontend for o mapa Stitch (ADR): **não** exija cópia idêntica do backend. Se o fluxo for backend-canônico: exija `INTERFACE.md` copiado após aprovação; se o do frontend for mais velho, pare.
 2. Binding/NFR/campo: ajuste o Svelte; proto só se o humano quiser zero deriva visual. **Não** regenere Stitch.
-3. Tela nova: o HTML (Stitch `code.html` ou `ui-prototype`) já tem de existir. Porte só o delta; extraia peças novas se o HTML repetir chrome/átomos. **Não** mude a casca de grid das telas que não saíram no delta.
+3. Tela nova: o HTML (Stitch `code.html` ou `ui-prototype`) já tem de existir. Porte só o delta; extraia peças novas se o HTML repetir chrome/átomos. **Não** mude a casca de grid das telas que não saíram no delta. **Não** mude a casca de grid das telas que não saíram no delta.
 4. Tela removida: apague a rota (e a pasta/`html` do proto se ainda estiver lá). Peças ainda usadas por outras telas **ficam**.
 5. **NÃO** adicione `fetch` fora do inventário. Controles só-proto (simulador) não viram endpoint.
 
