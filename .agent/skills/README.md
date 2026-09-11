@@ -58,7 +58,7 @@ Procedimento que vale para **vários repositórios** (não só o starter gerado)
 | [`ui-contract`](./ui-contract/SKILL.md) | Derivar `.agent/INTERFACE.md` (telas, ações, NFRs) a partir de um backend. Sem código de UI. |
 | [`component-contract`](./component-contract/SKILL.md) | Derivar `.agent/COMPONENTS.md` (peças reutilizáveis, props, bindings). Sem telas e sem código de UI. |
 | [`ui-prototype`](./ui-prototype/SKILL.md) | `INTERFACE.md` **aprovado** → HTML/CSS **se não houver Stitch**. Sem framework, sem fetch. |
-| [`ui-port`](./ui-port/SKILL.md) | Stitch `code.html` **ou** HTML plano + contrato → app. Default Svelte. Não redesenhar, não regenerar Stitch. |
+| [`ui-port`](./ui-port/SKILL.md) | Stitch `code.html` **ou** HTML plano + contrato → app. Default **Svelte 5** (runes, layout/componentes — não dump HTML). Ver [`ui-port/svelte.md`](./ui-port/svelte.md). Não regenerar Stitch. |
 
 ### ❌ NÃO crie uma Skill quando:
 - For uma regra geral de código ou estilo (use `AGENTS.md`).

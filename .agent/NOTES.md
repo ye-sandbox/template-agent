@@ -39,6 +39,7 @@
 | 2026-09-08 | Pipeline UI = 3 skills, não branch | Contrato → proto HTML → porte. `INTERFACE.md` viaja com `proto/`. Svelte é default do porte; stack oficial na ADR do frontend. Delta: backend → contrato → proto só se o visual mudar → porte. Svelte não descobre endpoint. |
 | 2026-09-10 | Kit de peças = skill `component-contract`, irmã de `ui-contract` | Telas (`INTERFACE.md`) e componentes (`COMPONENTS.md`) são handoffs distintos. Misturar no mesmo molde faz o agente inventar rotas de SPA. Nenhuma das duas skills gera código. |
 | 2026-09-10 | Stitch = layout A do `ui-port` | Export `proto/scr-<id>/code.html` + `DESIGN.md` é proto canônico quando existir. Achatar ou regenerar com `ui-prototype` apaga o visual aprovado. Mapa do frontend pode divergir do backend (ADR). |
+| 2026-09-10 | Porte = Svelte 5 de verdade, não dump HTML | Proto é HTML/CSS: Svelte porta markup/classes quase 1:1 (simples + runtime pequeno). React/Vue reescrevem o HTML. Visual 1:1 ≠ um `.svelte` por tela. Extração header/footer/átomos e runes são estrutura, não redesenho. `COMPONENTS.md` aprovado alimenta `src/components/`; ausência não bloqueia o porte. |
 
 ### Índice de ADRs formais
 
