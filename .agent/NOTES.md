@@ -40,6 +40,7 @@
 | 2026-09-10 | Kit de peças = skill `component-contract`, irmã de `ui-contract` | Telas (`INTERFACE.md`) e componentes (`COMPONENTS.md`) são handoffs distintos. Misturar no mesmo molde faz o agente inventar rotas de SPA. Nenhuma das duas skills gera código. |
 | 2026-09-10 | Stitch = layout A do `ui-port` | Export `proto/scr-<id>/code.html` + `DESIGN.md` é proto canônico quando existir. Achatar ou regenerar com `ui-prototype` apaga o visual aprovado. Mapa do frontend pode divergir do backend (ADR). |
 | 2026-09-10 | Porte = Svelte 5 de verdade, não dump HTML | Proto é HTML/CSS: Svelte porta markup/classes quase 1:1 (simples + runtime pequeno). React/Vue reescrevem o HTML. Visual 1:1 ≠ um `.svelte` por tela. Extração header/footer/átomos e runes são estrutura, não redesenho. `COMPONENTS.md` aprovado alimenta `src/components/`; ausência não bloqueia o porte. |
+| 2026-09-10 | Fidelidade = `class` + motion do HTML, não “clima” Stitch | Extração em componentes sem copiar grid/`absolute`/`@keyframes` redesenha (ex.: `md:grid-cols-3` → `xl:grid-cols-4`, drawer inventado). Stitch minifica `class` e `<style>` no `<head>`; o agente tem de abrir por `id`. `DESIGN.md` não substitui o CSS de animação do `code.html`. |
 
 ### Índice de ADRs formais
 
