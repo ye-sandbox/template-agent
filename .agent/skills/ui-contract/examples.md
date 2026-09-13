@@ -20,11 +20,13 @@ Ilustra classificação. Não é o contrato completo — o agente preenche `INTE
 
 ## Chrome (seção 8 — não vem das rotas)
 
-Tema: `light` | `system` | `dark`, default `system`, persistência local no chrome (não há `PUT` de preferências na API). Locale no rascunho: `fixed` `en`. No Passo 5 o humano confirma inglês só, ou p.ex. `en` + `pt-BR` → `selectable` com bandeiras `US` e `BR`. `Accept-Language` não aparece nos handlers.
+Tema: `light` | `system` | `dark`, default `system`, persistência local no chrome (não há `PUT` de preferências na API). Locale no rascunho: `fixed` `en`. Superfície no rascunho: eixos `pendente` — **não** inferir `operator` do path `/api/inverter`. No Passo 5 o humano confirma inglês só (ou p.ex. `en` + `pt-BR` → `selectable` com bandeiras `US` e `BR`) **e** a superfície, p.ex. global `operator` + `industrial` + `functional` + `plain` + `desktop`. `Accept-Language` não aparece nos handlers.
+
+Override: neste recorte nenhuma ficha diverge (home operacional = o default). Exemplo de override, se o humano pedisse um `scr-public`: na ficha, `audiência = layperson`, `densidade = minimal`, `formato = touch`; o resto herda.
 
 ## Âncoras (seção 9)
 
-`scr-ops` → `id="scr-ops"`; widgets `wdg-status`, `wdg-live`, `wdg-today`. Estados no live: `loading`, `empty`, `error`, `idle-night` (`has_data: false`). `html data-theme`. Sem seletor de idioma no rascunho.
+`scr-ops` → `id="scr-ops"`; widgets `wdg-status`, `wdg-live`, `wdg-today`. Estados no live: `loading`, `empty`, `error`, `idle-night` (`has_data: false`). `html data-theme` e, após acordo, `data-audience` / `data-density` / `data-motion` / `data-copy` / `data-format`. Sem seletor de idioma no rascunho.
 
 ## NFR com evidência
 

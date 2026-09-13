@@ -55,7 +55,7 @@ Procedimento que vale para **vários repositórios** (não só o starter gerado)
 
 | Skill | Quando |
 | :--- | :--- |
-| [`ui-contract`](./ui-contract/SKILL.md) | Derivar `.agent/INTERFACE.md` (telas, ações, NFRs) a partir de um backend. Sem código de UI. |
+| [`ui-contract`](./ui-contract/SKILL.md) | Derivar `.agent/INTERFACE.md` (telas, ações, NFRs, chrome: tema/locale/superfície) a partir de um backend. Sem código de UI. |
 | [`component-contract`](./component-contract/SKILL.md) | Derivar `.agent/COMPONENTS.md` (peças reutilizáveis, props, bindings). Sem telas e sem código de UI. |
 | [`ui-prototype`](./ui-prototype/SKILL.md) | `INTERFACE.md` **aprovado** → HTML/CSS **se não houver Stitch**. Sem framework, sem fetch. |
 | [`ui-port`](./ui-port/SKILL.md) | Stitch `code.html` **ou** HTML plano + contrato → app. Default **Svelte 5**: copiar `class`/keyframes/grid, reusar peças, Tailwind ou UnoCSS. Ver [`ui-port/svelte.md`](./ui-port/svelte.md). Não regenerar Stitch. |
