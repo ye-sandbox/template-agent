@@ -70,9 +70,11 @@ Não cole `code.html` inteiro numa página. Extraia nesta ordem:
 <footer id="app-footer">{/* footer do proto, uma vez */}</footer>
 ```
 
-A página **usa** as peças; não duplica o header.
+A página **usa** as peças; não duplica o header. Antes de criar arquivo: se o `class` (ou `cmp-*`) já tem dono em `src/components/` / `src/layout/`, **importe**. Duas peças para o mesmo átomo do proto = falha.
 
 A **casca** (`grid`, `col-span-*`, `max-w-[…]`) fica na página, copiada do proto. O componente **não** inventa outro `grid-cols-*`. A string `class="…"` do botão/card no HTML vai inteira para o `.svelte` (incluindo `absolute`, `animate-*`, `blur-*`). `@keyframes` do `<style>` do proto: mesmo nome, mesma classe no mesmo tipo de nó.
+
+CSS no bundler: **Tailwind** (default) ou **UnoCSS** se a ADR/repo já o tiver. Sem terceiro motor. Sem reescrever utilities em folha própria.
 
 ---
 
