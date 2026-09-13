@@ -45,6 +45,8 @@
 | [05.5] | `ui-port` / `ui-prototype` aceitam proto Stitch (`code.html`) | [`6d5fa9b`] | 2026-09-10 |
 | [05.6] | Idioma Svelte 5 (runes + peças) no `ui-port` | [`45ad5d6`, `43c6d9b`] | 2026-09-10 |
 | [05.7] | Fidelidade de `class`/grid/motion no `ui-port` | [`d72ac8b`, `7703859`, `da1a756`] | 2026-09-10 |
+| [05.8] | Guardrails de peça, CSS utilitário e padrão de tela no `ui-port` | [`e9c3651`] | 2026-09-13 |
+| [05.9] | Superfície de UI no `ui-contract` (audiência, densidade, motion, copy, formato) | [`deafb06`] | 2026-09-13 |
 
 ---
 
