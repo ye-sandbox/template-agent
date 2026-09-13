@@ -41,6 +41,7 @@
 | 2026-09-10 | Stitch = layout A do `ui-port` | Export `proto/scr-<id>/code.html` + `DESIGN.md` é proto canônico quando existir. Achatar ou regenerar com `ui-prototype` apaga o visual aprovado. Mapa do frontend pode divergir do backend (ADR). |
 | 2026-09-10 | Porte = Svelte 5 de verdade, não dump HTML | Proto é HTML/CSS: Svelte porta markup/classes quase 1:1 (simples + runtime pequeno). React/Vue reescrevem o HTML. Visual 1:1 ≠ um `.svelte` por tela. Extração header/footer/átomos e runes são estrutura, não redesenho. `COMPONENTS.md` aprovado alimenta `src/components/`; ausência não bloqueia o porte. |
 | 2026-09-10 | Fidelidade = `class` + motion do HTML, não “clima” Stitch | Extração em componentes sem copiar grid/`absolute`/`@keyframes` redesenha (ex.: `md:grid-cols-3` → `xl:grid-cols-4`, drawer inventado). Stitch minifica `class` e `<style>` no `<head>`; o agente tem de abrir por `id`. `DESIGN.md` não substitui o CSS de animação do `code.html`. |
+| 2026-09-12 | Porte: reuse + Tailwind\|UnoCSS + padrão de tela | Dump e cópia de chrome/átomos inflacionam o app e divergem no delta. Stitch já é Tailwind; UnoCSS só se o repo já o tiver (mesma string `class`). Terceiro motor ou visual “só desta rota” é redesenho. Brief `.md` do Stitch não substitui `INTERFACE.md`. Drop cru entra como `proto/scr-<id>/`, não como slug. |
 
 ### Índice de ADRs formais
 
