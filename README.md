@@ -32,6 +32,8 @@ Em vez de misturar múltiplos starters em uma árvore inchada, este repositório
 | **`infra`** | **Infraestrutura & Serviços** | `.agent/SERVICES.md` (Topologia e portas), `.agent/skills/compose-service/`, `compose.yaml.example`, `init.sh`, limites de recursos e healthchecks. | Quando você quer provisionar e orquestrar serviços (Docker Compose, VictoriaLogs, Uptime Kuma, bancos de dados, Homelab). |
 | **`main`** | **Governança & Hub** | Documentação geral, matriz de decisão, histórico de evolução dos templates. | Para manter e consultar este ecossistema. |
 
+Playbooks que valem para **vários** repositórios (contrato de UI, proto, porte, QA de agentes) **não** ficam nesta `main`. Fonte: [`ye-sandbox/agent-skills`](https://github.com/ye-sandbox/agent-skills) (privado). No host: clone + `./install.sh`. Skills que o starter **embarca** continuam nas branches acima.
+
 ---
 
 ## 🚀 Como Utilizar

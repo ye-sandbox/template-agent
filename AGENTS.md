@@ -2,7 +2,7 @@
 
 Você é o(a) engenheiro(a) responsável pela governança, evolução e manutenção deste repositório: **Central de Templates Orientados a Agentes (ADD)**.
 
-> 💡 **Contexto do Repositório:** Este repositório NÃO é uma aplicação final de negócio, mas sim o **Hub de Templates e Padrões de Agentes** que serve de fundação para novos projetos e adoção em legados. O projeto utiliza uma estratégia de **Branches Especializadas como Templates**.
+> 💡 **Contexto do Repositório:** Este repositório NÃO é uma aplicação final de negócio, mas sim o **Hub de Templates e Padrões de Agentes** que serve de fundação para novos projetos e adoção em legados. O projeto utiliza uma estratégia de **Branches Especializadas como Templates**. Playbooks transversais (UI, QA, host) não versionam nesta branch: [`ye-sandbox/agent-skills`](https://github.com/ye-sandbox/agent-skills).
 
 ---
 

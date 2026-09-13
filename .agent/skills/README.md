@@ -1,79 +1,15 @@
-# Habilidades do Projeto (`.agent/skills/`)
+# Skills neste hub
 
-Este diretório armazena as **Habilidades Especializadas (Skills)** do repositório. Enquanto o `AGENTS.md` define as **regras e restrições** ("o que fazer e não fazer") e o `NOTES.md` guarda as **decisões e contexto** ("o porquê"), as **Skills** ensinam o agente **como executar fluxos procedurais complexos com precisão**.
+A branch `main` **não** é o livro de playbooks da org. Procedimento transversal (UI, QA, host) vive em [`ye-sandbox/agent-skills`](https://github.com/ye-sandbox/agent-skills) (`skills/<nome>/` + `./install.sh` → `~/.cursor/skills`).
 
----
+Nesta pasta, nesta branch, não há `SKILL.md` de produto. Skills de **molde** (viajam com o starter) estão só nas branches de template:
 
-## 🧭 O Papel de Cada Componente
-
-| Arquivo / Diretório | Função Principal | Pergunta Respondida |
-| :--- | :--- | :--- |
-| **`AGENTS.md`** | Constituição do projeto, DoD, stack e regras inegociáveis | *Quais são as regras e limites?* |
-| **`.agent/TASK.md`** | Escopo da tarefa ativa e backlog imediato | *O que deve ser feito agora?* |
-| **`.agent/NOTES.md`** | Decisões técnicas rápidas, armadilhas e contratos | *Por que foi feito assim?* |
-| **`.agent/adr/`** | Decisões arquiteturais formais e complexas | *Quais alternativas foram ponderadas?* |
-| **`.agent/skills/`** | Manuais operacionais passo a passo de procedimentos | *Como executar este fluxo com maestria?* |
-
----
-
-## 📁 Estrutura de uma Skill
-
-Cada habilidade deve residir em sua própria subpasta contendo um arquivo `SKILL.md`:
-
-```text
-.agent/skills/
-├── README.md                  # Este guia
-├── 000-template.md            # Template canônico para criar novas skills
-├── [nome-da-skill]/
-│   ├── SKILL.md               # Instruções operacionais detalhadas
-│   ├── examples/              # (Opcional) Exemplos de entrada e saída
-│   └── scripts/               # (Opcional) Scripts auxiliares ou de validação
-```
-
-O arquivo `SKILL.md` deve iniciar com cabeçalho YAML padronizado:
-
-```yaml
----
-name: nome-da-skill
-description: Resumo conciso de uma linha sobre o que esta skill ensina e quando ativá-la.
----
-```
-
----
-
-## 🎯 Quando Criar uma Skill no Projeto?
-
-### ✅ Crie uma Skill quando:
-- Houver um **fluxo repetitivo de mais de 3 passos** no projeto (ex: criar uma nova entidade com rota, service, migration e testes).
-- Houver um **padrão de integração específico** com um serviço ou biblioteca (ex: formato padrão de eventos para filas, schemas de payload padronizados).
-- Houver um procedimento de **debug ou validação especializado** (ex: como validar queries pesadas, como reproduzir fluxos assíncronos locais).
-- Houver ferramentas auxiliares ou servidores MCP específicos que exigem sequência correta de chamadas.
-
-### Skills globais versionadas neste hub
-
-Procedimento que vale para **vários repositórios** (não só o starter gerado) fica aqui e é exposto no Cursor por symlink em `~/.cursor/skills/<nome>` → `.agent/skills/<nome>/` deste clone. Não copie a pasta para `greenfield`/`brownfield`.
-
-| Skill | Quando |
+| Branch | Skills do molde |
 | :--- | :--- |
-| [`ui-contract`](./ui-contract/SKILL.md) | Derivar `.agent/INTERFACE.md` (telas, ações, NFRs, chrome: tema/locale/superfície) a partir de um backend. Sem código de UI. |
-| [`component-contract`](./component-contract/SKILL.md) | Derivar `.agent/COMPONENTS.md` (peças reutilizáveis, props, bindings). Sem telas e sem código de UI. |
-| [`ui-prototype`](./ui-prototype/SKILL.md) | `INTERFACE.md` **aprovado** → HTML/CSS **se não houver Stitch**. Sem framework, sem fetch. |
-| [`ui-port`](./ui-port/SKILL.md) | Stitch `code.html` **ou** HTML plano + contrato → app. Default **Svelte 5**: copiar `class`/keyframes/grid, reusar peças, Tailwind ou UnoCSS. Ver [`ui-port/svelte.md`](./ui-port/svelte.md). Não regenerar Stitch. |
-| [`qa-environment`](./qa-environment/SKILL.md) | Preparar ambiente de testes (mock, seeding, túnel) e gerar prompt para agentes de QA de UI (Grok, Playwright, etc.). |
+| `greenfield` | `database-migration`, `api-endpoint` |
+| `blackbox` | `reverse-engineering` |
+| `infra` | `compose-service` |
 
-### ❌ NÃO crie uma Skill quando:
-- For uma regra geral de código ou estilo (use `AGENTS.md`).
-- For uma decisão arquitetural pontual ou registro de débito técnico (use `.agent/NOTES.md`).
-- For uma ferramenta de infraestrutura geral do seu ambiente/homelab que se aplica a múltiplos repositórios (ex: consulta geral ao VictoriaLogs, controle de containers Proxmox). Nesses casos, prefira **Skills Globais** no host. Se a fonte canônica for este hub, versionar em `.agent/skills/` e expor por symlink (como `ui-contract`, `component-contract`, `ui-prototype`, `ui-port`).
+`brownfield` injeta governança; não copia o livro da org.
 
----
-
-## 🚀 Como Criar uma Nova Skill
-
-1. Copie o arquivo [`000-template.md`](./000-template.md) para uma nova pasta com o nome da habilidade:
-   ```bash
-   mkdir -p .agent/skills/minha-skill
-   cp .agent/skills/000-template.md .agent/skills/minha-skill/SKILL.md
-   ```
-2. Preencha as seções com instruções imperativas, exemplos de código reais e possíveis armadilhas.
-3. Se aplicável, adicione uma menção à nova skill no `AGENTS.md` na seção de Habilidades Especializadas.
+Não liste playbooks no `AGENTS.md` deste hub. Skill nova da org → `agent-skills`. Skill nova de um tipo de starter → a branch daquele molde.
