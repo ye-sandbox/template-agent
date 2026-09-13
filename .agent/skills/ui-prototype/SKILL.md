@@ -13,7 +13,7 @@ Fonte canônica: `template-agent` (branch `main`) `.agent/skills/ui-prototype/`.
 
 ## 1. Objetivo
 
-Materializar cada tela do mapa em HTML/CSS puro, com as **âncoras da seção 9** (`id`, `name`, `data-state`, `data-theme`). Visual revisável no browser, sem app.
+Materializar cada tela do mapa em HTML/CSS puro, com as **âncoras da seção 9** (`id`, `name`, `data-state`, `data-theme`, atributos de superfície). Visual revisável no browser, sem app. A §8 (densidade, motion, formato, audiência, copy) **rege** o CSS deste layout B; não improvise “clima”.
 
 ---
 
@@ -24,7 +24,7 @@ Ative quando a tarefa for:
 - Mockup estático / proto / “abre no browser”
 - Delta: tela ou widget **novo**, ou layout/copy visível mudou no contrato
 
-**Não** ative se o contrato estiver `Rascunho`, `Desatualizado` ou locale `pendente`. **Não** ative para Svelte, Vite, fetch — isso é `ui-port`. **Não** ative só porque um path HTTP mudou sem mudança visual (isso é só `ui-port`).
+**Não** ative se o contrato estiver `Rascunho`, `Desatualizado`, locale `pendente` ou eixo de superfície `pendente`. **Não** ative para Svelte, Vite, fetch — isso é `ui-port`. **Não** ative só porque um path HTTP mudou sem mudança visual (isso é só `ui-port`).
 
 **Não** ative se o visual canônico já for **Stitch** (`proto/scr-<id>/code.html` e/ou ADR “proto = Stitch”). Não regenere, não achate, não substitua `code.html`. O humano atualiza o drop; o próximo passo é `ui-port`.
 
@@ -41,7 +41,7 @@ Ative quando a tarefa for:
 
 ### Passo 1 — Entrada
 
-Exija `.agent/INTERFACE.md` com **Status `Aprovado`** e seção 8 com acordo de locale. Sem isso: pare e mande o humano voltar à `ui-contract`.
+Exija `.agent/INTERFACE.md` com **Status `Aprovado`**, seção 8 com acordo de locale **e** de superfície (nenhum eixo `pendente`). Sem isso: pare e mande o humano voltar à `ui-contract`.
 
 Onde escrever: `proto/` na raiz (layout B: `scr-<id>.html` + `css/`). Esta skill **não** edita `.svelte` e **não** escreve `proto/scr-<id>/code.html` (isso é export Stitch).
 
@@ -61,7 +61,18 @@ Se já existir layout A (Stitch) para os IDs do mapa: **pare**. Não misture B e
 
 Copie a seção 9. Cada região existe no DOM com o `id` combinado. Campos de formulário: `name` = propriedade do schema. Estados da ficha: blocos irmãos ou regiões com `data-state="…"`. Chrome: `<html data-theme="system">` e controle de tema `light` \| `system` \| `dark` (pode ser estático / `localStorage` mínimo em `<script>` **inline só para tema/locale**, sem chamar a API).
 
-Copy de ações e erros HTTP: texto visível no HTML (não placeholder Lorem se o contrato já tem copy).
+Copy de ações e erros HTTP: texto visível no HTML (não placeholder Lorem se o contrato já tem copy). Copy `cautious`: confirmação visível nas ações destrutivas da ficha. `plain`: não invente modal extra.
+
+**Superfície (§8, override da ficha se houver):**
+
+- **Motion `none`:** sem `@keyframes`, `animate-*` ou transição decorativa.
+- **Motion `functional`:** só feedback de `loading` / `error` (e domínio da ficha).
+- **Motion `expressive`:** motion de marca permitido; ainda sem tela fora do mapa.
+- **Formato `touch` / `kiosk`:** alvos grandes; nada que exista só no hover.
+- **Formato `desktop`:** hover ok se for o padrão do proto; não vire kiosk.
+- **Densidade** rege ruído visual (tabela densa vs. respiro). Não invente paleta.
+
+`<html>` leva `data-theme` e os `data-*` de superfície da §8 (ou do override dessa tela).
 
 ### Passo 4 — Dados fake
 
@@ -72,7 +83,7 @@ Não crie tela que não está no mapa. Não implemente Adiado.
 ### Passo 5 — Parar
 
 1. Liste os HTML gerados vs IDs do mapa (tem de bater).
-2. Peça revisão **no browser** (tema system/light/dark; locale se houver seletor).
+2. Peça revisão **no browser** (tema system/light/dark; locale se houver seletor; densidade/motion visíveis segundo a §8).
 3. Não copie para outro git e não inicie `ui-port` neste turno, salvo o humano pedir explicitamente **depois** de aprovar o proto.
 4. Pacote para o repo novo (humano): `.agent/INTERFACE.md` + `proto/` juntos. Sem um dos dois, o porte falha.
 
@@ -82,6 +93,7 @@ Tabela canônica: [`ui-contract` Passo 6](../ui-contract/SKILL.md).
 
 - Tela/widget novo ou copy/layout **neste** formato B: atualize só os `scr-*.html` afetados.
 - Binding/NFR sem mudança visual: **não rode** esta skill.
+- Superfície da §8 mudou e o visual precisa acompanhar: atualize os `scr-*.html` (layout B) ou peça novo Stitch (layout A).
 - Visual Stitch (layout A): **não rode** esta skill; peça um novo export ao humano.
 
 ---
@@ -89,7 +101,7 @@ Tabela canônica: [`ui-contract` Passo 6](../ui-contract/SKILL.md).
 ## 5. Vocabulário
 
 - **Proto** — HTML/CSS estático em `proto/`
-- **Âncora** — `id` / `name` / `data-state` / `data-theme` iguais ao contrato
+- **Âncora** — `id` / `name` / `data-state` / `data-theme` / `data-*` de superfície iguais ao contrato
 
 ---
 
@@ -100,14 +112,15 @@ Tabela canônica: [`ui-contract` Passo 6](../ui-contract/SKILL.md).
 - ⚠️ **NÃO** invente `scr-*` fora do mapa.
 - ⚠️ **NÃO** mude `id`/`name` “para ficar mais semântico”.
 - ⚠️ **NÃO** regenere proto Stitch (`code.html`) nem apague `DESIGN.md`.
+- ⚠️ **NÃO** ignore densidade/motion/formato da §8 neste layout B.
 - 💡 **FAÇA:** CSS variables para os três temas, para o porte reusar.
-- 💡 **FAÇA:** o mesmo chrome (header/tema/bandeiras) em todas as telas.
+- 💡 **FAÇA:** o mesmo chrome (header/tema/bandeiras) em todas as telas; `data-*` de superfície no `<html>` (override só no `scr-*` que a ficha marcar).
 
 ---
 
 ## 7. Checklist
 
-- [ ] `INTERFACE.md` aprovado (locale acordado)
+- [ ] `INTERFACE.md` aprovado (locale e superfície acordados; eixos não `pendente`)
 - [ ] Layout B: um `proto/scr-*.html` por tela **ou** skill não rodou porque o proto é Stitch
 - [ ] Âncoras da seção 9 presentes no DOM
 - [ ] Três temas no CSS; seletor de idioma só se `selectable`

@@ -2,7 +2,7 @@
 
 > Fonte da verdade para um agente de implementação. Sem tela/ação aqui, não há UI.
 > Preenchido pela skill `ui-contract`. Stack fica em ADR do repo de frontend, não neste arquivo.
-> Chrome (seção 8) é obrigatório mesmo sem rota de preferências.
+> Chrome (seção 8) é obrigatório mesmo sem rota de preferências: tema, locale e superfície.
 > Duas cópias (backend e frontend) devem ser o **mesmo** arquivo após cada aprovação. API mudou → `Desatualizado` até o Passo 6 da skill.
 
 **Status do contrato:** `Rascunho` | `Aprovado` | `Desatualizado`  
@@ -52,6 +52,7 @@
   - `error` (rede / 5xx):
   - `domínio` (se houver):
 - **Não mostrar:** `[ex. campos internos, stack trace]`
+- **Override de superfície:** omitir se herda a §8. Só eixos que divergem: `audiência` / `densidade` / `motion` / `copy` / `formato` = `[valor da lista fechada]`
 
 ---
 
@@ -88,7 +89,7 @@ Toda rota do backend aparece **uma** vez.
 
 ## 8. Chrome (não deriva de rota)
 
-Preferências de superfície. **Não** é tela de produto: não criar `scr-settings` nem rota `/settings` só por isto. Tema: especifique comportamento, não o widget. Locale `selectable`: o seletor **leva bandeira por território** (ver abaixo).
+Preferências de casca. **Não** é tela de produto: não criar `scr-settings` nem rota `/settings` só por isto. Tema: especifique comportamento, não o widget. Locale `selectable`: o seletor **leva bandeira por território** (ver abaixo). Superfície: enum fechado; acordo no Passo 5.
 
 Se o backend **já** tiver perfil com tema/locale, o binding vai na ficha da tela de conta — não duplicar aqui como chrome-only.
 
@@ -128,13 +129,36 @@ Tabela se `selectable` (uma linha por idioma; território ISO 3166 só para a ba
 
 Copy e traduções **não** entram neste arquivo. Fichas de tela no idioma de trabalho do contrato; a UI implementada segue os locales acordados.
 
+### Superfície (obrigatório — acordar no Passo 5)
+
+Não deriva de OpenAPI nem de persona inventada. Rascunho: todos os eixos `pendente`. Sem acordo o contrato não está aprovado. Paleta, type e grid **não** entram aqui (proto / `DESIGN.md`).
+
+O default vale para **todas** as telas. Override só na ficha que o humano marcar.
+
+| Eixo | Valores (só estes) | Significa |
+| :--- | :--- | :--- |
+| Audiência | `operator` \| `customer` \| `layperson` | Jargão e o que pode aparecer; operador vs cliente vs leigo |
+| Densidade | `industrial` \| `compact` \| `minimal` | Painel denso vs compacto vs produto limpo |
+| Motion | `none` \| `functional` \| `expressive` | Sem animação; só feedback (loading/erro); motion de marca |
+| Copy | `plain` \| `cautious` | Ação direta vs confirmação extra em risco |
+| Formato | `desktop` \| `touch` \| `kiosk` | Mouse/teclado vs tap vs chão/luva (não confundir com audiência) |
+
+| Campo | Valor |
+| :--- | :--- |
+| Audiência | `pendente` \| `operator` \| `customer` \| `layperson` |
+| Densidade | `pendente` \| `industrial` \| `compact` \| `minimal` |
+| Motion | `pendente` \| `none` \| `functional` \| `expressive` |
+| Copy | `pendente` \| `plain` \| `cautious` |
+| Formato | `pendente` \| `desktop` \| `touch` \| `kiosk` |
+| Acordo humano | `pendente` \| `sim` (data / o que foi combinado) |
+
 ---
 
 ## 9. Âncoras de implementação (stack-agnóstico)
 
 O proto HTML e o porte (Svelte ou outro) **reutilizam** estes identificadores. Sem âncora aqui, o implementador não inventa `id`.
 
-**Documento:** `<html data-theme="system">` (valores: `light` \| `system` \| `dark`). Se locale `selectable`, o seletor de bandeira vive no chrome global (mesmo markup em todas as telas).
+**Documento:** `<html data-theme="system">` (valores: `light` \| `system` \| `dark`) e, após acordo, `data-audience` `data-density` `data-motion` `data-copy` `data-format` iguais à §8 (override da ficha, se houver, só nesse `scr-*`). Se locale `selectable`, o seletor de bandeira vive no chrome global (mesmo markup em todas as telas).
 
 **Por região** (preencha a partir das fichas):
 
