@@ -44,6 +44,7 @@
 | 2026-09-12 | Porte: reuse + Tailwind\|UnoCSS + padrão de tela | Dump e cópia de chrome/átomos inflacionam o app e divergem no delta. Stitch já é Tailwind; UnoCSS só se o repo já o tiver (mesma string `class`). Terceiro motor ou visual “só desta rota” é redesenho. Brief `.md` do Stitch não substitui `INTERFACE.md`. Drop cru entra como `proto/scr-<id>/`, não como slug. |
 | 2026-09-13 | Superfície de UI = chrome acordado, não persona da API | Audiência/densidade/motion/copy/formato não saem do OpenAPI. Sem campo, proto e Stitch improvisam clima. Enum fechado + Passo 5 (com locale); override só na ficha que diverge. Paleta/type ficam no proto. Formato (`desktop`/`touch`/`kiosk`) não é audiência. |
 | 2026-09-13 | Skill `qa-environment` (Mock, Seeding, Túnel e Prompt) | Teste de UI por agentes externos precisa de mock seguro para evitar disparos em produção, dados pré-carregados para testar listagens/estados e túnel HTTPS com prompt estruturado. |
+| 2026-09-13 | Livro de skills = `agent-skills`, não o hub | Playbook transversal (UI, QA) não é molde de starter. Canônico: `ye-sandbox/agent-skills` `skills/`. Hub `main` só aponta; `greenfield`/`blackbox`/`infra` mantêm skills que o `init.sh` entrega. |
 
 ### Índice de ADRs formais
 
