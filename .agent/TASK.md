@@ -10,23 +10,19 @@
 
 ## Active Task
 
-### 📌 Task [08.1]: Apply 11 Agent Instruction-File Design Rules to Templates
+### 📌 Task [XX.Y]: [Short descriptive title]
 
-- **Description:** Enforce RFC 2119 precision, explicit rule precedence hierarchies, contrast pairs (DO/DON'T), binary pass/fail verification, and modular context triggers across Hub and starter templates.
-- **Systems Involved:** `docs`, `hub`, `greenfield`, `brownfield`, `blackbox`, `infra`
+- **Description:** [2–4 lines for the agent to assemble a plan.]
+- **Systems Involved:** [e.g.: `docs`, `hub`, `branch-greenfield`]
 - **Action Type:**
-  - [x] Read-only / Documentation
+  - [ ] Read-only / Documentation
   - [ ] Source code changes
-- **Status:** RUNNING
+- **Status:** READY FOR PLANNING
   *(Workflow: `READY FOR PLANNING` → `PLANNING` on presenting plan → approval → `RUNNING`)*
 
 ### Acceptance Criteria
-- [ ] `main` AGENTS.md incorporates RFC 2119, Rule Precedence, Fail-Stop schema, and Falsifiable DoD.
-- [ ] `greenfield` AGENTS.md updated with RFC 2119, Precedence, Contrast Pairs, and Verification criteria.
-- [ ] `brownfield` AGENTS.md updated with RFC 2119 Chesterton rules, Precedence, Contrast Pairs, and Fail-Stop schema.
-- [ ] `blackbox` AGENTS.md updated with RFC 2119, Precedence, Contrast Pairs, and anti-ban Circuit Breaker.
-- [ ] `infra` AGENTS.md updated with RFC 2119, Precedence, Contrast Pairs, and binary Compose verification.
-- [ ] All commits executed atomically on their respective branches with semantic commit messages.
+- [ ] [Verifiable criterion 1]
+- [ ] [Verifiable criterion 2]
 
 ---
 
@@ -53,6 +49,7 @@
 | [05.10] | Skill `qa-environment` (Mock, Seeding, Túnel e Prompt) | [`1a08274`] | 2026-09-13 |
 | [06.1] | Extrair playbooks transversais para `agent-skills` | [`94f562a`] | 2026-09-13 |
 | [07.1] | Starters and Hub internationalization (Technical English + PT-BR README) | [`e748b7c`, `567fd62`, `a54b465`, `9e0a8d5`, `06103f4`] | 2026-09-15 |
+| [08.1] | Apply 11 Agent Instruction-File Design Rules to Templates | [`bf8402b`, `bad0f7b`, `25e0b55`, `370beb5`, `c75131d`, `376fca0`] | 2026-09-15 |
 
 ---
 
