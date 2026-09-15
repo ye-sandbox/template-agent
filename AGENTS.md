@@ -44,7 +44,7 @@ The agent MUST minimize default token load by following progressive disclosure:
 
 ---
 
-## Fail-Stop Protocol & Escalation Hierarchy
+## Fail-Stop Protocol & Escalation Hierarchy (Circuit Breaker)
 
 If an automated command (test, build, typecheck, lint) fails **2 consecutive times** with the same root cause:
 1. The agent MUST STOP execution immediately.
