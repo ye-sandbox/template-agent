@@ -1,138 +1,136 @@
-# Diretrizes e Regras do Agente (Repositório Hub de Templates)
+# Agent Guidelines and Rules (Template Hub Repository)
 
-Você é o(a) engenheiro(a) responsável pela governança, evolução e manutenção deste repositório: **Central de Templates Orientados a Agentes (ADD)**.
+You are the lead engineer responsible for governing, maintaining, and evolving this repository: **Agent-Driven Development (ADD) Template Hub**.
 
-> 💡 **Contexto do Repositório:** Este repositório NÃO é uma aplicação final de negócio, mas sim o **Hub de Templates e Padrões de Agentes** que serve de fundação para novos projetos e adoção em legados. O projeto utiliza uma estratégia de **Branches Especializadas como Templates**. Playbooks transversais (UI, QA, host) não versionam nesta branch: [`ye-sandbox/agent-skills`](https://github.com/ye-sandbox/agent-skills).
-
----
-
-## 🌿 Mapa de Branches do Repositório
-
-- **`main` (Esta Branch):** Central de documentação, matriz de decisão, guias de governança e histórico de evolução do ecossistema de templates.
-- **`greenfield`:** O starter kit puro para projetos criados do zero (com `.agent/adr/`, `.agent/skills/`, etc. na raiz).
-- **`brownfield`:** O template de injeção em projetos existentes/legados (com `install.sh`, `.agent/INVARIANTS.md`, Task 00 de Discovery).
-- **`blackbox`:** O template para engenharia reversa, scrapers, automações e integrações com sistemas fechados/legados sem documentação (com `.agent/ENDPOINTS.md`, `.agent/skills/reverse-engineering/` e `init.sh`).
-- **`infra`:** O template para infraestrutura como código (IaC), Docker Compose, orquestração de serviços e Homelab (com `.agent/SERVICES.md`, `.agent/skills/compose-service/`, `compose.yaml.example` e `init.sh`).
+> 💡 **Repository Context:** This repository is NOT a business application. It is the **Central Template Hub** providing foundational templates for new projects and legacy adoption. The repository uses a **Specialized Branches as Templates** architecture. Cross-cutting playbooks (UI, QA, host infrastructure) are maintained separately in [`ye-sandbox/agent-skills`](https://github.com/ye-sandbox/agent-skills).
 
 ---
 
-## Protocolo de Execução Obrigatório
+## 🌿 Repository Branch Map
 
-1. **Sempre consulte a documentação:** Antes de alterar ou criar arquivos na `main`, consulte `AGENTS.md`, `.agent/TASK.md` e `.agent/NOTES.md`.
-2. **Respeite o Isolamento das Branches:**
-   - Se a tarefa for melhorar o fluxo de **projetos novos do zero**, alterne para a branch `greenfield` para aplicar e testar as mudanças.
-   - Se a tarefa for melhorar o instalador ou guardrails de **código legado**, alterne para a branch `brownfield` para aplicar e testar as mudanças.
-   - Se a tarefa for sobre **engenharia reversa, scrapers ou APIs fechadas**, alterne para a branch `blackbox` para aplicar e testar as mudanças.
-   - Se a tarefa for sobre **infraestrutura, Docker Compose ou serviços**, alterne para a branch `infra` para aplicar e testar as mudanças.
-   - Se a tarefa for sobre a **documentação geral, criação de nova branch de template ou governança**, atue diretamente na branch `main`.
-3. **Modo Planejamento Primeiro:**
-   - Altere o campo `Status` em `.agent/TASK.md` para `EM PLANEJAMENTO`.
-   - Apresente um plano de ação detalhado (quais branches e arquivos serão afetados).
-   - Aguarde aprovação explícita do usuário antes de commitar ou alterar branches.
-   - Após aprovado, atualize o `Status` para `EM EXECUÇÃO`.
-4. **Critério de Conclusão (Definition of Done - DoD):**
-   - [ ] Alterações documentadas de forma clara em markdown com formatação consistente.
-   - [ ] Links relativos entre branches e arquivos validados.
-   - [ ] Commits semânticos realizados em inglês (ex: `feat(hub): ...`, `docs(greenfield): ...`, `fix(brownfield): ...`).
-   - [ ] Tarefa registrada no log de concluídas do `.agent/TASK.md`.
+- **`main` (This Branch):** Documentation hub, decision matrix, governance guidelines, and ecosystem evolution history.
+- **`greenfield`:** Clean starter kit for projects built from scratch (`.agent/adr/`, `.agent/skills/`, etc. at root).
+- **`brownfield`:** Injection template for existing/legacy codebases (`install.sh`, `.agent/INVARIANTS.md`, Task 00 Discovery).
+- **`blackbox`:** Template for reverse engineering, scrapers, automations, and undocumented closed APIs (`.agent/ENDPOINTS.md`, `.agent/skills/reverse-engineering/`, `init.sh`).
+- **`infra`:** Infrastructure-as-Code (IaC), Docker Compose, service orchestration, and Homelab (`.agent/SERVICES.md`, `.agent/skills/compose-service/`, `compose.yaml.example`, `init.sh`).
 
 ---
 
-## Numeração de Tarefas (`[XX.Y]`)
+## Mandatory Execution Protocol
 
-Formato `[Épico].[Sequencial]` com épico de **dois dígitos**. Subtarefas: `[XX.Y.Z]`. Só **uma** tarefa `EM EXECUÇÃO`. IDs imutáveis dentro da release. Após tag Git: arquivar no `ARCHIVE.md`, reiniciar em `[00.1]`/`[01.1]` e corrigir o ID da tarefa ativa.
+1. **Read Context First:** Before editing or creating files on `main`, inspect `AGENTS.md`, `.agent/TASK.md`, and `.agent/NOTES.md`.
+2. **Respect Branch Isolation:**
+   - For greenfield/scratch project workflows: checkout and test on `greenfield`.
+   - For legacy injection or brownfield guardrails: checkout and test on `brownfield`.
+   - For reverse engineering, scrapers, or closed APIs: checkout and test on `blackbox`.
+   - For infrastructure, Docker Compose, or service templates: checkout and test on `infra`.
+   - For general hub docs, governance, or new template branches: work directly on `main`.
+3. **Plan-First Workflow:**
+   - Update `Status` in `.agent/TASK.md` to `PLANNING` (or `EM PLANEJAMENTO`).
+   - Present a detailed action plan listing affected branches and files.
+   - Wait for explicit user approval before executing changes or switching branches.
+   - Upon approval, update `Status` to `RUNNING` (or `EM EXECUÇÃO`).
+4. **Definition of Done (DoD):**
+   - [ ] Clear, consistently formatted Markdown documentation.
+   - [ ] Validated relative links between branches and files.
+   - [ ] Semantic Conventional Commits in English (e.g. `feat(hub): ...`, `docs(greenfield): ...`, `fix(brownfield): ...`).
+   - [ ] Task completed and logged in `.agent/TASK.md`.
 
-**Próximo ID:** só Tarefa Ativa + Log do ciclo vigente. Ignore Backlog Futuro e a seção de encerramento. Mesmo épico → `Y+1` (`[04.4]` → `[04.5]`). Épico novo → `[XX+1.1]`. Não salte para `90.x`/`99.x` a menos que o trabalho seja refatoração/release **e** o usuário peça.
+---
 
-**Release:** `[99.1]` não é item de fila. Só vira Tarefa Ativa com permissão explícita. Nunca inicie tag/higiene de release sozinho; nunca use `99.x` como teto.
+## Task Numbering (`[XX.Y]`)
 
-| Prefixo | Fase | Foco neste hub |
+Format: `[Epic].[Sequence]` with two-digit epics. Subtasks: `[XX.Y.Z]`. Exactly **one** task active in `RUNNING` status. IDs are immutable within a release cycle. After Git tag: archive to `ARCHIVE.md`, restart at `[00.1]`/`[01.1]`, and update the active task ID.
+
+**Next ID:** Derived solely from Active Task + Log of current cycle. Ignore Future Backlog and closing sections. Same epic → `Y+1` (`[04.4]` → `[04.5]`). New epic → `[XX+1.1]`. Never jump to `90.x`/`99.x` unless performing refactoring/release explicitly requested by the user.
+
+**Release:** `[99.1]` is not a queue item. It becomes active only with explicit human instruction. Never trigger release tags autonomously; never treat `99.x` as an artificial ceiling.
+
+| Prefix | Phase | Hub Scope |
 | :---: | :--- | :--- |
-| **`00.x`** | Bootstrap & Discovery | Setup, linters, auditoria inicial |
-| **`01.x`** | Fundação & Guardrails | Bugs críticos, CI, contratos canônicos |
-| **`02.x`–`89.x`** | Épicos | Novos templates, features do hub (cada dezena = um épico) |
-| **`90.x`** | Refatoração | Dívida técnica sem mudar contratos |
-| **`99.x`** | Hardening & Release | Auditoria final e tag — só com permissão humana |
+| **`00.x`** | Bootstrap & Discovery | Setup, linters, initial audit |
+| **`01.x`** | Foundation & Guardrails | Critical fixes, CI, canonical contracts |
+| **`02.x`–`89.x`** | Epics | New templates, hub features (each decade = one epic) |
+| **`90.x`** | Refactoring | Technical debt without contract modifications |
+| **`99.x`** | Hardening & Release | Final audit and release tagging — human approval required |
 
 ---
 
-## Higiene Pós-Release (gatilho: tag Git, qualquer fase)
+## Post-Release Hygiene (Trigger: Git tag on any phase)
 
-Não está preso à fase `99.x`. Ao publicar `vX.Y.Z`:
+Not restricted to phase `99.x`. When releasing `vX.Y.Z`:
 
-1. **Arquivar:** mover o log do ciclo de `TASK.md` → `ARCHIVE.md` sob `## [vX.Y.Z] - AAAA-MM-DD`.
-2. **Consolidar:** promover decisões definitivas para ADRs; apagar dumps e notas efêmeras no `NOTES.md`.
-3. **Borda:** `.env.example` e `README.md` alinhados à tag.
-4. **Reset:** reiniciar numeração; corrigir ID da tarefa ativa; promover a próxima meta (`PRONTO PARA PLANEJAMENTO`); restaurar o aviso de encerramento no `TASK.md` (não como `- [ ] **[99.1]**`).
+1. **Archive:** Move completed log from `TASK.md` to `ARCHIVE.md` under `## [vX.Y.Z] - YYYY-MM-DD`.
+2. **Consolidate:** Promote definitive architectural decisions to ADRs; prune ephemeral scratch notes in `NOTES.md`.
+3. **Perimeter:** Sync `.env.example` and `README.md` to the release tag.
+4. **Reset:** Reset task numbering; correct active task ID; promote next milestone to `READY FOR PLANNING`; restore closing checklist in `TASK.md` (never as an active backlog checkbox).
 
 ---
 
-## 🔄 Protocolo de Sincronização e Manutenção Inter-Branches
+## 🔄 Inter-Branch Synchronization Protocol
 
-Como as branches `greenfield`, `brownfield`, `blackbox`, `infra` e `main` possuem árvores de arquivos intencionalmente distintas na raiz, **o comando `git merge` entre elas é estritamente proibido**, pois mesclaria arquivos de templates de forma desordenada e poluiria as raízes limpas.
+Because branches `greenfield`, `brownfield`, `blackbox`, `infra`, and `main` have intentionally distinct root directories, **`git merge` between them is strictly prohibited**. Merging pollutes clean template roots.
 
-Para propagar melhorias de governança ou infraestrutura comum entre as branches:
+To propagate governance or shared tooling improvements across branches:
 
-### 1. Propagação de Commits Atômicos (Cherry-Pick)
-Ao criar uma melhoria genérica aplicável a outras branches (ex: regras de formatação, ajustes no linter ou padrões de documentação), aplique o commit pontual:
+### 1. Atomic Commit Cherry-Picking
+When creating generic improvements applicable across templates (formatting rules, linter tweaks, doc patterns):
 ```bash
-# Estando na branch de destino (ex: greenfield, brownfield, blackbox ou infra):
+# On target branch (e.g., greenfield, brownfield, blackbox, infra):
 git cherry-pick <commit-hash>
 ```
 
-### 2. Sincronização de Arquivos Compartilhados Específicos
-Para alinhar um arquivo comum (ex: `.gitignore`, `.env.example`) com a versão canônica de outra branch:
+### 2. Selective File Checkout
+To sync shared canonical files (e.g., `.gitignore`, `.env.example`):
 ```bash
-# Estando na branch de destino:
-git checkout <branch-origem> -- caminho/do/arquivo
-git commit -m "chore(sync): sync <arquivo> from <branch-origem>"
+# On target branch:
+git checkout <source-branch> -- path/to/file
+git commit -m "chore(sync): sync <file> from <source-branch>"
 ```
 
-### 3. Matriz de Responsabilidade por Arquivo
-- `.github/workflows/ci.yml`: Mantido e versionado centralmente na branch `main`.
-- `.gitignore` e `.env.example`: Mantidos sincronizados em todas as branches.
-- `.agent/TASK.md` e `.agent/NOTES.md`:
-  - Na `main`: Rastreiam as tarefas e decisões do ecossistema e Hub de Templates.
-  - Na `greenfield`, `brownfield`, `blackbox` e `infra`: Permanecem como templates canônicos limpos para o usuário final.
+### 3. Responsibility Matrix
+- `.github/workflows/ci.yml`: Centrally maintained and versioned on `main`.
+- `.gitignore` and `.env.example`: Kept synchronized across all branches.
+- `.agent/TASK.md` and `.agent/NOTES.md`:
+  - On `main`: Tracks ecosystem and Template Hub tasks/decisions.
+  - On `greenfield`, `brownfield`, `blackbox`, `infra`: Kept as clean canonical templates for end users.
 
 ---
 
-## 📦 Regras de Git e Commits (Conventional Commits & Atomicidade)
+## 📦 Git & Commit Standards (Conventional Commits & Atomicity)
 
-Para manter a rastreabilidade e a integridade de todas as alterações feitas neste Hub:
+### 1. Atomic Commits
+1. **Single Responsibility:** Each commit must represent a single, cohesive, verifiable change. Never combine governance, documentation, and script updates into one commit.
+2. **Step-by-Step Cycle:** Commit and validate atomically before moving to the next phase.
+3. **Surgical Diffs:** Avoid unintended files, accidental whitespace changes, or temporary files.
 
-### 1. Commits Atômicos
-1. **Uma Responsabilidade por Commit:** Cada commit deve representar uma alteração única, coesa e verificável. Nunca agrupe alterações de governança, documentação e correções de scripts no mesmo commit.
-2. **Ciclo por Etapa:** Para cada etapa concluída e validada (ex: ajuste documental, teste de CI), realize um commit atômico antes de iniciar a próxima etapa.
-3. **Diffs Cirúrgicos:** Nunca inclua arquivos acidentais, alterações cosméticas fora do escopo ou arquivos temporários no commit.
+### 2. Conventional Commits Syntax
+All commit messages MUST follow `<type>(<scope>): <imperative summary>` in English:
 
-### 2. Padrão Conventional Commits (em inglês)
-Todas as mensagens de commit DEVEM seguir rigorosamente a sintaxe `<type>(<scope>): <descrição no imperativo/presente>` em inglês:
-
-| Tipo | Finalidade Principal | Exemplo de Aplicação no Hub |
+| Type | Purpose | Hub Scope Example |
 | :---: | :--- | :--- |
-| **`feat`** | Nova funcionalidade ou novo template/branch | `feat(hub): add infra template branch to matrix` |
-| **`fix`** | Correção de bugs em scripts ou fluxos | `fix(installer): resolve remote execution flag parsing` |
-| **`docs`** | Alterações puramente documentais ou logs de tarefas | `docs(task): log task 03.1 completion` |
-| **`refactor`** | Reestruturação ou simplificação de código sem alterar comportamento | `refactor(ci): streamline multi-branch matrix testing` |
-| **`test`** | Inclusão ou ajuste de testes automatizados | `test(infra): add scaffolding verification step` |
-| **`chore`** | Tarefas de manutenção, sync inter-branches ou configs | `chore(sync): sync .gitignore from greenfield` |
+| **`feat`** | New capability or starter branch | `feat(hub): add infra template branch to matrix` |
+| **`fix`** | Bug fix in scripts or workflows | `fix(installer): resolve remote execution flag parsing` |
+| **`docs`** | Documentation or task log updates | `docs(task): log task 07.1 completion` |
+| **`refactor`** | Code/structure cleanup without behavior change | `refactor(ci): streamline multi-branch matrix testing` |
+| **`test`** | Automated tests or contract assertions | `test(infra): add scaffolding verification step` |
+| **`chore`** | Maintenance, inter-branch sync, or configs | `chore(sync): sync .gitignore from greenfield` |
 
-### 3. Convenção de Escopos Recomendados
-- `hub`: Mudanças que afetam a documentação global, README ou matriz do repositório.
-- `greenfield`: Alterações voltadas ao template de projetos novos.
-- `brownfield`: Alterações voltadas ao template de projetos legados (`install.sh`, etc.).
-- `blackbox`: Alterações voltadas ao template de engenharia reversa.
-- `infra`: Alterações voltadas ao template de infraestrutura e serviços.
-- `ci`: Alterações no pipeline de automação (`.github/workflows/ci.yml`).
-- `task`: Atualizações no `.agent/TASK.md`.
+### 3. Recommended Scopes
+- `hub`: Global documentation, hub README, or repository decision matrix.
+- `greenfield`: Greenfield starter template files.
+- `brownfield`: Brownfield legacy template files (`install.sh`, etc.).
+- `blackbox`: Blackbox reverse-engineering template files.
+- `infra`: Infrastructure and Docker Compose template files.
+- `ci`: Automation and CI pipeline (`.github/workflows/ci.yml`).
+- `task`: Updates to `.agent/TASK.md`.
 
 ---
 
-## Regras de Ouro deste Hub
+## Golden Rules of this Hub
 
-- **NUNCA** execute `git merge` entre as branches especializadas (`main`, `greenfield`, `brownfield`, `blackbox`, `infra`). Propague melhorias exclusivamente via `git cherry-pick` ou checkout pontual de arquivos.
-- **NUNCA** misture arquivos de templates específicos na branch `main`. Cada template deve residir exclusivamente na raiz de sua própria branch.
-- **NUNCA** force push (`git push --force`) nas branches principais sem autorização explícita do usuário.
-- **NUNCA** quebre a retrocompatibilidade dos scripts `install.sh` e `init.sh` das branches especializadas.
-- **PRESERVE O CONTEXTO ENXUTO:** Mantenha os arquivos `.agent/TASK.md` e `NOTES.md` objetivos e limpos em todas as branches.
+- **NEVER** run `git merge` between specialized branches (`main`, `greenfield`, `brownfield`, `blackbox`, `infra`). Propagate changes exclusively via `git cherry-pick` or selective file checkout.
+- **NEVER** mix specific template files into `main`. Each starter must remain strictly isolated at the root of its own branch.
+- **NEVER** force-push (`git push --force`) to primary branches without explicit user permission.
+- **NEVER** break backward compatibility of `install.sh` and `init.sh`.
+- **PRESERVE LEAN CONTEXT:** Keep `.agent/TASK.md` and `.agent/NOTES.md` concise, structured, and noise-free.
