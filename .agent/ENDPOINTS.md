@@ -1,42 +1,42 @@
-# Contrato de Endpoints e Integrações Descobertas
+# Discovered Endpoints and Integration Contracts
 
-> Fonte da verdade. Sem rota catalogada aqui + cURL mínimo, não há cliente de produção.
-> Anatomia e exemplo SEI: [`.agent/skills/reverse-engineering/SKILL.md`](./skills/reverse-engineering/SKILL.md).
-
----
-
-## 1. Contexto global
-
-- **Nome do Sistema:** […]
-- **Host Base:** `[https://…]`
-- **Auth / sessão:** [cookie, CSRF, expiração, sinal de sessão morta]
-- **Headers / Content-Type globais:** […]
+> Source of truth. Without a cataloged route here + minimal cURL, no production client code may be written.
+> Anatomy and examples: [`.agent/skills/reverse-engineering/SKILL.md`](./skills/reverse-engineering/SKILL.md).
 
 ---
 
-## 2. Matriz
+## 1. Global Context
 
-| Método | Endpoint / Ação | Propósito | Status | Auth? | Última Validação |
+- **Target System Name:** […]
+- **Base Host:** `[https://…]`
+- **Auth / Session Strategy:** [cookie, CSRF, lifetime, session expiration signal]
+- **Global Headers / Content-Type:** […]
+
+---
+
+## 2. Route Matrix
+
+| Method | Endpoint / Action | Purpose | Status | Auth? | Last Verified |
 | :---: | :--- | :--- | :---: | :---: | :---: |
 | | | | | | |
 
-*(Status: `Descoberto` → `Em Mapeamento` → `Validado` → `Deprecado`)*
+*(Status: `Discovered` $\rightarrow$ `Mapping` $\rightarrow$ `Validated` $\rightarrow$ `Deprecated`)*
 
 ---
 
-## 3. Ficha (copie por rota)
+## 3. Route Card (copy per route)
 
-### 📌 [MÉTODO] `caminho`
+### 📌 [METHOD] `path`
 
-- **Descrição:**
+- **Description:**
 - **Headers:**
-- **Parâmetros:** campo / tipo / local / obrigatório
-- **Sucesso / erros típicos:**
-- **cURL mínimo:**
+- **Parameters:** field / type / location (query/body/path) / required
+- **Expected Success / Error Codes:**
+- **Minimal cURL:**
   ```bash
-  curl -s -X METHOD "$TARGET_BASE_URL/caminho" \
+  curl -s -X METHOD "$TARGET_BASE_URL/path" \
     -b "SESSION=$TARGET_SESSION_COOKIE" \
     -d "..."
   ```
 - **Fixture:** `tests/fixtures/…`
-- **Pegadinhas:**
+- **Gotchas / Quirks:**

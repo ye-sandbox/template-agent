@@ -1,74 +1,76 @@
-# Template Blackbox — Engenharia Reversa, Scrapers e Integrações Fechadas (ADD)
+# Blackbox Template — Reverse Engineering, Scrapers & Closed Integrations (ADD)
 
-Este template é o starter kit canônico do ecossistema ADD para desenvolvimento orientado a agentes em sistemas **sem documentação oficial de API** (ex: SEI, SIP, ERPs legados, portais governamentais, portais web e APIs móveis fechadas).
+🌐 **English | [Português](README.pt-br.md)**
 
----
-
-## 🎯 Por que um template dedicado para Blackbox?
-
-Agentes de IA frequentemente falham em engenharia reversa porque:
-1. **Alucinam nomes de parâmetros:** Em formulários legados (como os do SEI), campos como `hdnInfraItemSelecionado` ou tokens de hash são omitidos ou inventados.
-2. **Ignoram o ciclo de vida da sessão:** Cookies e tokens CSRF expiram, fazendo com que requisições subsequentes falhem silenciosamente.
-3. **Fazem requisições reais durante o CI:** Sem fixtures mockadas, a suite de testes quebra toda vez que a rede oscila ou a sessão expira.
-
-Este template resolve esses problemas com:
-- **`.agent/ENDPOINTS.md`:** Catálogo vivo e canônico de todos os endpoints, cookies, headers e formulários descobertos.
-- **`.agent/skills/reverse-engineering/SKILL.md`:** Metodologia estrita de 6 passos (Captura -> Isolamento -> Minimização -> Documentação -> Fixtures -> Cliente HTTP).
-- **Fixtures Primeiro:** Política obrigatória de gravar respostas mockadas antes de codificar o cliente de produção.
-- **Defensividade HTTP:** Backoff exponencial, rate-limiting e detecção automática de sessão expirada.
+This template is the canonical ADD starter kit for agent-driven engineering on systems **lacking official API documentation** (e.g., legacy ERPs, state/enterprise portals, internal web portals, and closed mobile APIs).
 
 ---
 
-## 📁 Estrutura de Arquivos
+## 🎯 Why a Dedicated Template for Blackbox?
+
+AI coding agents often fail in reverse engineering workflows because they:
+1. **Hallucinate form parameters:** In legacy forms, hidden fields, hash tokens, and state keys are frequently omitted or misnamed.
+2. **Overlook session lifecycles:** Cookies and anti-CSRF tokens expire, causing subsequent requests to fail silently.
+3. **Execute live network calls during CI:** Without static mocked fixtures, test suites break on network hiccups or session invalidation.
+
+This template solves these failure modes with:
+- **`.agent/ENDPOINTS.md`:** Living canonical catalog of all discovered endpoints, cookies, headers, and form schemas.
+- **`.agent/skills/reverse-engineering/SKILL.md`:** Strict 6-step lifecycle (Capture $\rightarrow$ Isolation $\rightarrow$ Minimization $\rightarrow$ Catalog $\rightarrow$ Fixtures $\rightarrow$ Typed Client).
+- **Fixtures-First Standard:** Mandatory recording of sanitized mock responses before authoring production client code.
+- **HTTP Defensiveness:** Exponential backoff, concurrency pacing, and automated session expiry handling.
+
+---
+
+## 📁 File Structure
 
 ```text
 ├── .agent/
-│   ├── ENDPOINTS.md                 # Contrato vivo de rotas, payloads e cookies descobertos
-│   ├── TASK.md                      # Roadmap e tarefa ativa do agente
-│   ├── NOTES.md                     # Invariantes e pegadinhas do sistema-alvo
-│   ├── ARCHIVE.md                   # Tarefas antigas arquivadas
+│   ├── ENDPOINTS.md                 # Living catalog of discovered routes, payloads, and cookies
+│   ├── TASK.md                      # Roadmap and active agent task
+│   ├── NOTES.md                     # Target system invariants, quirks, and gotchas
+│   ├── ARCHIVE.md                   # Archived task history
 │   └── skills/
 │       └── reverse-engineering/
-│           └── SKILL.md             # Instrução passo a passo de engenharia reversa
-├── .env.example                     # Modelo de variáveis de conexão e credenciais
-├── .gitignore                       # Ignora .env, dumps *.har, *.pcap e cookies
-├── AGENTS.md                        # Diretrizes e regras de ouro do agente
-├── init.sh                          # Script de inicialização rápida (removido no projeto final)
-└── README.md                        # Documentação do projeto
+│           └── SKILL.md             # Step-by-step reverse engineering protocol
+├── .env.example                     # Connection variable and credential templates
+├── .gitignore                       # Ignores .env, *.har, *.pcap, and session dumps
+├── AGENTS.md                        # Agent guidelines and golden rules
+├── init.sh                          # Quick initialization script (removed in project instance)
+└── README.md                        # Project documentation
 ```
 
 ---
 
-## 🚀 Como Inicializar um Novo Projeto Blackbox
+## 🚀 How to Initialize a New Blackbox Project
 
-Via script rápido (One-Liner):
+Via one-line script:
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/ye-sandbox/template-agent/blackbox/init.sh | bash -s -- meu-projeto-sei
-cd meu-projeto-sei
+curl -fsSL https://raw.githubusercontent.com/ye-sandbox/template-agent/blackbox/init.sh | bash -s -- my-blackbox-project
+cd my-blackbox-project
 ```
 
-*Ou via clone manual do Git:*
+*Or via manual Git clone:*
 ```bash
-git clone --depth 1 -b blackbox https://github.com/ye-sandbox/template-agent.git meu-projeto-sei
-cd meu-projeto-sei
+git clone --depth 1 -b blackbox https://github.com/ye-sandbox/template-agent.git my-blackbox-project
+cd my-blackbox-project
 rm -rf .git && git init -b main && git add . && git commit -m "chore: initial blackbox setup"
 ```
 
 ---
 
-## 🤖 Primeiro Prompt para o Agente de IA
+## 🤖 First Prompt for the AI Agent
 
-Abra a pasta do projeto no seu editor (Cursor, Windsurf, VS Code, Antigravity) e envie:
+Open the project folder in your AI coding environment (Cursor, Windsurf, VS Code, Antigravity) and send:
 
-> *"Leia o AGENTS.md, .agent/TASK.md, .agent/ENDPOINTS.md e a skill em .agent/skills/reverse-engineering/SKILL.md. Apresente seu plano de implementação para a Tarefa [00.1] de descoberta de autenticação antes de rodar requisições."*
+> *"Read AGENTS.md, .agent/TASK.md, .agent/ENDPOINTS.md, and .agent/skills/reverse-engineering/SKILL.md. Present your implementation plan for Task [00.1] Authentication Discovery before running live requests."*
 
 ---
 
-## 🛡️ Regras de Ouro deste Template
+## 🛡️ Core Rules of this Template
 
-1. **Inspecione antes de codificar:** Sempre obtenha uma chamada cURL mínima funcional antes de escrever código de produção.
-2. **Alimente o `.agent/ENDPOINTS.md`:** Nenhuma rota vai para o código sem estar documentada.
-3. **Fixtures Mockadas para Testes:** Testes automatizados nunca devem chamar o sistema real sem necessidade.
-4. **Respeite o Sistema-Alvo:** Use delays, rate-limits e backoff exponencial para evitar bloqueios ou sobrecargas.
-5. **Segurança de Credenciais:** Sessões e senhas residem exclusivamente no `.env`.
+1. **Inspect before Coding:** Always reproduce a minimal working cURL call before writing production client code.
+2. **Catalog in `.agent/ENDPOINTS.md`:** No route enters application code without prior documentation.
+3. **Mocked Test Fixtures:** Automated CI tests must never make live external requests.
+4. **Protect the Target System:** Enforce request pacing, rate-limiting, and exponential backoff to avoid IP blocks.
+5. **Credential Security:** Session cookies, passwords, and tokens live strictly in `.env`.

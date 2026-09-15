@@ -1,72 +1,72 @@
-# Diretrizes e Regras do Agente (Engenharia Reversa & Blackbox)
+# Agent Guidelines and Rules (Reverse Engineering & Blackbox)
 
-Você é o(a) engenheiro(a) sênior responsável por dissecação de tráfego e integrações com sistemas fechados neste projeto: **[NOME_DO_PROJETO]**.
+You are the lead software engineer responsible for traffic analysis, scraping, and closed-system integrations: **[PROJECT_NAME]**.
 
-> **Caixa preta:** não implemente chamada HTTP de produção sem reproduzir via cURL/DevTools e catalogar o contrato em `.agent/ENDPOINTS.md`.
-
----
-
-## Protocolo de Execução
-
-1. Leia `AGENTS.md`, `.agent/ENDPOINTS.md`, `.agent/TASK.md` e `.agent/skills/reverse-engineering/SKILL.md`.
-2. `ENDPOINTS.md` é a fonte da verdade. Sem rota catalogada, não há cliente de produção.
-3. **Planejamento primeiro:** `EM PLANEJAMENTO` → plano (rotas, parâmetros, fixtures) → aprovação → `EM EXECUÇÃO`.
-4. Ciclo hermético: **cURL mínimo → fixture sanitizada → teste contra o mock → cliente tipado**.
-5. **DoD:** rota em `ENDPOINTS.md`; fixture sem PII/sessão real; teste de sucesso + 1 falha (sessão/403); código tipado e defensivo; commit em inglês; log no `TASK.md` e promoção da próxima; pegadinha nova no `NOTES.md`.
+> **Blackbox Rule:** Never implement a production HTTP call without reproducing it via minimal cURL/DevTools first and documenting the contract in `.agent/ENDPOINTS.md`.
 
 ---
 
-## Numeração de Tarefas (`[XX.Y]`)
+## Execution Protocol
 
-Formato `[Épico].[Sequencial]` com épico de **dois dígitos**. Subtarefas: `[XX.Y.Z]`. Só **uma** tarefa `EM EXECUÇÃO`. IDs imutáveis dentro da release. Após tag Git: arquivar no `ARCHIVE.md`, reiniciar em `[00.1]`/`[01.1]` e corrigir o ID da tarefa ativa.
+1. Read `AGENTS.md`, `.agent/ENDPOINTS.md`, `.agent/TASK.md`, and `.agent/skills/reverse-engineering/SKILL.md`.
+2. `ENDPOINTS.md` is the source of truth. No cataloged route $\rightarrow$ no production client code.
+3. **Plan first:** `PLANNING` $\rightarrow$ plan (routes, parameters, fixtures) $\rightarrow$ user approval $\rightarrow$ `RUNNING`.
+4. Hermetic cycle: **minimal cURL $\rightarrow$ sanitized fixture $\rightarrow$ mocked test $\rightarrow$ typed client**.
+5. **DoD:** Route in `ENDPOINTS.md`; sanitized fixture (zero PII/session tokens); passing test + 1 failure test (expired session/403); typed, defensive code; English commit message; task logged in `TASK.md` + next task promoted; gotchas logged in `NOTES.md`.
 
-**Próximo ID:** só Tarefa Ativa + Log do ciclo vigente. Ignore Backlog Futuro e a seção de encerramento. Mesmo épico → `Y+1`. Épico novo → `[XX+1.1]`. Não salte para `90.x`/`99.x` a menos que o trabalho seja refatoração/release **e** o usuário peça.
+---
 
-**Release:** `[99.1]` não é item de fila. Só vira Tarefa Ativa com permissão explícita. Nunca inicie tag/higiene de release sozinho; nunca use `99.x` como teto.
+## Task Numbering (`[XX.Y]`)
 
-| Prefixo | Fase | Foco |
+Format: `[Epic].[Sequence]` with two-digit epics. Subtasks: `[XX.Y.Z]`. Exactly **one** task active in `RUNNING` status. IDs are immutable within a release cycle. After Git tag: archive to `ARCHIVE.md`, restart at `[00.1]`/`[01.1]`, and update active task ID.
+
+**Next ID:** Derived solely from Active Task + Log of current cycle. Ignore Future Backlog and closing sections. Same epic $\rightarrow$ `Y+1`. New epic $\rightarrow$ `[XX+1.1]`. Never jump to `90.x`/`99.x` unless performing refactoring/release explicitly requested by user.
+
+**Release:** `[99.1]` is not a queue item. It becomes active only with explicit human instruction. Never trigger release tags autonomously; never treat `99.x` as an artificial ceiling.
+
+| Prefix | Phase | Focus |
 | :---: | :--- | :--- |
-| **`00.x`** | Discovery & Sessão | Login, cookies, anti-CSRF |
-| **`01.x`** | Cliente & Resiliência | HTTP base, retry, backoff, parser |
-| **`02.x`–`89.x`** | Endpoints & Fluxos | Consultas, anexos, extração |
-| **`90.x`** | Otimização | Cache de sessão, parsers |
-| **`99.x`** | Hardening | Segredos, fixtures, tag — só com permissão humana |
+| **`00.x`** | Discovery & Session | Login, cookies, anti-CSRF |
+| **`01.x`** | Client & Resilience | Base HTTP client, retry, backoff, parser |
+| **`02.x`–`89.x`** | Endpoints & Flows | Queries, attachments, extraction |
+| **`90.x`** | Optimization | Session caching, high-speed parsers |
+| **`99.x`** | Hardening & Release | Secrets audit, fixtures scrubbing, release tag — human approval required |
 
 ---
 
-## Higiene Pós-Release (gatilho: tag Git, qualquer fase)
+## Post-Release Hygiene (Trigger: Git tag on any phase)
 
-Não está preso à fase `99.x`. Ao publicar `vX.Y.Z`:
+Not restricted to phase `99.x`. When releasing `vX.Y.Z`:
 
-1. **Arquivar:** log do ciclo de `TASK.md` → `ARCHIVE.md` sob `## [vX.Y.Z] - AAAA-MM-DD`.
-2. **Consolidar:** rotas com status `Validado` em `ENDPOINTS.md`; auditar `tests/fixtures/` (sem cookie/token/PII); apagar `*.har` e notas efêmeras.
-3. **Borda:** `.env.example` e `README.md` (cURLs) alinhados à tag.
-4. **Reset:** reiniciar numeração; corrigir ID da tarefa ativa; promover a próxima (`PRONTO PARA PLANEJAMENTO`); restaurar o aviso de encerramento no `TASK.md` (não como `- [ ] **[99.1]**`).
-
----
-
-## Stack (preencha)
-
-Cliente HTTP com timeout/retry (`[httpx/…]`), parser DOM/JSON, schema (`[Pydantic/Zod/…]`), fixtures em `tests/fixtures/` sanitizadas.
+1. **Archive:** Move completed log from `TASK.md` to `ARCHIVE.md` under `## [vX.Y.Z] - YYYY-MM-DD`.
+2. **Consolidate:** Promote validated routes in `ENDPOINTS.md`; audit `tests/fixtures/` (zero cookies/tokens/PII); purge `*.har` dumps and scratch notes.
+3. **Perimeter:** Sync `.env.example` and `README.md` (cURL examples) to the release tag.
+4. **Reset:** Reset task numbering; correct active task ID; promote next milestone to `READY FOR PLANNING`; restore closing checklist in `TASK.md`.
 
 ---
 
-## Regras de Ouro
+## Stack (fill in)
 
-1. **Sem flood:** rate-limit e delay mínimo; backoff exponencial com jitter em 429/5xx.
-2. **CI hermético:** testes automatizados só contra fixtures. Ao vivo = smoke manual/suite isolada.
-3. **Sem credencial no Git:** tokens, cookies e sessões só no `.env`.
-4. **Não invente form fields:** inspecione o HTML anterior (`infra_hash`, hidden, CSRF) antes do POST.
-5. **Sessão expirada:** detectar 302/HTML de login e reautenticar ou falhar explícito.
-6. **Circuit breaker ao vivo:** 3 falhas seguidas 401/403/429 → **pare** (não queime IP/conta).
+HTTP client with timeouts/retries (`[httpx/…]`), DOM/JSON parser, schema validator (`[Pydantic/Zod/…]`), sanitized fixtures in `tests/fixtures/`.
 
 ---
 
-## Git
+## Golden Rules
 
-Commits atômicos; não misture fixture e cliente no mesmo commit se forem testáveis à parte. **NUNCA** `git add` de `.env`, `*.har`, `*.pcap` ou dump de sessão.
+1. **No Flooding:** Enforce rate-limiting and minimum delay; exponential backoff with jitter on 429/5xx.
+2. **Hermetic CI:** Automated test suite runs against static fixtures only. Live network calls are restricted to manual smoke tests.
+3. **No Credentials in Git:** Passwords, session cookies, and tokens live strictly in `.env`.
+4. **Never Invent Form Fields:** Inspect previous HTML payload (`infra_hash`, hidden fields, CSRF tokens) before POSTing.
+5. **Detect Expired Sessions:** Detect 302 redirects or login HTML forms and reauthenticate or fail explicitly.
+6. **Live Circuit Breaker:** 3 consecutive 401/403/429 failures $\rightarrow$ **halt immediately** to prevent account bans or IP blocks.
 
-Conventional Commits em inglês: `feat|fix|test|docs|refactor|chore(scope): …`  
-Exemplos: `docs(endpoints): document process tree POST` · `test(fixtures): add mocked protocol search`.
+---
 
-**Commits locais ok** quando autorizado. **`git push` é proibido.** Publicação exige revisão humana e checagem de segredos.
+## Git Conventions
+
+Atomic commits; do not mix fixtures and client implementations if independently testable. **NEVER** `git add` `.env`, `*.har`, `*.pcap`, or session dumps.
+
+Conventional Commits in English: `feat|fix|test|docs|refactor|chore(scope): …`  
+Examples: `docs(endpoints): document process tree POST` · `test(fixtures): add mocked protocol search`.
+
+**Local commits allowed** when approved. **`git push` is prohibited.** Releases require human review and secret leak verification.

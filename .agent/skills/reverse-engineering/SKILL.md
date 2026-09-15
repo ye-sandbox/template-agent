@@ -1,95 +1,92 @@
 ---
 name: reverse-engineering
-description: Metodologia e protocolo de dissecação, validação, documentação e implementação de integrações com APIs e portais legados sem documentação (Engenharia Reversa de Caixa Preta).
+description: Methodology and standard operating protocol for dissecting, validating, documenting, and integrating undocumented legacy APIs and web portals (Blackbox Reverse Engineering).
 ---
 
-# Metodologia de Engenharia Reversa de APIs e Portais Legados
+# Undocumented API & Portal Reverse Engineering (`reverse-engineering`)
 
-Esta skill define o procedimento operacional padrão para agentes que precisam interagir com sistemas sem documentação oficial (ex: SEI, SIP, portais estatais, ERPs monolíticos).
+This skill defines the standard operating procedure for AI agents integrating with undocumented systems (e.g. monolithic ERPs, state/enterprise portals, closed legacy backends).
 
 ---
 
-## 🧭 O Ciclo de 6 Etapas
+## 🧭 The 6-Stage Lifecycle
 
 ```text
 ┌─────────────────┐     ┌──────────────────┐     ┌──────────────────┐
-│  1. Captura de  │ ──> │ 2. Isolamento de │ ──> │ 3. Minimização & │
-│     Tráfego     │     │   Autenticação   │     │   Validação cURL │
+│  1. Traffic     │ ──> │ 2. Session &     │ ──> │ 3. cURL          │
+│     Capture     │     │    Auth Isolation│     │    Minimization  │
 └─────────────────┘     └──────────────────┘     └──────────────────┘
                                                            │
                                                            ▼
 ┌─────────────────┐     ┌──────────────────┐     ┌──────────────────┐
-│ 6. Cliente HTTP │ <── │  5. Fixtures de  │ <── │ 4. Documentação  │
-│   Tipado Final  │     │  Teste Mockadas  │     │ em ENDPOINTS.md  │
+│ 6. Typed HTTP   │ <── │ 5. Sanitized     │ <── │ 4. Catalog in    │
+│    Client       │     │    Test Fixtures │     │    ENDPOINTS.md  │
 └─────────────────┘     └──────────────────┘     └──────────────────┘
 ```
 
 ---
 
-## Passo 1: Captura e Inspecção de Tráfego
+## Step 1: Traffic Capture & Inspection
 
-1. **Abra as ferramentas de desenvolvedor (DevTools Network) ou proxy (mitmproxy):**
-   - Marque "Preserve log" para não perder redirecionamentos.
-   - Execute a ação manualmente na interface gráfica ou via script de automação.
-2. **Identifique a requisição crítica:**
-   - Filtre por `Fetch/XHR` ou `Doc` (caso seja formulário HTML tradicional com `POST`).
-   - Identifique qual requisição realmente carrega ou envia a informação de negócio.
-3. **Exporte a chamada:**
-   - Copie como cURL (`Copy as cURL (bash)`).
-   - NUNCA salve arquivos HAR contendo credenciais de produção no repositório.
-
----
-
-## Passo 2: Isolamento de Sessão e Autenticação
-
-Sistemas legados raramente usam tokens estáticos Bearer. Identifique:
-1. **Cookies de Sessão:** Quais cookies são fundamentais? (Ex: teste remover um por um no cURL até descobrir qual é o cookie de autenticação real).
-2. **Tokens de Proteção (Anti-CSRF / Hash):**
-   - Verifique se a requisição envia parâmetros como `infra_hash`, `csrf_token`, `__VIEWSTATE`, `authenticity_token`.
-   - Localize em qual requisição anterior esse token foi fornecido (geralmente em campos `<input type="hidden">` do HTML da tela anterior).
-3. **Mapeamento do Ciclo de Vida da Sessão:**
-   - Qual a validade da sessão?
-   - O que o servidor responde quando a sessão morre? (Redirecionamento 302 para login, ou 200 com HTML de erro?).
+1. **Open DevTools (Network tab) or proxy (mitmproxy):**
+   - Enable "Preserve log" to trace cross-page redirects.
+   - Execute the action manually or via automation.
+2. **Identify the critical request:**
+   - Filter by `Fetch/XHR` or `Doc` (for legacy `POST` forms).
+   - Locate the exact call carrying domain data.
+3. **Export the request:**
+   - Copy as cURL (`Copy as cURL (bash)`).
+   - **NEVER** commit HAR files containing live session tokens to git.
 
 ---
 
-## Passo 3: Minimização e Validação via cURL
+## Step 2: Session & Auth Isolation
 
-Antes de criar qualquer código:
-1. **Elimine o Ruído:**
-   - Remova headers dispensáveis gerados pelo navegador (`Sec-Ch-Ua`, `Accept-Language`, `Sec-Fetch-*`).
-   - Mantenha apenas o estritamente necessário (`Cookie`, `Content-Type`, `User-Agent`, `Referer` quando exigido).
-2. **Teste a Resiliência:**
-   - Execute o comando via terminal:
-     ```bash
-     curl -s -i -X POST "URL" -H "..." -d "..."
-     ```
-   - Garanta que a chamada funciona de forma consistente em chamadas repetidas (respeitando rate-limits).
+Legacy systems rarely rely on static Bearer tokens. Identify:
+1. **Session Cookies:** Which cookies are strictly required? (Test removing cookies one by one in cURL).
+2. **CSRF / Anti-Forgery Tokens:**
+   - Check for tokens like `infra_hash`, `csrf_token`, `__VIEWSTATE`, `authenticity_token`.
+   - Locate which prior response delivered the token (usually `<input type="hidden">` fields).
+3. **Session Lifecycle:**
+   - What is the session TTL?
+   - How does the server signal expired sessions? (302 redirect to login, or 200 with error HTML?).
 
 ---
 
-## Passo 4: Registro Imediato no `.agent/ENDPOINTS.md`
+## Step 3: Minimization & Validation via cURL
 
-Assim que a chamada for validada no terminal:
-1. Adicione a rota na tabela de **Matriz de Cobertura**.
-2. Crie a **Ficha Detalhada** com:
-   - Método e URL exata.
-   - Headers mandatórios.
-   - Parâmetros obrigatórios e opcionais.
-   - Snippet cURL reproduzível testado.
-   - Identificação de pegadinhas (ex: encoding ISO-8859-1, parâmetros obrigatórios porém ocultos).
+Before writing any application code:
+1. **Eliminate Noise:**
+   - Remove browser-specific clutter (`Sec-Ch-Ua`, `Accept-Language`, `Sec-Fetch-*`).
+   - Retain only essentials (`Cookie`, `Content-Type`, `User-Agent`, `Referer` if enforced).
+2. **Validate in Terminal:**
+   ```bash
+   curl -s -i -X POST "URL" -H "..." -d "..."
+   ```
+   - Ensure the call succeeds repeatedly without triggering rate limits.
 
-### Exemplo canônico (SEI) — não copie dados reais para o Git
+---
 
-Use só como anatomia. No `ENDPOINTS.md` do projeto, substitua pelos contratos do alvo.
+## Step 4: Catalog in `.agent/ENDPOINTS.md`
+
+Immediately after terminal validation:
+1. Register the route in the **Route Matrix**.
+2. Add a **Route Card** containing:
+   - Method and exact path.
+   - Required headers.
+   - Mandatory and optional query/body parameters.
+   - Tested reproducible minimal cURL command.
+   - Quirks/gotchas (e.g. ISO-8859-1 encoding, hidden fields).
+
+### Canonical Example
 
 ```markdown
 ### 📌 [POST] `controlador.php?acao=procedimento_trabalhar`
 
-- **Headers:** `Cookie: SEI_SESSION=<token-sessao>` · `Content-Type: application/x-www-form-urlencoded`
-- **Body:** `id_procedimento` (int) · `infra_hash` (CSRF da tela anterior)
-- **Sucesso 200:** HTML `ISO-8859-1`; `#divArvoreHtml [data-id-documento]`; `#txtNumeroProcesso`
-- **Sessão morta:** 302 ou 200 com `<input id="txtUsuario">`
+- **Headers:** `Cookie: SEI_SESSION=<session-token>` · `Content-Type: application/x-www-form-urlencoded`
+- **Body:** `id_procedimento` (int) · `infra_hash` (CSRF from prior page)
+- **Success 200:** HTML `ISO-8859-1`; `#divArvoreHtml [data-id-documento]`; `#txtNumeroProcesso`
+- **Dead Session:** 302 or 200 with `<input id="txtUsuario">`
 - **cURL:**
   ```bash
   curl -s -X POST "$TARGET_BASE_URL/controlador.php?acao=procedimento_trabalhar" \
@@ -97,30 +94,29 @@ Use só como anatomia. No `ENDPOINTS.md` do projeto, substitua pelos contratos d
     -b "SEI_SESSION=$TARGET_SESSION_COOKIE" \
     -d "id_procedimento=1234567&infra_hash=$TARGET_CSRF_HASH"
   ```
-- **Pegadinhas:** encoding ISO-8859-1; `id_procedimento` vazio devolve a tela inicial sem erro HTTP.
+- **Gotchas:** ISO-8859-1 charset; empty `id_procedimento` returns home dashboard without HTTP error.
 ```
 
 ---
 
-## Passo 5: Criação de Fixtures Mockadas para Testes
+## Step 5: Author Sanitized Test Fixtures
 
-**Regra de Ouro:** O código de teste automatizado nunca deve bater no sistema real em execução contínua de CI.
+**Golden Rule:** Automated tests must never hit live production servers in continuous CI runs.
 
-1. Salve o corpo da resposta obtida no Passo 3 em `tests/fixtures/<sistema>_<acao>_sucesso.<json|html>`.
-2. **Sanitize os dados:** Substitua nomes de pessoas, números de documentos (CPF, RG) e chaves sensíveis por valores fictícios (`111.222.333-44`, `João da Silva`, etc.).
-3. Salve também um cenário de erro típico (ex: `tests/fixtures/<sistema>_sessao_expirada.html`).
+1. Save the response body from Step 3 into `tests/fixtures/<target>_<action>_success.<json|html>`.
+2. **Sanitize Data:** Replace personal identifiable information (PII), names, IDs, and tokens with synthetic placeholders.
+3. Save typical failure scenarios (e.g., `tests/fixtures/<target>_session_expired.html`).
 
 ---
 
-## Passo 6: Implementação do Cliente HTTP Tipado
+## Step 6: Typed HTTP Client Implementation
 
-Ao construir o código na aplicação:
-1. **Tipagem Estrita:** Crie modelos (Pydantic / Zod / Dataclasses) para os dados de entrada e para os dados extraídos da resposta.
-2. **Resiliência e Retry:**
-   - Implemente retry apenas para erros transitórios (status 502, 503, 504, 429 ou `TimeoutException`).
-   - NUNCA dê retry automático em erros de autenticação (401/403) sem re-autenticar primeiro.
-3. **Detecção de Sessão Inválida:**
-   - Inspecione se o HTML retornado contém sinais de deslogamento antes de tentar fazer parsing dos dados esperados.
-   - Se a sessão expirou, levante uma exceção explícita (`SessionExpiredError`) para permitir renovação automática.
-4. **Respeito aos Limites:**
-   - Inclua delays e controle de concorrência (`asyncio.Semaphore` ou fila de requisições) para evitar derrubar ou ser bloqueado pelo sistema legado.
+1. **Strict Typing:** Author schemas (Pydantic / Zod / Dataclasses) for input payloads and parsed responses.
+2. **Resilience & Retry:**
+   - Retry transient network failures only (502, 503, 504, 429, `TimeoutException`).
+   - **NEVER** auto-retry auth failures (401/403) without triggering session renewal.
+3. **Session Expiry Detection:**
+   - Check for login form markers in returned HTML prior to running data parsers.
+   - Raise explicit `SessionExpiredError` on expiration to trigger automated re-login.
+4. **Concurrency & Rate Limits:**
+   - Enforce pacing (`asyncio.Semaphore` or token bucket) to avoid IP bans.

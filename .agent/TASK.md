@@ -1,66 +1,62 @@
-# TASK.md — Tarefa Atual e Roadmap do Projeto (Blackbox)
+# TASK.md — Current Task and Roadmap (Blackbox)
 
-> Define O QUE precisa ser feito. Reescrito/atualizado no início de cada nova tarefa.
-> Se o pedido do usuário na conversa conflitar com este arquivo, o pedido do usuário
-> tem precedência — mas o agente deve reportar a divergência antes de agir.
->
-> **Regra de ouro deste arquivo:** ele guarda O QUE FAZER, não O QUE JÁ FOI FEITO.
-> Detalhes de implementação de tarefas concluídas vivem no `git log`, não aqui.
+> Defines WHAT needs to be done. Detailed history lives in `git log`.
+> User requests during conversation take precedence — report discrepancies before acting.
 
 ---
 
-## Tarefa Ativa
+## Active Task
 
-### 📌 Tarefa [00.1]: Setup de Ambiente e Mapeamento de Autenticação/Sessão
+### 📌 Task [00.1]: Environment Setup and Authentication/Session Mapping
 
-- **Descrição:** Realizar a auditoria inicial do sistema-alvo, isolar o mecanismo de autenticação/cookies de sessão, definir as variáveis de ambiente necessárias no `.env` e documentar as particularidades globais no `.agent/ENDPOINTS.md`.
-- **Sistema(s) Envolvido(s):** `[auth]`, `[env]`, `[endpoints]`
-- **Tipo de Ação:**
-  - [x] Somente leitura / Documentação
-  - [ ] Escrita de código-fonte
-- **Status:** PRONTO PARA PLANEJAMENTO
-  *(Fluxo: `PRONTO PARA PLANEJAMENTO` → `EM PLANEJAMENTO` ao apresentar plano → aprovação → `EM EXECUÇÃO`)*
+- **Description:** Perform initial reconnaissance on the target system, isolate the session/auth mechanism, define required environment variables in `.env`, and document global attributes in `.agent/ENDPOINTS.md`.
+- **Systems Involved:** `[auth]`, `[env]`, `[endpoints]`
+- **Action Type:**
+  - [x] Read-only / Documentation
+  - [ ] Source code changes
+- **Status:** READY FOR PLANNING
+  *(Workflow: `READY FOR PLANNING` → `PLANNING` on presenting plan → approval → `RUNNING`)*
 
-### Critérios de Aceite
-- [ ] Mecanismo de autenticação e ciclo de vida de sessão identificados (cookies, tokens CSRF, cabeçalhos obrigatórios).
-- [ ] Arquivo `.env.example` preenchido com as variáveis de conexão e credenciais necessárias.
-- [ ] Seção 1 (Contexto Global) do `.agent/ENDPOINTS.md` preenchida com as particularidades do sistema.
-- [ ] Chamada cURL mínima reproduzível de login ou validação de sessão testada com sucesso.
+### Acceptance Criteria
+- [ ] Authentication mechanism and session lifecycle identified (cookies, CSRF tokens, required headers).
+- [ ] `.env.example` populated with necessary credentials and connection endpoints.
+- [ ] Section 1 (Global Context) of `.agent/ENDPOINTS.md` completed.
+- [ ] Reproducible minimal cURL call for login or session verification tested successfully.
 
 ---
 
-## Log de Tarefas Concluídas
+## Completed Tasks Log
 
-| Tarefa | Título | Commit(s) | Data |
+| Task | Title | Commit(s) | Date |
 |---|---|---|---|
-| [00.0] | Inicialização do Repositório Blackbox (ADD) | [`0000000`] | 2026-09-04 |
+| [00.0] | Initialized Blackbox repository (ADD) | [`0000000`] | 2026-09-04 |
 
 ---
 
-## Backlog (Próximas, em ordem)
+## Backlog (Upcoming, in priority order)
 
-- [ ] **[00.2]** Mapear e dissecar o primeiro endpoint de negócio no `.agent/ENDPOINTS.md` — `[endpoints]`
-- [ ] **[01.1]** Implementar cliente HTTP resiliente com sessão, retry e backoff — `[client]`
-- [ ] **[01.2]** Criar fixtures mockadas e suite de testes automatizados herméticos — `[tests]`
-- [ ] **[02.1]** Implementar fluxo de extração de dados e parser DOM/JSON — `[parser]`
-
----
-
-## Encerramento de ciclo (não é a próxima tarefa)
-
-Release/tag só com pedido explícito. Nessa hora o ID é `[99.1]`. Não numere feature, hygiene ou CI como `99.x`. Não calcule o próximo ID a partir desta seção.
+- [ ] **[00.2]** Map and dissect the first business endpoint in `.agent/ENDPOINTS.md` — `[endpoints]`
+- [ ] **[01.1]** Implement resilient HTTP client with session, retry, and backoff — `[client]`
+- [ ] **[01.2]** Create mocked fixtures and hermetic test suite — `[tests]`
+- [ ] **[02.1]** Implement data extraction pipeline and DOM/JSON parser — `[parser]`
 
 ---
 
-## Backlog Futuro / Ideias (não priorizadas)
+## Release / Cycle Wrap-up (Not the next task)
 
-- [ ] Cache em memória/Redis de sessões válidas
-- [ ] Proxy rotation e evasão de rate-limit
-- [ ] Exportação de dados para PostgreSQL ou fila de mensagens
+Release/tag only with explicit human request. When triggered, the ID is `[99.1]`. Do not number feature, hygiene, or CI tasks as `99.x`. Do not calculate next task ID from this section.
 
 ---
 
-## Como manter este arquivo enxuto
+## Future Backlog / Ideas (Unprioritized)
 
-1. Detalhe só na tarefa ativa. Concluída → uma linha no log e promover o backlog.
-2. Próximo ID = último do log (ou da ativa). Encerramento de ciclo e `[99.1]`: ver `AGENTS.md`.
+- [ ] In-memory/Redis session caching
+- [ ] Proxy rotation and rate-limit mitigation
+- [ ] Export pipeline to PostgreSQL or message queue
+
+---
+
+## How to Keep this File Lean
+
+1. Detail only in the active task. When complete $\rightarrow$ log one line and promote the next task.
+2. Backlog is a list of titles. Next ID = last ID in log (or active task). Cycle wrap-up and `[99.1]`: see `AGENTS.md`.
