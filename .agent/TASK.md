@@ -1,62 +1,62 @@
-# TASK.md — Tarefas e Roadmap para Código Legado
+# TASK.md — Tasks and Roadmap for Legacy Codebase
 
-> Define O QUE precisa ser feito. Reescrito/atualizado no início de cada nova tarefa.
-> Para projetos Brownfield, este arquivo inicia com o **Protocolo de Discovery (Task 00.1)**
-> para que o agente audite a base de código antes de qualquer desenvolvimento.
-
----
-
-## Tarefa Ativa
-
-### 📌 Tarefa [00.1]: Auditoria e Mapeamento de Contexto (Discovery)
-
-- **Descrição:** Varrer o repositório existente para mapear a stack real, scripts de execução, suíte de testes, pontos de entrada da aplicação e variáveis de ambiente, preenchendo o `AGENTS.md` com dados verídicos.
-- **Sistema(s) Envolvido(s):** `discovery`, `docs`, `setup`
-- **Tipo de Ação:**
-  - [x] Somente leitura / Documentação
-  - [ ] Escrita de código-fonte
-- **Status:** PRONTO PARA PLANEJAMENTO
-  *(Fluxo: `PRONTO PARA PLANEJAMENTO` → `EM PLANEJAMENTO` ao apresentar plano → aprovação → `EM EXECUÇÃO`)*
-
-### Critérios de Aceite
-- [ ] Inspecionar arquivos de configuração de dependências (`package.json`, `pyproject.toml`, `go.mod`, `pom.xml`, etc.) e atualizar o `AGENTS.md` com linguagens, versões e gerenciador de pacotes oficial.
-- [ ] Identificar e testar os comandos reais de validação (como rodar testes locais, linters e build) e registrá-los em `AGENTS.md`.
-- [ ] Verificar o estado atual da suíte de testes (se os testes existentes passam 100% ou se há falhas conhecidas).
-- [ ] Mapear os principais pontos de entrada (rotas HTTP, workers de fila, scripts CLI ou schedulers).
-- [ ] Auditar variáveis de ambiente necessárias e verificar se o `.env.example` está condizente com as referências no código.
-- [ ] Registrar as primeiras armadilhas ou invariantes encontradas no `.agent/INVARIANTS.md`.
+> Defines WHAT needs to be done. Detailed history lives in `git log`.
+> For Brownfield projects, this file begins with the **Discovery Protocol (Task 00.1)**
+> so the agent audits the codebase before undertaking development.
 
 ---
 
-## Log de Tarefas Concluídas
+## Active Task
 
-| Tarefa | Título | Commit(s) | Data |
+### 📌 Task [00.1]: Project Discovery and Context Mapping (Discovery)
+
+- **Description:** Audit the existing repository to map the real stack, build/run scripts, test suite, application entrypoints, and environment variables, populating `AGENTS.md` with accurate data.
+- **Systems Involved:** `discovery`, `docs`, `setup`
+- **Action Type:**
+  - [x] Read-only / Documentation
+  - [ ] Source code changes
+- **Status:** READY FOR PLANNING
+  *(Workflow: `READY FOR PLANNING` → `PLANNING` on presenting plan → approval → `RUNNING`)*
+
+### Acceptance Criteria
+- [ ] Inspect dependency manifests (`package.json`, `pyproject.toml`, `go.mod`, `pom.xml`, etc.) and update `AGENTS.md` with languages, versions, and official package managers.
+- [ ] Identify and verify actual validation commands (local test runner, linter, build) and record them in `AGENTS.md`.
+- [ ] Inspect test suite status (whether existing tests pass 100% or have known failures).
+- [ ] Map primary application entrypoints (HTTP routes, queue workers, CLI scripts, or schedulers).
+- [ ] Audit environment variables and verify that `.env.example` aligns with references in source code.
+- [ ] Document initial quirks or invariants discovered in `.agent/INVARIANTS.md`.
+
+---
+
+## Completed Tasks Log
+
+| Task | Title | Commit(s) | Date |
 |---|---|---|---|
-| [00.0] | Injeção do template brownfield no repositório legado | [`0000000`] | [AAAA-MM-DD] |
+| [00.0] | Injected brownfield template into legacy codebase | [`0000000`] | [YYYY-MM-DD] |
 
 ---
 
-## Backlog (Próximas, em ordem)
+## Backlog (Upcoming, in priority order)
 
-- [ ] **[01.1]** [Primeira tarefa real de negócio, bugfix ou feature no legado] — `[módulo]`
-- [ ] **[01.2]** [Subsequente] — `[módulo]`
-
----
-
-## Encerramento de ciclo (não é a próxima tarefa)
-
-Release/tag só com pedido explícito. Nessa hora o ID é `[99.1]`. Não numere feature, hygiene ou CI como `99.x`. Não calcule o próximo ID a partir desta seção.
+- [ ] **[01.1]** [First business task, bugfix, or feature in legacy] — `[module]`
+- [ ] **[01.2]** [Subsequent task] — `[module]`
 
 ---
 
-## Backlog Futuro / Ideias (não priorizadas)
+## Release / Cycle Wrap-up (Not the next task)
 
-- [ ] [Mapear débitos técnicos prioritários para refatoração segura com testes]
-- [ ] [Aumentar cobertura de testes nos módulos críticos legados]
+Release/tag only with explicit human request. When triggered, the ID is `[99.1]`. Do not number feature, hygiene, or CI tasks as `99.x`. Do not calculate next task ID from this section.
 
 ---
 
-## Como manter este arquivo enxuto
+## Future Backlog / Ideas (Unprioritized)
 
-1. Detalhe só na tarefa ativa. Concluída → uma linha no log e promover o backlog.
-2. Backlog é lista de títulos. Próximo ID = último do log (ou da ativa). Encerramento e `[99.1]`: ver `AGENTS.md`.
+- [ ] [Map priority technical debt for characterization test coverage]
+- [ ] [Expand test coverage across critical legacy modules]
+
+---
+
+## How to Keep this File Lean
+
+1. Detail only in the active task. When complete $\rightarrow$ log one line and promote the next task.
+2. Backlog is a list of titles. Next ID = last ID in log (or active task). Cycle wrap-up and `[99.1]`: see `AGENTS.md`.
