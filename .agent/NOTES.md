@@ -1,22 +1,22 @@
-# NOTES.md — Decisões, Contexto e Contratos do Hub
+# NOTES.md — Hub Decisions, Context, and Contracts
 
-> Guarda o PORQUÊ. O QUE fica no `git log` / `.agent/TASK.md`. Antes de escrever:
-> isso explica uma decisão, ou só descreve uma mudança? Se for descrição, o commit basta.
-
----
-
-## Como usar
-
-1. Leia antes de planejar. Decisões aqui vencem a “forma óbvia”, salvo o usuário pedir para revisitar.
-2. Registre: trade-off entre alternativas, contrato, armadilha, skill nova, débito consciente.
-3. Não registre: lista de arquivos, changelog, testes passando.
-4. Entrada longa demais → ADR em `.agent/adr/` e aqui só uma linha + link.
+> Stores the WHY. The WHAT lives in `git log` / `.agent/TASK.md`. Before writing:
+> does this explain a rationale, or merely describe a diff? If descriptive, the commit is enough.
 
 ---
 
-## Decisões (porquê — a regra vive no `AGENTS.md`)
+## Usage Guidelines
 
-| Data | Decisão | Por quê (não copiar a regra) |
+1. Read before planning. Decisions here take precedence over "obvious defaults", unless explicitly revisited.
+2. Record: trade-offs, contracts, gotchas, new skills, deliberate technical debt.
+3. Do not record: file lists, changelogs, passing tests.
+4. Lengthy decisions $\rightarrow$ formal ADR in `.agent/adr/` and only one line + link here.
+
+---
+
+## Decisions (Rationale — rules live in `AGENTS.md`)
+
+| Date | Decision | Rationale (Do not copy rule) |
 |---|---|---|
 | 2026-09-03 | Skills locais vs `AGENTS.md` | Procedimento repetitivo fora da constituição para não inflar tokens. Infra compartilhada (VictoriaLogs, Proxmox) é skill **global** do host. |
 | 2026-09-03 | Brownfield ≠ greenfield | ADRs retroativas do legado são ficção; `INVARIANTS.md` + caracterização evitam refatoração cega. |
@@ -45,16 +45,17 @@
 | 2026-09-13 | Superfície de UI = chrome acordado, não persona da API | Audiência/densidade/motion/copy/formato não saem do OpenAPI. Sem campo, proto e Stitch improvisam clima. Enum fechado + Passo 5 (com locale); override só na ficha que diverge. Paleta/type ficam no proto. Formato (`desktop`/`touch`/`kiosk`) não é audiência. |
 | 2026-09-13 | Skill `qa-environment` (Mock, Seeding, Túnel e Prompt) | Teste de UI por agentes externos precisa de mock seguro para evitar disparos em produção, dados pré-carregados para testar listagens/estados e túnel HTTPS com prompt estruturado. |
 | 2026-09-13 | Livro de skills = `agent-skills`, não o hub | Playbook transversal (UI, QA) não é molde de starter. Canônico: `ye-sandbox/agent-skills` `skills/`. Hub `main` só aponta; `greenfield`/`blackbox`/`infra` mantêm skills que o `init.sh` entrega. |
+| 2026-09-15 | High-density Technical English in templates | Reduces token consumption by 30-40% across multi-turn agent sessions and improves instruction-following fidelity. Primary README in English with dedicated `README.pt-br.md` for Brazilian community. |
 
-### Índice de ADRs formais
+### Formal ADR Index
 
-Nenhum ADR formal aberto neste hub. Template: `.agent/adr/000-template.md`.
+No formal ADR currently open in this hub. Template: `.agent/adr/000-template.md`.
 
 ---
 
-## Armadilhas
+## Pitfalls & Gotchas
 
-- **`curl \| bash` no `install.sh`:** não leia confirmações do stdin; use `/dev/tty` ou `-y`.
-- **Cherry-pick, nunca merge:** árvores de raiz diferentes; merge polui os starters.
-- **CI dos starters:** o job na `main` faz `git show origin/<branch>:init.sh` — precisa de `fetch-depth: 0`.
-- **Brownfield `install.sh`:** não copia `.gitignore` nem `.env.example` — o legado já os tem. O CI não deve exigir esses arquivos no destino da injeção.
+- **`curl | bash` in `install.sh`:** Do not read confirmation from stdin; use `/dev/tty` or `-y`.
+- **Cherry-pick, never merge:** Distinct root filetrees; merge pollutes starters.
+- **Starter CI:** The job on `main` runs `git show origin/<branch>:init.sh` — requires `fetch-depth: 0`.
+- **Brownfield `install.sh`:** Does not copy `.gitignore` or `.env.example` — existing project already has them. Starter CI must not require them on injection target.

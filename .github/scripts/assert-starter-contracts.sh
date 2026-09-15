@@ -53,7 +53,7 @@ assert_greenfield() {
   need_grep AGENTS.md 'circuit breaker' -qiE
   need_grep .gitignore '.env' -qF
   need_grep .gitignore '!.env.example' -qF
-  if grep -q 'Checklist de adaptação' "$ROOT/AGENTS.md"; then
+  if grep -qiE 'Checklist de adaptação|Adaptation checklist' "$ROOT/AGENTS.md"; then
     fail "adaptation checklist leaked into generated AGENTS.md"
   fi
 }
@@ -66,7 +66,7 @@ assert_brownfield() {
   need_file .agent/NOTES.md
   need_file .agent/ARCHIVE.md
   need_grep AGENTS.md '.agent/INVARIANTS.md' -qF
-  need_grep AGENTS.md 'caracteriza' -qiE
+  need_grep AGENTS.md 'characteriz|caracteriza' -qiE
   need_grep AGENTS.md 'git push' -qiF
   need_grep .agent/INVARIANTS.md 'Chesterton' -qF
 }

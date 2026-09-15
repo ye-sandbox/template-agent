@@ -11,19 +11,23 @@
 
 ## Tarefa Ativa
 
-### 📌 Tarefa [XX.Y]: [Título curto e descritivo]
+### 📌 Tarefa [07.1]: Hub & Starters Internationalization (Technical English & PT-BR README)
 
-- **Descrição:** [2–4 linhas para o agente montar um plano.]
-- **Sistema(s) Envolvido(s):** [ex: `docs`, `hub`, `branch-greenfield`]
+- **Descrição:** Migrate agent-consumed directives and templates to dense technical English for token optimization and instruction adherence. Retain English README.md and add README.pt-br.md in all branches.
+- **Sistema(s) Envolvido(s):** `hub`, `main`, `greenfield`, `brownfield`, `blackbox`, `infra`, `ci`
 - **Tipo de Ação:**
-  - [ ] Somente leitura / Documentação
-  - [ ] Escrita de código-fonte
-- **Status:** PRONTO PARA PLANEJAMENTO
+  - [x] Somente leitura / Documentação
+  - [x] Escrita de código-fonte
+- **Status:** EM EXECUÇÃO
   *(Fluxo: `PRONTO PARA PLANEJAMENTO` → `EM PLANEJAMENTO` ao apresentar plano → aprovação → `EM EXECUÇÃO`)*
 
 ### Critérios de Aceite
-- [ ] [Critério verificável 1]
-- [ ] [Critério verificável 2]
+- [ ] Documentação de governança (`AGENTS.md`, `.agent/*`) convertida para Technical English enxuto na branch `main`.
+- [ ] Templates de starters (`greenfield`, `brownfield`, `blackbox`, `infra`) convertidos para Technical English em suas respectivas branches.
+- [ ] `README.md` mantido em inglês e versão `README.pt-br.md` criada em todas as branches com navegação cruzada.
+- [ ] Scripts `init.sh` e `install.sh` atualizados sem quebrar retrocompatibilidade nem contratos.
+- [ ] CI `.github/scripts/assert-starter-contracts.sh` e `.github/workflows/ci.yml` passam com 100% de sucesso.
+- [ ] Commits atômicos realizados em inglês respeitando o isolamento absoluto de branches (sem merge entre templates).
 
 ---
 

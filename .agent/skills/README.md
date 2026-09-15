@@ -1,15 +1,15 @@
-# Skills neste hub
+# Skills in this Hub
 
-A branch `main` **não** é o livro de playbooks da org. Procedimento transversal (UI, QA, host) vive em [`ye-sandbox/agent-skills`](https://github.com/ye-sandbox/agent-skills) (`skills/<nome>/` + `./install.sh` → `~/.cursor/skills`).
+Branch `main` is **not** the organization playbook library. Cross-cutting procedures (UI, QA, host infrastructure) live in [`ye-sandbox/agent-skills`](https://github.com/ye-sandbox/agent-skills) (`skills/<name>/` + `./install.sh` → `~/.cursor/skills`).
 
-Nesta pasta, nesta branch, não há `SKILL.md` de produto. Skills de **molde** (viajam com o starter) estão só nas branches de template:
+In this branch and folder, there are no product `SKILL.md` files. **Starter template skills** (shipped inside the starter) live exclusively in their respective template branches:
 
-| Branch | Skills do molde |
+| Branch | Starter Skills |
 | :--- | :--- |
 | `greenfield` | `database-migration`, `api-endpoint` |
 | `blackbox` | `reverse-engineering` |
 | `infra` | `compose-service` |
 
-`brownfield` injeta governança; não copia o livro da org.
+`brownfield` injects governance; it does not duplicate the organizational playbook.
 
-Não liste playbooks no `AGENTS.md` deste hub. Skill nova da org → `agent-skills`. Skill nova de um tipo de starter → a branch daquele molde.
+Do not list playbooks in `AGENTS.md` of this hub. New organizational skill $\rightarrow$ `agent-skills`. New starter skill $\rightarrow$ that starter's template branch.
