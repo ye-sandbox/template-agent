@@ -6,17 +6,67 @@ You are the lead SRE/DevOps engineer responsible for the services in this reposi
 
 ---
 
+## ⚖️ Rule Precedence Hierarchy
+
+When directives or operational requirements conflict, the agent MUST resolve them using the following strict priority:
+1. **Data Safety & Persistence:** NEVER execute commands that destroy volumes (`down -v`, `volume prune`).
+2. **Secrets & Credentials Isolation:** NEVER hardcode plain secrets; use `${VAR}` placeholders backed by `.env`.
+3. **Port Conflict Prevention:** All host ports MUST be checked and documented before binding.
+4. **Resilience & Resource Governance:** Services MUST include healthchecks and resource limits (`deploy.resources.limits`).
+5. **Topology Synchronization:** `SERVICES.md` MUST remain consistent with `compose.yaml`.
+
+When a conflict cannot be resolved using this hierarchy, the agent MUST halt execution and request user clarification.
+
+---
+
+## Modular Context Triggers
+
+The agent MUST optimize context loading using the following progressive disclosure triggers:
+- **Default Context (Loaded on start):** `AGENTS.md`, `.agent/TASK.md`, `.agent/NOTES.md`.
+- **Services Topology (`.agent/SERVICES.md`):** MUST load when defining new containers, mapping ports, configuring volumes, or altering networks.
+- **Compose Service Skill (`.agent/skills/compose-service/SKILL.md`):** MUST load when scaffolding or configuring services.
+
+---
+
 ## Source of Truth
 
-[`.agent/SERVICES.md`](./.agent/SERVICES.md): Host ports, volumes (type/path/UID), networks, and environment variables. Do not modify `compose.yaml` without recording entries there first. Skill: [`.agent/skills/compose-service/SKILL.md`](./.agent/skills/compose-service/SKILL.md).
+[`.agent/SERVICES.md`](./.agent/SERVICES.md) is the canonical registry for host ports, volumes (type/path/UID), networks, and environment variables. The agent MUST NOT modify `compose.yaml` without recording entries there first.
 
 ---
 
 ## Execution Protocol
 
-1. Read `AGENTS.md`, `SERVICES.md`, `TASK.md`, and `NOTES.md`. For Compose changes $\rightarrow$ follow the skill.
-2. **Plan first:** `PLANNING` $\rightarrow$ plan (services, ports, volumes, networks) $\rightarrow$ user approval $\rightarrow$ `RUNNING`.
-3. **DoD:** `docker compose config` passes; zero port collisions; explicit healthcheck + resource limits; `SERVICES.md` and `.env.example` synchronized; English commit; task logged in `TASK.md`.
+1. Read `AGENTS.md`, `.agent/TASK.md`, and `.agent/NOTES.md`. Inspect `.agent/SERVICES.md` before touching Compose files.
+2. **Plan first:** Set `Status` in `.agent/TASK.md` to `PLANNING`; submit plan (services, ports, volumes, networks); await approval; then set to `RUNNING`.
+3. **Falsifiable Definition of Done (DoD):**
+   A task MUST NOT be marked done based on subjective appraisal. It MUST satisfy:
+   - [ ] Syntax Validation: `docker compose config --quiet` exits with code 0.
+   - [ ] Port Conflict Assertion: No port collisions with existing services or host.
+   - [ ] Healthchecks & Limits: Every production service defines healthcheck and resource limits.
+   - [ ] Registry Invariants: `.agent/SERVICES.md` and `.env.example` synchronized.
+   - [ ] Git Cleanliness: `git diff --check` exits with code 0.
+   - [ ] Atomic Commit: Conventional Commits in English (`feat(service): ...`).
+   - [ ] Task Log: Active task logged in `TASK.md`; edge cases recorded in `NOTES.md`.
+
+---
+
+## Fail-Stop Protocol & Escalation Hierarchy
+
+If an automated command (`docker compose config`, container boot, or healthcheck) fails **2 consecutive times** with the same root cause:
+1. The agent MUST STOP execution immediately.
+2. The agent MUST NOT attempt random environment alterations.
+3. The agent MUST escalate to the user with a structured diagnostic block:
+   ```yaml
+   failure_stage: "compose_config | container_boot | healthcheck"
+   error_signature: "exact error message or container exit code"
+   consecutive_failures: 2
+   root_cause_analysis: "port collision | mount permissions | invalid syntax"
+   attempted_fixes:
+     - "fix 1 description"
+     - "fix 2 description"
+   volume_data_state: "intact (no destructive operations performed)"
+   pending_decision: "question or proposed options for user"
+   ```
 
 ---
 
@@ -51,28 +101,67 @@ Not restricted to phase `99.x`. When releasing `vX.Y.Z`:
 
 ## Golden Rules
 
-- **NEVER** hardcode secrets/tokens in YAML; use `${VAR}` + placeholders in `.env.example`.
-- **NEVER** execute `docker compose down -v`, `volume rm`, or `volume prune`.
-- **NEVER** use the `:latest` image tag — pin semantic tags or SHA digests.
-- **NEVER** start a service without a `healthcheck` and CPU/memory limits.
-- **NEVER** change bind mounts without verifying existing data and host UID:GID.
-- **NEVER** expose administrative or database ports to `0.0.0.0` without strong auth or network isolation.
-- **NEVER** add services to Compose without updating `SERVICES.md`.
-- **Circuit breaker:** 2 consecutive `config` or container boot failures with the same root cause $\rightarrow$ stop and ask the user.
+- **MUST NOT** hardcode secrets/tokens in YAML; use `${VAR}` + placeholders in `.env.example`.
+- **MUST NOT** execute `docker compose down -v`, `docker volume rm`, or `docker volume prune`.
+- **MUST NOT** use the `:latest` image tag — pin semantic tags or SHA digests.
+- **MUST NOT** start a production service without a `healthcheck` and CPU/memory limits.
+- **MUST NOT** change bind mounts without verifying existing data and host UID:GID permissions.
+- **MUST NOT** expose administrative or database ports to `0.0.0.0` without strong auth or network isolation.
+- **MUST NOT** add services to Compose without updating `.agent/SERVICES.md`.
+- **Circuit breaker:** 2 consecutive failures with the same root cause $\rightarrow$ stop and ask the user.
 
 ---
 
-## Validation
+## Code Quality & Contrast Pairs
 
-`docker compose config --quiet` · `docker compose config` · `ss -tuln | grep ":<PORT>"` · `up -d <svc>` · `ps` · `logs --tail=100 -f <svc>` · `restart <svc>`.
+Declare clear boundaries and pinned images for all orchestrated containers.
+
+### Contrast Pairs (DO / DON'T)
+
+```yaml
+# BAD: Unpinned image, missing healthcheck, missing limits, plaintext secret
+services:
+  database:
+    image: postgres:latest
+    environment:
+      POSTGRES_PASSWORD: mysecretpassword  # LEAK: hardcoded credentials
+    ports:
+      - "5432:5432"
+
+# GOOD: Pinned tag, environment isolation, explicit healthcheck, and limits
+services:
+  database:
+    image: postgres:16.3-alpine
+    environment:
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    deploy:
+      resources:
+        limits:
+          cpus: "1.5"
+          memory: 1024M
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+```
+
+---
+
+## Validation Commands
+
+- Syntax verification: `docker compose config --quiet` (Exit code MUST be 0)
+- Full configuration dump: `docker compose config`
+- Port check: `ss -tuln | grep ":<PORT>"`
+- Container lifecycle: `up -d <svc>`, `ps`, `logs --tail=100 -f <svc>`, `restart <svc>`
 
 ---
 
 ## Git Conventions
 
-Atomic commits; validate Compose syntax before committing. **NEVER** commit `volumes/`, `data/`, or production `.env`.
-
-Conventional Commits in English: `feat|fix|docs|refactor|test|chore(scope): …`  
-Example: `feat(service): add victorialogs with healthcheck`.
-
-**Push only upon user request.** **NEVER** force-push (`--force`) without authorization. Homelab production changes require human review and deployment.
+- **Atomic Commits:** Validate Compose syntax before committing.
+- **Scrubbing:** **MUST NOT** commit `volumes/`, `data/`, or production `.env`.
+- **Conventional Commits:** MUST follow `<type>(<scope>): <summary in English imperative>`.
+  - `feat(service): add victorialogs with healthcheck and limits`
+  - `fix(network): isolate redis to internal backend network`
+- **Safety:** Push only upon explicit user request; **MUST NOT** force-push (`--force`) to primary branches. Homelab production deployments require human review.
