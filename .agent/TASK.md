@@ -1,57 +1,57 @@
-# TASK.md — Tarefa Atual e Roadmap do Projeto
+# TASK.md — Current Task and Roadmap
 
-> O QUE fazer agora. Histórico detalhado vive no `git log`. Pedido do usuário na
-> conversa vence este arquivo — reporte a divergência antes de agir.
-
----
-
-## Tarefa Ativa
-
-### 📌 Tarefa [XX.Y]: [Título curto e descritivo]
-
-- **Descrição:** [2–4 linhas para o agente montar um plano.]
-- **Sistema(s) Envolvido(s):** [ex: `servico-api`, `frontend`]
-- **Tipo de Ação:**
-  - [ ] Somente leitura / Documentação
-  - [ ] Escrita de código-fonte
-- **Status:** PRONTO PARA PLANEJAMENTO
-  *(Fluxo: `PRONTO PARA PLANEJAMENTO` → `EM PLANEJAMENTO` ao apresentar plano → aprovação → `EM EXECUÇÃO`)*
-
-### Critérios de Aceite
-- [ ] [Critério verificável 1]
-- [ ] [Critério verificável 2]
+> WHAT to do now. Detailed history lives in `git log`. User requests during conversation
+> take precedence — report discrepancies before acting.
 
 ---
 
-## Log de Tarefas Concluídas
+## Active Task
 
-| Tarefa | Título | Commit(s) | Data |
+### 📌 Task [XX.Y]: [Short descriptive title]
+
+- **Description:** [2–4 lines for the agent to devise a plan.]
+- **Systems Involved:** [e.g. `api-service`, `frontend`]
+- **Action Type:**
+  - [ ] Read-only / Documentation
+  - [ ] Source code changes
+- **Status:** READY FOR PLANNING
+  *(Workflow: `READY FOR PLANNING` → `PLANNING` on presenting plan → approval → `RUNNING`)*
+
+### Acceptance Criteria
+- [ ] [Verifiable criterion 1]
+- [ ] [Verifiable criterion 2]
+
+---
+
+## Completed Tasks Log
+
+| Task | Title | Commit(s) | Date |
 |---|---|---|---|
-| [00.0] | Scaffolding inicial (ADD greenfield) | [`0000000`] | [AAAA-MM-DD] |
+| [00.0] | Initial scaffolding (ADD greenfield) | [`0000000`] | [YYYY-MM-DD] |
 
 ---
 
-## Backlog (Próximas, em ordem)
+## Backlog (Upcoming, in priority order)
 
-- [ ] **[00.1]** [Setup de stack, linters e comandos de validação] — `[setup]`
-- [ ] **[01.1]** [Primeiro épico de fundação] — `[sistema]`
-
----
-
-## Encerramento de ciclo (não é a próxima tarefa)
-
-Release/tag só com pedido explícito. Nessa hora o ID é `[99.1]`. Não numere feature, hygiene ou CI como `99.x`. Não calcule o próximo ID a partir desta seção.
+- [ ] **[00.1]** [Setup stack, linters, and validation commands] — `[setup]`
+- [ ] **[01.1]** [First foundation epic] — `[system]`
 
 ---
 
-## Backlog Futuro / Ideias (não priorizadas)
+## Release / Cycle Wrap-up (Not the next task)
 
-*(vazio)*
+Release/tag only with explicit human request. When triggered, the ID is `[99.1]`. Do not number feature, hygiene, or CI tasks as `99.x`. Do not calculate next task ID from this section.
 
 ---
 
-## Como manter este arquivo enxuto
+## Future Backlog / Ideas (Unprioritized)
 
-1. Detalhe só na tarefa ativa. Concluída → uma linha no log e promover o backlog.
-2. Backlog é lista de títulos. Spec completa só quando o item vira tarefa ativa.
-3. Próximo ID = último do log (ou da ativa). Encerramento de ciclo e `[99.1]`: ver `AGENTS.md`.
+*(empty)*
+
+---
+
+## How to Keep this File Lean
+
+1. Detail only in the active task. When complete $\rightarrow$ log one line and promote the next task.
+2. Backlog is a list of titles. Full spec only when an item becomes the active task.
+3. Next ID = last ID in log (or active task). Cycle wrap-up and `[99.1]`: see `AGENTS.md`.

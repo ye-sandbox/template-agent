@@ -1,58 +1,58 @@
 ---
-name: [nome-da-skill-em-kebab-case]
-description: [Descrição concisa e clara em uma frase: o que esta skill faz e quando o agente deve ativá-la]
+name: [skill-name-in-kebab-case]
+description: [Concise one-sentence description: what this skill accomplishes and when the agent must activate it]
 ---
 
-# [Nome da Skill em Título Legível]
+# [Readable Skill Title]
 
-## 1. Contexto e Objetivo
-[Descreva brevemente o propósito desta habilidade, qual problema ela resolve e qual padrão do projeto ela padroniza.]
-
----
-
-## 2. Quando Utilizar (Gatilhos)
-Ative as orientações desta skill sempre que a tarefa envolver:
-- [Gatilho ou tipo de tarefa 1, ex: criação de um novo endpoint REST]
-- [Gatilho ou tipo de tarefa 2, ex: integração de mensageria com eventos de domínio]
-- [Gatilho ou tipo de tarefa 3, ex: investigação de erros usando logs estruturados]
+## 1. Context and Objective
+[Briefly describe the purpose of this skill, what problem it solves, and the project architectural standard it enforces.]
 
 ---
 
-## 3. Ferramentas e Servidores MCP Relacionados
-- **MCP(s) Utilizados:** [ex: `postgres-mcp`, `victorialogs-mcp` ou `Nenhum (código local)`]
-- **Ferramentas de CLI / Scripts:** [ex: `uv run pytest`, `pnpm run generate`]
+## 2. When to Use (Triggers)
+Activate this skill whenever the task involves:
+- [Trigger 1, e.g. creating a new REST endpoint]
+- [Trigger 2, e.g. integrating messaging with domain events]
+- [Trigger 3, e.g. investigating errors using structured logs]
 
 ---
 
-## 4. Procedimento Operacional Passo a Passo
-
-### Passo 1: [Preparação / Consulta Prévia]
-[O que verificar ou inspecionar antes de iniciar a alteração.]
-
-### Passo 2: [Implementação do Padrão]
-[Passo a passo com a lógica esperada. Indique quais camadas tocar e em qual ordem.]
-
-### Passo 3: [Validação e Testes]
-[Como validar que a implementação seguiu o padrão esperado.]
+## 3. Associated Tools and MCP Servers
+- **MCP Servers:** [e.g. `postgres-mcp`, `victorialogs-mcp`, or `None (local code)`]
+- **CLI Tools / Scripts:** [e.g. `uv run pytest`, `pnpm run generate`]
 
 ---
 
-## 5. Padrões de Código e Exemplos Canônicos
+## 4. Step-by-Step Operational Procedure
 
-### Exemplo de Implementação Padrão
-```[linguagem]
-// Exemplo canônico de código com tipagem estrita seguindo a convenção do projeto
+### Step 1: [Preparation / Discovery]
+[What to verify or inspect before making modifications.]
+
+### Step 2: [Implementation]
+[Step-by-step logic. Specify which layers to touch and in what order.]
+
+### Step 3: [Validation & Testing]
+[How to verify that the implementation adheres to the required standard.]
+
+---
+
+## 5. Code Standards and Canonical Examples
+
+### Standard Implementation Example
+```[language]
+// Canonical strictly typed example following project conventions
 ```
 
 ---
 
-## 6. Armadilhas Conhecidas e Anti-Padrões
-- ⚠️ **NÃO FAÇA:** [Exemplo de erro comum ou anti-padrão a evitar]
-- 💡 **FAÇA:** [A forma correta esperada pelo projeto]
+## 6. Known Gotchas and Anti-Patterns
+- ⚠️ **DO NOT:** [Common pitfall or anti-pattern to avoid]
+- 💡 **DO:** [Correct expected project pattern]
 
 ---
 
-## 7. Checklist de Conclusão da Skill
-- [ ] [Verificação de contrato ou schema atendido]
-- [ ] [Testes unitários ou de integração cobrindo o fluxo]
-- [ ] [Validação de linter e tipagem estrita]
+## 7. Skill Completion Checklist
+- [ ] [Schema or contract requirement verified]
+- [ ] [Unit or integration tests covering the workflow]
+- [ ] [Linter and strict typing validation passes]

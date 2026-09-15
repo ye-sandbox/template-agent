@@ -1,79 +1,79 @@
 ---
 name: api-endpoint
-description: Procedimento canônico para implementação e evolução de endpoints HTTP/REST com tipagem estrita, separação em camadas (Router -> Service -> Repository) e validação de contratos.
+description: Canonical procedure for implementing and evolving HTTP/REST endpoints with strict typing, layered architecture (Router -> Service -> Repository), and contract validation.
 ---
 
-# Construção de Endpoints REST (`api-endpoint`)
+# REST Endpoint Development (`api-endpoint`)
 
-## 1. Contexto e Objetivo
-Esta habilidade padroniza a criação e evolução de endpoints HTTP/REST no projeto, garantindo **tipagem estrita ponta a ponta**, **arquitetura em camadas desacoplada** e **contratos de dados previsíveis** para clientes web, mobile ou outros serviços.
-
----
-
-## 2. Quando Utilizar (Gatilhos)
-Ative as diretrizes desta skill sempre que a tarefa envolver:
-- Criação de uma nova rota HTTP (ex: `POST /orders`, `GET /users/{id}`).
-- Adição de novos parâmetros, queries ou corpos de requisição a endpoints existentes.
-- Refatoração de rotas para melhorar performance ou desacoplamento.
-- Implementação de novos códigos de resposta HTTP ou tratamento de exceções na API.
+## 1. Context and Objective
+This skill standardizes the creation and evolution of HTTP/REST endpoints, ensuring **end-to-end strict typing**, **decoupled layered architecture**, and **predictable data contracts** for web, mobile, and inter-service clients.
 
 ---
 
-## 3. Ferramentas e Servidores MCP Relacionados
-- **MCP(s) Utilizados:** Servidores de documentação de API ou MCP de banco de dados para checar schemas existentes.
-- **Ferramentas de Validação e Teste:** Test runners HTTP (ex: `pytest` com `httpx`/`TestClient`, `vitest`/`jest` com `supertest`, `go test`).
+## 2. When to Use (Triggers)
+Activate this skill whenever the task involves:
+- Creating a new HTTP route (e.g., `POST /orders`, `GET /users/{id}`).
+- Adding parameters, query arguments, or request bodies to existing endpoints.
+- Refactoring routes to improve decoupling or performance.
+- Adding error handling or standardizing HTTP response codes.
 
 ---
 
-## 4. Procedimento Operacional Passo a Passo
+## 3. Associated Tools and MCP Servers
+- **MCP Servers:** API documentation servers or database MCPs to inspect existing schemas (strictly read-only).
+- **Testing & CLI Tools:** HTTP test runners (e.g. `pytest` with `httpx`/`TestClient`, `vitest`/`jest` with `supertest`, `go test`).
 
-### Passo 1: Definição do Contrato (Schemas Primeiro)
-Antes de escrever a rota, defina explicitamente os schemas de validação com tipagem estrita:
-1. **Request Schema:** Tipagem obrigatória de Body, Query Parameters e Path Parameters (ex: Pydantic, Zod, structs tipadas).
-2. **Response Schema:** Tipagem do payload retornado para sucesso (200/201) e formato padronizado de erro (400/404/422/500).
-3. Nunca permita que campos desconhecidos passem sem validação.
+---
 
-### Passo 2: Separação Estrita de Camadas
-A implementação DEVE respeitar 3 camadas com responsabilidades isoladas:
+## 4. Step-by-Step Operational Procedure
 
-1. **Controller / Router (Camada Web Fina):**
-   - Extrai parâmetros e valida o payload com o schema.
-   - Invoca o caso de uso / serviço.
-   - Retorna o status HTTP correto (`201` para criação, `200` para leitura/atualização com body, `204` para sucesso sem body).
-   - ⚠️ **PROIBIDO:** Executar queries SQL, chamar ORM ou processar regras de negócio diretamente no controller.
-2. **Service / Use Case (Regra de Negócio Pura):**
-   - Orquestra as regras do domínio (cálculos, validações de negócio, disparos de eventos).
-   - Não depende de objetos do framework HTTP (não recebe `Request`, `Response` ou `Headers`).
-   - Lança exceções de domínio tipadas (ex: `EntityNotFoundException`, `InsufficientFundsException`).
-3. **Repository / Gateway (Acesso a Dados):**
-   - Encapsula consultas ao banco de dados ou chamadas a APIs externas.
+### Step 1: Contract Definition (Schemas First)
+Before writing route handlers, explicitly define strict validation schemas:
+1. **Request Schema:** Mandatory typing for Request Body, Query Parameters, and Path Parameters (e.g., Pydantic, Zod, typed structs).
+2. **Response Schema:** Typed payloads for success statuses (200/201) and standardized error formats (400/404/422/500).
+3. Disallow unknown/unvalidated fields.
 
-### Passo 3: Tratamento Padronizado de Erros
-- Exceções de negócio devem ser interceptadas por um Middleware/Exception Handler global e convertidas no código HTTP correspondente:
+### Step 2: Strict Layer Separation
+Implementation MUST follow 3 isolated layers:
+
+1. **Controller / Router (Thin Web Layer):**
+   - Extracts parameters and validates payloads against the schema.
+   - Invokes the use case / service layer.
+   - Returns appropriate HTTP status codes (`201` for creation, `200` for reads/updates with body, `204` for success without body).
+   - ⚠️ **FORBIDDEN:** Executing raw SQL, calling ORM methods directly, or handling business logic in controllers.
+2. **Service / Use Case (Pure Business Logic):**
+   - Orchestrates domain rules (computations, validations, domain event publishing).
+   - Independent of HTTP framework objects (no `Request`, `Response`, or `Headers` parameters).
+   - Throws typed domain exceptions (e.g., `EntityNotFoundException`, `InsufficientFundsException`).
+3. **Repository / Gateway (Data Access):**
+   - Encapsulates database queries or external API calls.
+
+### Step 3: Standardized Error Handling
+- Domain exceptions must be caught by a global middleware/exception handler and mapped to HTTP status codes:
   - `EntityNotFoundException` ➔ `404 Not Found`
-  - `ValidationException` / Schema Inválido ➔ `422 Unprocessable Entity` ou `400 Bad Request`
+  - `ValidationException` / Invalid Schema ➔ `422 Unprocessable Entity` or `400 Bad Request`
   - `UnauthorizedException` ➔ `401 Unauthorized`
   - `ForbiddenException` ➔ `403 Forbidden`
   - `ConflictException` ➔ `409 Conflict`
-- Nunca exponha stack traces ou mensagens internas de infraestrutura ao cliente externo.
+- Never leak raw stack traces, database queries, or server internals to external clients.
 
-### Passo 4: Testes Automatizados de Integração
-Para cada novo endpoint, escreva testes automatizados cobrindo:
-1. **Caminho Feliz:** Requisição válida retorna status esperado (`200 OK` ou `201 Created`) com payload correspondente.
-2. **Validação Inválida:** Envio de payload fora do schema retorna `400` ou `422` com mensagens de erro legíveis.
-3. **Casos Limite:** Entidade não encontrada (`404`) ou violação de unicidade (`409`).
+### Step 4: Automated Integration Tests
+For every new or updated endpoint, write automated tests covering:
+1. **Happy Path:** Valid request returns expected status (`200 OK` or `201 Created`) with the matching payload schema.
+2. **Validation Failure:** Invalid request payload returns `400` or `422` with actionable error messages.
+3. **Edge Cases:** Resource not found (`404`) or uniqueness conflicts (`409`).
 
-### Passo 5: Registro em Governança
-Documente o novo endpoint na tabela de **Contratos de Dados Vigentes** em `.agent/NOTES.md` indicando rota, método e schema associado.
+### Step 5: Document in Governance
+Record the endpoint in the **Active Contracts** table in `.agent/NOTES.md` with route, method, and schema references.
 
 ---
 
-## 5. Padrões de Código e Exemplo Canônico
+## 5. Code Standards and Canonical Example
 
 ```typescript
-// Exemplo canônico de separação de camadas em TypeScript/Zod
+// Canonical layer separation example in TypeScript / Zod
 
-// 1. SCHEMAS (Contrato Estrito)
+// 1. SCHEMAS (Strict Contract)
 export const CreateUserRequestSchema = z.object({
   name: z.string().min(2).max(100),
   email: z.string().email(),
@@ -88,18 +88,18 @@ export const UserResponseSchema = z.object({
 });
 export type UserResponse = z.infer<typeof UserResponseSchema>;
 
-// 2. CONTROLLER (Fino - Sem regra de negócio)
+// 2. CONTROLLER (Thin - No business logic)
 export async function createUserController(req: Request, res: Response) {
-  // Validação estrita do payload
+  // Strict payload validation
   const validatedPayload = CreateUserRequestSchema.parse(req.body);
   
-  // Delegação para a camada de serviço
+  // Delegate to service layer
   const createdUser = await userService.createUser(validatedPayload);
   
   return res.status(201).json(createdUser);
 }
 
-// 3. SERVICE (Regra de Negócio Pura)
+// 3. SERVICE (Pure Business Logic)
 export class UserService {
   constructor(private userRepository: UserRepository) {}
 
@@ -115,19 +115,19 @@ export class UserService {
 
 ---
 
-## 6. Armadilhas Conhecidas e Anti-Padrões
-- ⚠️ **NÃO FAÇA:** Retornar `200 OK` contendo `{ status: "error", message: "..." }`. Utilize status codes HTTP semânticos.
-- ⚠️ **NÃO FAÇA:** Escrever consultas de banco de dados (`SELECT ...`) dentro de arquivos de rotas ou controllers.
-- ⚠️ **NÃO FAÇA:** Utilizar tipos genéricos ou soltos (`any`, `Object`, `dict`) para inputs ou outputs de endpoints.
-- 💡 **FAÇA:** Validar tanto parâmetros de rota (`/users/:id`), query params (`?page=1`) quanto bodies JSON com schemas estritos.
-- 💡 **FAÇA:** Isolar exceções de infraestrutura de modo que nunca vazem credenciais, queries SQL ou paths de servidor para a resposta HTTP.
+## 6. Known Gotchas and Anti-Patterns
+- ⚠️ **DO NOT:** Return `200 OK` containing `{ status: "error", message: "..." }`. Use semantic HTTP status codes.
+- ⚠️ **DO NOT:** Write database queries (`SELECT ...`) inside controllers or router files.
+- ⚠️ **DO NOT:** Use loose types (`any`, `Object`, unvalidated maps) for endpoint inputs or outputs.
+- 💡 **DO:** Validate path parameters (`/users/:id`), query params (`?page=1`), and request bodies against strict schemas.
+- 💡 **DO:** Catch infrastructure exceptions so internal credentials, paths, or SQL statements never leak in HTTP responses.
 
 ---
 
-## 7. Checklist de Conclusão da Skill
-- [ ] Schemas de Request e Response definidos com tipagem estrita (sem `any`).
-- [ ] Controller livre de regras de negócio e consultas a banco de dados.
-- [ ] Serviço implementado e desacoplado de dependências HTTP.
-- [ ] Códigos de status HTTP semânticos (201, 204, 400, 404, etc.) aplicados.
-- [ ] Testes automatizados de integração cobrindo caminho de sucesso e de erro.
-- [ ] Novo contrato mapeado em `.agent/NOTES.md`.
+## 7. Skill Completion Checklist
+- [ ] Request and Response schemas defined with strict typing (no `any`).
+- [ ] Controller free of business logic and direct database access.
+- [ ] Service layer decoupled from HTTP framework specifics.
+- [ ] Semantic HTTP status codes applied.
+- [ ] Automated integration tests pass for both success and error scenarios.
+- [ ] Contract documented in `.agent/NOTES.md`.

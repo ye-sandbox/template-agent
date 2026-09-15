@@ -1,18 +1,14 @@
-# Skills do projeto
+# Project Skills Guide
 
-Procedimentos passo a passo. Regras ficam no `AGENTS.md`; decisões no `NOTES.md`.
+This directory contains procedural skills tailored specifically to this project's architecture and domain.
 
-## Catálogo
+Organizational cross-cutting procedures (UI design, QA playbooks, host infrastructure) belong in [`ye-sandbox/agent-skills`](https://github.com/ye-sandbox/agent-skills) and run from `~/.cursor/skills`.
 
-| Skill | Arquivo | Quando |
-| :--- | :--- | :--- |
-| **`database-migration`** | [`database-migration/SKILL.md`](./database-migration/SKILL.md) | Migrations com expand/contract e rollback |
-| **`api-endpoint`** | [`api-endpoint/SKILL.md`](./api-endpoint/SKILL.md) | Rotas HTTP: router → service → repository |
+## When to Create a Local Skill
 
-Apague a pasta se o projeto não usar banco ou API HTTP. Adapte exemplos à stack real.
+Create a new skill in this folder (`.agent/skills/<name>/SKILL.md`) when:
+1. A multi-step procedure (>3 steps) is repeated frequently across tasks.
+2. An architectural convention requires strict sequencing (e.g., migrations, complex domain mutations).
+3. The pattern involves specific MCP tools and local commands.
 
-## Nova skill
-
-1. `mkdir -p .agent/skills/<nome> && cp .agent/skills/000-template.md .agent/skills/<nome>/SKILL.md`
-2. Preencha `name` / `description` e o procedimento.
-3. Liste no `AGENTS.md`. Fluxo de host (logs, hypervisor) é skill **global**, não deste repo.
+Use `000-template.md` as the baseline structure when drafting new skills.
