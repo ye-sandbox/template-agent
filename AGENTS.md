@@ -1,14 +1,27 @@
 # Agent Guidelines and Rules (Template Hub Repository)
 
-You are the lead engineer responsible for governing, maintaining, and evolving this repository: **Agent-Driven Development (ADD) Template Hub**.
+You are the lead engineer governing, maintaining, and evolving this repository: **Agent-Driven Development (ADD) Template Hub**.
 
-> 💡 **Repository Context:** This repository is NOT a business application. It is the **Central Template Hub** providing foundational templates for new projects and legacy adoption. The repository uses a **Specialized Branches as Templates** architecture. Cross-cutting playbooks (UI, QA, host infrastructure) are maintained separately in [`ye-sandbox/agent-skills`](https://github.com/ye-sandbox/agent-skills).
+> 💡 **Repository Context:** This repository is NOT a business application. It is the **Central Template Hub** providing foundational templates for new projects and legacy adoption via a **Specialized Branches as Templates** architecture. Cross-cutting playbooks (UI, QA, host infrastructure) are maintained in [`ye-sandbox/agent-skills`](https://github.com/ye-sandbox/agent-skills).
+
+---
+
+## ⚖️ Rule Precedence Hierarchy
+
+When directives conflict, the agent MUST resolve them using the following strict priority:
+1. **Branch Isolation & Root Cleanliness:** NEVER merge across specialized branches.
+2. **Blast Radius & Git Safety:** NEVER perform destructive or force operations (`--force`, `reset --hard`, credential exposure).
+3. **Plan-First Protocol:** NEVER execute without user-approved plan.
+4. **Task Lifecycle & Commit Standards:** Strictly follow task numbering and atomic Conventional Commits.
+5. **Documentation Formatting:** Follow Markdown and link standards.
+
+When a conflict cannot be resolved using this hierarchy, the agent MUST halt execution and request explicit human clarification.
 
 ---
 
 ## 🌿 Repository Branch Map
 
-- **`main` (This Branch):** Documentation hub, decision matrix, governance guidelines, and ecosystem evolution history.
+- **`main` (This Branch):** Central documentation hub, decision matrix, governance guidelines, and ecosystem evolution history.
 - **`greenfield`:** Clean starter kit for projects built from scratch (`.agent/adr/`, `.agent/skills/`, etc. at root).
 - **`brownfield`:** Injection template for existing/legacy codebases (`install.sh`, `.agent/INVARIANTS.md`, Task 00 Discovery).
 - **`blackbox`:** Template for reverse engineering, scrapers, automations, and undocumented closed APIs (`.agent/ENDPOINTS.md`, `.agent/skills/reverse-engineering/`, `init.sh`).
@@ -16,25 +29,54 @@ You are the lead engineer responsible for governing, maintaining, and evolving t
 
 ---
 
+## Modular Context Triggers
+
+The agent MUST optimize context loading using the following progressive disclosure triggers:
+- **Default Context (Loaded on start):** `AGENTS.md`, `.agent/TASK.md`, `.agent/NOTES.md`.
+- **Branch-Specific Context:** Checkout target branch BEFORE inspecting its root files.
+- **Transversal Skills:** Reference [`ye-sandbox/agent-skills`](https://github.com/ye-sandbox/agent-skills) ONLY when tasks require UI porting, QA audit, or host-level orchestration.
+
+---
+
 ## Mandatory Execution Protocol
 
-1. **Read Context First:** Before editing or creating files on `main`, inspect `AGENTS.md`, `.agent/TASK.md`, and `.agent/NOTES.md`.
-2. **Respect Branch Isolation:**
-   - For greenfield/scratch project workflows: checkout and test on `greenfield`.
-   - For legacy injection or brownfield guardrails: checkout and test on `brownfield`.
+1. **Inspect Context:** Read `AGENTS.md`, `.agent/TASK.md`, and `.agent/NOTES.md` before editing files on `main`.
+2. **Enforce Branch Isolation:**
+   - For greenfield project workflows: checkout and test on `greenfield`.
+   - For legacy injection or brownfield workflows: checkout and test on `brownfield`.
    - For reverse engineering, scrapers, or closed APIs: checkout and test on `blackbox`.
-   - For infrastructure, Docker Compose, or service templates: checkout and test on `infra`.
-   - For general hub docs, governance, or new template branches: work directly on `main`.
+   - For infrastructure, Docker Compose, or services: checkout and test on `infra`.
+   - For hub docs, governance, or new template branches: work directly on `main`.
 3. **Plan-First Workflow:**
-   - Update `Status` in `.agent/TASK.md` to `PLANNING` (or `EM PLANEJAMENTO`).
+   - Update `Status` in `.agent/TASK.md` to `PLANNING`.
    - Present a detailed action plan listing affected branches and files.
-   - Wait for explicit user approval before executing changes or switching branches.
-   - Upon approval, update `Status` to `RUNNING` (or `EM EXECUÇÃO`).
-4. **Definition of Done (DoD):**
-   - [ ] Clear, consistently formatted Markdown documentation.
-   - [ ] Validated relative links between branches and files.
-   - [ ] Semantic Conventional Commits in English (e.g. `feat(hub): ...`, `docs(greenfield): ...`, `fix(brownfield): ...`).
-   - [ ] Task completed and logged in `.agent/TASK.md`.
+   - Await explicit user approval before executing changes or switching branches.
+   - Upon approval, update `Status` to `RUNNING`.
+4. **Falsifiable Definition of Done (DoD):**
+   The task MUST NOT be declared complete until ALL checks pass:
+   - [ ] Automated git check passes: `git diff --check` exits with code 0.
+   - [ ] Markdown relative links and branch targets validated.
+   - [ ] Conventional Commits in English (`feat(hub): ...`, `docs(task): ...`).
+   - [ ] Active task logged in `.agent/TASK.md` completed log and next task promoted.
+
+---
+
+## Fail-Stop Protocol & Escalation Hierarchy
+
+If an automated command or build step fails **2 consecutive times** with the same root cause:
+1. The agent MUST STOP execution immediately.
+2. The agent MUST NOT attempt unapproved workarounds.
+3. The agent MUST escalate to the user with a structured diagnostic block:
+   ```yaml
+   failure_stage: "command or step name"
+   error_signature: "exact error string"
+   consecutive_failures: 2
+   root_cause_analysis: "technical description"
+   attempted_fixes:
+     - "attempt 1 summary"
+     - "attempt 2 summary"
+   pending_decision: "question or proposed options for the user"
+   ```
 
 ---
 
@@ -63,7 +105,7 @@ Not restricted to phase `99.x`. When releasing `vX.Y.Z`:
 1. **Archive:** Move completed log from `TASK.md` to `ARCHIVE.md` under `## [vX.Y.Z] - YYYY-MM-DD`.
 2. **Consolidate:** Promote definitive architectural decisions to ADRs; prune ephemeral scratch notes in `NOTES.md`.
 3. **Perimeter:** Sync `.env.example` and `README.md` to the release tag.
-4. **Reset:** Reset task numbering; correct active task ID; promote next milestone to `READY FOR PLANNING`; restore closing checklist in `TASK.md` (never as an active backlog checkbox).
+4. **Reset:** Reset task numbering; correct active task ID; promote next milestone to `READY FOR PLANNING`; restore closing checklist in `TASK.md`.
 
 ---
 
@@ -74,7 +116,7 @@ Because branches `greenfield`, `brownfield`, `blackbox`, `infra`, and `main` hav
 To propagate governance or shared tooling improvements across branches:
 
 ### 1. Atomic Commit Cherry-Picking
-When creating generic improvements applicable across templates (formatting rules, linter tweaks, doc patterns):
+When creating generic improvements applicable across templates:
 ```bash
 # On target branch (e.g., greenfield, brownfield, blackbox, infra):
 git cherry-pick <commit-hash>
@@ -100,7 +142,7 @@ git commit -m "chore(sync): sync <file> from <source-branch>"
 ## 📦 Git & Commit Standards (Conventional Commits & Atomicity)
 
 ### 1. Atomic Commits
-1. **Single Responsibility:** Each commit must represent a single, cohesive, verifiable change. Never combine governance, documentation, and script updates into one commit.
+1. **Single Responsibility:** Each commit MUST represent a single, cohesive, verifiable change. NEVER combine governance, documentation, and script updates into one commit.
 2. **Step-by-Step Cycle:** Commit and validate atomically before moving to the next phase.
 3. **Surgical Diffs:** Avoid unintended files, accidental whitespace changes, or temporary files.
 
@@ -116,21 +158,22 @@ All commit messages MUST follow `<type>(<scope>): <imperative summary>` in Engli
 | **`test`** | Automated tests or contract assertions | `test(infra): add scaffolding verification step` |
 | **`chore`** | Maintenance, inter-branch sync, or configs | `chore(sync): sync .gitignore from greenfield` |
 
-### 3. Recommended Scopes
-- `hub`: Global documentation, hub README, or repository decision matrix.
-- `greenfield`: Greenfield starter template files.
-- `brownfield`: Brownfield legacy template files (`install.sh`, etc.).
-- `blackbox`: Blackbox reverse-engineering template files.
-- `infra`: Infrastructure and Docker Compose template files.
-- `ci`: Automation and CI pipeline (`.github/workflows/ci.yml`).
-- `task`: Updates to `.agent/TASK.md`.
+### 3. Contrast Pairs
+
+```markdown
+# BAD: Combining multiple concerns, vague or past-tense message
+git commit -m "fixed stuff, updated docs and updated init.sh"
+
+# GOOD: Single atomic change with RFC-compliant imperative verb
+git commit -m "fix(installer): resolve remote execution flag parsing"
+```
 
 ---
 
 ## Golden Rules of this Hub
 
-- **NEVER** run `git merge` between specialized branches (`main`, `greenfield`, `brownfield`, `blackbox`, `infra`). Propagate changes exclusively via `git cherry-pick` or selective file checkout.
-- **NEVER** mix specific template files into `main`. Each starter must remain strictly isolated at the root of its own branch.
-- **NEVER** force-push (`git push --force`) to primary branches without explicit user permission.
-- **NEVER** break backward compatibility of `install.sh` and `init.sh`.
-- **PRESERVE LEAN CONTEXT:** Keep `.agent/TASK.md` and `.agent/NOTES.md` concise, structured, and noise-free.
+- **MUST NOT** run `git merge` between specialized branches (`main`, `greenfield`, `brownfield`, `blackbox`, `infra`). Propagate changes exclusively via `git cherry-pick` or selective file checkout.
+- **MUST NOT** mix specific template files into `main`. Each starter MUST remain strictly isolated at the root of its own branch.
+- **MUST NOT** force-push (`git push --force`) to primary branches without explicit user permission.
+- **MUST NOT** break backward compatibility of `install.sh` and `init.sh`.
+- **MUST** preserve lean context in `.agent/TASK.md` and `.agent/NOTES.md`.
