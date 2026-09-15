@@ -1,20 +1,20 @@
-# Catálogo de Procedimentos Operacionais (Skills de Infraestrutura)
+# Standard Operating Procedures (Infrastructure Skills)
 
-Este diretório contém os procedimentos passo a passo que ensinam aos agentes de IA como operar e evoluir a infraestrutura de forma segura e padronizada.
+This directory contains step-by-step procedures instructing AI agents on safely provisioning, updating, and operating services.
 
 ---
 
-## Skills Ativas
+## Active Skills
 
-| Skill | Localização | Propósito Principal |
+| Skill | Location | Primary Purpose |
 | :--- | :--- | :--- |
-| **`compose-service`** | [`compose-service/SKILL.md`](./compose-service/SKILL.md) | Adicionar ou atualizar serviços no Docker Compose garantindo portas, volumes, healthcheck e limites de recursos. |
+| **`compose-service`** | [`compose-service/SKILL.md`](./compose-service/SKILL.md) | Add or update services in Docker Compose with port isolation, storage persistence, healthchecks, and resource limits. |
 
 ---
 
-## Como Criar uma Nova Skill de Infraestrutura
+## How to Create a New Infrastructure Skill
 
-1. Copie o arquivo modelo [`000-template.md`](./000-template.md) para uma nova pasta `.agent/skills/<nome-da-skill>/SKILL.md`.
-2. Preencha o frontmatter YAML (`name` e `description`).
-3. Detalhe pré-requisitos, etapas de execução e validação.
-4. Adicione a nova skill à tabela acima e ao catálogo no `AGENTS.md`.
+1. Copy [`000-template.md`](./000-template.md) to `.agent/skills/<skill-name>/SKILL.md`.
+2. Fill the YAML frontmatter (`name` and `description`).
+3. Detail prerequisites, operational steps, and validation checks.
+4. Add the new skill to the table above and to `AGENTS.md`.

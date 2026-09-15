@@ -1,51 +1,53 @@
-# Template de Infraestrutura, Serviços & Homelab (ADD)
+# Infrastructure, Services & Homelab Template (ADD)
 
-Este repositório é a fundação para gerenciamento, orquestração e evolução de **serviços de infraestrutura e Homelab orientados a agentes de IA** (Docker Compose, VictoriaLogs, Uptime Kuma, bancos de dados, proxies reversos e observabilidade).
+🌐 **English | [Português](README.pt-br.md)**
 
-A estrutura foi projetada para eliminar os riscos comuns de agentes atuando em infraestrutura: **colisão de portas**, **perda acidental de volumes**, **vazamento de credenciais em YAML** e **ausência de limites de recursos**.
+This repository serves as the foundation for managing, orchestrating, and evolving **agent-driven infrastructure and Homelab services** (Docker Compose, VictoriaLogs, Uptime Kuma, databases, reverse proxies, and observability).
+
+The governance structure is engineered to eliminate common operational risks when AI agents interact with infrastructure: **port binding collisions**, **accidental volume loss**, **plaintext secret leaks in YAML**, and **missing resource limits**.
 
 ---
 
-## 🏛️ Estrutura do Template
+## 🏛️ Template Structure
 
 ```text
 ├── .agent/
-│   ├── ARCHIVE.md               # Histórico de tarefas arquivadas
-│   ├── NOTES.md                 # Decisões de infraestrutura e invariantes técnicas
-│   ├── SERVICES.md              # Fonte canônica viva: Portas, Volumes, Redes e Healthchecks
-│   ├── TASK.md                  # Tarefa ativa e roadmap de evolução dos serviços
+│   ├── ARCHIVE.md               # Archived completed tasks
+│   ├── NOTES.md                 # Infrastructure architectural decisions and gotchas
+│   ├── SERVICES.md              # Living source of truth: Ports, Volumes, Networks, Healthchecks
+│   ├── TASK.md                  # Active task and service evolution roadmap
 │   └── skills/
-│       ├── 000-template.md      # Template para novos procedimentos operacionais
-│       ├── README.md            # Catálogo de skills de infraestrutura
-│       └── compose-service/     # Procedimento padronizado para adicionar/alterar serviços
-├── compose.yaml.example         # Exemplo canônico de compose com healthchecks e limits
-├── .env.example                 # Contrato de variáveis de ambiente e portas
-├── .gitignore                   # Proteção contra commit de dados, volumes e segredos
-├── AGENTS.md                    # Regras de ouro de SRE/DevOps e guardrails inegociáveis
-└── README.md                    # Documentação do projeto
+│       ├── 000-template.md      # Template for new standard operating procedures
+│       ├── README.md            # Infrastructure skills index
+│       └── compose-service/     # Standard procedure for adding/modifying services
+├── compose.yaml.example         # Canonical Compose example with healthchecks and limits
+├── .env.example                 # Environment variable and port contracts
+├── .gitignore                   # Guards against committing data, volumes, and secrets
+├── AGENTS.md                    # SRE/DevOps golden rules and non-negotiable guardrails
+└── README.md                    # Project documentation
 ```
 
 ---
 
-## 🚀 Como Inicializar e Usar
+## 🚀 Quickstart
 
-### 1. Criar o arquivo de ambiente e configurar variáveis
+### 1. Create environment file and configure variables
 ```bash
 cp .env.example .env
-# Ajuste as portas e credenciais conforme o host
+# Adjust ports and credentials for your host
 ```
 
-### 2. Inicializar o arquivo de serviços a partir do exemplo
+### 2. Initialize service file from example
 ```bash
 cp compose.yaml.example compose.yaml
 ```
 
-### 3. Validar a sintaxe do Compose
+### 3. Validate Compose syntax
 ```bash
-docker compose config --quiet && echo "Compose sintaticamente válido!"
+docker compose config --quiet && echo "Compose syntax valid!"
 ```
 
-### 4. Subir os serviços em background
+### 4. Launch services in background
 ```bash
 docker compose up -d
 docker compose ps
@@ -53,8 +55,8 @@ docker compose ps
 
 ---
 
-## 🤖 Primeiro Prompt para o Agente de IA
+## 🤖 First Prompt for the AI Agent
 
-Ao abrir este repositório no seu editor com agente (Cursor, Windsurf, Antigravity, Roo Code):
+When opening this repository in your AI coding environment (Cursor, Windsurf, Antigravity, Roo Code):
 
-> *"Leia o AGENTS.md, .agent/SERVICES.md, .agent/TASK.md e a skill em .agent/skills/compose-service/SKILL.md. Apresente seu plano de implementação para a Tarefa [00.1] antes de alterar qualquer arquivo de configuração."*
+> *"Read AGENTS.md, .agent/SERVICES.md, .agent/TASK.md, and .agent/skills/compose-service/SKILL.md. Present your implementation plan for Task [00.1] before altering configuration files."*

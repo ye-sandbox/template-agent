@@ -1,38 +1,38 @@
-# NOTES.md — Decisões, Contexto e Contratos de Infraestrutura
+# NOTES.md — Infrastructure Decisions, Context, and Contracts
 
-> Guarda o PORQUÊ, não o QUE nem o COMO.
-> Para decisões de arquitetura de infraestrutura, trade-offs de redes/volumes e armadilhas descobertas.
-
----
-
-## Como usar este arquivo (para o agente)
-
-1. **Leia antes de planejar qualquer tarefa:** Decisões aqui registradas evitam retrabalho ou escolhas que geram conflitos no host.
-2. **Registre uma nova entrada quando:**
-   - Uma decisão estrutural for tomada (ex: escolha entre Docker Compose vs Nomad/K3s, Traefik vs Caddy).
-   - Um comportamento não-óbvio de uma imagem de contêiner for identificado (ex: UID específico exigido para bind mount).
-   - Uma política de retenção de dados ou logs for alterada.
+> Stores the WHY, not the WHAT or HOW.
+> Records infrastructure architectural decisions, network/volume trade-offs, and discovered gotchas.
 
 ---
 
-## Decisões Rápidas e Contexto Técnico
+## How to Use this File (for the Agent)
 
-### [AAAA-MM-DD] [Padrão de Volumes Nominais vs Bind Mounts]
-- **Contexto:** Necessidade de garantir alta performance de I/O e facilidade de backup sem quebrar permissões de usuário entre host e contêiner.
-- **Decisão:** Adotados **Named Volumes** para bancos de dados e mecanismos de storage de escrita intensa (VictoriaLogs, Postgres, SQLite do Uptime Kuma), e **Bind Mounts** estritos (`:ro`) para arquivos de configuração versionados no Git.
-- **Consequências:** Evita problemas crônicos de permissão de escrita (`Permission denied`) em diretórios mapeados no host.
-
----
-
-## Armadilhas e Comportamentos Não-Óbvios
-
-- **UID em bind mount:** imagens não-root (1000, 65534) exigem permissão compatível no host. Named volume para DB/logs evita isso — a regra `down -v` está no `AGENTS.md`.
-- **Porta no host:** consulte `SERVICES.md` antes de `ports:`; colisão aparece como `bind: address already in use`.
+1. **Read before planning any task:** Recorded decisions prevent regressions or host-level port/storage collisions.
+2. **Add an entry when:**
+   - A structural decision is made (e.g., choice between Docker Compose vs Nomad/K3s, Traefik vs Caddy).
+   - An atypical container behavior is uncovered (e.g. non-root UID requirements on bind mounts).
+   - Retention or backup policies are adjusted.
 
 ---
 
-## Débitos Técnicos Assumidos
+## Technical Decisions and Context
 
-| Débito | Motivo da decisão | Quando revisitar |
+### [YYYY-MM-DD] [Named Volumes vs Bind Mounts Strategy]
+- **Context:** Ensuring high I/O throughput and safe backup handling without user permission friction between host and container.
+- **Decision:** Use **Named Volumes** for databases and high-write storage engines (VictoriaLogs, Postgres, SQLite in Uptime Kuma), and strict **Bind Mounts** (`:ro`) for configuration files tracked in Git.
+- **Consequences:** Avoids recurring write permission errors (`Permission denied`) on mapped host directories.
+
+---
+
+## Gotchas and Quirks
+
+- **Host UID on bind mounts:** Non-root container users (1000, 65534) require compatible host permissions. Named volumes for databases/logs bypass this issue — remember the strict `down -v` prohibition in `AGENTS.md`.
+- **Host port binding:** Check `SERVICES.md` before mapping `ports:`; collisions manifest as `bind: address already in use`.
+
+---
+
+## Assumed Technical Debt
+
+| Debt | Decision Rationale | Revisit When |
 |---|---|---|
-| `[ex: Sem replicação de banco de dados]` | `[Setup simplificado de nó único]` | `[Ao atingir limites de escala]` |
+| `[e.g.: Single-node without replication]` | `[Simplified single-node homelab setup]` | `[When reaching scale limits]` |

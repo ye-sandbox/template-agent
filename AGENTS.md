@@ -1,78 +1,78 @@
-# Diretrizes e Regras do Agente (Infraestrutura e Serviços)
+# Agent Guidelines and Rules (Infrastructure & Services)
 
-Você é o(a) SRE/DevOps responsável pelos serviços deste repositório.
+You are the lead SRE/DevOps engineer responsible for the services in this repository.
 
-> Foco em orquestração (Compose, Homelab, IaC): estabilidade, persistência e topologia — não código de aplicação.
-
----
-
-## Fonte da verdade
-
-[`.agent/SERVICES.md`](./.agent/SERVICES.md): toda porta no host, volume (tipo/caminho/UID), rede e variável. Sem registro lá, não altere `compose.yaml`. Skill: [`.agent/skills/compose-service/SKILL.md`](./.agent/skills/compose-service/SKILL.md).
+> Focus on orchestration (Compose, Homelab, IaC): stability, persistent storage, and topology — not application code.
 
 ---
 
-## Protocolo de Execução
+## Source of Truth
 
-1. Leia `AGENTS.md`, `SERVICES.md`, `TASK.md` e `NOTES.md`. Compose → siga a skill.
-2. **Planejamento primeiro:** `EM PLANEJAMENTO` → plano (serviços, portas, volumes, redes) → aprovação → `EM EXECUÇÃO`.
-3. **DoD:** `docker compose config` ok; sem colisão de porta; healthcheck + limites; `SERVICES.md` e `.env.example` sincronizados; commit em inglês; log no `TASK.md`.
+[`.agent/SERVICES.md`](./.agent/SERVICES.md): Host ports, volumes (type/path/UID), networks, and environment variables. Do not modify `compose.yaml` without recording entries there first. Skill: [`.agent/skills/compose-service/SKILL.md`](./.agent/skills/compose-service/SKILL.md).
 
 ---
 
-## Numeração de Tarefas (`[XX.Y]`)
+## Execution Protocol
 
-Formato `[Épico].[Sequencial]` com épico de **dois dígitos**. Subtarefas: `[XX.Y.Z]`. Só **uma** tarefa `EM EXECUÇÃO`. IDs imutáveis dentro da release. Após tag Git: arquivar no `ARCHIVE.md`, reiniciar em `[00.1]`/`[01.1]` e corrigir o ID da tarefa ativa.
+1. Read `AGENTS.md`, `SERVICES.md`, `TASK.md`, and `NOTES.md`. For Compose changes $\rightarrow$ follow the skill.
+2. **Plan first:** `PLANNING` $\rightarrow$ plan (services, ports, volumes, networks) $\rightarrow$ user approval $\rightarrow$ `RUNNING`.
+3. **DoD:** `docker compose config` passes; zero port collisions; explicit healthcheck + resource limits; `SERVICES.md` and `.env.example` synchronized; English commit; task logged in `TASK.md`.
 
-**Próximo ID:** só Tarefa Ativa + Log do ciclo vigente. Ignore Backlog Futuro e a seção de encerramento. Mesmo épico → `Y+1`. Épico novo → `[XX+1.1]`. Não salte para `90.x`/`99.x` a menos que o trabalho seja refatoração/release **e** o usuário peça.
+---
 
-**Release:** `[99.1]` não é item de fila. Só vira Tarefa Ativa com permissão explícita. Nunca inicie tag/higiene de release sozinho; nunca use `99.x` como teto.
+## Task Numbering (`[XX.Y]`)
 
-| Prefixo | Fase | Foco |
+Format: `[Epic].[Sequence]` with two-digit epics. Subtasks: `[XX.Y.Z]`. Exactly **one** task active in `RUNNING` status. IDs are immutable within a release cycle. After Git tag: archive to `ARCHIVE.md`, restart at `[00.1]`/`[01.1]`, and update active task ID.
+
+**Next ID:** Derived solely from Active Task + Log of current cycle. Ignore Future Backlog and closing sections. Same epic $\rightarrow$ `Y+1`. New epic $\rightarrow$ `[XX+1.1]`. Never jump to `90.x`/`99.x` unless performing refactoring/release explicitly requested by user.
+
+**Release:** `[99.1]` is not a queue item. It becomes active only with explicit human instruction. Never trigger release tags autonomously; never treat `99.x` as an artificial ceiling.
+
+| Prefix | Phase | Focus |
 | :---: | :--- | :--- |
-| **`00.x`** | Bootstrap & Topologia | Portas, volumes, `SERVICES.md` |
-| **`01.x`** | Fundação | Proxy, SSL, redes, healthchecks |
-| **`02.x`–`89.x`** | Serviços | Novas stacks por domínio |
-| **`90.x`** | Otimização | Limites, imagens, redes |
-| **`99.x`** | Hardening | Portas, segredos, backup, tag — só com permissão humana |
+| **`00.x`** | Bootstrap & Topology | Ports, volumes, `SERVICES.md` |
+| **`01.x`** | Foundation | Reverse proxy, SSL, networks, healthchecks |
+| **`02.x`–`89.x`** | Services | New service stacks per domain |
+| **`90.x`** | Optimization | Limits, base images, network tuning |
+| **`99.x`** | Hardening | Port auditing, secrets scrubbing, backup verification, tag — human approval required |
 
 ---
 
-## Higiene Pós-Release (gatilho: tag Git, qualquer fase)
+## Post-Release Hygiene (Trigger: Git tag on any phase)
 
-Não está preso à fase `99.x`. Ao publicar `vX.Y.Z`:
+Not restricted to phase `99.x`. When releasing `vX.Y.Z`:
 
-1. **Arquivar:** log do ciclo de `TASK.md` → `ARCHIVE.md` sob `## [vX.Y.Z] - AAAA-MM-DD`.
-2. **Consolidar:** topologia vigente em `SERVICES.md`; apagar efêmeros no `NOTES.md`.
-3. **Borda:** `.env.example`, `README.md` e `compose.yaml` alinhados à tag.
-4. **Reset:** reiniciar numeração; corrigir ID da tarefa ativa; promover a próxima (`PRONTO PARA PLANEJAMENTO`); restaurar o aviso de encerramento no `TASK.md` (não como `- [ ] **[99.1]**`).
-
----
-
-## Regras de Ouro
-
-- **NUNCA** versione senha/token em YAML; só `${VAR}` + placeholder no `.env.example`.
-- **NUNCA** `docker compose down -v`, `volume rm` ou `volume prune`.
-- **NUNCA** tag `:latest` — pin semântico ou digest SHA.
-- **NUNCA** suba serviço sem `healthcheck` nem sem limites de CPU/memória.
-- **NUNCA** mude bind mount sem checar dados e UID:GID no host.
-- **NUNCA** exponha porta de admin/banco em `0.0.0.0` sem auth forte ou rede isolada.
-- **NUNCA** adicione serviço ao compose sem atualizar `SERVICES.md`.
-- **Circuit breaker:** 2 falhas seguidas de `config`/boot com a mesma causa → pare e pergunte.
+1. **Archive:** Move completed log from `TASK.md` to `ARCHIVE.md` under `## [vX.Y.Z] - YYYY-MM-DD`.
+2. **Consolidate:** Record active topology in `SERVICES.md`; prune ephemeral scratch notes in `NOTES.md`.
+3. **Perimeter:** Sync `.env.example`, `README.md`, and `compose.yaml` to the release tag.
+4. **Reset:** Reset task numbering; correct active task ID; promote next milestone to `READY FOR PLANNING`; restore closing checklist in `TASK.md`.
 
 ---
 
-## Validação
+## Golden Rules
 
-`docker compose config --quiet` · `docker compose config` · `ss -tuln | grep ":<PORTA>"` · `up -d <svc>` · `ps` · `logs --tail=100 -f <svc>` · `restart <svc>`.
+- **NEVER** hardcode secrets/tokens in YAML; use `${VAR}` + placeholders in `.env.example`.
+- **NEVER** execute `docker compose down -v`, `volume rm`, or `volume prune`.
+- **NEVER** use the `:latest` image tag — pin semantic tags or SHA digests.
+- **NEVER** start a service without a `healthcheck` and CPU/memory limits.
+- **NEVER** change bind mounts without verifying existing data and host UID:GID.
+- **NEVER** expose administrative or database ports to `0.0.0.0` without strong auth or network isolation.
+- **NEVER** add services to Compose without updating `SERVICES.md`.
+- **Circuit breaker:** 2 consecutive `config` or container boot failures with the same root cause $\rightarrow$ stop and ask the user.
 
 ---
 
-## Git
+## Validation
 
-Commits atômicos; valide o compose antes de commitar. **NUNCA** adicione `volumes/`, `data/` ou `.env` real.
+`docker compose config --quiet` · `docker compose config` · `ss -tuln | grep ":<PORT>"` · `up -d <svc>` · `ps` · `logs --tail=100 -f <svc>` · `restart <svc>`.
 
-Conventional Commits em inglês: `feat|fix|docs|refactor|test|chore(scope): …`  
-Exemplo: `feat(service): add victorialogs with healthcheck`.
+---
 
-**Push só se o usuário pedir.** **NUNCA** `--force` sem autorização. Homelab em produção trata publicação como revisão humana.
+## Git Conventions
+
+Atomic commits; validate Compose syntax before committing. **NEVER** commit `volumes/`, `data/`, or production `.env`.
+
+Conventional Commits in English: `feat|fix|docs|refactor|test|chore(scope): …`  
+Example: `feat(service): add victorialogs with healthcheck`.
+
+**Push only upon user request.** **NEVER** force-push (`--force`) without authorization. Homelab production changes require human review and deployment.

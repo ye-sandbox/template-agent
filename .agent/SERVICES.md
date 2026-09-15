@@ -1,87 +1,70 @@
-# Catálogo e Topologia de Serviços de Infraestrutura (SERVICES.md)
+# Infrastructure Services Catalog and Topology (SERVICES.md)
 
-> 🎯 **Finalidade Deste Arquivo:** Fonte canônica viva da topologia, alocação de portas, persistência de dados e políticas de rede dos serviços provisionados neste repositório.
+> 🎯 **Purpose of this File:** Canonical living source of truth for topology, host port allocations, data persistence volumes, and network policies for services provisioned in this repository.
 >
-> ⚠️ **Regra Mandatória para o Agente:** NUNCA suba ou altere um contêiner no `compose.yaml` sem antes registrar e checar conflitos nas tabelas deste arquivo.
+> ⚠️ **Mandatory Rule for the Agent:** NEVER bring up or modify containers in `compose.yaml` without first recording and verifying potential conflicts in the tables below.
 
 ---
 
-## 1. Alocação de Portas no Host
+## 1. Host Port Allocations
 
-> Registre toda porta mapeada no host para evitar conflitos de bind (`bind: address already in use`).
+> Record all ports bound on the host to avoid binding collisions (`bind: address already in use`).
 
-| Porta Host | Protocolo | Serviço | Porta Contêiner | Exposição | Propósito / Endpoint |
+| Host Port | Protocol | Service | Container Port | Exposure | Purpose / Endpoint |
 | :---: | :---: | :--- | :---: | :--- | :--- |
-| `9428` | TCP | `victorialogs` | `9428` | `127.0.0.1` (Local) | Ingestão e UI HTTP do VictoriaLogs |
-| `3001` | TCP | `uptime-kuma` | `3001` | `0.0.0.0` (Pública) | Dashboard de monitoramento e status |
-| `80` | TCP | `reverse-proxy` | `80` | `0.0.0.0` (Pública) | HTTP Gateway (Traefik / Nginx) |
-| `443` | TCP | `reverse-proxy` | `443` | `0.0.0.0` (Pública) | HTTPS Gateway |
+| `9428` | TCP | `victorialogs` | `9428` | `127.0.0.1` (Local) | VictoriaLogs HTTP ingestion and web UI |
+| `3001` | TCP | `uptime-kuma` | `3001` | `0.0.0.0` (Public) | Monitoring dashboard and status pages |
+| `80` | TCP | `reverse-proxy` | `80` | `0.0.0.0` (Public) | HTTP Gateway (Traefik / Nginx) |
+| `443` | TCP | `reverse-proxy` | `443` | `0.0.0.0` (Public) | HTTPS Gateway |
 
-*(Tipos de Exposição: `127.0.0.1` [somente host local], `0.0.0.0` [rede pública / externa], `Rede Interna` [sem porta no host, apenas DNS Docker])*
+*(Exposure types: `127.0.0.1` [local host only], `0.0.0.0` [public / external network], `Internal Network` [no host port, Docker DNS only])*
 
 ---
 
-## 2. Matriz de Volumes e Persistência de Dados
+## 2. Volumes and Data Persistence Matrix
 
-> Garanta que nenhum dado de produção fique efêmero dentro de contêineres e documente as permissões necessárias.
+> Ensure no production data is kept ephemerally inside container layers, and document required permissions.
 
-| Serviço | Tipo | Caminho no Host / Volume | Caminho no Contêiner | UID:GID | Backup Obrigatório? |
+| Service | Type | Host Path / Volume | Container Path | UID:GID | Mandatory Backup? |
 | :--- | :---: | :--- | :--- | :---: | :---: |
-| `victorialogs` | Named Volume | `victorialogs_data` | `/vlogs-data` | `1000:1000` | Sim (diário) |
-| `uptime-kuma` | Named Volume | `uptime_kuma_data` | `/app/data` | `1000:1000` | Sim (diário) |
-| `reverse-proxy` | Bind Mount | `./config/traefik.yaml` | `/etc/traefik/traefik.yaml:ro` | `root:root` | Não (versionado em Git) |
+| `victorialogs` | Named Volume | `victorialogs_data` | `/vlogs-data` | `1000:1000` | Yes (daily) |
+| `uptime-kuma` | Named Volume | `uptime_kuma_data` | `/app/data` | `1000:1000` | Yes (daily) |
+| `reverse-proxy` | Bind Mount | `./config/traefik.yaml` | `/etc/traefik/traefik.yaml:ro` | `root:root` | No (git-versioned) |
 
-*(Tipos de Volume: `Named Volume` [gerenciado pelo Docker], `Bind Mount` [diretório mapeado do host])*
+*(Volume types: `Named Volume` [Docker-managed volume], `Bind Mount` [Host mapped directory])*
 
 ---
 
-## 3. Matriz de Redes Virtuais Docker
+## 3. Docker Virtual Networks Matrix
 
-> Segregação de tráfego para segurança e contenção de blast radius.
+> Segregate traffic for security containment and minimal blast radius.
 
-| Nome da Rede | Driver | Escopo | Finalidade e Serviços Conectados |
+| Network Name | Driver | Scope | Purpose and Connected Services |
 | :--- | :---: | :---: | :--- |
-| `proxy_public` | bridge | Interno | Roteamento de entrada (Traefik, Uptime Kuma) |
-| `monitoring_internal` | bridge | Isolado | Tráfego interno de métricas e logs (VictoriaLogs, Scrapers) |
-| `db_isolated` | bridge | Isolado | Acesso exclusivo de bancos de dados a seus respectivos backends |
+| `proxy_public` | bridge | Internal | Ingress routing (Traefik, Uptime Kuma) |
+| `monitoring_internal` | bridge | Isolated | Internal telemetry and logs (VictoriaLogs, scrapers) |
+| `db_isolated` | bridge | Isolated | Exclusive database access for backends |
 
 ---
 
-## 4. Catálogo de Serviços, Imagens e Healthchecks
+## 4. Services, Images, and Healthchecks Catalog
 
-> Todo serviço DEVE ter imagem com tag pinada (nunca `:latest` puro) e comando de `healthcheck`.
+> Every service MUST use a pinned image tag (never plain `:latest`) and an explicit `healthcheck` block.
 
 ### 📌 `victorialogs`
-- **Imagem:** `victoriametrics/victoria-logs:v1.1.0`
-- **Descrição:** Mecanismo de armazenamento e consulta de logs em alta performance.
-- **Redes:** `monitoring_internal`
+- **Image:** `victoriametrics/victoria-logs:v1.1.0`
+- **Description:** High-performance log ingestion and querying engine.
+- **Networks:** `monitoring_internal`
 - **Healthcheck:**
-  - **Comando:** `["CMD-SHELL", "wget -q --spider http://127.0.0.1:9428/health || exit 1"]`
-  - **Intervalo:** `15s` | **Timeout:** `5s` | **Retries:** `3` | **Start Period:** `10s`
-- **Limites de Recursos:**
-  - `cpus: '1.0'` | `memory: 1024M`
-- **Dependências de Boot (`depends_on`):** Nenhuma
+  - **Command:** `["CMD-SHELL", "wget -q --spider http://127.0.0.1:9428/health || exit 1"]`
+  - **Interval:** `15s` | **Timeout:** `5s` | **Retries:** `3` | **Start Period:** `10s`
+- **Resource Limits:** CPU: `1.0` | Memory: `512MB`
 
 ### 📌 `uptime-kuma`
-- **Imagem:** `louislam/uptime-kuma:1.23.13`
-- **Descrição:** Monitoramento de uptime e dashboards públicos de status.
-- **Redes:** `proxy_public`, `monitoring_internal`
+- **Image:** `louislam/uptime-kuma:1.23.13-debian`
+- **Description:** Self-hosted monitoring and status page dashboard.
+- **Networks:** `proxy_public`
 - **Healthcheck:**
-  - **Comando:** `["CMD-SHELL", "node extra/healthcheck.js || exit 1"]`
-  - **Intervalo:** `30s` | **Timeout:** `10s` | **Retries:** `3` | **Start Period:** `30s`
-- **Limites de Recursos:**
-  - `cpus: '0.5'` | `memory: 512M`
-- **Dependências de Boot (`depends_on`):** Nenhuma
-
----
-
-## 5. Mapeamento de Variáveis Sensíveis (.env)
-
-> Contrato de variáveis requeridas. NUNCA coloque senhas reais neste arquivo nem no Git.
-
-| Variável | Serviço(s) | Obrigatória? | Descrição |
-| :--- | :--- | :---: | :--- |
-| `TZ` | Todos | Sim | Fuso horário dos contêineres (ex: `America/Sao_Paulo`) |
-| `DATA_PATH` | Todos | Sim | Diretório base para persistência local (ex: `./volumes`) |
-| `UPTIME_KUMA_PORT` | `uptime-kuma` | Sim | Porta externa vinculada ao Uptime Kuma |
-| `VICTORIALOGS_PORT`| `victorialogs`| Sim | Porta externa de ingestão do VictoriaLogs |
+  - **Command:** `["CMD-SHELL", "node extra/healthcheck.js || exit 1"]`
+  - **Interval:** `30s` | **Timeout:** `10s` | **Retries:** `3` | **Start Period:** `15s`
+- **Resource Limits:** CPU: `0.5` | Memory: `256MB`
