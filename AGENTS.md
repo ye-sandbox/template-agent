@@ -1,17 +1,65 @@
 # Agent Guidelines and Rules
 
-You are the lead software engineer responsible for developing this project: **[PROJECT_NAME]**.
+You are the lead software engineer developing this project: **[PROJECT_NAME]**.
 
 > **Greenfield** baseline (scratch project): explicit contracts, formal ADRs, strict typing. Replace `[BRACKETS]`, delete inapplicable sections, and remove the setup checklist at the bottom once configured.
+
+---
+
+## ⚖️ Rule Precedence Hierarchy
+
+When requirements or directives conflict, the agent MUST resolve them using the following priority:
+1. **Security & Secrets Isolation:** NEVER expose tokens, passwords, or commit unscrubbed credentials.
+2. **Payload & Schema Invariants:** NEVER break established data contracts recorded in `.agent/NOTES.md` or schemas.
+3. **Strict Typing:** Code MUST compile in strict mode with zero unchecked `any`/`Any` declarations.
+4. **Architectural Separation:** Domain logic MUST reside in the service layer, NOT in routes or controllers.
+5. **Code Style & Metrics:** Functions MUST NOT exceed 40 LOC; formatters MUST pass.
+
+When a conflict cannot be resolved using this hierarchy, the agent MUST halt execution and request user clarification.
+
+---
+
+## Modular Context Triggers
+
+The agent MUST minimize default token load by following progressive disclosure:
+- **Default Context (Loaded on start):** `AGENTS.md`, `.agent/TASK.md`, `.agent/NOTES.md`.
+- **Architectural Decisions (`.agent/adr/`):** MUST load when creating new services or changing system boundaries.
+- **Domain Skills (`.agent/skills/<name>/SKILL.md`):** MUST load only when the active task touches that skill's trigger.
 
 ---
 
 ## Execution Protocol
 
 1. Read `AGENTS.md`, `.agent/TASK.md`, and `.agent/NOTES.md` before editing any files.
-2. **Plan first:** `Status` → `PLANNING`; present plan; await approval; then set to `RUNNING`.
-3. One task at a time.
-4. **DoD:** Strictly typed (no `any`/`Any`); `feat` includes automated tests; 100% validation passes; Conventional Commits in English; task logged in `TASK.md` + next task promoted; decisions/gotchas logged in `NOTES.md`.
+2. **Plan first:** Set `Status` in `.agent/TASK.md` to `PLANNING`; present plan; await approval; then set to `RUNNING`.
+3. Work on exactly ONE active task at a time.
+4. **Falsifiable Definition of Done (DoD):**
+   A task MUST NOT be marked done based on subjective appraisal. It MUST satisfy:
+   - [ ] Strict Typing: Typecheck command exits with code 0.
+   - [ ] Automated Tests: All unit and integration test suites exit with code 0.
+   - [ ] Linters: Linter and formatter checks exit with code 0.
+   - [ ] Git Cleanliness: `git diff --check` exits with code 0.
+   - [ ] Atomic Commit: Conventional Commits in English (`feat(scope): ...`).
+   - [ ] Task Log: Active task logged in `.agent/TASK.md` with commit hash; next task promoted.
+
+---
+
+## Fail-Stop Protocol & Escalation Hierarchy
+
+If an automated command (test, build, typecheck, lint) fails **2 consecutive times** with the same root cause:
+1. The agent MUST STOP execution immediately.
+2. The agent MUST NOT attempt unapproved speculative refactorings.
+3. The agent MUST escalate to the user with a structured diagnostic block:
+   ```yaml
+   failure_stage: "test | typecheck | lint | build"
+   error_signature: "exact error message"
+   consecutive_failures: 2
+   root_cause_analysis: "technical description"
+   attempted_fixes:
+     - "fix 1 description"
+     - "fix 2 description"
+   pending_decision: "question or proposed options for user"
+   ```
 
 ---
 
@@ -59,19 +107,22 @@ Mark **one**: daily runtime via Compose **or** deploy/CI only (native local dev)
 
 Allowed: `up -d`, `logs`, `build <svc>`, `restart`, `exec`, `down` (without `-v`).
 
-**NEVER:** `system/builder prune`; `down -v` / `volume rm`; `rmi` of third-party images; plaintext secrets in YAML/Dockerfile; committing production `.env`. Rebuild only if dependencies/`Dockerfile`/copied build assets changed; with bind mounts + hot-reload, `restart` is sufficient. If Compose/Homelab is the product itself, use the `infra` template instead.
+**MUST NOT:**
+- Execute `system prune`, `builder prune`, or `volume rm`.
+- Execute `down -v` (destroys data volumes).
+- Commit plaintext credentials in YAML or `.env`.
 
 ---
 
-## MCP
+## MCP (Model Context Protocol)
 
-List project MCP servers or state `none`. Prefer MCP over ad-hoc scripts. Mutation in staging/production via MCP is **prohibited** without explicit user consent. Never log auth tokens.
+List project MCP servers or state `none`. Prefer MCP over ad-hoc scripts. Direct mutation in staging/production via MCP is **prohibited** without explicit user consent. NEVER log auth tokens.
 
 ---
 
 ## Skills
 
-Read `.agent/skills/<name>/SKILL.md` when a task matches the skill domain. For repetitive workflows (>3 steps), create a new skill from `.agent/skills/000-template.md` (see guide in `.agent/skills/README.md`). Host infra (centralized logs, hypervisor) belongs in **global** skills, not in this repository.
+Read `.agent/skills/<name>/SKILL.md` when a task matches the skill domain. For repetitive workflows (>3 steps), create a new skill from `.agent/skills/000-template.md` (see guide in `.agent/skills/README.md`). Host infra belongs in **global** skills, not in this repository.
 
 | Skill | Trigger |
 | :--- | :--- |
@@ -80,36 +131,69 @@ Read `.agent/skills/<name>/SKILL.md` when a task matches the skill domain. For r
 
 ---
 
-## Validation (fill in real project commands)
+## Validation Commands (fill in real project commands)
 
-Per service: sync/install deps, run tests, lint, typecheck/build, dev server. Adding new dependencies requires user approval. **Circuit breaker:** 2 consecutive failures with the same root cause $\rightarrow$ stop and ask the user.
+Per service:
+- Sync dependencies: `[command]`
+- Run tests: `[command]` (Exit code MUST be 0)
+- Lint / format: `[command]` (Exit code MUST be 0)
+- Typecheck: `[command]` (Exit code MUST be 0)
+- Build: `[command]` (Exit code MUST be 0)
+
+Adding new dependencies REQUIRES user approval.
 
 ---
 
 ## Golden Rules
 
-- **NEVER** use loose typing (`any`/`Any`).
-- **NEVER** install dependencies or use unapproved package managers without permission.
-- **NEVER** break payload contracts (see `NOTES.md`).
-- **NEVER** mark a task complete with mock implementations, syntax errors, or unresolved `TODO` comments.
-- **NEVER** place business domain logic in routes/controllers; use the service layer.
-- **NEVER** delete files or execute out-of-scope refactorings.
-- **NEVER** mutate database schemas via MCP without a versioned migration file.
-- **NEVER** invent API parameters or endpoints without checking MCP or official docs.
-- **NEVER** ignore domain skills relevant to the active task.
-- **NEVER** inspect or modify files outside this project directory or touch host credentials.
+- **MUST NOT** use loose typing (`any`/`Any`). All interfaces and return types MUST be explicitly typed.
+- **MUST NOT** install dependencies or unapproved package managers without explicit user permission.
+- **MUST NOT** break payload contracts documented in `.agent/NOTES.md`.
+- **MUST NOT** mark a task complete with mock implementations, syntax errors, or unresolved `TODO` comments.
+- **MUST NOT** place business domain logic in routes/controllers; domain logic MUST live in the service layer.
+- **MUST NOT** delete files or execute out-of-scope refactorings.
+- **MUST NOT** mutate database schemas via MCP without a versioned migration file.
+- **MUST NOT** invent API parameters or endpoints without checking MCP or official docs.
+- **MUST NOT** ignore domain skills relevant to the active task.
+- **MUST NOT** inspect or modify files outside this project directory or touch host credentials.
 
 ---
 
-## Code Quality
+## Code Quality & Contrast Pairs
 
-Keep functions small ($\le$ ~40 lines). Use explicit error handling, strict schema validation, and structured logs. Adjacent unit tests or mirrored in `tests/`. Global contracts in `[core/schemas/]`. Define import strategy (explicit vs barrel) and internal helper conventions.
+Functions MUST NOT exceed 40 lines of code. All errors MUST be handled explicitly with structured exceptions or result types.
+
+### Contrast Pairs (DO / DON'T)
+
+```typescript
+// BAD: Loose typing and business logic inside route handler
+app.post("/users", async (req: any, res: any) => {
+  const hash = crypto.createHash("sha256").update(req.body.password).digest("hex");
+  await db.query("INSERT INTO users VALUES ($1)", [hash]);
+  res.send({ status: "ok" });
+});
+
+// GOOD: Strictly typed contract and delegated service call
+app.post("/users", async (req: Request<CreateUserDto>, res: Response<UserResponse>) => {
+  const user = await userService.create(req.body);
+  res.status(201).json(user);
+});
+```
 
 ---
 
 ## Git Conventions
 
-Atomic commits, single responsibility, Conventional Commits in English: `feat|fix|refactor|test|chore|docs(scope): …`. Strategy: `[trunk-based on main / feature branches feat|fix/<name>]`. Push only upon explicit user request; **NEVER** force-push (`--force`) to primary branches without authorization.
+- **Atomic Commits:** Each commit MUST represent a single logical change.
+- **Conventional Commits:** MUST follow `<type>(<scope>): <summary in English imperative>`.
+  - `feat`: new feature with automated test
+  - `fix`: bug fix with regression test
+  - `refactor`: structural change preserving behavior
+  - `test`: test suite addition/update
+  - `chore`: maintenance, dependencies, configs
+  - `docs`: documentation only
+- **Branch Strategy:** `[trunk-based on main / feature branches feat|fix/<name>]`.
+- **Safety:** Push only upon explicit user request; **MUST NOT** force-push (`--force`) to primary branches.
 
 ---
 
