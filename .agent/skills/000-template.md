@@ -1,32 +1,32 @@
 ---
-name: [nome-da-skill-em-kebab-case]
-description: [Resumo claro de 1-2 frases explicando o que esta habilidade faz e quando o agente deve utilizá-la.]
+name: [skill-name-in-kebab-case]
+description: [Clear 1-2 sentence summary explaining what this skill accomplishes and when the agent must use it.]
 ---
 
-# Procedimento: [Título Operacional da Skill]
+# Procedure: [Operational Skill Title]
 
-> 💡 **Objetivo:** [Breve contexto do problema que este procedimento padroniza e resolve.]
-
----
-
-## Pré-requisitos e Invariantes Obrigatórios
-
-1. [Invariante 1: ex: Leitura obrigatória de `.agent/SERVICES.md`.]
-2. [Invariante 2: ex: Validação de variáveis no `.env` antes de executar comandos.]
-3. [Invariante 3: ex: Não causar downtime em serviços adjacentes.]
+> 💡 **Objective:** [Brief context on the operational challenge this procedure standardizes and solves.]
 
 ---
 
-## Procedimento Passo a Passo
+## Prerequisites and Mandatory Invariants
 
-### Etapa 1: [Preparação / Diagnóstico]
-1. [Ação descritiva 1]
-2. [Ação descritiva 2]
+1. [Invariant 1: e.g. Mandatory review of `.agent/SERVICES.md`.]
+2. [Invariant 2: e.g. Validation of environment variables in `.env` before running commands.]
+3. [Invariant 3: e.g. Zero downtime on adjacent production services.]
 
-### Etapa 2: [Execução / Modificação]
-1. [Ação descritiva 1]
-2. [Ação descritiva 2]
+---
 
-### Etapa 3: [Validação e Verificação]
-1. [Comando de teste / verificação de integridade]
-2. [Critério de sucesso observável]
+## Step-by-Step Procedure
+
+### Stage 1: [Preparation / Diagnosis]
+1. [Descriptive action 1]
+2. [Descriptive action 2]
+
+### Stage 2: [Execution / Modification]
+1. [Descriptive action 1]
+2. [Descriptive action 2]
+
+### Stage 3: [Validation & Verification]
+1. [Healthcheck / verification command]
+2. [Observable success criterion]

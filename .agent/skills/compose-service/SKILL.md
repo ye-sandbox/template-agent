@@ -1,49 +1,49 @@
 ---
 name: compose-service
-description: Procedimento padronizado para adicionar ou atualizar serviços no Docker Compose garantindo isolamento de portas, persistência segura, healthcheck e limites de recursos.
+description: Standard operating procedure for adding or updating services in Docker Compose ensuring port isolation, storage persistence, healthchecks, and resource limits.
 ---
 
-# Procedimento: Adicionar / Atualizar Serviço no Docker Compose
+# Procedure: Add or Update Service in Docker Compose
 
-> 💡 **Objetivo:** Adicionar ou modificar serviços em arquivos `compose.yaml` (ou `docker-compose.yml`) de forma idempotente, segura e documentada, sem conflito de portas ou riscos de perda de dados.
-
----
-
-## Pré-requisitos e Invariantes Obrigatórios
-
-1. **Consulta Prévia da Topologia:** O agente DEVE ler [.agent/SERVICES.md](../../SERVICES.md) antes de alterar qualquer linha de configuração.
-2. **Imagens Pinadas:** Proibido o uso da tag `:latest`. Use sempre tags semânticas estáveis (ex: `v1.2.3`, `1.23-alpine`).
-3. **Healthcheck Obrigatório:** Todo contêiner deve possuir bloco explícito de `healthcheck`.
-4. **Limites de Recursos:** Todo contêiner deve possuir diretivas de contenção (`cpus` e `memory`).
-5. **Zero Segredos em Plaintext:** Senhas e tokens devem ser consumidos via variáveis de ambiente (`${VAR_NAME}`).
+> 💡 **Objective:** Add or modify services in `compose.yaml` (or `docker-compose.yml`) idempotently and safely, avoiding port collisions and data loss risks.
 
 ---
 
-## Procedimento Passo a Passo
+## Prerequisites and Mandatory Invariants
 
-### Etapa 1: Verificação de Disponibilidade de Portas
-1. Consulte a tabela de "Alocação de Portas no Host" em [.agent/SERVICES.md](../../SERVICES.md).
-2. Se o serviço necessita expor portas no host, certifique-se de que a porta escolhida não está em uso.
-3. No host local (se comandos de shell estiverem liberados), valide se a porta já não está sendo ouvida por outro processo:
+1. **Prior Topology Review:** The agent MUST read [.agent/SERVICES.md](../../SERVICES.md) before modifying configuration.
+2. **Pinned Images:** Tag `:latest` is forbidden. Always use stable semantic tags (e.g. `v1.2.3`, `1.23-alpine`) or SHA digests.
+3. **Mandatory Healthcheck:** Every container must define an explicit `healthcheck` block.
+4. **Resource Limits:** Every container must define CPU and memory limits (`cpus` and `memory`).
+5. **Zero Plaintext Secrets:** Passwords and tokens must be injected via environment variables (`${VAR_NAME}`).
+
+---
+
+## Step-by-Step Procedure
+
+### Stage 1: Port Availability Verification
+1. Check the "Host Port Allocations" table in [.agent/SERVICES.md](../../SERVICES.md).
+2. If exposing ports on the host, ensure the selected port is not already allocated.
+3. On the local host (if shell commands are authorized), verify that the port is not bound by an external process:
    ```bash
-   ss -tuln | grep ":<PORTA>" || echo "Porta livre"
+   ss -tuln | grep ":<PORT>" || echo "Port available"
    ```
 
-### Etapa 2: Estruturação de Redes e Persistência
-1. Determine a segregação de rede:
-   - Serviços expostos ao usuário devem conectar-se à rede do reverse-proxy (ex: `proxy_public`).
-   - Serviços de backend (bancos, filas, storage) devem residir exclusivamente em redes isoladas (ex: `db_isolated`).
-2. Defina os volumes:
-   - Para dados de banco ou escrita pesada, prefira **Named Volumes** declarados no final do `compose.yaml`.
-   - Para arquivos de configuração estáticos, utilize **Bind Mounts** com a flag de somente-leitura `:ro`.
+### Stage 2: Network Segregation & Storage Persistence
+1. Determine network boundaries:
+   - User-facing services connect to the reverse-proxy network (e.g. `proxy_public`).
+   - Backend services (databases, queues, storage) reside exclusively on isolated networks (e.g. `db_isolated`).
+2. Configure volumes:
+   - For databases and high-write state, use **Named Volumes** declared in the root `volumes:` block of `compose.yaml`.
+   - For static configuration files, use **Bind Mounts** with read-only `:ro` flags.
 
-### Etapa 3: Definição do Bloco do Serviço no `compose.yaml`
-Escreva o bloco do serviço seguindo a anatomia canônica:
+### Stage 3: Author Service Block in `compose.yaml`
+Author the service block following canonical syntax:
 
 ```yaml
-  nome-do-servico:
-    image: vendor/imagem:v1.0.0
-    container_name: nome-do-servico
+  service-name:
+    image: vendor/image:v1.0.0
+    container_name: service-name
     restart: unless-stopped
     security_opt:
       - no-new-privileges:true
@@ -51,13 +51,13 @@ Escreva o bloco do serviço seguindo a anatomia canônica:
       - proxy_public
       - monitoring_internal
     ports:
-      - "${SERVICO_PORT:-8080}:8080"
+      - "${SERVICE_PORT:-8080}:8080"
     environment:
       - TZ=${TZ:-UTC}
       - APP_SECRET=${APP_SECRET}
     volumes:
-      - servico_data:/caminho/no/container
-      - ./config/servico.conf:/etc/servico/servico.conf:ro
+      - service_data:/path/in/container
+      - ./config/service.conf:/etc/service/service.conf:ro
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
       interval: 30s
@@ -71,23 +71,23 @@ Escreva o bloco do serviço seguindo a anatomia canônica:
           memory: 512M
 ```
 
-### Etapa 4: Atualização de Variáveis de Ambiente
-1. Inclua as novas variáveis necessárias no arquivo `.env.example` com valores mockados e seguros.
-2. Nunca coloque senhas de produção no `.env.example`.
+### Stage 4: Update Environment Variables
+1. Add new variables to `.env.example` with safe placeholder values.
+2. Never commit production credentials to `.env.example`.
 
-### Etapa 5: Atualização do `.agent/SERVICES.md`
-1. Atualize a tabela de portas em `.agent/SERVICES.md`.
-2. Registre o volume e caminho na tabela de persistência.
-3. Adicione a especificação do serviço no catálogo.
+### Stage 5: Update `.agent/SERVICES.md`
+1. Record the host port allocation in `.agent/SERVICES.md`.
+2. Record volume persistence paths and UID:GID requirements.
+3. Add the service definition to the services catalog.
 
-### Etapa 6: Validação Sintática e Idempotência
-1. Valide a sintaxe do arquivo de composição:
+### Stage 6: Syntax Validation & Idempotency
+1. Validate Compose configuration syntax:
    ```bash
    docker compose config --quiet
    ```
-2. Caso a validação retorne erros, corrija o alinhamento ou nomes de variáveis antes de prosseguir.
-3. Se autorizado a iniciar o serviço:
+2. If validation reports errors, correct formatting or missing variables before proceeding.
+3. If authorized to launch:
    ```bash
-   docker compose up -d nome-do-servico
-   docker compose ps nome-do-servico
+   docker compose up -d service-name
+   docker compose ps service-name
    ```

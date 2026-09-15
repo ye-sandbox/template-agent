@@ -1,72 +1,61 @@
-# TASK.md — Tarefa Atual e Roadmap de Infraestrutura
+# TASK.md — Current Infrastructure Task and Roadmap
 
-> Define O QUE precisa ser feito na infraestrutura. Reescrito/atualizado no início de cada nova tarefa.
-> Se o pedido do usuário na conversa conflitar com este arquivo, o pedido do usuário
-> tem precedência — mas o agente deve reportar a divergência antes de agir.
->
-> **Regra de ouro deste arquivo:** ele guarda O QUE FAZER, não O QUE JÁ FOI FEITO.
-> Detalhes de implementação vivem no `git log`.
-> Ver seção "Como manter este arquivo enxuto" no final.
+> Defines WHAT needs to be done in infrastructure. Detailed history lives in `git log`.
+> User requests during conversation take precedence — report discrepancies before acting.
 
 ---
 
-## Tarefa Ativa
+## Active Task
 
-### 📌 Tarefa [00.1]: Mapear Topologia e Provisionar Serviços Base
+### 📌 Task [00.1]: Map Topology and Provision Baseline Services
 
-- **Descrição:** Mapear os requisitos de infraestrutura do projeto, configurar as variáveis
-  canônicas em `.env.example`, registrar portas e volumes em `.agent/SERVICES.md` e
-  estruturar os primeiros serviços no `compose.yaml` (ex: VictoriaLogs, Uptime Kuma, proxy).
-- **Sistema(s) Envolvido(s):** `infra`, `docker-compose`, `services`
-- **Tipo de Ação:**
-  - [x] Somente leitura / Documentação
-  - [x] Escrita de código-fonte
-- **Status:** PRONTO PARA PLANEJAMENTO
-  *(Fluxo: `PRONTO PARA PLANEJAMENTO` → `EM PLANEJAMENTO` ao apresentar plano → aprovação → `EM EXECUÇÃO`)*
+- **Description:** Map infrastructure requirements, configure environment variables in `.env.example`, record host ports and volumes in `.agent/SERVICES.md`, and author baseline services in `compose.yaml` (e.g. VictoriaLogs, Uptime Kuma, reverse proxy).
+- **Systems Involved:** `infra`, `docker-compose`, `services`
+- **Action Type:**
+  - [x] Read-only / Documentation
+  - [x] Source code changes
+- **Status:** READY FOR PLANNING
+  *(Workflow: `READY FOR PLANNING` → `PLANNING` on presenting plan → approval → `RUNNING`)*
 
-### Critérios de Aceite
-- [ ] Arquivo `compose.yaml` criado e validado com `docker compose config`
-- [ ] Portas registradas sem colisão no `.agent/SERVICES.md`
-- [ ] Volumes de persistência definidos com permissões e diretórios adequados
-- [ ] Healthcheck configurado em todos os contêineres provisionados
-- [ ] Limites de memória e CPU aplicados no compose
-- [ ] Variáveis sensíveis e de portas documentadas no `.env.example`
+### Acceptance Criteria
+- [ ] `compose.yaml` created and validated with `docker compose config`.
+- [ ] Ports recorded in `.agent/SERVICES.md` without collisions.
+- [ ] Persistent storage volumes declared with appropriate permissions and host directories.
+- [ ] Healthchecks configured across all provisioned containers.
+- [ ] Memory and CPU limits specified in Compose service blocks.
+- [ ] Ports and sensitive configuration parameters documented in `.env.example`.
 
 ---
 
-## Log de Tarefas Concluídas
+## Completed Tasks Log
 
-> Uma linha por tarefa. Nada de detalhes repetidos aqui — isso já está no commit.
-> Quando esta tabela passar de ~15-20 linhas (ou ao cortar uma release/tag Git), arquive em `.agent/ARCHIVE.md`.
-
-| Tarefa | Título | Commit(s) | Data |
+| Task | Title | Commit(s) | Date |
 |---|---|---|---|
-| `[00.0]` | Scaffolding inicial do template de infraestrutura | [`0000000`] | `AAAA-MM-DD` |
+| `[00.0]` | Initial infrastructure template scaffolding | [`0000000`] | `YYYY-MM-DD` |
 
 ---
 
-## Backlog (Próximas, em ordem)
+## Backlog (Upcoming, in priority order)
 
-- [ ] **[01.1]** Configurar reverse-proxy (Traefik ou Nginx) com terminação SSL automática
-- [ ] **[01.2]** Implementar procedimento e rotina automatizada de backup de volumes persistentes
-
----
-
-## Encerramento de ciclo (não é a próxima tarefa)
-
-Release/tag só com pedido explícito. Nessa hora o ID é `[99.1]`. Não numere feature, hygiene ou CI como `99.x`. Não calcule o próximo ID a partir desta seção.
+- [ ] **[01.1]** Configure reverse proxy (Traefik or Nginx) with automated SSL termination
+- [ ] **[01.2]** Implement automated backup routine for persistent volumes
 
 ---
 
-## Backlog Futuro / Ideias (não priorizadas)
+## Release / Cycle Wrap-up (Not the next task)
 
-- [ ] Integrar alertas de status do Uptime Kuma com webhook (Discord / Telegram)
-- [ ] Adicionar dashboard unificado de observabilidade com Grafana e VictoriaMetrics
+Release/tag only with explicit human request. When triggered, the ID is `[99.1]`. Do not number feature, hygiene, or CI tasks as `99.x`. Do not calculate next task ID from this section.
 
 ---
 
-## Como manter este arquivo enxuto
+## Future Backlog / Ideas (Unprioritized)
 
-1. Detalhe só na tarefa ativa. Concluída → uma linha no log e promover o backlog.
-2. Próximo ID = último do log (ou da ativa). Encerramento de ciclo e `[99.1]`: ver `AGENTS.md`.
+- [ ] Integrate Uptime Kuma alerts with webhooks (Discord / Telegram)
+- [ ] Add unified observability dashboard with Grafana and VictoriaMetrics
 
+---
+
+## How to Keep this File Lean
+
+1. Detail only in the active task. When complete $\rightarrow$ log one line and promote the next task.
+2. Next ID = last ID in log (or active task). Cycle wrap-up and `[99.1]`: see `AGENTS.md`.
