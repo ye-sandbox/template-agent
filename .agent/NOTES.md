@@ -1,45 +1,45 @@
-# NOTES.md — Decisões Rápidas e Contratos do Código Legado
+# NOTES.md — Rapid Decisions and Legacy Contracts
 
-> Guarda o PORQUÊ das mudanças e descobertas técnicas.
-> Para restrições intocáveis e peculiaridades históricas, use preferencialmente o `.agent/INVARIANTS.md`.
-> Este arquivo é para decisões tomadas durante as tarefas ativas e mapeamento de contratos vigentes.
-
----
-
-## Como usar este arquivo (para o agente)
-
-1. **Leia antes de planejar qualquer tarefa.**
-2. **Registre uma nova entrada quando:**
-   - Um comportamento estranho ou armadilha for resolvido/investigado.
-   - Um novo contrato de dados (schema/payload) for mapeado ou expandido de forma retrocompatível.
-   - Um débito técnico for assumido conscientemente durante um bugfix.
-3. **Mantenha as entradas curtas e objetivas.**
+> Stores the WHY of technical changes and discoveries.
+> For rigid constraints and historical quirks, use `.agent/INVARIANTS.md`.
+> This file tracks decisions made during active tasks and mappings of active contracts.
 
 ---
 
-## Decisões Técnicas Recentes
+## How to Use this File (for the Agent)
 
-### [AAAA-MM-DD] [Título da decisão ou correção no legado]
-
-- **Contexto:** [Qual problema ou bug estava sendo corrigido]
-- **Decisão:** [O que foi implementado mantendo compatibilidade]
-- **Alternativas consideradas:** [Por que uma refatoração maior foi descartada em favor do escopo cirúrgico]
-- **Consequências:** [Impacto ou testes de caracterização adicionados]
+1. **Read before planning any task.**
+2. **Add a new entry when:**
+   - A non-obvious behavior or gotcha is investigated/resolved.
+   - A new data contract (schema/payload) is mapped or extended backward-compatibly.
+   - Deliberate technical debt is assumed during a bugfix.
+3. **Keep entries short and objective.**
 
 ---
 
-## Contratos de Dados Mapeados
+## Recent Technical Decisions
 
-### Endpoints / Filas Críticas
+### [YYYY-MM-DD] [Title of Decision or Legacy Fix]
 
-| Canal / Rota | Produtor | Consumidor | Schema / Observações |
+- **Context:** [What problem or bug was being addressed]
+- **Decision:** [What was implemented to preserve compatibility]
+- **Alternatives Considered:** [Why larger refactoring was avoided in favor of surgical scope]
+- **Consequences:** [Impact and characterization tests added]
+
+---
+
+## Active Data Contracts
+
+### Critical Endpoints / Queues
+
+| Channel / Route | Producer | Consumer | Schema / Notes |
 |---|---|---|---|
-| `[ex: POST /api/v1/orders]` | `[Frontend Legado]` | `[Worker Backend]` | `[Não permite remoção de campos antigos]` |
+| `[e.g.: POST /api/v1/orders]` | `[Legacy Frontend]` | `[Backend Worker]` | `[Must retain legacy fields]` |
 
 ---
 
-## Débitos Técnicos Assumidos
+## Assumed Technical Debt
 
-| Débito | Motivo no Legado | Quando revisitar |
+| Debt | Legacy Rationale | Revisit When |
 |---|---|---|
-| `[ex: Validação manual sem Zod/Pydantic]` | `[Módulo sem tipagem estrita total]` | `[Quando houver suíte completa de testes]` |
+| `[e.g.: Manual validation without Zod/Pydantic]` | `[Module lacks full static typing]` | `[When complete test suite is available]` |

@@ -1,14 +1,14 @@
 #!/usr/bin/env bash
 # ==============================================================================
-# Script de Instalação do Template Brownfield para Agentes de IA
-# Suporta execução local e remota (via curl | bash)
+# Brownfield Template Installer for AI Coding Agents
+# Supports local and remote execution (via curl | bash)
 # ==============================================================================
 set -euo pipefail
 
 FORCE_YES=false
 TARGET_DIR=""
 
-# Parse de argumentos
+# Parse arguments
 while [[ $# -gt 0 ]]; do
     case "$1" in
         -y|--yes|-f|--force)
@@ -16,18 +16,18 @@ while [[ $# -gt 0 ]]; do
             shift
             ;;
         -h|--help)
-            echo "Uso: install.sh [-y|--yes] [DIRETORIO_DESTINO]"
+            echo "Usage: install.sh [-y|--yes] [TARGET_DIR]"
             echo ""
-            echo "Opções:"
-            echo "  -y, --yes, -f, --force    Sobrescrever arquivos sem confirmação interativa"
-            echo "  -h, --help                Exibir esta mensagem de ajuda"
+            echo "Options:"
+            echo "  -y, --yes, -f, --force    Overwrite files without interactive confirmation"
+            echo "  -h, --help                Show this help message"
             exit 0
             ;;
         *)
             if [ -z "$TARGET_DIR" ]; then
                 TARGET_DIR="$1"
             else
-                echo "⚠️  Argumento extra ignorado: $1"
+                echo "⚠️  Extra argument ignored: $1"
             fi
             shift
             ;;
@@ -38,10 +38,10 @@ TARGET_DIR="${TARGET_DIR:-.}"
 mkdir -p "$TARGET_DIR/.agent"
 RESOLVED_TARGET="$(cd "$TARGET_DIR" && pwd)"
 
-# Configuração de repositório remoto para instalação via pipe/curl
+# Remote repository URL for piped execution
 TEMPLATE_REPO_URL="${TEMPLATE_REPO_URL:-https://raw.githubusercontent.com/ye-sandbox/template-agent/brownfield}"
 
-# Detecção do modo de execução (local vs remoto)
+# Detect execution mode (local vs remote)
 SCRIPT_SOURCE="${BASH_SOURCE[0]:-}"
 SCRIPT_DIR=""
 if [ -n "$SCRIPT_SOURCE" ] && [ -f "$SCRIPT_SOURCE" ]; then
@@ -55,12 +55,12 @@ else
 fi
 
 echo "======================================================="
-echo " Instalador do Template Brownfield (ADD para Legados)"
-echo " Destino: $RESOLVED_TARGET"
-echo " Modo:    $([ "$INSTALL_MODE" = "local" ] && echo "Local ($SCRIPT_DIR)" || echo "Remoto ($TEMPLATE_REPO_URL)")"
+echo " Brownfield Template Installer (ADD for Legacies)"
+echo " Destination: $RESOLVED_TARGET"
+echo " Mode:        $([ "$INSTALL_MODE" = "local" ] && echo "Local ($SCRIPT_DIR)" || echo "Remote ($TEMPLATE_REPO_URL)")"
 echo "======================================================="
 
-# Função para copiar (local) ou baixar (remoto) arquivos
+# Helper to copy (local) or download (remote) files
 fetch_file() {
     local rel_path="$1"
     local dest_path="$2"
@@ -74,13 +74,13 @@ fetch_file() {
         elif command -v wget >/dev/null 2>&1; then
             wget -qO "$dest_path" "$url"
         else
-            echo "❌ Erro: 'curl' ou 'wget' é obrigatório para download dos arquivos do template." >&2
+            echo "❌ Error: 'curl' or 'wget' is required to download template files." >&2
             exit 1
         fi
     fi
 }
 
-# Função para confirmação do usuário (compatível com execução via pipe)
+# Helper for interactive confirmations (safe with piped execution)
 ask_confirm() {
     local prompt="$1"
     local reply=""
@@ -90,36 +90,36 @@ ask_confirm() {
     fi
 
     if [ -c /dev/tty ]; then
-        read -p "$prompt (s/N): " -r reply </dev/tty || reply=""
+        read -p "$prompt (y/N): " -r reply </dev/tty || reply=""
     elif [ -t 0 ]; then
-        read -p "$prompt (s/N): " -r reply || reply=""
+        read -p "$prompt (y/N): " -r reply || reply=""
     else
-        echo "⚠️  Terminal não-interativo detectado. Mantendo arquivo existente."
+        echo "⚠️  Non-interactive terminal detected. Retaining existing file."
         return 1
     fi
 
-    if [[ "$reply" =~ ^[sSyY]$ ]]; then
+    if [[ "$reply" =~ ^[yYsS]$ ]]; then
         return 0
     else
         return 1
     fi
 }
 
-# 1. Instalar AGENTS.md
+# 1. Install AGENTS.md
 if [ -f "$RESOLVED_TARGET/AGENTS.md" ]; then
-    echo "⚠️  Aviso: 'AGENTS.md' já existe em $RESOLVED_TARGET."
-    if ask_confirm "Deseja sobrescrever o AGENTS.md?"; then
+    echo "⚠️  Warning: 'AGENTS.md' already exists in $RESOLVED_TARGET."
+    if ask_confirm "Overwrite existing AGENTS.md?"; then
         fetch_file "AGENTS.md" "$RESOLVED_TARGET/AGENTS.md"
-        echo "✅ AGENTS.md atualizado com sucesso."
+        echo "✅ AGENTS.md successfully updated."
     else
-        echo "ℹ️  Mantendo o AGENTS.md existente."
+        echo "ℹ️  Retaining existing AGENTS.md."
     fi
 else
     fetch_file "AGENTS.md" "$RESOLVED_TARGET/AGENTS.md"
-    echo "✅ AGENTS.md instalado com sucesso."
+    echo "✅ AGENTS.md installed."
 fi
 
-# 2. Instalar arquivos da pasta .agent
+# 2. Install files into .agent directory
 AGENT_FILES=("INVARIANTS.md" "TASK.md" "NOTES.md" "ARCHIVE.md")
 
 for file in "${AGENT_FILES[@]}"; do
@@ -127,24 +127,24 @@ for file in "${AGENT_FILES[@]}"; do
     if [ -f "$dest" ]; then
         if [ "$FORCE_YES" = true ]; then
             fetch_file ".agent/$file" "$dest"
-            echo "✅ .agent/$file atualizado (--force)."
+            echo "✅ .agent/$file updated (--force)."
         else
-            echo "ℹ️  $file já existe em .agent/. Mantendo o arquivo existente."
+            echo "ℹ️  $file already exists in .agent/. Retaining existing file."
         fi
     else
         fetch_file ".agent/$file" "$dest"
-        echo "✅ .agent/$file instalado."
+        echo "✅ .agent/$file installed."
     fi
 done
 
 echo ""
 echo "======================================================="
-echo "🎉 Instalação concluída com sucesso!"
+echo "🎉 Installation completed successfully!"
 echo ""
-echo "👉 Próximos passos com o seu agente de IA:"
-echo "1. Abra a pasta do seu projeto no editor com o agente de IA ativo."
-echo "2. Envie o seguinte prompt inicial:"
+echo "👉 Next steps with your AI agent:"
+echo "1. Open your project in your AI coding environment."
+echo "2. Send the following kickoff prompt:"
 echo ""
-echo "   \"Leia o AGENTS.md e a Tarefa [00.1] no .agent/TASK.md. Apresente seu plano"
-echo "    de implementação para a Auditoria e Discovery do projeto antes de alterar qualquer código.\""
+echo "   \"Read AGENTS.md and Task [00.1] in .agent/TASK.md. Present your implementation plan"
+echo "    for Project Discovery and Audit before modifying any code.\""
 echo "======================================================="
