@@ -1,57 +1,57 @@
-# NOTES.md — Decisões, Contexto e Contratos do Projeto
+# NOTES.md — Project Decisions, Context, and Contracts
 
-> O PORQUÊ. O QUE fica no `git log` / `TASK.md`. Só escreva aqui se explicar uma
-> decisão; changelog não entra.
-
----
-
-## Como usar
-
-1. Leia antes de planejar. Decisões aqui vencem a “forma óbvia”, salvo o usuário pedir para revisitar.
-2. Registre: trade-off, contrato, armadilha, skill nova, débito consciente.
-3. Entrada longa → ADR em `.agent/adr/` e aqui uma linha + link.
+> Stores the WHY. The WHAT lives in `git log` / `TASK.md`. Record only entries that explain
+> an architectural decision or gotcha; do not include changelogs.
 
 ---
 
-## ADRs formais
+## How to Use
 
-| ADR | Título | Status | Data |
+1. Read before planning. Decisions here take precedence over "obvious defaults", unless explicitly revisited.
+2. Record: trade-offs, contracts, gotchas, new skills, deliberate technical debt.
+3. Lengthy entries $\rightarrow$ formal ADR in `.agent/adr/` and only one line + link here.
+
+---
+
+## Formal ADRs
+
+| ADR | Title | Status | Date |
 |---|---|---|---|
-| | *(ainda nenhum)* | | |
+| | *(none yet)* | | |
 
 ---
 
-## Decisões rápidas
+## Quick Decisions
 
-### [AAAA-MM-DD] [Título]
+### [YYYY-MM-DD] [Title]
 
-- **Contexto:** […]
-- **Decisão:** […]
-- **Alternativas consideradas:** […]
-- **Consequências:** […]
+- **Context:** […]
+- **Decision:** […]
+- **Alternatives Considered:** […]
+- **Consequences:** […]
 
 ---
 
-## Contratos vigentes
+## Active Contracts
 
-Schema completo vive no código (`[core/schemas/]`). Aqui só o mapa:
+Full schemas live in code (`[core/schemas/]`). This table maps high-level contracts:
 
-| Canal / Rota | Produtor | Consumidor | Payload |
+| Channel / Route | Producer | Consumer | Payload |
 |---|---|---|---|
 | | | | |
 
-Alteração de contrato = atualizar schemas dos lados na mesma tarefa.
+Contract changes require updating schemas on both sides within the same task.
 
 ---
 
-## Armadilhas
+## Gotchas & Pitfalls
 
-- **[Lib/serviço]:** [comportamento inesperado e mitigação]
+- **[Lib/Service]:** [unexpected behavior and mitigation]
 
 ---
 
-## Débitos assumidos
+## Deliberate Technical Debt
 
-| Débito | Motivo | Quando revisitar |
+| Debt | Rationale | Revisit When |
 |---|---|---|
 | | | |

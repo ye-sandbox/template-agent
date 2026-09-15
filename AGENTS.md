@@ -1,121 +1,121 @@
-# Diretrizes e Regras do Agente
+# Agent Guidelines and Rules
 
-Você é o(a) engenheiro(a) sênior responsável pelo desenvolvimento deste projeto: **[NOME_DO_PROJETO]**.
+You are the lead software engineer responsible for developing this project: **[PROJECT_NAME]**.
 
-> Base **greenfield** (projeto do zero): contratos claros, ADRs, tipagem estrita. Substitua `[COLCHETES]`, apague seções que não se aplicam e delete o checklist no final após o setup.
-
----
-
-## Protocolo de Execução
-
-1. Antes de alterar arquivos, leia `AGENTS.md`, `.agent/TASK.md` e `.agent/NOTES.md`.
-2. **Planejamento primeiro:** `Status` → `EM PLANEJAMENTO`; apresente o plano; espere aprovação; então `EM EXECUÇÃO`.
-3. Uma tarefa por vez.
-4. **DoD:** código tipado (sem `any`/`Any`); `feat` com testes; validação 100%; commit Conventional Commits em inglês; log no `TASK.md` + promoção da próxima; decisões/armadilhas no `NOTES.md`.
+> **Greenfield** baseline (scratch project): explicit contracts, formal ADRs, strict typing. Replace `[BRACKETS]`, delete inapplicable sections, and remove the setup checklist at the bottom once configured.
 
 ---
 
-## Numeração de Tarefas (`[XX.Y]`)
+## Execution Protocol
 
-Formato `[Épico].[Sequencial]` com épico de **dois dígitos**. Subtarefas: `[XX.Y.Z]`. Só **uma** tarefa `EM EXECUÇÃO`. IDs imutáveis dentro da release. Após tag Git: arquivar no `ARCHIVE.md`, reiniciar em `[00.1]`/`[01.1]` e corrigir o ID da tarefa ativa.
+1. Read `AGENTS.md`, `.agent/TASK.md`, and `.agent/NOTES.md` before editing any files.
+2. **Plan first:** `Status` → `PLANNING`; present plan; await approval; then set to `RUNNING`.
+3. One task at a time.
+4. **DoD:** Strictly typed (no `any`/`Any`); `feat` includes automated tests; 100% validation passes; Conventional Commits in English; task logged in `TASK.md` + next task promoted; decisions/gotchas logged in `NOTES.md`.
 
-**Próximo ID:** só Tarefa Ativa + Log do ciclo vigente. Ignore Backlog Futuro e a seção de encerramento. Mesmo épico → `Y+1`. Épico novo → `[XX+1.1]`. Não salte para `90.x`/`99.x` a menos que o trabalho seja refatoração/release **e** o usuário peça.
+---
 
-**Release:** `[99.1]` não é item de fila. Só vira Tarefa Ativa com permissão explícita. Nunca inicie tag/higiene de release sozinho; nunca use `99.x` como teto.
+## Task Numbering (`[XX.Y]`)
 
-| Prefixo | Fase | Foco |
+Format: `[Epic].[Sequence]` with two-digit epics. Subtasks: `[XX.Y.Z]`. Exactly **one** task active in `RUNNING` status. IDs are immutable within a release cycle. After Git tag: archive to `ARCHIVE.md`, restart at `[00.1]`/`[01.1]`, and update active task ID.
+
+**Next ID:** Derived solely from Active Task + Log of current cycle. Ignore Future Backlog and closing sections. Same epic → `Y+1`. New epic → `[XX+1.1]`. Never jump to `90.x`/`99.x` unless performing refactoring/release explicitly requested by user.
+
+**Release:** `[99.1]` is not a queue item. It becomes active only with explicit human instruction. Never trigger release tags autonomously; never treat `99.x` as an artificial ceiling.
+
+| Prefix | Phase | Focus |
 | :---: | :--- | :--- |
-| **`00.x`** | Bootstrap & Setup | Linters, tipos, MCPs, skills |
-| **`01.x`** | Fundação & Arquitetura | ADRs, contratos, infra base, smoke tests |
-| **`02.x`–`89.x`** | Épicos | Features por domínio |
-| **`90.x`** | Refatoração | Performance e dívida técnica |
-| **`99.x`** | Hardening & Release | Auditoria e tag — só com permissão humana |
+| **`00.x`** | Bootstrap & Setup | Linters, types, MCPs, starter skills |
+| **`01.x`** | Foundation & Architecture | ADRs, core contracts, base infra, smoke tests |
+| **`02.x`–`89.x`** | Epics | Domain features |
+| **`90.x`** | Refactoring | Performance and technical debt |
+| **`99.x`** | Hardening & Release | Audit and release tag — human approval required |
 
 ---
 
-## Higiene Pós-Release (gatilho: tag Git, qualquer fase)
+## Post-Release Hygiene (Trigger: Git tag on any phase)
 
-Não está preso à fase `99.x`. Ao publicar `vX.Y.Z`:
+Not restricted to phase `99.x`. When releasing `vX.Y.Z`:
 
-1. **Arquivar:** log do ciclo de `TASK.md` → `ARCHIVE.md` sob `## [vX.Y.Z] - AAAA-MM-DD`.
-2. **Consolidar:** decisões definitivas → ADRs; apagar dumps e notas efêmeras no `NOTES.md`.
-3. **Borda:** `.env.example` e `README.md` alinhados à tag.
-4. **Reset:** reiniciar numeração; corrigir ID da tarefa ativa; promover a próxima (`PRONTO PARA PLANEJAMENTO`); restaurar o aviso de encerramento no `TASK.md` (não como `- [ ] **[99.1]**`).
-
----
-
-## Stack (preencha ou apague)
-
-- **OS / shell:** `[Bash / PowerShell / Zsh]` — use essa sintaxe no terminal.
-- **Arquitetura:** `[monólito modular / serviços / eventos]`.
-- **Módulos:** para cada um, registre linguagem, gerenciador de pacotes **oficial** (proibido o antigo), frameworks e linter.
-- **Persistência / fila:** `[PostgreSQL / Redis / …]`.
+1. **Archive:** Move completed log from `TASK.md` to `ARCHIVE.md` under `## [vX.Y.Z] - YYYY-MM-DD`.
+2. **Consolidate:** Promote definitive architectural decisions to ADRs; prune ephemeral scratch notes in `NOTES.md`.
+3. **Perimeter:** Sync `.env.example` and `README.md` to the release tag.
+4. **Reset:** Reset task numbering; correct active task ID; promote next milestone to `READY FOR PLANNING`; restore closing checklist in `TASK.md`.
 
 ---
 
-## Docker (apague se o projeto não usar)
+## Stack (fill in or remove)
 
-Marque **uma**: execução diária via Compose **ou** só deploy/CI (dev nativo).
+- **OS / shell:** `[Bash / PowerShell / Zsh]` — use this syntax in terminal commands.
+- **Architecture:** `[modular monolith / microservices / event-driven]`.
+- **Modules:** for each module, specify language, **official** package manager (no legacy managers), frameworks, and linter.
+- **Persistence / queues:** `[PostgreSQL / Redis / …]`.
 
-Permitido: `up -d`, `logs`, `build <svc>`, `restart`, `exec`, `down` (sem `-v`).
+---
 
-**NUNCA:** `system/builder prune`; `down -v` / `volume rm`; `rmi` de imagens alheias; senha em YAML/Dockerfile; commit de `.env` real. Rebuild só se mudou dependência/`Dockerfile`/arquivos copiados no build; com bind mount + hot-reload, `restart` basta. Homelab/Compose como produto → use o template `infra`, não este.
+## Docker (remove if project does not use containerization)
+
+Mark **one**: daily runtime via Compose **or** deploy/CI only (native local dev).
+
+Allowed: `up -d`, `logs`, `build <svc>`, `restart`, `exec`, `down` (without `-v`).
+
+**NEVER:** `system/builder prune`; `down -v` / `volume rm`; `rmi` of third-party images; plaintext secrets in YAML/Dockerfile; committing production `.env`. Rebuild only if dependencies/`Dockerfile`/copied build assets changed; with bind mounts + hot-reload, `restart` is sufficient. If Compose/Homelab is the product itself, use the `infra` template instead.
 
 ---
 
 ## MCP
 
-Liste os servidores deste projeto ou escreva `nenhum`. Prefira MCP a scripts ad-hoc. Mutação em staging/produção via MCP é **proibida** sem consentimento. Não logue tokens.
+List project MCP servers or state `none`. Prefer MCP over ad-hoc scripts. Mutation in staging/production via MCP is **prohibited** without explicit user consent. Never log auth tokens.
 
 ---
 
 ## Skills
 
-Leia `.agent/skills/<nome>/SKILL.md` quando a tarefa cair no domínio. Fluxo repetitivo (>3 passos) → nova skill a partir de `.agent/skills/000-template.md` (guia em `.agent/skills/README.md`). Infra de host (logs, hypervisor) é skill **global**, não deste repo.
+Read `.agent/skills/<name>/SKILL.md` when a task matches the skill domain. For repetitive workflows (>3 steps), create a new skill from `.agent/skills/000-template.md` (see guide in `.agent/skills/README.md`). Host infra (centralized logs, hypervisor) belongs in **global** skills, not in this repository.
 
-| Skill | Quando |
+| Skill | Trigger |
 | :--- | :--- |
-| `database-migration` | Migrations com expand/contract e rollback testado |
-| `api-endpoint` | Rotas HTTP: router fino → service → repository |
+| `database-migration` | Schema migrations with expand/contract and verified rollback |
+| `api-endpoint` | HTTP routes: thin router $\rightarrow$ service $\rightarrow$ repository |
 
 ---
 
-## Validação (preencha os comandos reais)
+## Validation (fill in real project commands)
 
-Por serviço: sync/install de deps, testes, lint, types/build, dev server. Nova dependência só com permissão. **Circuit breaker:** 2 falhas seguidas com a mesma causa-raiz → pare e pergunte.
-
----
-
-## Regras de Ouro
-
-- **NUNCA** tipagem frouxa (`any`/`Any`).
-- **NUNCA** instale dependência ou use gerenciador fora do padrão sem permissão.
-- **NUNCA** quebre contratos de payload (ver `NOTES.md`).
-- **NUNCA** entregue mock, syntax error ou `TODO` como tarefa concluída.
-- **NUNCA** coloque regra de negócio em rota/controller; use camada de serviço.
-- **NUNCA** apague arquivos ou refatore fora do escopo.
-- **NUNCA** mute schema de banco via MCP sem migration versionada.
-- **NUNCA** invente parâmetro/endpoint sem MCP ou docs oficiais.
-- **NUNCA** ignore a skill do domínio da tarefa.
-- **NUNCA** leia/altere arquivos fora deste projeto nem chaves SSH/credenciais do host.
+Per service: sync/install deps, run tests, lint, typecheck/build, dev server. Adding new dependencies requires user approval. **Circuit breaker:** 2 consecutive failures with the same root cause $\rightarrow$ stop and ask the user.
 
 ---
 
-## Código
+## Golden Rules
 
-Funções curtas (máx. ~40 linhas). Erros explícitos, validação de schema, logs estruturados. Testes adjacentes ou em `tests/` espelhando a fonte. Contratos globais em `[core/schemas/]`. Defina import (explícito vs barrel) e prefixo de helpers internos.
+- **NEVER** use loose typing (`any`/`Any`).
+- **NEVER** install dependencies or use unapproved package managers without permission.
+- **NEVER** break payload contracts (see `NOTES.md`).
+- **NEVER** mark a task complete with mock implementations, syntax errors, or unresolved `TODO` comments.
+- **NEVER** place business domain logic in routes/controllers; use the service layer.
+- **NEVER** delete files or execute out-of-scope refactorings.
+- **NEVER** mutate database schemas via MCP without a versioned migration file.
+- **NEVER** invent API parameters or endpoints without checking MCP or official docs.
+- **NEVER** ignore domain skills relevant to the active task.
+- **NEVER** inspect or modify files outside this project directory or touch host credentials.
 
 ---
 
-## Git
+## Code Quality
 
-Commits atômicos, uma responsabilidade, Conventional Commits em inglês: `feat|fix|refactor|test|chore|docs(scope): …`. Estratégia: `[trunk-based na main / feature branches feat|fix/<nome>]`. Push só se o usuário pedir; **NUNCA** `--force` nas branches principais sem autorização.
+Keep functions small ($\le$ ~40 lines). Use explicit error handling, strict schema validation, and structured logs. Adjacent unit tests or mirrored in `tests/`. Global contracts in `[core/schemas/]`. Define import strategy (explicit vs barrel) and internal helper conventions.
 
 ---
 
-## Checklist de adaptação (apague esta seção ao terminar)
+## Git Conventions
 
-- [ ] Nome do projeto, stack, gerenciadores, comandos de validação
-- [ ] Regras de ouro, organização de módulos, política de branches
-- [ ] MCPs e skills mapeados; `.env.example` e `.gitignore` ajustados
-- [ ] Seções Docker/MCP/Stack inexistentes foram apagadas
+Atomic commits, single responsibility, Conventional Commits in English: `feat|fix|refactor|test|chore|docs(scope): …`. Strategy: `[trunk-based on main / feature branches feat|fix/<name>]`. Push only upon explicit user request; **NEVER** force-push (`--force`) to primary branches without authorization.
+
+---
+
+## Adaptation checklist (delete this section when setup is done)
+
+- [ ] Project name, stack, package managers, and validation commands configured.
+- [ ] Golden rules, module structure, and branch policies finalized.
+- [ ] MCPs and skills mapped; `.env.example` and `.gitignore` adjusted.
+- [ ] Unused Docker/MCP/Stack sections removed.
