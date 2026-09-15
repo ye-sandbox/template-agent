@@ -1,41 +1,36 @@
-# TASK.md — Tarefa Atual e Roadmap do Projeto
-
-> Define O QUE precisa ser feito. Reescrito/atualizado no início de cada nova tarefa.
-> Se o pedido do usuário na conversa conflitar com este arquivo, o pedido do usuário
-> tem precedência — mas o agente deve reportar a divergência antes de agir.
->
-> **Regra de ouro deste arquivo:** ele guarda O QUE FAZER, não O QUE JÁ FOI FEITO.
-> Detalhes de implementação de tarefas concluídas vivem no `git log`, não aqui.
-
----
-
-## Tarefa Ativa
-
-### 📌 Tarefa [07.1]: Hub & Starters Internationalization (Technical English & PT-BR README)
-
-- **Descrição:** Migrate agent-consumed directives and templates to dense technical English for token optimization and instruction adherence. Retain English README.md and add README.pt-br.md in all branches.
-- **Sistema(s) Envolvido(s):** `hub`, `main`, `greenfield`, `brownfield`, `blackbox`, `infra`, `ci`
-- **Tipo de Ação:**
-  - [x] Somente leitura / Documentação
-  - [x] Escrita de código-fonte
-- **Status:** EM EXECUÇÃO
-  *(Fluxo: `PRONTO PARA PLANEJAMENTO` → `EM PLANEJAMENTO` ao apresentar plano → aprovação → `EM EXECUÇÃO`)*
-
-### Critérios de Aceite
-- [ ] Documentação de governança (`AGENTS.md`, `.agent/*`) convertida para Technical English enxuto na branch `main`.
-- [ ] Templates de starters (`greenfield`, `brownfield`, `blackbox`, `infra`) convertidos para Technical English em suas respectivas branches.
-- [ ] `README.md` mantido em inglês e versão `README.pt-br.md` criada em todas as branches com navegação cruzada.
-- [ ] Scripts `init.sh` e `install.sh` atualizados sem quebrar retrocompatibilidade nem contratos.
-- [ ] CI `.github/scripts/assert-starter-contracts.sh` e `.github/workflows/ci.yml` passam com 100% de sucesso.
-- [ ] Commits atômicos realizados em inglês respeitando o isolamento absoluto de branches (sem merge entre templates).
+# TASK.md — Current Task and Roadmap
+ 
+> Defines WHAT needs to be done. Detailed history lives in `git log`.
+> User requests during conversation take precedence — report discrepancies before acting.
+> 
+> **Golden rule of this file:** It stores WHAT TO DO, not WHAT WAS DONE.
+> Implementation details of completed tasks live in `git log`, not here.
 
 ---
 
-## Log de Tarefas Concluídas
+## Active Task
 
-> Ciclos 00–03: `.agent/ARCHIVE.md`. Detalhe: `git log`.
+### 📌 Task [XX.Y]: [Short descriptive title]
 
-| Tarefa | Título | Commit(s) | Data |
+- **Description:** [2–4 lines for the agent to assemble a plan.]
+- **Systems Involved:** [e.g.: `docs`, `hub`, `branch-greenfield`]
+- **Action Type:**
+  - [ ] Read-only / Documentation
+  - [ ] Source code changes
+- **Status:** READY FOR PLANNING
+  *(Workflow: `READY FOR PLANNING` → `PLANNING` on presenting plan → approval → `RUNNING`)*
+
+### Acceptance Criteria
+- [ ] [Verifiable criterion 1]
+- [ ] [Verifiable criterion 2]
+
+---
+
+## Completed Tasks Log
+
+> Cycles 00–03: `.agent/ARCHIVE.md`. Detail: `git log`.
+
+| Task | Title | Commit(s) | Date |
 |---|---|---|---|
 | [04.1] | Enxugar guardrails e corrigir incoerências de contexto | [`b25715e`, `d615950`, `254a3ef`, `2bdd0eb`, `2ea2d63`, `0231b5e`, `58a1fc3`, `376adbc`, `ae7c529`, `4c6c90c`, `6b2a7e4`] | 2026-09-06 |
 | [04.2] | Asserções de contrato no CI dos starters | [`c582fd1`, `0397624`, `e575ec0`] | 2026-09-06 |
@@ -53,31 +48,32 @@
 | [05.9] | Superfície de UI no `ui-contract` (audiência, densidade, motion, copy, formato) | [`deafb06`] | 2026-09-13 |
 | [05.10] | Skill `qa-environment` (Mock, Seeding, Túnel e Prompt) | [`1a08274`] | 2026-09-13 |
 | [06.1] | Extrair playbooks transversais para `agent-skills` | [`94f562a`] | 2026-09-13 |
+| [07.1] | Starters and Hub internationalization (Technical English + PT-BR README) | [`e748b7c`, `567fd62`, `a54b465`, `9e0a8d5`, `06103f4`] | 2026-09-15 |
 
 ---
 
-## Backlog (Próximas, em ordem)
+## Backlog (Upcoming, in priority order)
 
-*(vazio)*
-
----
-
-## Encerramento de ciclo (não é a próxima tarefa)
-
-Release/tag só com pedido explícito. Nessa hora o ID é `[99.1]`. Não numere feature, hygiene ou CI como `99.x`. Não calcule o próximo ID a partir desta seção.
+*(empty)*
 
 ---
 
-## Backlog Futuro / Ideias (não priorizadas)
+## Release / Cycle Wrap-up (Not the next task)
 
-*(vazio)*
+Release/tag only with explicit human request. When triggered, the ID is `[99.1]`. Do not number feature, hygiene, or CI tasks as `99.x`. Do not calculate next task ID from this section.
 
 ---
 
-## Como manter este arquivo enxuto
+## Future Backlog / Ideas (Unprioritized)
 
-1. Detalhe só na tarefa ativa. Concluída → uma linha no log (título + hash) e promover o backlog.
-2. Backlog é lista de títulos. Spec completa só quando o item vira tarefa ativa.
-3. Escopo grande → issue no tracker; aqui só o link.
-4. Próximo ID = último do log (ou da ativa). Encerramento de ciclo e `[99.1]`: ver `AGENTS.md`.
-5. Não cole a mensagem de commit neste arquivo. Histórico profundo: `git log` / `.agent/NOTES.md`.
+*(empty)*
+
+---
+
+## How to Keep this File Lean
+
+1. Detail only in the active task. When complete $\rightarrow$ log one line (title + hash) and promote next task.
+2. Backlog is a list of titles. Full spec only when an item becomes the active task.
+3. Large scope $\rightarrow$ issue in tracker; link only here.
+4. Next ID = last ID in log (or active task). Cycle wrap-up and `[99.1]`: see `AGENTS.md`.
+5. Do not paste full commit messages into this file. Deep history: `git log` / `.agent/NOTES.md`.
