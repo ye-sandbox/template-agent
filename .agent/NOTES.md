@@ -22,6 +22,11 @@
 - **Decision:** Use **Named Volumes** for databases and high-write storage engines (VictoriaLogs, Postgres, SQLite in Uptime Kuma), and strict **Bind Mounts** (`:ro`) for configuration files tracked in Git.
 - **Consequences:** Avoids recurring write permission errors (`Permission denied`) on mapped host directories.
 
+### [YYYY-MM-DD] [Documentation Taxonomy, Incident Narratives & Author Metadata]
+- **Context:** Preserving lean context in `.agent/NOTES.md` while enabling deep, auditable documentation (incident postmortems, architecture, host runbooks) with clear distinction between AI generation and human-reviewed truth.
+- **Decision:** Adopt `docs/` taxonomy (`docs/architecture/`, `docs/incidents/`, `docs/host/`). Require YAML frontmatter (`author_type: agent|human|agent-assisted`, `author`, `reviewed_by`, `date`, `status`, `type`). Root-cause postmortems follow `docs/incidents/000-template.md` (Cause, Line of Reasoning, Solution, Prevention).
+- **Consequences:** Keeps `.agent/` context-efficient while preventing unverified AI reasoning from being mistaken for canonical operational truth.
+
 ---
 
 ## Gotchas and Quirks
