@@ -10,23 +10,19 @@
 
 ## Active Task
 
-### 📌 Task [09.2]: Graduated Incident Management, Preventive Actions Tracker, and VictoriaLogs Anchors
+### 📌 Task [XX.Y]: [Short descriptive title]
 
-- **Description:** Implement a 3-tier incident graduation model (Tier 1 Gotchas in NOTES.md, Tier 2 Runbooks in docs/host/, Tier 3 RCA in docs/incidents/), establish an incident index and action items tracker in `docs/incidents/README.md`, integrate structured VictoriaLogs/LogsQL query anchors into the RCA template, and propagate to `homelab`.
-- **Systems Involved:** `infra`, `hub`, `homelab`, `docs`
+- **Description:** [2–4 lines for the agent to assemble a plan.]
+- **Systems Involved:** [e.g.: `docs`, `hub`, `branch-greenfield`]
 - **Action Type:**
-  - [x] Read-only / Documentation
-  - [x] Source code changes
-- **Status:** RUNNING
+  - [ ] Read-only / Documentation
+  - [ ] Source code changes
+- **Status:** READY FOR PLANNING
   *(Workflow: `READY FOR PLANNING` → `PLANNING` on presenting plan → approval → `RUNNING`)*
 
 ### Acceptance Criteria
-- [ ] Create `docs/incidents/README.md` in `infra` branch with incident index, naming convention rules (`YYYY-MM-DD-<slug>.md`), and preventive action items tracker.
-- [ ] Update `docs/incidents/000-template.md` with structured VictoriaLogs/LogsQL query blocks and timeline telemetry.
-- [ ] Update `docs/README.md` and `AGENTS.md` on `infra` with the 3-tier incident graduation model.
-- [ ] Update `assert-starter-contracts.sh` on `main` to assert `docs/incidents/README.md`.
-- [ ] Propagate improvements to `/home/yegear/github/homelab`.
-- [ ] Ensure all automated checks pass (`git diff --check`, `assert-starter-contracts.sh infra`).
+- [ ] [Verifiable criterion 1]
+- [ ] [Verifiable criterion 2]
 
 ---
 
@@ -55,6 +51,7 @@
 | [07.1] | Starters and Hub internationalization (Technical English + PT-BR README) | [`e748b7c`, `567fd62`, `a54b465`, `9e0a8d5`, `06103f4`] | 2026-09-15 |
 | [08.1] | Apply 11 Agent Instruction-File Design Rules to Templates | [`bf8402b`, `bad0f7b`, `25e0b55`, `370beb5`, `c75131d`, `376fca0`] | 2026-09-15 |
 | [09.1] | Standardize documentation taxonomy, RCA templates and author metadata header | [`4fc712f`, `50b59aa`, `28068cc`] | 2026-09-18 |
+| [09.2] | Graduated incident management, preventive actions tracker, and VictoriaLogs anchors | [`6286035`, `e3ca0c1`, `131fd77`] | 2026-09-18 |
 
 ---
 
