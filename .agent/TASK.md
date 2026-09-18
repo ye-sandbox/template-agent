@@ -10,24 +10,19 @@
 
 ## Active Task
 
-### 📌 Task [09.1]: Standardize Documentation Taxonomy, RCA Narrative Templates, and Author Metadata Header
+### 📌 Task [XX.Y]: [Short descriptive title]
 
-- **Description:** Establish canonical documentation standards for the `infra` template and `homelab`, providing structured author metadata headers (`author_type`, `author`, `reviewed_by`, `date`, `status`, `type`), a dedicated template for incident/postmortem narratives (Cause, Reasoning, Solution, Prevention), and retrofitting existing `homelab/docs` documents.
-- **Systems Involved:** `infra`, `hub`, `homelab`, `docs`
+- **Description:** [2–4 lines for the agent to assemble a plan.]
+- **Systems Involved:** [e.g.: `docs`, `hub`, `branch-greenfield`]
 - **Action Type:**
-  - [x] Read-only / Documentation
-  - [x] Source code changes
-- **Status:** RUNNING
+  - [ ] Read-only / Documentation
+  - [ ] Source code changes
+- **Status:** READY FOR PLANNING
   *(Workflow: `READY FOR PLANNING` → `PLANNING` on presenting plan → approval → `RUNNING`)*
 
 ### Acceptance Criteria
-- [ ] Create `docs/README.md` in `infra` branch establishing taxonomy (`docs/architecture/`, `docs/incidents/`, `docs/host/`) and mandatory author metadata header format.
-- [ ] Create `docs/incidents/000-template.md` in `infra` branch with structured narrative sections (Incident Summary, Timeline, Root Cause, Reasoning / Investigated Hypotheses, Remediation, Prevention).
-- [ ] Create `docs/architecture/000-template.md` in `infra` branch with author header and system design sections.
-- [ ] Update `infra:AGENTS.md` and `infra:.agent/NOTES.md` with guidelines on author metadata and incident narration.
-- [ ] Update `assert-starter-contracts.sh` on `main` to assert `docs/` and `docs/README.md` on `infra`.
-- [ ] Retrofit all existing documentation in `/home/yegear/github/homelab/docs/` with canonical author metadata headers and updated taxonomy.
-- [ ] Ensure `git diff --check` passes across both repositories and atomic Conventional Commits are created.
+- [ ] [Verifiable criterion 1]
+- [ ] [Verifiable criterion 2]
 
 ---
 
@@ -55,6 +50,7 @@
 | [06.1] | Extrair playbooks transversais para `agent-skills` | [`94f562a`] | 2026-09-13 |
 | [07.1] | Starters and Hub internationalization (Technical English + PT-BR README) | [`e748b7c`, `567fd62`, `a54b465`, `9e0a8d5`, `06103f4`] | 2026-09-15 |
 | [08.1] | Apply 11 Agent Instruction-File Design Rules to Templates | [`bf8402b`, `bad0f7b`, `25e0b55`, `370beb5`, `c75131d`, `376fca0`] | 2026-09-15 |
+| [09.1] | Standardize documentation taxonomy, RCA templates and author metadata header | [`4fc712f`, `50b59aa`, `28068cc`] | 2026-09-18 |
 
 ---
 
