@@ -10,19 +10,23 @@
 
 ## Active Task
 
-### 📌 Task [XX.Y]: [Short descriptive title]
+### 📌 Task [09.2]: Graduated Incident Management, Preventive Actions Tracker, and VictoriaLogs Anchors
 
-- **Description:** [2–4 lines for the agent to assemble a plan.]
-- **Systems Involved:** [e.g.: `docs`, `hub`, `branch-greenfield`]
+- **Description:** Implement a 3-tier incident graduation model (Tier 1 Gotchas in NOTES.md, Tier 2 Runbooks in docs/host/, Tier 3 RCA in docs/incidents/), establish an incident index and action items tracker in `docs/incidents/README.md`, integrate structured VictoriaLogs/LogsQL query anchors into the RCA template, and propagate to `homelab`.
+- **Systems Involved:** `infra`, `hub`, `homelab`, `docs`
 - **Action Type:**
-  - [ ] Read-only / Documentation
-  - [ ] Source code changes
-- **Status:** READY FOR PLANNING
+  - [x] Read-only / Documentation
+  - [x] Source code changes
+- **Status:** RUNNING
   *(Workflow: `READY FOR PLANNING` → `PLANNING` on presenting plan → approval → `RUNNING`)*
 
 ### Acceptance Criteria
-- [ ] [Verifiable criterion 1]
-- [ ] [Verifiable criterion 2]
+- [ ] Create `docs/incidents/README.md` in `infra` branch with incident index, naming convention rules (`YYYY-MM-DD-<slug>.md`), and preventive action items tracker.
+- [ ] Update `docs/incidents/000-template.md` with structured VictoriaLogs/LogsQL query blocks and timeline telemetry.
+- [ ] Update `docs/README.md` and `AGENTS.md` on `infra` with the 3-tier incident graduation model.
+- [ ] Update `assert-starter-contracts.sh` on `main` to assert `docs/incidents/README.md`.
+- [ ] Propagate improvements to `/home/yegear/github/homelab`.
+- [ ] Ensure all automated checks pass (`git diff --check`, `assert-starter-contracts.sh infra`).
 
 ---
 
