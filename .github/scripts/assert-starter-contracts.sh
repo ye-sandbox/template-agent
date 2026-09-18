@@ -108,12 +108,14 @@ assert_infra() {
   need_file compose.yaml.example
   need_dir docs
   need_file docs/README.md
+  need_file docs/incidents/README.md
   need_file docs/incidents/000-template.md
   need_file docs/architecture/000-template.md
   need_dir .git
   need_absent init.sh
   need_one_commit
   need_grep docs/README.md 'author_type' -qF
+  need_grep docs/incidents/README.md 'Tier 1' -qF
   need_grep docs/incidents/000-template.md 'author_type' -qF
   need_grep AGENTS.md 'down -v' -qF
   need_grep AGENTS.md ':latest' -qF
