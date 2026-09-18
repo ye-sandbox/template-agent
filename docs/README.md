@@ -42,7 +42,18 @@ type: "incident-rca"           # "architecture" | "incident-rca" | "host-runbook
 
 ---
 
-## 🗂️ Starter Templates
+## 🧭 Incident Graduation & Severity Tiers
 
-- **[`docs/incidents/000-template.md`](./incidents/000-template.md):** Canonical template for postmortems and deep-dive troubleshooting.
+To balance operational agility with architectural rigor, issues MUST be graduated into three distinct tiers:
+
+1. **Tier 1 (Gotchas & Quirks):** Minor configuration friction, transient container restart, or non-disruptive UID/port adjustments. Documented directly in [`.agent/NOTES.md`](../.agent/NOTES.md) (3–5 lines).
+2. **Tier 2 (Operational Runbooks):** Recurring operational procedures and disaster recovery steps (e.g. disk cleanup, container restart loop). Documented in [`docs/host/`](./host/) or specialized skills.
+3. **Tier 3 (Critical Postmortems / RCA):** Outages, service degradation, data corruption risk, or hard-to-diagnose root causes. Documented as full postmortems under [`docs/incidents/`](./incidents/) using chronological filenames (`YYYY-MM-DD-<slug>.md`).
+
+---
+
+## 🗂️ Starter Templates & Hubs
+
+- **[`docs/incidents/README.md`](./incidents/README.md):** Central Postmortems & Action Items Tracker hub.
+- **[`docs/incidents/000-template.md`](./incidents/000-template.md):** Canonical template for postmortems and deep-dive troubleshooting with VictoriaLogs query anchors.
 - **[`docs/architecture/000-template.md`](./architecture/000-template.md):** Canonical template for system design and topological decisions.

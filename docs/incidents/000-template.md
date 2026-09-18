@@ -48,6 +48,12 @@ Document the diagnostic thought process, evidence gathered, and hypotheses evalu
 
 ### Hypothesis 1: [Initial Assumption / Suspected Cause]
 - **Reasoning:** [Why this was initially suspected]
+- **VictoriaLogs / LogsQL Query:**
+  ```text
+  _stream:{service="<service_name>"} AND (level:error OR "fatal" OR "panic")
+  timerange: YYYY-MM-DDTHH:MM:00Z to YYYY-MM-DDTHH:MM:00Z
+  hits: XX
+  ```
 - **Evidence / Logs Gathered:**
   ```text
   [Relevant log excerpts, command outputs (e.g. ss -tuln, dmesg, journalctl, docker logs)]
@@ -56,6 +62,10 @@ Document the diagnostic thought process, evidence gathered, and hypotheses evalu
 
 ### Hypothesis 2: [Subsequent Assumption]
 - **Reasoning:** [Why this avenue was explored]
+- **VictoriaLogs / LogsQL Query:**
+  ```text
+  _stream:{host="<host_name>"} AND "<keyword>"
+  ```
 - **Evidence Gathered:**
   ```text
   [Evidence]

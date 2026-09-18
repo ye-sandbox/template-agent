@@ -69,6 +69,7 @@ If an automated command (`docker compose config`, container boot, or healthcheck
    volume_data_state: "intact (no destructive operations performed)"
    pending_decision: "question or proposed options for user"
    ```
+4. **Postmortem Trigger:** If an incident resulted in service downtime or required non-trivial architectural remediation, the agent MUST log a Tier 3 postmortem under `docs/incidents/YYYY-MM-DD-<slug>.md` and register the action items in `docs/incidents/README.md`.
 
 ---
 
