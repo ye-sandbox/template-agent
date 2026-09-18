@@ -46,6 +46,7 @@
 | 2026-09-13 | Skill `qa-environment` (Mock, Seeding, Túnel e Prompt) | Teste de UI por agentes externos precisa de mock seguro para evitar disparos em produção, dados pré-carregados para testar listagens/estados e túnel HTTPS com prompt estruturado. |
 | 2026-09-13 | Livro de skills = `agent-skills`, não o hub | Playbook transversal (UI, QA) não é molde de starter. Canônico: `ye-sandbox/agent-skills` `skills/`. Hub `main` só aponta; `greenfield`/`blackbox`/`infra` mantêm skills que o `init.sh` entrega. |
 | 2026-09-15 | High-density Technical English in templates | Reduces token consumption by 30-40% across multi-turn agent sessions and improves instruction-following fidelity. Primary README in English with dedicated `README.pt-br.md` for Brazilian community. |
+| 2026-09-18 | Taxonomia `docs/`, RCA narrativo e cabeçalho de autoria | `NOTES.md` permanece enxuto ("WHY"). Narrativas profundas de incidentes (Causa, Linha de Raciocínio, Solução, Prevenção) ficam em `docs/incidents/`. Todo doc sob `docs/` exige cabeçalho YAML (`author_type: agent\|human\|agent-assisted`, `author`, `reviewed_by`, `date`, `status`, `type`) para diferenciar raciocínio de IA de fatos auditados. |
 
 ### Formal ADR Index
 
