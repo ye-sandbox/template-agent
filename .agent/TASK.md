@@ -10,19 +10,24 @@
 
 ## Active Task
 
-### 📌 Task [XX.Y]: [Short descriptive title]
+### 📌 Task [09.1]: Standardize Documentation Taxonomy, RCA Narrative Templates, and Author Metadata Header
 
-- **Description:** [2–4 lines for the agent to assemble a plan.]
-- **Systems Involved:** [e.g.: `docs`, `hub`, `branch-greenfield`]
+- **Description:** Establish canonical documentation standards for the `infra` template and `homelab`, providing structured author metadata headers (`author_type`, `author`, `reviewed_by`, `date`, `status`, `type`), a dedicated template for incident/postmortem narratives (Cause, Reasoning, Solution, Prevention), and retrofitting existing `homelab/docs` documents.
+- **Systems Involved:** `infra`, `hub`, `homelab`, `docs`
 - **Action Type:**
-  - [ ] Read-only / Documentation
-  - [ ] Source code changes
-- **Status:** READY FOR PLANNING
+  - [x] Read-only / Documentation
+  - [x] Source code changes
+- **Status:** RUNNING
   *(Workflow: `READY FOR PLANNING` → `PLANNING` on presenting plan → approval → `RUNNING`)*
 
 ### Acceptance Criteria
-- [ ] [Verifiable criterion 1]
-- [ ] [Verifiable criterion 2]
+- [ ] Create `docs/README.md` in `infra` branch establishing taxonomy (`docs/architecture/`, `docs/incidents/`, `docs/host/`) and mandatory author metadata header format.
+- [ ] Create `docs/incidents/000-template.md` in `infra` branch with structured narrative sections (Incident Summary, Timeline, Root Cause, Reasoning / Investigated Hypotheses, Remediation, Prevention).
+- [ ] Create `docs/architecture/000-template.md` in `infra` branch with author header and system design sections.
+- [ ] Update `infra:AGENTS.md` and `infra:.agent/NOTES.md` with guidelines on author metadata and incident narration.
+- [ ] Update `assert-starter-contracts.sh` on `main` to assert `docs/` and `docs/README.md` on `infra`.
+- [ ] Retrofit all existing documentation in `/home/yegear/github/homelab/docs/` with canonical author metadata headers and updated taxonomy.
+- [ ] Ensure `git diff --check` passes across both repositories and atomic Conventional Commits are created.
 
 ---
 
