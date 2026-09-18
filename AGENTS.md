@@ -25,6 +25,7 @@ The agent MUST optimize context loading using the following progressive disclosu
 - **Default Context (Loaded on start):** `AGENTS.md`, `.agent/TASK.md`, `.agent/NOTES.md`.
 - **Services Topology (`.agent/SERVICES.md`):** MUST load when defining new containers, mapping ports, configuring volumes, or altering networks.
 - **Compose Service Skill (`.agent/skills/compose-service/SKILL.md`):** MUST load when scaffolding or configuring services.
+- **Documentation & Incident Narratives (`docs/`):** MUST load when investigating past incidents, postmortems (`docs/incidents/`), or authoring architectural guides (`docs/architecture/`).
 
 ---
 
@@ -44,6 +45,7 @@ The agent MUST optimize context loading using the following progressive disclosu
    - [ ] Port Conflict Assertion: No port collisions with existing services or host.
    - [ ] Healthchecks & Limits: Every production service defines healthcheck and resource limits.
    - [ ] Registry Invariants: `.agent/SERVICES.md` and `.env.example` synchronized.
+   - [ ] Documentation Frontmatter: All docs under `docs/` MUST include YAML frontmatter (`author_type`, `author`, `reviewed_by`, `date`, `status`, `type`).
    - [ ] Git Cleanliness: `git diff --check` exits with code 0.
    - [ ] Atomic Commit: Conventional Commits in English (`feat(service): ...`).
    - [ ] Task Log: Active task logged in `TASK.md`; edge cases recorded in `NOTES.md`.
