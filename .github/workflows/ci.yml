@@ -32,17 +32,25 @@ jobs:
           rm -f init.sh
           .github/scripts/assert-starter-contracts.sh greenfield /tmp/ci-test-greenfield
 
-      - name: Test Brownfield install.sh (Legacy Injection & Idempotency)
+      - name: Test Brownfield install.sh (Legacy Injection, Idempotency & Stealth Mode)
         run: |
           echo "=== Testing Brownfield install.sh ==="
-          rm -rf /tmp/brownfield-source /tmp/ci-test-brownfield
-          mkdir -p /tmp/brownfield-source /tmp/ci-test-brownfield
+          rm -rf /tmp/brownfield-source /tmp/ci-test-brownfield /tmp/ci-test-brownfield-stealth
+          mkdir -p /tmp/brownfield-source /tmp/ci-test-brownfield /tmp/ci-test-brownfield-stealth
           git archive origin/brownfield 2>/dev/null | tar -x -C /tmp/brownfield-source || git archive brownfield | tar -x -C /tmp/brownfield-source
           chmod +x /tmp/brownfield-source/install.sh
           /tmp/brownfield-source/install.sh -y /tmp/ci-test-brownfield
           /tmp/brownfield-source/install.sh -y /tmp/ci-test-brownfield
           .github/scripts/assert-starter-contracts.sh brownfield /tmp/ci-test-brownfield
-          rm -rf /tmp/brownfield-source /tmp/ci-test-brownfield
+
+          echo "=== Testing Brownfield install.sh in Stealth Mode (--local-only) ==="
+          git -C /tmp/ci-test-brownfield-stealth init
+          touch /tmp/ci-test-brownfield-stealth/index.js
+          git -C /tmp/ci-test-brownfield-stealth add index.js
+          git -C /tmp/ci-test-brownfield-stealth commit -m "feat(repo): initial enterprise commit"
+          /tmp/brownfield-source/install.sh -y --local-only /tmp/ci-test-brownfield-stealth
+          .github/scripts/assert-starter-contracts.sh brownfield-stealth /tmp/ci-test-brownfield-stealth
+          rm -rf /tmp/brownfield-source /tmp/ci-test-brownfield /tmp/ci-test-brownfield-stealth
 
       - name: Test Blackbox init.sh (Reverse Engineering Scaffolding)
         run: |
