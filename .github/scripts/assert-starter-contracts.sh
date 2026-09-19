@@ -1,13 +1,13 @@
 #!/usr/bin/env bash
 # Assert scaffolding + guardrail contracts on a generated starter.
-# Usage: assert-starter-contracts.sh <greenfield|brownfield|blackbox|infra> <dir>
+# Usage: assert-starter-contracts.sh <greenfield|brownfield|brownfield-stealth|blackbox|infra> <dir>
 set -euo pipefail
 
 KIND="${1:-}"
 ROOT="${2:-}"
 
 if [ -z "$KIND" ] || [ -z "$ROOT" ] || [ ! -d "$ROOT" ]; then
-  echo "Usage: $0 <greenfield|brownfield|blackbox|infra> <generated-dir>" >&2
+  echo "Usage: $0 <greenfield|brownfield|brownfield-stealth|blackbox|infra> <generated-dir>" >&2
   exit 2
 fi
 
@@ -71,6 +71,18 @@ assert_brownfield() {
   need_grep .agent/INVARIANTS.md 'Chesterton' -qF
 }
 
+assert_brownfield_stealth() {
+  assert_brownfield
+  need_grep AGENTS.md 'Enterprise / Local-Only Mode Active' -qF
+  need_grep AGENTS.md 'NEVER STAGE OR COMMIT' -qF
+  need_file .git/info/exclude
+  need_grep .git/info/exclude '^/AGENTS.md$' -qE
+  need_grep .git/info/exclude '^/\.agent/$' -qE
+  local status_output
+  status_output="$(git -C "$ROOT" status --porcelain)"
+  [ -z "$status_output" ] || fail "git status is not clean in stealth mode: $status_output"
+}
+
 assert_blackbox() {
   need_file AGENTS.md
   need_dir .agent
@@ -132,6 +144,7 @@ assert_infra() {
 case "$KIND" in
   greenfield) assert_greenfield ;;
   brownfield) assert_brownfield ;;
+  brownfield-stealth) assert_brownfield_stealth ;;
   blackbox) assert_blackbox ;;
   infra) assert_infra ;;
   *)
