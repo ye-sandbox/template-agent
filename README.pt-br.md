@@ -72,7 +72,14 @@ curl -fsSL https://raw.githubusercontent.com/ye-sandbox/template-agent/brownfiel
 
 > 💡 **Dica:** Para automações ou CI sem confirmações interativas, use `bash -s -- -y`. Para instalar em um diretório específico, passe o caminho como argumento (`bash -s -- ./outro-caminho`).
 
-*Ou clone a branch `brownfield` e execute `./install.sh /caminho/do/projeto` localmente.*
+> 🔒 **Modo Empresarial / Stealth (`--local-only`):**
+> Ao adotar em repositórios empresariais ou compartilhados onde arquivos de governança de IA não devem ser comitados no histórico do Git:
+> ```bash
+> curl -fsSL https://raw.githubusercontent.com/ye-sandbox/template-agent/brownfield/install.sh | bash -s -- --local-only
+> ```
+> Isso adiciona automaticamente `/AGENTS.md` e `/.agent/` ao `.git/info/exclude` (mantendo o `.gitignore` e o `git status` 100% limpos) e injeta guardrails estritos de modo stealth proibindo o staging de arquivos do agente.
+
+*Ou clone a branch `brownfield` e execute `./install.sh /caminho/do/projeto` (ou com `--local-only`) localmente.*
 
 **Primeiro prompt para o agente no projeto legado:**
 > *"Leia o AGENTS.md e o .agent/TASK.md. Apresente seu plano de implementação para a Tarefa [00.1] de Auditoria e Discovery do projeto antes de alterar qualquer código."*

@@ -72,7 +72,14 @@ curl -fsSL https://raw.githubusercontent.com/ye-sandbox/template-agent/brownfiel
 
 > 💡 **Tip:** For non-interactive CI or automated runs, pass `bash -s -- -y`. To target a specific folder, provide the destination path (`bash -s -- ./target-dir`).
 
-*Or clone the `brownfield` branch and run `./install.sh /path/to/project` locally.*
+> 🔒 **Enterprise / Stealth Mode (`--local-only`):**
+> When adopting in enterprise or shared repositories where AI governance files cannot be committed to shared git history:
+> ```bash
+> curl -fsSL https://raw.githubusercontent.com/ye-sandbox/template-agent/brownfield/install.sh | bash -s -- --local-only
+> ```
+> This automatically appends `/AGENTS.md` and `/.agent/` to `.git/info/exclude` (leaving `.gitignore` and `git status` untouched) and injects strict stealth guardrails forbidding staging AI files.
+
+*Or clone the `brownfield` branch and run `./install.sh /path/to/project` (or with `--local-only`) locally.*
 
 **Initial prompt for the agent in a legacy codebase:**
 > *"Read AGENTS.md and .agent/TASK.md. Present your implementation plan for Task [00.1] Project Discovery & Audit before modifying any code."*
