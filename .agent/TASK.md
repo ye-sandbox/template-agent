@@ -10,22 +10,19 @@
 
 ## Active Task
 
-### 📌 Task [10.1]: Brownfield `--local-only` stealth mode for enterprise repositories
+### 📌 Task [XX.Y]: [Short descriptive title]
 
-- **Description:** Add `--local-only` (and `--stealth`) flag to `brownfield/install.sh` to enable non-intrusive adoption in enterprise/shared repositories. Automatically configures `.git/info/exclude` and injects stealth directives into `AGENTS.md` so the agent never stages or commits agentic files.
-- **Systems Involved:** `branch-brownfield`, `docs`, `ci`
+- **Description:** [2–4 lines for the agent to assemble a plan.]
+- **Systems Involved:** [e.g.: `docs`, `hub`, `branch-greenfield`]
 - **Action Type:**
-  - [x] Source code changes
-  - [x] Read-only / Documentation
-- **Status:** RUNNING
+  - [ ] Read-only / Documentation
+  - [ ] Source code changes
+- **Status:** READY FOR PLANNING
   *(Workflow: `READY FOR PLANNING` → `PLANNING` on presenting plan → approval → `RUNNING`)*
 
 ### Acceptance Criteria
-- [ ] `brownfield/install.sh` accepts `-l`, `--local-only`, and `--stealth` flags.
-- [ ] In `--local-only` mode, verify if `$TARGET_DIR` is inside a git repository and append `/AGENTS.md` and `/.agent/` to `.git/info/exclude` without modifying `.gitignore`.
-- [ ] In `--local-only` mode, inject explicit Stealth Mode guardrails into `AGENTS.md` (forbidding `git add .agent/` or `AGENTS.md`, and enforcing ticket/commit standards).
-- [ ] Scaffolding and contract assertions in `.github/scripts/assert-starter-contracts.sh` validate `--local-only` behavior.
-- [ ] Documentation (`README.md`, `README.pt-br.md`) documents the Enterprise / Local-Only adoption pattern.
+- [ ] [Verifiable criterion 1]
+- [ ] [Verifiable criterion 2]
 
 ---
 
@@ -55,6 +52,7 @@
 | [08.1] | Apply 11 Agent Instruction-File Design Rules to Templates | [`bf8402b`, `bad0f7b`, `25e0b55`, `370beb5`, `c75131d`, `376fca0`] | 2026-09-15 |
 | [09.1] | Standardize documentation taxonomy, RCA templates and author metadata header | [`4fc712f`, `50b59aa`, `28068cc`] | 2026-09-18 |
 | [09.2] | Graduated incident management, preventive actions tracker, and VictoriaLogs anchors | [`6286035`, `e3ca0c1`, `131fd77`] | 2026-09-18 |
+| [10.1] | Brownfield `--local-only` stealth mode for enterprise repositories | [`8f31440`, `27e3dac`, `6f3fd24`, `f521191`] | 2026-09-19 |
 
 ---
 
