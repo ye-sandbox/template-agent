@@ -48,9 +48,18 @@ curl -fsSL https://raw.githubusercontent.com/ye-sandbox/template-agent/brownfiel
 > curl -fsSL https://raw.githubusercontent.com/ye-sandbox/template-agent/brownfield/install.sh | bash -s -- ./path/to/project
 > ```
 
+> 🔒 **Enterprise / Local-Only Mode (Stealth):**
+> If working in an enterprise codebase where you cannot or do not want to commit agentic governance files:
+> ```bash
+> curl -fsSL https://raw.githubusercontent.com/ye-sandbox/template-agent/brownfield/install.sh | bash -s -- --local-only
+> ```
+> This automatically excludes `.agent/` and `AGENTS.md` via `.git/info/exclude` (leaving `.gitignore` untouched and git status 100% clean) and injects strict stealth guardrails.
+
 *Or run locally from a cloned copy of the `brownfield` branch:*
 ```bash
 ./install.sh /path/to/your-legacy-project
+# or with stealth mode:
+./install.sh --local-only /path/to/your-legacy-project
 ```
 
 ### Option 2: Manual Copy

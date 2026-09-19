@@ -48,9 +48,18 @@ curl -fsSL https://raw.githubusercontent.com/ye-sandbox/template-agent/brownfiel
 > curl -fsSL https://raw.githubusercontent.com/ye-sandbox/template-agent/brownfield/install.sh | bash -s -- ./caminho/do/projeto
 > ```
 
+> 🔒 **Modo Empresarial / Local-Only (Stealth):**
+> Se você está trabalhando em uma base de código corporativa onde não pode ou não deseja comitar arquivos de governança de IA no repositório compartilhado:
+> ```bash
+> curl -fsSL https://raw.githubusercontent.com/ye-sandbox/template-agent/brownfield/install.sh | bash -s -- --local-only
+> ```
+> Isso adiciona automaticamente o `.agent/` e `AGENTS.md` ao `.git/info/exclude` (sem alterar o `.gitignore` e mantendo o `git status` 100% limpo) e injeta guardrails estritos de stealth mode.
+
 Ou, caso tenha clonado a branch `brownfield` localmente:
 ```bash
 ./install.sh /caminho/para/seu-projeto-legado
+# ou com modo stealth:
+./install.sh --local-only /caminho/para/seu-projeto-legado
 ```
 
 ### Opção 2: Cópia Manual
