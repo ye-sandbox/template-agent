@@ -10,19 +10,22 @@
 
 ## Active Task
 
-### 📌 Task [XX.Y]: [Short descriptive title]
+### 📌 Task [10.1]: Brownfield `--local-only` stealth mode for enterprise repositories
 
-- **Description:** [2–4 lines for the agent to assemble a plan.]
-- **Systems Involved:** [e.g.: `docs`, `hub`, `branch-greenfield`]
+- **Description:** Add `--local-only` (and `--stealth`) flag to `brownfield/install.sh` to enable non-intrusive adoption in enterprise/shared repositories. Automatically configures `.git/info/exclude` and injects stealth directives into `AGENTS.md` so the agent never stages or commits agentic files.
+- **Systems Involved:** `branch-brownfield`, `docs`, `ci`
 - **Action Type:**
-  - [ ] Read-only / Documentation
-  - [ ] Source code changes
-- **Status:** READY FOR PLANNING
+  - [x] Source code changes
+  - [x] Read-only / Documentation
+- **Status:** RUNNING
   *(Workflow: `READY FOR PLANNING` → `PLANNING` on presenting plan → approval → `RUNNING`)*
 
 ### Acceptance Criteria
-- [ ] [Verifiable criterion 1]
-- [ ] [Verifiable criterion 2]
+- [ ] `brownfield/install.sh` accepts `-l`, `--local-only`, and `--stealth` flags.
+- [ ] In `--local-only` mode, verify if `$TARGET_DIR` is inside a git repository and append `/AGENTS.md` and `/.agent/` to `.git/info/exclude` without modifying `.gitignore`.
+- [ ] In `--local-only` mode, inject explicit Stealth Mode guardrails into `AGENTS.md` (forbidding `git add .agent/` or `AGENTS.md`, and enforcing ticket/commit standards).
+- [ ] Scaffolding and contract assertions in `.github/scripts/assert-starter-contracts.sh` validate `--local-only` behavior.
+- [ ] Documentation (`README.md`, `README.pt-br.md`) documents the Enterprise / Local-Only adoption pattern.
 
 ---
 
