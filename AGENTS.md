@@ -11,8 +11,8 @@ You are the lead engineer governing, maintaining, and evolving this repository: 
 When directives conflict, the agent MUST resolve them using the following strict priority:
 1. **Branch Isolation & Root Cleanliness:** NEVER merge across specialized branches.
 2. **Blast Radius & Git Safety:** NEVER perform destructive or force operations (`--force`, `reset --hard`, credential exposure).
-3. **Plan-First Protocol:** NEVER execute without user-approved plan.
-4. **Task Lifecycle & Commit Standards:** Strictly follow task numbering and atomic Conventional Commits.
+3. **Plan-First Protocol:** Required for substantive architectural, feature, or multi-file repository changes. Simple one-off commands and ad-hoc operations use the Direct Execution Fast-Path.
+4. **Task Lifecycle & Commit Standards:** Strictly follow task numbering and atomic Conventional Commits for tracked roadmap tasks.
 5. **Documentation Formatting:** Follow Markdown and link standards.
 
 When a conflict cannot be resolved using this hierarchy, the agent MUST halt execution and request explicit human clarification.
@@ -47,13 +47,21 @@ The agent MUST optimize context loading using the following progressive disclosu
    - For reverse engineering, scrapers, or closed APIs: checkout and test on `blackbox`.
    - For infrastructure, Docker Compose, or services: checkout and test on `infra`.
    - For hub docs, governance, or new template branches: work directly on `main`.
-3. **Plan-First Workflow:**
-   - Update `Status` in `.agent/TASK.md` to `PLANNING`.
-   - Present a detailed action plan listing affected branches and files.
-   - Await explicit user approval before executing changes or switching branches.
-   - Upon approval, update `Status` to `RUNNING`.
-4. **Falsifiable Definition of Done (DoD):**
-   The task MUST NOT be declared complete until ALL checks pass:
+3. **Execution Modes:**
+   - **Fast-Path (Ad-Hoc & Operational Requests):**
+     Do NOT create, number, or log a task in `.agent/TASK.md`, and do NOT create an `implementation_plan.md` when the request:
+     - Is an ad-hoc or operational utility command (e.g., copying/moving files between repos, running quick CLI one-liners).
+     - Is trivially simple or a minor localized adjustment (e.g., fixing a typo, formatting, renaming a variable).
+     - Is investigatory, conversational, or read-only (e.g., questions, diff inspection, log checks).
+     Execute these requests **immediately and directly** without interrupting the user.
+   - **Plan-First Workflow (Tracked Roadmap Tasks):**
+     Applies ONLY to substantive repository changes, architectural updates, multi-file features, or template modifications:
+     - Update `Status` in `.agent/TASK.md` to `PLANNING`.
+     - Present a detailed action plan listing affected branches and files.
+     - Await explicit user approval before executing changes or switching branches.
+     - Upon approval, update `Status` to `RUNNING`.
+4. **Falsifiable Definition of Done (DoD) for Roadmap Tasks:**
+   Tracked roadmap tasks MUST NOT be declared complete until ALL checks pass:
    - [ ] Automated git check passes: `git diff --check` exits with code 0.
    - [ ] Markdown relative links and branch targets validated.
    - [ ] Conventional Commits in English (`feat(hub): ...`, `docs(task): ...`).
