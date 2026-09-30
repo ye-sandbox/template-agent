@@ -49,6 +49,7 @@
 | 2026-09-18 | Taxonomia `docs/`, RCA narrativo e cabeçalho de autoria | `NOTES.md` permanece enxuto ("WHY"). Narrativas profundas de incidentes (Causa, Linha de Raciocínio, Solução, Prevenção) ficam em `docs/incidents/`. Todo doc sob `docs/` exige cabeçalho YAML (`author_type: agent\|human\|agent-assisted`, `author`, `reviewed_by`, `date`, `status`, `type`) para diferenciar raciocínio de IA de fatos auditados. |
 | 2026-09-18 | Graduação de incidentes em 3 tiers e âncoras LogsQL | Tier 1 (Gotchas em `NOTES.md`), Tier 2 (Runbooks em `docs/host/`), Tier 3 (RCA com nome `YYYY-MM-DD-<slug>.md` em `docs/incidents/`). `docs/incidents/README.md` rastreia histórico e itens de ação preventiva. Template `000-template.md` ganha blocos estruturados de query VictoriaLogs/LogsQL. |
 | 2026-09-19 | Brownfield `--local-only` vs branch dedicada | Branch exclusiva para modo local causaria duplicação de 95% do starter legado. Modo stealth via flag no `install.sh` (`.git/info/exclude` + diretiva no `AGENTS.md`) resolve adoção corporativa sem branch sprawl. |
+| 2026-09-30 | `.agent/ECOSYSTEM.md` vs `NOTES.md` para multi-repo | Topologia de serviços irmãos, contratos externos e raio de impacto têm ciclo de vida próprio. Documentar no `NOTES.md` inflaria o contexto default a cada turno; `ECOSYSTEM.md` isola o mapa e só é carregado sob demanda (progressive disclosure) quando o agente altera contratos externos. |
 
 ### Formal ADR Index
 
