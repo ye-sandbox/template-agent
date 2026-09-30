@@ -10,23 +10,19 @@
 
 ## Active Task
 
-### 📌 Task [11.1]: Multi-repo ecosystem topology template (.agent/ECOSYSTEM.md) and guardrails for greenfield
+### 📌 Task [XX.Y]: [Short descriptive title]
 
-- **Description:** Implement canonical `.agent/ECOSYSTEM.md` template, progressive disclosure triggers, and multi-repo contract guardrails in the greenfield starter branch.
-- **Systems Involved:** `hub`, `branch-greenfield`, `ci-contracts`
+- **Description:** [2–4 lines for the agent to assemble a plan.]
+- **Systems Involved:** [e.g.: `docs`, `hub`, `branch-greenfield`]
 - **Action Type:**
-  - [x] Read-only / Documentation
-  - [x] Source code changes
-- **Status:** RUNNING
+  - [ ] Read-only / Documentation
+  - [ ] Source code changes
+- **Status:** READY FOR PLANNING
   *(Workflow: `READY FOR PLANNING` → `PLANNING` on presenting plan → approval → `RUNNING`)*
 
 ### Acceptance Criteria
-- [ ] Canonical `.agent/ECOSYSTEM.md` created in `greenfield` with topology matrix, shared contract strategy, cross-repo interface catalog, and blast radius rules.
-- [ ] `greenfield/AGENTS.md` updated with modular context trigger for `ECOSYSTEM.md` and multi-repo contract protection rule.
-- [ ] `greenfield/README.md` and `greenfield/README.pt-br.md` updated with `.agent/ECOSYSTEM.md` in template file tree.
-- [ ] CI contract assertion updated in `.github/scripts/assert-starter-contracts.sh` for greenfield to assert `.agent/ECOSYSTEM.md`.
-- [ ] Hub `.agent/NOTES.md` records architectural rationale for dedicated `ECOSYSTEM.md` vs monolithic `NOTES.md`.
-- [ ] All tests and `assert-starter-contracts.sh` pass cleanly without branch pollution.
+- [ ] [Verifiable criterion 1]
+- [ ] [Verifiable criterion 2]
 
 ---
 
@@ -57,6 +53,7 @@
 | [09.1] | Standardize documentation taxonomy, RCA templates and author metadata header | [`4fc712f`, `50b59aa`, `28068cc`] | 2026-09-18 |
 | [09.2] | Graduated incident management, preventive actions tracker, and VictoriaLogs anchors | [`6286035`, `e3ca0c1`, `131fd77`] | 2026-09-18 |
 | [10.1] | Brownfield `--local-only` stealth mode for enterprise repositories | [`8f31440`, `27e3dac`, `6f3fd24`, `f521191`] | 2026-09-19 |
+| [11.1] | Multi-repo ecosystem topology template (.agent/ECOSYSTEM.md) and guardrails for greenfield | [`e785269`, `e8e6be3`, `0a26fc7`] | 2026-09-30 |
 
 ---
 
