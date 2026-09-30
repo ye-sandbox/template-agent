@@ -16,6 +16,7 @@ A estrutura foi desenhada para resolver os maiores problemas no uso de agentes e
 │   ├── TASK.md               # Tarefa ativa, critérios de aceite e roadmap imediato
 │   ├── NOTES.md              # Decisões arquiteturais rápidas, contratos de dados e armadilhas
 │   ├── ARCHIVE.md            # Histórico de tarefas antigas (preserva contexto enxuto)
+│   ├── ECOSYSTEM.md          # Topologia multi-repo, contratos entre serviços e raio de impacto (opcional)
 │   ├── adr/                  # Registros de Decisões Arquiteturais complexas (ADRs formais)
 │   │   └── 000-template.md   # Template padrão de ADR
 │   └── skills/               # Habilidades procedurais especializadas do projeto

@@ -10,7 +10,7 @@ You are the lead software engineer developing this project: **[PROJECT_NAME]**.
 
 When requirements or directives conflict, the agent MUST resolve them using the following priority:
 1. **Security & Secrets Isolation:** NEVER expose tokens, passwords, or commit unscrubbed credentials.
-2. **Payload & Schema Invariants:** NEVER break established data contracts recorded in `.agent/NOTES.md` or schemas.
+2. **Payload & Schema Invariants:** NEVER break established data contracts recorded in `.agent/NOTES.md`, `.agent/ECOSYSTEM.md`, or schemas.
 3. **Strict Typing:** Code MUST compile in strict mode with zero unchecked `any`/`Any` declarations.
 4. **Architectural Separation:** Domain logic MUST reside in the service layer, NOT in routes or controllers.
 5. **Code Style & Metrics:** Functions MUST NOT exceed 40 LOC; formatters MUST pass.
@@ -24,6 +24,7 @@ When a conflict cannot be resolved using this hierarchy, the agent MUST halt exe
 The agent MUST minimize default token load by following progressive disclosure:
 - **Default Context (Loaded on start):** `AGENTS.md`, `.agent/TASK.md`, `.agent/NOTES.md`.
 - **Architectural Decisions (`.agent/adr/`):** MUST load when creating new services or changing system boundaries.
+- **Multi-Repo Ecosystem (`.agent/ECOSYSTEM.md`):** MUST load when creating or modifying public endpoints, event schemas, cross-repo dependencies, or shared contracts.
 - **Domain Skills (`.agent/skills/<name>/SKILL.md`):** MUST load only when the active task touches that skill's trigger.
 
 ---
@@ -148,7 +149,7 @@ Adding new dependencies REQUIRES user approval.
 
 - **MUST NOT** use loose typing (`any`/`Any`). All interfaces and return types MUST be explicitly typed.
 - **MUST NOT** install dependencies or unapproved package managers without explicit user permission.
-- **MUST NOT** break payload contracts documented in `.agent/NOTES.md`.
+- **MUST NOT** break payload contracts documented in `.agent/NOTES.md` or `.agent/ECOSYSTEM.md`.
 - **MUST NOT** mark a task complete with mock implementations, syntax errors, or unresolved `TODO` comments.
 - **MUST NOT** place business domain logic in routes/controllers; domain logic MUST live in the service layer.
 - **MUST NOT** delete files or execute out-of-scope refactorings.
@@ -202,4 +203,5 @@ app.post("/users", async (req: Request<CreateUserDto>, res: Response<UserRespons
 - [ ] Project name, stack, package managers, and validation commands configured.
 - [ ] Golden rules, module structure, and branch policies finalized.
 - [ ] MCPs and skills mapped; `.env.example` and `.gitignore` adjusted.
+- [ ] Multi-repo topology configured in `.agent/ECOSYSTEM.md` (or file deleted if standalone).
 - [ ] Unused Docker/MCP/Stack sections removed.
