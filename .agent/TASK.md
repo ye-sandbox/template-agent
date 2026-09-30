@@ -10,19 +10,23 @@
 
 ## Active Task
 
-### 📌 Task [XX.Y]: [Short descriptive title]
+### 📌 Task [11.1]: Multi-repo ecosystem topology template (.agent/ECOSYSTEM.md) and guardrails for greenfield
 
-- **Description:** [2–4 lines for the agent to assemble a plan.]
-- **Systems Involved:** [e.g.: `docs`, `hub`, `branch-greenfield`]
+- **Description:** Implement canonical `.agent/ECOSYSTEM.md` template, progressive disclosure triggers, and multi-repo contract guardrails in the greenfield starter branch.
+- **Systems Involved:** `hub`, `branch-greenfield`, `ci-contracts`
 - **Action Type:**
-  - [ ] Read-only / Documentation
-  - [ ] Source code changes
-- **Status:** READY FOR PLANNING
+  - [x] Read-only / Documentation
+  - [x] Source code changes
+- **Status:** RUNNING
   *(Workflow: `READY FOR PLANNING` → `PLANNING` on presenting plan → approval → `RUNNING`)*
 
 ### Acceptance Criteria
-- [ ] [Verifiable criterion 1]
-- [ ] [Verifiable criterion 2]
+- [ ] Canonical `.agent/ECOSYSTEM.md` created in `greenfield` with topology matrix, shared contract strategy, cross-repo interface catalog, and blast radius rules.
+- [ ] `greenfield/AGENTS.md` updated with modular context trigger for `ECOSYSTEM.md` and multi-repo contract protection rule.
+- [ ] `greenfield/README.md` and `greenfield/README.pt-br.md` updated with `.agent/ECOSYSTEM.md` in template file tree.
+- [ ] CI contract assertion updated in `.github/scripts/assert-starter-contracts.sh` for greenfield to assert `.agent/ECOSYSTEM.md`.
+- [ ] Hub `.agent/NOTES.md` records architectural rationale for dedicated `ECOSYSTEM.md` vs monolithic `NOTES.md`.
+- [ ] All tests and `assert-starter-contracts.sh` pass cleanly without branch pollution.
 
 ---
 
