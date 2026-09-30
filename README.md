@@ -16,6 +16,7 @@ The structure directly addresses the primary bottlenecks when using autonomous a
 │   ├── TASK.md               # Active task, acceptance criteria, and immediate roadmap
 │   ├── NOTES.md              # Rapid architectural decisions, data contracts, and gotchas
 │   ├── ARCHIVE.md            # Historical log of completed tasks (preserves lean context)
+│   ├── ECOSYSTEM.md          # Multi-repo topology, cross-repo contracts, and blast radius (optional)
 │   ├── adr/                  # Complex Architectural Decision Records (formal ADRs)
 │   │   └── 000-template.md   # Standard ADR template
 │   └── skills/               # Specialized procedural skills for the project
