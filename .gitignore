@@ -20,6 +20,7 @@ Thumbs.db
 .agent/scratch/
 .gemini/
 .claude/
+.maestri/
 
 # Uncomment extras for your stack:
 # --- Python ---
@@ -36,3 +37,4 @@ Thumbs.db
 # .turbo/
 # .parcel-cache/
 # npm-debug.log*
+# *.tsbuildinfo
