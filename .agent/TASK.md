@@ -21,6 +21,7 @@
 - [ ] Authentication mechanism and session lifecycle identified (cookies, CSRF tokens, required headers).
 - [ ] `.env.example` populated with necessary credentials and connection endpoints.
 - [ ] Section 1 (Global Context) of `.agent/ENDPOINTS.md` completed.
+- [ ] Test runner command configured in package.json/pytest and smoke test verified.
 - [ ] Reproducible minimal cURL call for login or session verification tested successfully.
 
 ---

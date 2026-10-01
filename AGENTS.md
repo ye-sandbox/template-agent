@@ -99,6 +99,14 @@ Not restricted to phase `99.x`. When releasing `vX.Y.Z`:
 
 HTTP client with timeouts/retries (`[httpx/…]`), DOM/JSON parser, schema validator (`[Pydantic/Zod/…]`), sanitized fixtures in `tests/fixtures/`.
 
+## Validation Commands (fill in real project commands)
+
+- Sync dependencies: `[npm install | poetry install]`
+- Run tests: `[npm test | pytest]` (Exit code MUST be 0)
+- Lint / format: `[command]` (Exit code MUST be 0)
+
+Every project MUST define an official, reproducible test command (e.g. `"test": "node --test"` in `package.json` or `pytest`).
+
 ---
 
 ## Golden Rules
@@ -109,6 +117,7 @@ HTTP client with timeouts/retries (`[httpx/…]`), DOM/JSON parser, schema valid
 4. **MUST NOT invent form fields:** Inspect previous HTML payload (`infra_hash`, hidden fields, CSRF tokens) before POSTing.
 5. **Detect Expired Sessions:** Detect 302 redirects or login HTML forms and reauthenticate or fail explicitly.
 6. **Live Circuit Breaker:** 2 consecutive 401/403/429 failures $\rightarrow$ **halt immediately** to prevent account bans.
+7. **Canonical Test Runner:** **MUST NOT** invent ad-hoc test compilation loops or dynamic eval hacks. Tests MUST run via the official test command against sanitized fixtures.
 
 ---
 
