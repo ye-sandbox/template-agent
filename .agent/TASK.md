@@ -10,21 +10,19 @@
 
 ## Active Task
 
-### 📌 Task [12.1]: Baseline test runner pre-configuration and validation contracts for starters
+### 📌 Task [XX.Y]: [Short descriptive title]
 
-- **Description:** Pre-configure canonical test execution in starter templates (baseline `package.json` with `"test": "node --test"` / Vitest guidance) and strengthen bootstrap validation contracts in `AGENTS.md` and Task 00.1 to eliminate agent discovery overhead.
-- **Systems Involved:** `hub`, `branch-greenfield`, `branch-blackbox`, `ci`
+- **Description:** [2–4 lines for the agent to assemble a plan.]
+- **Systems Involved:** [e.g.: `docs`, `hub`, `branch-greenfield`]
 - **Action Type:**
   - [ ] Read-only / Documentation
-  - [x] Source code changes
-- **Status:** RUNNING
+  - [ ] Source code changes
+- **Status:** READY FOR PLANNING
   *(Workflow: `READY FOR PLANNING` → `PLANNING` on presenting plan → approval → `RUNNING`)*
 
 ### Acceptance Criteria
-- [ ] Greenfield and Blackbox templates include a zero-dependency baseline `package.json` with `"type": "module"` and `"test": "node --test"`.
-- [ ] Greenfield and Blackbox `AGENTS.md` and Task `[00.1]` mandate an explicit, working test script (`npm test` / `pytest`) and forbid ad-hoc compilation loops or dynamic eval hacks.
-- [ ] Contract assertion script (`assert-starter-contracts.sh`) validates `package.json` and the `"test"` script contract across generated starters.
-- [ ] All CI and starter contract assertions pass with exit code 0.
+- [ ] [Verifiable criterion 1]
+- [ ] [Verifiable criterion 2]
 
 ---
 
@@ -56,6 +54,7 @@
 | [09.2] | Graduated incident management, preventive actions tracker, and VictoriaLogs anchors | [`6286035`, `e3ca0c1`, `131fd77`] | 2026-09-18 |
 | [10.1] | Brownfield `--local-only` stealth mode for enterprise repositories | [`8f31440`, `27e3dac`, `6f3fd24`, `f521191`] | 2026-09-19 |
 | [11.1] | Multi-repo ecosystem topology template (.agent/ECOSYSTEM.md) and guardrails for greenfield | [`e785269`, `e8e6be3`, `0a26fc7`] | 2026-09-30 |
+| [12.1] | Baseline test runner pre-configuration and validation contracts for starters | [`b3b33fa`, `21c6195`, `bff3277`, `a53c84b`, `433ae43`] | 2026-10-01 |
 
 ---
 
