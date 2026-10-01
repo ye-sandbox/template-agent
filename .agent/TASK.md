@@ -10,19 +10,22 @@
 
 ## Active Task
 
-### 📌 Task [XX.Y]: [Short descriptive title]
+### 📌 Task [13.1]: Ignore TypeScript incremental build cache and Maestri canvas state across template branches
 
-- **Description:** [2–4 lines for the agent to assemble a plan.]
-- **Systems Involved:** [e.g.: `docs`, `hub`, `branch-greenfield`]
+- **Description:** Update starter and hub `.gitignore` templates to ignore `*.tsbuildinfo` in the Node section and `.maestri/` in OS/IDE/agent scratch, propagating cleanly across `main`, `greenfield`, `brownfield`, `blackbox`, and `infra`.
+- **Systems Involved:** `hub`, `branch-greenfield`, `branch-brownfield`, `branch-blackbox`, `branch-infra`, `ci`
 - **Action Type:**
   - [ ] Read-only / Documentation
-  - [ ] Source code changes
-- **Status:** READY FOR PLANNING
+  - [x] Source code changes
+- **Status:** RUNNING
   *(Workflow: `READY FOR PLANNING` → `PLANNING` on presenting plan → approval → `RUNNING`)*
 
 ### Acceptance Criteria
-- [ ] [Verifiable criterion 1]
-- [ ] [Verifiable criterion 2]
+- [ ] `.gitignore` on `main`, `greenfield`, and `brownfield` includes `.maestri/` in OS/IDE/agent scratch and `*.tsbuildinfo` under Node.
+- [ ] `.gitignore` on `blackbox` and `infra` includes `.maestri/` (and `*.tsbuildinfo` on `blackbox`).
+- [ ] `assert-starter-contracts.sh` validates `.maestri/` in starter `.gitignore`s.
+- [ ] All starter scaffolding contract checks pass with exit code 0.
+- [ ] All changes committed with Conventional Commits and branch isolation preserved (no `git merge`).
 
 ---
 
