@@ -10,22 +10,19 @@
 
 ## Active Task
 
-### 📌 Task [13.1]: Ignore TypeScript incremental build cache and Maestri canvas state across template branches
+### 📌 Task [XX.Y]: [Short descriptive title]
 
-- **Description:** Update starter and hub `.gitignore` templates to ignore `*.tsbuildinfo` in the Node section and `.maestri/` in OS/IDE/agent scratch, propagating cleanly across `main`, `greenfield`, `brownfield`, `blackbox`, and `infra`.
-- **Systems Involved:** `hub`, `branch-greenfield`, `branch-brownfield`, `branch-blackbox`, `branch-infra`, `ci`
+- **Description:** [2–4 lines for the agent to assemble a plan.]
+- **Systems Involved:** [e.g.: `docs`, `hub`, `branch-greenfield`]
 - **Action Type:**
   - [ ] Read-only / Documentation
-  - [x] Source code changes
-- **Status:** RUNNING
+  - [ ] Source code changes
+- **Status:** READY FOR PLANNING
   *(Workflow: `READY FOR PLANNING` → `PLANNING` on presenting plan → approval → `RUNNING`)*
 
 ### Acceptance Criteria
-- [ ] `.gitignore` on `main`, `greenfield`, and `brownfield` includes `.maestri/` in OS/IDE/agent scratch and `*.tsbuildinfo` under Node.
-- [ ] `.gitignore` on `blackbox` and `infra` includes `.maestri/` (and `*.tsbuildinfo` on `blackbox`).
-- [ ] `assert-starter-contracts.sh` validates `.maestri/` in starter `.gitignore`s.
-- [ ] All starter scaffolding contract checks pass with exit code 0.
-- [ ] All changes committed with Conventional Commits and branch isolation preserved (no `git merge`).
+- [ ] [Verifiable criterion 1]
+- [ ] [Verifiable criterion 2]
 
 ---
 
@@ -58,6 +55,7 @@
 | [10.1] | Brownfield `--local-only` stealth mode for enterprise repositories | [`8f31440`, `27e3dac`, `6f3fd24`, `f521191`] | 2026-09-19 |
 | [11.1] | Multi-repo ecosystem topology template (.agent/ECOSYSTEM.md) and guardrails for greenfield | [`e785269`, `e8e6be3`, `0a26fc7`] | 2026-09-30 |
 | [12.1] | Baseline test runner pre-configuration and validation contracts for starters | [`b3b33fa`, `21c6195`, `bff3277`, `a53c84b`, `433ae43`] | 2026-10-01 |
+| [13.1] | Ignore TypeScript incremental build cache and Maestri canvas state across template branches | [`8a76a8b`, `12e025f`, `27e37ce`, `b704d7f`, `e9bfc23`, `18ec689`, `5d575c0`] | 2026-10-01 |
 
 ---
 
