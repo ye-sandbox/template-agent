@@ -46,12 +46,16 @@ assert_greenfield() {
   need_file .agent/skills/api-endpoint/SKILL.md
   need_file .agent/adr/000-template.md
   need_file .agent/ECOSYSTEM.md
+  need_file package.json
+  need_file tests/smoke.test.js
   need_dir .git
   need_absent init.sh
   need_one_commit
   need_grep AGENTS.md '.agent/TASK.md' -qF
   need_grep AGENTS.md '.agent/NOTES.md' -qF
   need_grep AGENTS.md '.agent/ECOSYSTEM.md' -qF
+  need_grep AGENTS.md 'npm test' -qF
+  need_grep package.json '"test": "node --test"' -qF
   need_grep .agent/ECOSYSTEM.md 'Repository Topology Matrix' -qF
   need_grep AGENTS.md 'circuit breaker' -qiE
   need_grep .gitignore '.env' -qF
@@ -94,6 +98,8 @@ assert_blackbox() {
   need_file .agent/TASK.md
   need_file .agent/NOTES.md
   need_file .agent/ARCHIVE.md
+  need_file package.json
+  need_file tests/smoke.test.js
   need_file .env.example
   need_file .gitignore
   need_dir .git
@@ -101,6 +107,8 @@ assert_blackbox() {
   need_one_commit
   need_grep AGENTS.md 'git push' -qiF
   need_grep AGENTS.md 'fixture' -qiE
+  need_grep AGENTS.md 'npm test' -qF
+  need_grep package.json '"test": "node --test"' -qF
   need_grep .gitignore '.env' -qF
   need_grep .gitignore '*.har' -qF
   need_grep .gitignore 'tests/fixtures/real/' -qF
