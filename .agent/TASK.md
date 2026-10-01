@@ -10,19 +10,21 @@
 
 ## Active Task
 
-### 📌 Task [XX.Y]: [Short descriptive title]
+### 📌 Task [12.1]: Baseline test runner pre-configuration and validation contracts for starters
 
-- **Description:** [2–4 lines for the agent to assemble a plan.]
-- **Systems Involved:** [e.g.: `docs`, `hub`, `branch-greenfield`]
+- **Description:** Pre-configure canonical test execution in starter templates (baseline `package.json` with `"test": "node --test"` / Vitest guidance) and strengthen bootstrap validation contracts in `AGENTS.md` and Task 00.1 to eliminate agent discovery overhead.
+- **Systems Involved:** `hub`, `branch-greenfield`, `branch-blackbox`, `ci`
 - **Action Type:**
   - [ ] Read-only / Documentation
-  - [ ] Source code changes
-- **Status:** READY FOR PLANNING
+  - [x] Source code changes
+- **Status:** RUNNING
   *(Workflow: `READY FOR PLANNING` → `PLANNING` on presenting plan → approval → `RUNNING`)*
 
 ### Acceptance Criteria
-- [ ] [Verifiable criterion 1]
-- [ ] [Verifiable criterion 2]
+- [ ] Greenfield and Blackbox templates include a zero-dependency baseline `package.json` with `"type": "module"` and `"test": "node --test"`.
+- [ ] Greenfield and Blackbox `AGENTS.md` and Task `[00.1]` mandate an explicit, working test script (`npm test` / `pytest`) and forbid ad-hoc compilation loops or dynamic eval hacks.
+- [ ] Contract assertion script (`assert-starter-contracts.sh`) validates `package.json` and the `"test"` script contract across generated starters.
+- [ ] All CI and starter contract assertions pass with exit code 0.
 
 ---
 
