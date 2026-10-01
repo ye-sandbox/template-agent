@@ -50,6 +50,7 @@
 | 2026-09-18 | Graduação de incidentes em 3 tiers e âncoras LogsQL | Tier 1 (Gotchas em `NOTES.md`), Tier 2 (Runbooks em `docs/host/`), Tier 3 (RCA com nome `YYYY-MM-DD-<slug>.md` em `docs/incidents/`). `docs/incidents/README.md` rastreia histórico e itens de ação preventiva. Template `000-template.md` ganha blocos estruturados de query VictoriaLogs/LogsQL. |
 | 2026-09-19 | Brownfield `--local-only` vs branch dedicada | Branch exclusiva para modo local causaria duplicação de 95% do starter legado. Modo stealth via flag no `install.sh` (`.git/info/exclude` + diretiva no `AGENTS.md`) resolve adoção corporativa sem branch sprawl. |
 | 2026-09-30 | `.agent/ECOSYSTEM.md` vs `NOTES.md` para multi-repo | Topologia de serviços irmãos, contratos externos e raio de impacto têm ciclo de vida próprio. Documentar no `NOTES.md` inflaria o contexto default a cada turno; `ECOSYSTEM.md` isola o mapa e só é carregado sob demanda (progressive disclosure) quando o agente altera contratos externos. |
+| 2026-10-01 | Runner canônico de testes no starter (`package.json`) vs descoberta ad-hoc | Omissão do script "test" no scaffold (ex: `create-vite`) causava ~30 steps de overhead com o agente tentando compilações inline (esbuild em base64). Starter agora nasce com `package.json` zero-dependência (`node --test`), `tests/smoke.test.js` e guardrail no `AGENTS.md` exigindo comando oficial (`npm test`/`vitest run`/`pytest`). |
 
 ### Formal ADR Index
 
