@@ -60,6 +60,8 @@ assert_greenfield() {
   need_grep AGENTS.md 'circuit breaker' -qiE
   need_grep .gitignore '.env' -qF
   need_grep .gitignore '!.env.example' -qF
+  need_grep .gitignore '.maestri/' -qF
+  need_grep .gitignore 'tsbuildinfo' -qF
   if grep -qiE 'Checklist de adaptação|Adaptation checklist' "$ROOT/AGENTS.md"; then
     fail "adaptation checklist leaked into generated AGENTS.md"
   fi
@@ -112,6 +114,8 @@ assert_blackbox() {
   need_grep .gitignore '.env' -qF
   need_grep .gitignore '*.har' -qF
   need_grep .gitignore 'tests/fixtures/real/' -qF
+  need_grep .gitignore '.maestri/' -qF
+  need_grep .gitignore '*.tsbuildinfo' -qF
   need_grep .agent/ENDPOINTS.md '$TARGET_SESSION_COOKIE' -qF
   if grep -RIE --exclude-dir=.git 'eyJ[A-Za-z0-9_-]{20,}\.[A-Za-z0-9_-]+\.' "$ROOT"; then
     fail "JWT-like token found in scaffold"
@@ -128,6 +132,7 @@ assert_infra() {
   need_file .agent/ARCHIVE.md
   need_file .env.example
   need_file .gitignore
+  need_grep .gitignore '.maestri/' -qF
   need_file compose.yaml.example
   need_dir docs
   need_file docs/README.md
