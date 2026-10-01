@@ -135,13 +135,13 @@ Read `.agent/skills/<name>/SKILL.md` when a task matches the skill domain. For r
 ## Validation Commands (fill in real project commands)
 
 Per service:
-- Sync dependencies: `[command]`
-- Run tests: `[command]` (Exit code MUST be 0)
-- Lint / format: `[command]` (Exit code MUST be 0)
-- Typecheck: `[command]` (Exit code MUST be 0)
-- Build: `[command]` (Exit code MUST be 0)
+- Sync dependencies: `[npm install | poetry install | cargo fetch]`
+- Run tests: `[npm test | pytest | cargo test]` (Exit code MUST be 0)
+- Lint / format: `[npm run lint | ruff check | cargo clippy]` (Exit code MUST be 0)
+- Typecheck: `[npm run typecheck | mypy | tsc --noEmit]` (Exit code MUST be 0)
+- Build: `[npm run build | cargo build]` (Exit code MUST be 0)
 
-Adding new dependencies REQUIRES user approval.
+Every project MUST define an official, reproducible test command (e.g. `"test": "vitest run"` or `"test": "node --test"` in `package.json`, or `pytest` in Python). Adding new dependencies REQUIRES user approval.
 
 ---
 
@@ -149,6 +149,7 @@ Adding new dependencies REQUIRES user approval.
 
 - **MUST NOT** use loose typing (`any`/`Any`). All interfaces and return types MUST be explicitly typed.
 - **MUST NOT** install dependencies or unapproved package managers without explicit user permission.
+- **MUST NOT** invent ad-hoc test compilation loops, dynamic eval imports, or inline bundler scripts (e.g., inline esbuild in .mjs) to bypass a missing test runner. The test suite MUST run via the project's canonical test command.
 - **MUST NOT** break payload contracts documented in `.agent/NOTES.md` or `.agent/ECOSYSTEM.md`.
 - **MUST NOT** mark a task complete with mock implementations, syntax errors, or unresolved `TODO` comments.
 - **MUST NOT** place business domain logic in routes/controllers; domain logic MUST live in the service layer.
@@ -179,6 +180,19 @@ app.post("/users", async (req: Request<CreateUserDto>, res: Response<UserRespons
   const user = await userService.create(req.body);
   res.status(201).json(user);
 });
+```
+
+```typescript
+// BAD: Inlining ad-hoc bundlers/eval in test files to bypass missing test runner
+import esbuild from 'esbuild';
+const code = fs.readFileSync('src/service.ts', 'utf8');
+const transformed = esbuild.transformSync(code, { loader: 'ts' });
+const mod = await import(`data:text/javascript;base64,${Buffer.from(transformed.code).toString('base64')}`);
+
+// GOOD: Canonical test runner configured in package.json and executed directly
+// package.json: { "scripts": { "test": "vitest run" } }
+import { describe, it, expect } from 'vitest';
+import { service } from '../src/service';
 ```
 
 ---

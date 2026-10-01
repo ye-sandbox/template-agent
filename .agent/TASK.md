@@ -33,7 +33,7 @@
 
 ## Backlog (Upcoming, in priority order)
 
-- [ ] **[00.1]** [Setup stack, linters, and validation commands] — `[setup]`
+- [ ] **[00.1]** [Setup stack, test runner ("test" in package.json/pytest), linters, and validation commands] — `[setup]`
 - [ ] **[01.1]** [First foundation epic] — `[system]`
 
 ---
