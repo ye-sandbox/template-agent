@@ -22,8 +22,9 @@ When a conflict cannot be resolved using this hierarchy, the agent MUST halt exe
 ## Modular Context Triggers
 
 The agent MUST optimize context loading using the following progressive disclosure triggers:
-- **Default Context (Loaded on start):** `AGENTS.md`, `.agent/TASK.md`, `.agent/NOTES.md`.
+- **Default Context (Loaded on start):** `AGENTS.md`, `.agent/TASK.md`, `.agent/NOTES.md` (Active Contracts & Invariants only).
 - **Endpoint Registry (`.agent/ENDPOINTS.md`):** MUST load when documenting or implementing reverse-engineered routes.
+- **Architectural Decisions (`docs/adr/decisions.md`):** Consult on demand when researching historical rationales.
 - **Reverse Engineering Playbook (`.agent/skills/reverse-engineering/SKILL.md`):** MUST load when capturing flows or constructing fixtures.
 
 ---
