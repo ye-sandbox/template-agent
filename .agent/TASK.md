@@ -10,19 +10,23 @@
 
 ## Active Task
 
-### 📌 Task [XX.Y]: [Short descriptive title]
+### 📌 Task [14.1]: Starter Templates ADR Diary (`docs/adr/decisions.md`) and Active Contracts Isolation (`NOTES.md`)
 
-- **Description:** [2–4 lines for the agent to assemble a plan.]
-- **Systems Involved:** [e.g.: `docs`, `hub`, `branch-greenfield`]
+- **Description:** Decouple architectural decision history from always-on agent context across starters. Migrate decision logs to `docs/adr/decisions.md`, preserve `.agent/NOTES.md` strictly for active runtime contracts (canonical `dev-trinity-sentinel` ensemble, payload mappings, gotchas), and update starter validation assertions.
+- **Systems Involved:** `hub-governance`, `branch-greenfield`, `branch-brownfield`, `branch-blackbox`, `branch-infra`, `ci-contracts`
 - **Action Type:**
-  - [ ] Read-only / Documentation
-  - [ ] Source code changes
-- **Status:** READY FOR PLANNING
+  - [x] Read-only / Documentation
+  - [x] Source code changes
+- **Status:** RUNNING
   *(Workflow: `READY FOR PLANNING` → `PLANNING` on presenting plan → approval → `RUNNING`)*
 
 ### Acceptance Criteria
-- [ ] [Verifiable criterion 1]
-- [ ] [Verifiable criterion 2]
+- [ ] `docs/adr/decisions.md` established as canonical cumulative ADR log template with author metadata and progressive disclosure.
+- [ ] `.agent/NOTES.md` on all starter branches refactored to focus strictly on active runtime contracts (active channels/endpoints, schemas, ensemble orchestration such as `dev-trinity-sentinel`, and gotchas) with zero historical decision bloat.
+- [ ] Greenfield template updated with `docs/adr/decisions.md` and linked in `NOTES.md` and `AGENTS.md`.
+- [ ] Brownfield, Blackbox, and Infra `.agent/NOTES.md` aligned with active contracts focus and pointer to ADR logs.
+- [ ] `.github/scripts/assert-starter-contracts.sh` and CI test suite updated and passing 100% locally.
+- [ ] Atomic conventional commits on each branch without cross-branch git merges.
 
 ---
 

@@ -45,6 +45,7 @@ assert_greenfield() {
   need_file .agent/skills/database-migration/SKILL.md
   need_file .agent/skills/api-endpoint/SKILL.md
   need_file .agent/adr/000-template.md
+  need_file docs/adr/decisions.md
   need_file .agent/ECOSYSTEM.md
   need_file package.json
   need_file tests/smoke.test.js
@@ -53,6 +54,9 @@ assert_greenfield() {
   need_one_commit
   need_grep AGENTS.md '.agent/TASK.md' -qF
   need_grep AGENTS.md '.agent/NOTES.md' -qF
+  need_grep AGENTS.md 'docs/adr/decisions.md' -qF
+  need_grep .agent/NOTES.md 'docs/adr/decisions.md' -qF
+  need_grep .agent/NOTES.md 'Active Contracts' -qF
   need_grep AGENTS.md '.agent/ECOSYSTEM.md' -qF
   need_grep AGENTS.md 'npm test' -qF
   need_grep package.json '"test": "node --test"' -qF
