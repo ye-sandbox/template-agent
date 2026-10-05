@@ -22,8 +22,8 @@ When a conflict cannot be resolved using this hierarchy, the agent MUST halt exe
 ## Modular Context Triggers
 
 The agent MUST minimize default token load by following progressive disclosure:
-- **Default Context (Loaded on start):** `AGENTS.md`, `.agent/TASK.md`, `.agent/NOTES.md`.
-- **Architectural Decisions (`.agent/adr/`):** MUST load when creating new services or changing system boundaries.
+- **Default Context (Loaded on start):** `AGENTS.md`, `.agent/TASK.md`, `.agent/NOTES.md` (Active Contracts only).
+- **Architectural Decisions (`docs/adr/decisions.md` & `.agent/adr/`):** MUST load when creating new services, researching historical trade-offs, or changing system boundaries.
 - **Multi-Repo Ecosystem (`.agent/ECOSYSTEM.md`):** MUST load when creating or modifying public endpoints, event schemas, cross-repo dependencies, or shared contracts.
 - **Domain Skills (`.agent/skills/<name>/SKILL.md`):** MUST load only when the active task touches that skill's trigger.
 
@@ -87,7 +87,7 @@ Format: `[Epic].[Sequence]` with two-digit epics. Subtasks: `[XX.Y.Z]`. Exactly 
 Not restricted to phase `99.x`. When releasing `vX.Y.Z`:
 
 1. **Archive:** Move completed log from `TASK.md` to `ARCHIVE.md` under `## [vX.Y.Z] - YYYY-MM-DD`.
-2. **Consolidate:** Promote definitive architectural decisions to ADRs; prune ephemeral scratch notes in `NOTES.md`.
+2. **Consolidate:** Promote definitive architectural decisions to `docs/adr/decisions.md` (and formal ADRs in `.agent/adr/`); prune ephemeral scratch notes in `.agent/NOTES.md` preserving only active contracts.
 3. **Perimeter:** Sync `.env.example` and `README.md` to the release tag.
 4. **Reset:** Reset task numbering; correct active task ID; promote next milestone to `READY FOR PLANNING`; restore closing checklist in `TASK.md`.
 
