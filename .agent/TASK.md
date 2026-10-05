@@ -10,23 +10,19 @@
 
 ## Active Task
 
-### 📌 Task [14.1]: Starter Templates ADR Diary (`docs/adr/decisions.md`) and Active Contracts Isolation (`NOTES.md`)
+### 📌 Task [XX.Y]: [Short descriptive title]
 
-- **Description:** Decouple architectural decision history from always-on agent context across starters. Migrate decision logs to `docs/adr/decisions.md`, preserve `.agent/NOTES.md` strictly for active runtime contracts (canonical `dev-trinity-sentinel` ensemble, payload mappings, gotchas), and update starter validation assertions.
-- **Systems Involved:** `hub-governance`, `branch-greenfield`, `branch-brownfield`, `branch-blackbox`, `branch-infra`, `ci-contracts`
+- **Description:** [2–4 lines for the agent to assemble a plan.]
+- **Systems Involved:** [e.g.: `docs`, `hub`, `branch-greenfield`]
 - **Action Type:**
-  - [x] Read-only / Documentation
-  - [x] Source code changes
-- **Status:** RUNNING
+  - [ ] Read-only / Documentation
+  - [ ] Source code changes
+- **Status:** READY FOR PLANNING
   *(Workflow: `READY FOR PLANNING` → `PLANNING` on presenting plan → approval → `RUNNING`)*
 
 ### Acceptance Criteria
-- [ ] `docs/adr/decisions.md` established as canonical cumulative ADR log template with author metadata and progressive disclosure.
-- [ ] `.agent/NOTES.md` on all starter branches refactored to focus strictly on active runtime contracts (active channels/endpoints, schemas, ensemble orchestration such as `dev-trinity-sentinel`, and gotchas) with zero historical decision bloat.
-- [ ] Greenfield template updated with `docs/adr/decisions.md` and linked in `NOTES.md` and `AGENTS.md`.
-- [ ] Brownfield, Blackbox, and Infra `.agent/NOTES.md` aligned with active contracts focus and pointer to ADR logs.
-- [ ] `.github/scripts/assert-starter-contracts.sh` and CI test suite updated and passing 100% locally.
-- [ ] Atomic conventional commits on each branch without cross-branch git merges.
+- [ ] [Verifiable criterion 1]
+- [ ] [Verifiable criterion 2]
 
 ---
 
@@ -36,6 +32,7 @@
 
 | Task | Title | Commit(s) | Date |
 |---|---|---|---|
+| [14.1] | Starter Templates ADR Diary (`docs/adr/decisions.md`) and Active Contracts Isolation (`NOTES.md`) | [`2c28814`, `10b411d`, `444a058`, `434d9af`, `ad84677`] | 2026-10-05 |
 | [04.1] | Enxugar guardrails e corrigir incoerências de contexto | [`b25715e`, `d615950`, `254a3ef`, `2bdd0eb`, `2ea2d63`, `0231b5e`, `58a1fc3`, `376adbc`, `ae7c529`, `4c6c90c`, `6b2a7e4`] | 2026-09-06 |
 | [04.2] | Asserções de contrato no CI dos starters | [`c582fd1`, `0397624`, `e575ec0`] | 2026-09-06 |
 | [04.3] | Enxugar leftovers de contexto | [`2621de4`, `c9acedd`, `9747f16`, `19d2c08`, `f0a0619`, `5172f7b`, `eadb9e9`, `dbdecb7`, `375407c`] | 2026-09-06 |
