@@ -1,31 +1,33 @@
-# NOTES.md — Infrastructure Decisions, Context, and Contracts
+# NOTES.md — Active Infrastructure Contracts and Gotchas
 
-> Stores the WHY, not the WHAT or HOW.
-> Records infrastructure architectural decisions, network/volume trade-offs, and discovered gotchas.
+> Stores active service port bindings, volume strategies, and multi-agent orchestration contracts.
+> Architectural decisions live in [`docs/adr/decisions.md`](../docs/adr/decisions.md).
+> Service taxonomy and port registry live in [`.agent/SERVICES.md`](SERVICES.md).
 
 ---
 
 ## How to Use this File (for the Agent)
 
-1. **Read before planning any task:** Recorded decisions prevent regressions or host-level port/storage collisions.
-2. **Add an entry when:**
-   - A structural decision is made (e.g., choice between Docker Compose vs Nomad/K3s, Traefik vs Caddy).
-   - An atypical container behavior is uncovered (e.g. non-root UID requirements on bind mounts).
-   - Retention or backup policies are adjusted.
+1. **Read before planning any task:** Active contracts prevent host-level port collisions and volume wipes.
+2. **Keep this file lean:** Only store active infrastructure contracts, multi-agent topology, and critical runtime gotchas.
+3. **Architectural decisions:** Record in [`docs/adr/decisions.md`](../docs/adr/decisions.md).
 
 ---
 
-## Technical Decisions and Context
+## Active Infrastructure & Multi-Agent Contracts
 
-### [YYYY-MM-DD] [Named Volumes vs Bind Mounts Strategy]
-- **Context:** Ensuring high I/O throughput and safe backup handling without user permission friction between host and container.
-- **Decision:** Use **Named Volumes** for databases and high-write storage engines (VictoriaLogs, Postgres, SQLite in Uptime Kuma), and strict **Bind Mounts** (`:ro`) for configuration files tracked in Git.
-- **Consequences:** Avoids recurring write permission errors (`Permission denied`) on mapped host directories.
+### 1. Multi-Agent Topology & Ensemble Contract (Dev Trinity Sentinel)
 
-### [YYYY-MM-DD] [Documentation Taxonomy, Incident Narratives & Author Metadata]
-- **Context:** Preserving lean context in `.agent/NOTES.md` while enabling deep, auditable documentation (incident postmortems, architecture, host runbooks) with clear distinction between AI generation and human-reviewed truth.
-- **Decision:** Adopt `docs/` taxonomy (`docs/architecture/`, `docs/incidents/`, `docs/host/`). Require YAML frontmatter (`author_type: agent|human|agent-assisted`, `author`, `reviewed_by`, `date`, `status`, `type`). Root-cause postmortems follow `docs/incidents/000-template.md` (Cause, Line of Reasoning, Solution, Prevention).
-- **Consequences:** Keeps `.agent/` context-efficient while preventing unverified AI reasoning from being mistaken for canonical operational truth.
+When operating under Maestri / Antigravity orchestration:
+- **Planner:** Manages `.agent/TASK.md` and coordinates service deployment tasks.
+- **Developer:** Authors Compose files, Dockerfiles, and IaC manifests under `aether-guard wrap`.
+- **Auditor:** Verifies resource limits, non-root users, healthchecks, and strict zero `-v` in teardown commands.
+- **Aether Sentinel:** Live supervisor terminal monitoring destructive commands (`prune`, `down -v`, `rm -rf`).
+
+### 2. Active Storage & Port Invariants
+
+- **Persistence Policy:** Named volumes for databases/high-write engines (VictoriaLogs, Postgres, SQLite); read-only bind mounts (`:ro`) for configuration files.
+- **Host Port Mapping:** Must match allocation in `.agent/SERVICES.md`.
 
 ---
 
