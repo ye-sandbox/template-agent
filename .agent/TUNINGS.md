@@ -47,7 +47,9 @@ When registering a new optimization, add a record below:
 - **Revert Command:** `sudo ./scripts/revert-<slug>.sh`
 
 #### Verification & Benchmarks
-- **Before:** [e.g. Boot time 14.2s, swappiness=60]
-- **After:** [e.g. Boot time 9.8s, swappiness=15]
+- **Pre-Run Summary:** `benchmarks/runs/<timestamp>-<slug>-pre/summary.json` (or baseline)
+- **Post-Run Summary:** `benchmarks/runs/<timestamp>-<slug>-post/summary.json`
+- **Before:** [e.g. Boot time 14.2s, latency avg=18.4us, swappiness=60]
+- **After:** [e.g. Boot time 9.8s, latency avg=4.2us, swappiness=15]
 - **Invariant Check:** Network, audio, and display session validated.
 ```

@@ -21,6 +21,10 @@ node_modules/
 dist/
 build/
 
+# Benchmark raw execution artifacts & telemetry dumps
+benchmarks/runs/
+*.raw
+
 # Hardware dumps containing sensitive serial numbers
 *.dump
 hardware-profile.json
