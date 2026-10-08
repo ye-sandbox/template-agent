@@ -27,7 +27,8 @@ graph LR
   cat /proc/sys/vm/swappiness
   systemctl status <service-name>
   ```
-- Record the current reading in `.agent/BASELINE.md` or `.agent/NOTES.md`.
+- Run relevant baseline benchmarks via `./benchmarks/scripts/` (e.g., `bench-cpu.sh`, `bench-latency.sh`, `bench-io.sh`, `monitor-thermals.sh`).
+- Raw runs are saved to `benchmarks/runs/` (gitignored). Record summarized baseline metrics in `.agent/BASELINE.md` or `.agent/NOTES.md`.
 
 ### Step 2: Invariants Verification
 - Cross-reference target files with [`.agent/INVARIANTS.md`](../../INVARIANTS.md).
@@ -104,5 +105,6 @@ fi
 - Execute `apply-<slug>.sh`.
 - Run post-change verification:
   - Invariant assertion (network, audio, display).
-  - Benchmark performance differential.
+  - Execute post-tuning benchmark runner: `./benchmarks/scripts/<bench-script>.sh`.
+  - Compare `summary.json` against baseline or pre-tuning run.
 - Update status and metrics in [`.agent/TUNINGS.md`](../../TUNINGS.md).

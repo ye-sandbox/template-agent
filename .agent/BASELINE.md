@@ -45,13 +45,18 @@
 
 ## ⏱️ Initial Baseline Benchmarks
 
-| Metric | Baseline Score | Measurement Method / Command |
+> Execute `./benchmarks/scripts/<script>.sh` to collect baseline measurements.
+> Raw execution dumps are saved to local `benchmarks/runs/` (gitignored). Record summarized indicators below.
+
+| Metric | Baseline Score | Measurement Method / Harness Command |
 |---|---|---|
 | **Cold Boot Time** | `[e.g. 12.4s (kernel 3.1s, userspace 9.3s)]` | `systemd-analyze` |
 | **Top Slow Services** | `[e.g. plymouth-quit-wait.service (2.1s)]` | `systemd-analyze blame \| head -n 5` |
 | **Memory Pressure (PSI)** | `[e.g. some avg10=0.00 avg60=0.00]` | `cat /proc/pressure/memory` |
-| **Disk Write Throughput** | `[e.g. 2.1 GB/s]` | `dd if=/dev/zero of=/tmp/bench bs=1G count=1 oflag=dsync` |
-| **CPU Benchmark** | `[e.g. sysbench cpu --cpu-max-prime=20000 run]` | `sysbench cpu` |
+| **CPU Benchmark** | `[e.g. 1540.2 events/sec, 12.98s]` | `./benchmarks/scripts/bench-cpu.sh` |
+| **Disk Write Throughput** | `[e.g. 1.8 GB/s (fio randwrite / dd)]` | `./benchmarks/scripts/bench-io.sh` |
+| **Scheduling Latency** | `[e.g. avg 4.2us, max 18.0us]` | `./benchmarks/scripts/bench-latency.sh` |
+| **Hardware Thermals / Clocks** | `[e.g. max 58.0°C, avg 4200 MHz]` | `./benchmarks/scripts/monitor-thermals.sh` |
 
 ---
 

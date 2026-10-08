@@ -10,4 +10,9 @@ test('baremetal core contract files exist', () => {
   assert.ok(existsSync('.agent/skills/baremetal-tuning/SKILL.md'), 'baremetal-tuning skill should exist');
   assert.ok(existsSync('.agent/TASK.md'), '.agent/TASK.md should exist');
   assert.ok(existsSync('.agent/NOTES.md'), '.agent/NOTES.md should exist');
+  assert.ok(existsSync('benchmarks/README.md'), 'benchmarks/README.md should exist');
+  assert.ok(existsSync('benchmarks/scripts/bench-cpu.sh'), 'bench-cpu.sh should exist');
+  assert.ok(existsSync('benchmarks/scripts/bench-io.sh'), 'bench-io.sh should exist');
+  assert.ok(existsSync('benchmarks/scripts/bench-latency.sh'), 'bench-latency.sh should exist');
+  assert.ok(existsSync('benchmarks/scripts/monitor-thermals.sh'), 'monitor-thermals.sh should exist');
 });
