@@ -10,19 +10,21 @@
 
 ## Active Task
 
-### 📌 Task [XX.Y]: [Short descriptive title]
+### 📌 Task [15.1]: Standardize Agent-Facing Documentation in Technical English Across Templates
 
-- **Description:** [2–4 lines for the agent to assemble a plan.]
-- **Systems Involved:** [e.g.: `docs`, `hub`, `branch-greenfield`]
+- **Description:** Explicitly establish and enforce in `AGENTS.md` across all template branches (`main`, `greenfield`, `brownfield`, `blackbox`, `infra`) that all agent-facing directives, skills, contracts, and task logs must be written in Technical English for token economy and instruction-following fidelity.
+- **Systems Involved:** `hub`, `branch-greenfield`, `branch-brownfield`, `branch-blackbox`, `branch-infra`
 - **Action Type:**
-  - [ ] Read-only / Documentation
+  - [x] Read-only / Documentation
   - [ ] Source code changes
-- **Status:** READY FOR PLANNING
+- **Status:** RUNNING
   *(Workflow: `READY FOR PLANNING` → `PLANNING` on presenting plan → approval → `RUNNING`)*
 
 ### Acceptance Criteria
-- [ ] [Verifiable criterion 1]
-- [ ] [Verifiable criterion 2]
+- [ ] Explicit Technical English rule added to `AGENTS.md` on `main` under Golden Rules.
+- [ ] Rule propagated to `greenfield`, `brownfield`, `blackbox`, and `infra` templates without branch merge pollution.
+- [ ] `git diff --check` passes cleanly across all branches.
+- [ ] Automated starter contracts verification in `.github/scripts/assert-starter-contracts.sh` passes.
 
 ---
 
