@@ -186,3 +186,4 @@ git commit -m "fix(installer): resolve remote execution flag parsing"
 - **MUST NOT** force-push (`git push --force`) to primary branches without explicit user permission.
 - **MUST NOT** break backward compatibility of `install.sh` and `init.sh`.
 - **MUST** preserve lean context in `.agent/TASK.md` and `.agent/NOTES.md`.
+- **MUST** author all agent-facing directives, contracts, skills, and lifecycle logs (`AGENTS.md`, `.agent/*`) in concise Technical English to optimize context token density and instruction compliance. Human-facing documentation (e.g., `README.pt-br.md`) may be localized.
