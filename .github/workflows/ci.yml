@@ -2,14 +2,14 @@ name: CI & Template Validation
 
 on:
   push:
-    branches: [ main, greenfield, brownfield, blackbox, infra ]
+    branches: [ main, greenfield, brownfield, blackbox, infra, baremetal ]
   pull_request:
-    branches: [ main, greenfield, brownfield, blackbox, infra ]
+    branches: [ main, greenfield, brownfield, blackbox, infra, baremetal ]
   workflow_dispatch:
 
 jobs:
   test-installers:
-    name: Test Greenfield, Brownfield, Blackbox & Infra Starters
+    name: Test Greenfield, Brownfield, Blackbox, Infra & Baremetal Starters
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -69,6 +69,15 @@ jobs:
           TEMPLATE_REPO_URL="$GITHUB_WORKSPACE" ./init-infra.sh -y /tmp/ci-test-infra
           rm -f init-infra.sh
           .github/scripts/assert-starter-contracts.sh infra /tmp/ci-test-infra
+
+      - name: Test Baremetal init.sh (PC & Workstation Tuning Scaffolding)
+        run: |
+          echo "=== Testing Baremetal init.sh ==="
+          git show origin/baremetal:init.sh > init-bm.sh 2>/dev/null || git show baremetal:init.sh > init-bm.sh
+          chmod +x init-bm.sh
+          TEMPLATE_REPO_URL="$GITHUB_WORKSPACE" ./init-bm.sh -y /tmp/ci-test-baremetal
+          rm -f init-bm.sh
+          .github/scripts/assert-starter-contracts.sh baremetal /tmp/ci-test-baremetal
 
   lint-markdown:
     name: Validate Markdown Structure
