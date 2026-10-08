@@ -18,12 +18,12 @@ Em vez de misturar múltiplos starters em uma árvore inchada, este repositório
                                   │   (Documentação e Hub)    │
                                   └─────────────┬─────────────┘
                                                 │
-         ┌───────────────────┬──────────────────┴──────────────────┬───────────────────┐
-         ▼                   ▼                                     ▼                   ▼
-┌─────────────────┐ ┌─────────────────┐                   ┌─────────────────┐ ┌─────────────────┐
-│branch greenfield│ │branch brownfield│                   │ branch blackbox │ │  branch infra   │
-│Projetos do Zero │ │Projetos Exist.  │                   │Engenharia Rever.│ │ Serviços & IaC  │
-└─────────────────┘ └─────────────────┘                   └─────────────────┘ └─────────────────┘
+         ┌───────────────────┬──────────────────┼──────────────────┬───────────────────┐
+         ▼                   ▼                  ▼                  ▼                   ▼
+┌─────────────────┐ ┌─────────────────┐ ┌───────────────┐ ┌─────────────────┐ ┌─────────────────┐
+│branch greenfield│ │branch brownfield│ │branch blackbox│ │  branch infra   │ │branch baremetal │
+│Projetos do Zero │ │Projetos Exist.  │ │Engenharia Rev.│ │ Serviços & IaC  │ │PC & Workstation │
+└─────────────────┘ └─────────────────┘ └───────────────┘ └─────────────────┘ └─────────────────┘
 ```
 
 | Branch | Foco do Projeto | Principais Componentes | Quando Usar |
@@ -32,6 +32,7 @@ Em vez de misturar múltiplos starters em uma árvore inchada, este repositório
 | **`brownfield`** | Código **legado / já existente** | `.agent/INVARIANTS.md` (Cercas de Chesterton), `install.sh`, Task 00 de Discovery, testes de caracterização, política estrita de *no-push* (revisão humana obrigatória). | Quando você quer colocar agentes para trabalhar com segurança em um projeto que já existe e roda em produção. |
 | **`blackbox`** | **Engenharia Reversa & Integração** | `.agent/ENDPOINTS.md` (Catálogo de rotas descobertas), `.agent/skills/reverse-engineering/`, `init.sh`, fixtures de replay e backoff defensivo. | Quando você precisa mapear, criar wrappers, scrapers ou integrar com sistemas legados/fechados sem documentação (ex: SEI/SIP). |
 | **`infra`** | **Infraestrutura & Serviços** | `.agent/SERVICES.md` (Topologia e portas), `.agent/skills/compose-service/`, `compose.yaml.example`, `init.sh`, limites de recursos e healthchecks. | Quando você quer provisionar e orquestrar serviços (Docker Compose, VictoriaLogs, Uptime Kuma, bancos de dados, Homelab). |
+| **`baremetal`** | **Otimização de PC & Workstation** | `.agent/BASELINE.md` (Inventário do sistema), `.agent/INVARIANTS.md`, `.agent/TUNINGS.md`, `.agent/skills/baremetal-tuning/`, `init.sh`, contratos de rollback. | Quando for calibrar parâmetros do SO, kernel, sysctl, serviços systemd, dotfiles ou manutenção no PC/host local. |
 | **`main`** | **Governança & Hub** | Documentação geral, matriz de decisão, histórico de evolução dos templates. | Para manter e consultar este ecossistema. |
 
 Playbooks que valem para **vários** repositórios (contrato de UI, proto, porte, QA de agentes) **não** ficam nesta `main`. Fonte: [`ye-sandbox/agent-skills`](https://github.com/ye-sandbox/agent-skills) (privado). No host: clone + `./install.sh`. Skills que o starter **embarca** continuam nas branches acima.
@@ -128,6 +129,27 @@ rm -rf .git && git init -b main && git add . && git commit -m "chore: initial se
 
 ---
 
+### 5. Otimização de PC, SO & Workstation (Baremetal)
+
+Para calibrar parâmetros de sistema operacional, sysctl, tweaks de kernel, serviços systemd ou dotfiles com garantias de rollback:
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/ye-sandbox/template-agent/baremetal/init.sh | bash -s -- meu-workstation-ops
+cd meu-workstation-ops
+```
+
+*Ou via clone manual do Git:*
+```bash
+git clone --depth 1 -b baremetal https://github.com/ye-sandbox/template-agent.git meu-workstation-ops
+cd meu-workstation-ops
+rm -rf .git && git init -b main && git add . && git commit -m "chore: initial setup"
+```
+
+**Primeiro prompt para o agente em repositório de workstation baremetal:**
+> *"Leia o AGENTS.md, .agent/BASELINE.md, .agent/INVARIANTS.md e a skill em .agent/skills/baremetal-tuning/SKILL.md. Apresente seu plano de implementação para a Tarefa [00.1] Auditoria de Baseline e Descoberta de Performance antes de executar qualquer modificação ou comando privilegiado."*
+
+---
+
 ## 🛡️ Comparativo de Filosofia e Governança
 
 ```mermaid
@@ -155,6 +177,12 @@ graph TD
     E --> E2[Skill padronizada compose-service]
     E --> E3[Healthchecks e limites de recursos obrigatórios]
     E --> E4[Proteção contra exclusão acidental de volumes]
+
+    A -- PC / Workstation / Host OS --> F[Use branch baremetal]
+    F --> F1[Inventário de sistema em .agent/BASELINE.md]
+    F --> F2[Regra Rollback-First: par de backup e script de reversão]
+    F --> F3[Registro de mudanças em .agent/TUNINGS.md]
+    F --> F4[Subsistemas críticos protegidos por INVARIANTS.md]
 ```
 
 ---
