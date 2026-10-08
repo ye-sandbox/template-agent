@@ -1,13 +1,13 @@
 #!/usr/bin/env bash
 # Assert scaffolding + guardrail contracts on a generated starter.
-# Usage: assert-starter-contracts.sh <greenfield|brownfield|brownfield-stealth|blackbox|infra> <dir>
+# Usage: assert-starter-contracts.sh <greenfield|brownfield|brownfield-stealth|blackbox|infra|baremetal> <dir>
 set -euo pipefail
 
 KIND="${1:-}"
 ROOT="${2:-}"
 
 if [ -z "$KIND" ] || [ -z "$ROOT" ] || [ ! -d "$ROOT" ]; then
-  echo "Usage: $0 <greenfield|brownfield|brownfield-stealth|blackbox|infra> <generated-dir>" >&2
+  echo "Usage: $0 <greenfield|brownfield|brownfield-stealth|blackbox|infra|baremetal> <generated-dir>" >&2
   exit 2
 fi
 
@@ -165,12 +165,41 @@ assert_infra() {
   docker compose --env-file "$ROOT/.env.example" -f "$ROOT/compose.yaml.example" config --quiet
 }
 
+assert_baremetal() {
+  need_file AGENTS.md
+  need_dir .agent
+  need_file .agent/BASELINE.md
+  need_file .agent/INVARIANTS.md
+  need_file .agent/TUNINGS.md
+  need_file .agent/skills/baremetal-tuning/SKILL.md
+  need_file .agent/TASK.md
+  need_file .agent/NOTES.md
+  need_file .agent/ARCHIVE.md
+  need_file package.json
+  need_file tests/smoke.test.js
+  need_file .gitignore
+  need_dir .git
+  need_absent init.sh
+  need_one_commit
+  need_grep AGENTS.md 'Rollback-First' -qiE
+  need_grep AGENTS.md 'Technical English' -qiF
+  need_grep AGENTS.md 'sudo' -qiF
+  need_grep AGENTS.md 'npm test' -qF
+  need_grep package.json '"test": "node --test"' -qF
+  need_grep .gitignore '.backups/' -qF
+  need_grep .gitignore '.maestri/' -qF
+  need_grep .agent/TUNINGS.md 'Registry' -qiE
+  need_grep .agent/BASELINE.md 'Baseline' -qiE
+  need_grep .agent/INVARIANTS.md 'Chesterton' -qF
+}
+
 case "$KIND" in
   greenfield) assert_greenfield ;;
   brownfield) assert_brownfield ;;
   brownfield-stealth) assert_brownfield_stealth ;;
   blackbox) assert_blackbox ;;
   infra) assert_infra ;;
+  baremetal) assert_baremetal ;;
   *)
     echo "Unknown starter kind: $KIND" >&2
     exit 2
