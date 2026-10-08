@@ -112,6 +112,7 @@ Not restricted to phase `99.x`. When releasing `vX.Y.Z`:
 - **MUST NOT** expose administrative or database ports to `0.0.0.0` without strong auth or network isolation.
 - **MUST NOT** add services to Compose without updating `.agent/SERVICES.md`.
 - **Circuit breaker:** 2 consecutive failures with the same root cause $\rightarrow$ stop and ask the user.
+- **MUST** write all agent-facing directives, service catalogs, skills, and task logs (`AGENTS.md`, `.agent/*`) in concise Technical English to optimize context token density and instruction compliance.
 
 ---
 
