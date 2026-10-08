@@ -53,6 +53,7 @@
 | 2026-10-01 | Runner canônico de testes no starter (`package.json`) vs descoberta ad-hoc | Omissão do script "test" no scaffold (ex: `create-vite`) causava ~30 steps de overhead com o agente tentando compilações inline (esbuild em base64). Starter agora nasce com `package.json` zero-dependência (`node --test`), `tests/smoke.test.js` e guardrail no `AGENTS.md` exigindo comando oficial (`npm test`/`vitest run`/`pytest`). |
 | 2026-10-01 | Ignore cache incremental TS (`*.tsbuildinfo`) e estado de canvas (`.maestri/`) | `*.tsbuildinfo` causa churn e merge conflicts frequentes em builds incrementais; `.maestri/` isola metadados locais de canvas e terminais do Maestri sem poluir templates e repositórios gerados. |
 | 2026-10-05 | Diário cumulativo de ADRs em `docs/adr/decisions.md` e contratos ativos em `NOTES.md` | O diário de decisões cresce indefinidamente e polui a janela de contexto se mantido no `NOTES.md` always-on. Migrar para `docs/adr/decisions.md` habilita progressive disclosure sob demanda, enquanto `NOTES.md` preserva apenas contratos ativos (incluindo topologia canônica multi-agente `dev-trinity-sentinel`, rotas e gotchas). |
+| 2026-10-08 | Branch `baremetal` para host OS & PC tuning | Diferenciação fundamental entre infraestrutura virtualizada/containers (`infra`) e sistema operacional nativo/hardware (`baremetal`). Exige guardrail Rollback-First (par obrigatório backup + `revert-*.sh` antes de tocar em `/etc` ou kernel) para prevenir quebras catastróficas do host. |
 
 ### Formal ADR Index
 
