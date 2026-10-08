@@ -10,19 +10,23 @@
 
 ## Active Task
 
-### 📌 Task [XX.Y]: [Short descriptive title]
+### 📌 Task [16.1]: Add Baremetal & Host Optimization Starter Template Branch (`baremetal`)
 
-- **Description:** [2–4 lines for the agent to assemble a plan.]
-- **Systems Involved:** [e.g.: `docs`, `hub`, `branch-greenfield`]
+- **Description:** Implement the specialized `baremetal` template branch for PC/workstation tuning, OS administration, kernel/sysctl tweaks, hardware diagnostics, and dotfiles with mandatory rollback-first pairs, baseline audits, and non-destructive execution guardrails. Update Hub documentation, branch map, and CI assertions.
+- **Systems Involved:** `hub`, `branch-baremetal`, `ci`, `docs`
 - **Action Type:**
-  - [ ] Read-only / Documentation
-  - [ ] Source code changes
-- **Status:** READY FOR PLANNING
+  - [x] Read-only / Documentation
+  - [x] Source code changes
+- **Status:** RUNNING
   *(Workflow: `READY FOR PLANNING` → `PLANNING` on presenting plan → approval → `RUNNING`)*
 
 ### Acceptance Criteria
-- [ ] [Verifiable criterion 1]
-- [ ] [Verifiable criterion 2]
+- [ ] Branch `baremetal` created cleanly with isolated root and zero merge contamination.
+- [ ] Canonical files on `baremetal`: `AGENTS.md`, `.agent/INVARIANTS.md`, `.agent/BASELINE.md`, `.agent/TUNINGS.md`, `.agent/skills/baremetal-tuning/SKILL.md`, `.agent/TASK.md`, `.agent/NOTES.md`, `.agent/ARCHIVE.md`, `init.sh`, `.gitignore`, `package.json`, `tests/smoke.test.js`.
+- [ ] Scaffolding and guardrail contracts asserted in `.github/scripts/assert-starter-contracts.sh` (`assert_baremetal`).
+- [ ] CI matrix in `.github/workflows/ci.yml` validates `baremetal` scaffolding hermetically.
+- [ ] Hub docs (`README.md`, `README.pt-br.md`, `AGENTS.md`) document the `baremetal` branch and quickstart.
+- [ ] All git checks pass (`git diff --check`).
 
 ---
 
