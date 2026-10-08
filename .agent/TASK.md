@@ -10,23 +10,19 @@
 
 ## Active Task
 
-### 📌 Task [16.1]: Add Baremetal & Host Optimization Starter Template Branch (`baremetal`)
+### 📌 Task [XX.Y]: [Short descriptive title]
 
-- **Description:** Implement the specialized `baremetal` template branch for PC/workstation tuning, OS administration, kernel/sysctl tweaks, hardware diagnostics, and dotfiles with mandatory rollback-first pairs, baseline audits, and non-destructive execution guardrails. Update Hub documentation, branch map, and CI assertions.
-- **Systems Involved:** `hub`, `branch-baremetal`, `ci`, `docs`
+- **Description:** [2–4 lines for the agent to assemble a plan.]
+- **Systems Involved:** [e.g.: `docs`, `hub`, `branch-greenfield`]
 - **Action Type:**
-  - [x] Read-only / Documentation
-  - [x] Source code changes
-- **Status:** RUNNING
+  - [ ] Read-only / Documentation
+  - [ ] Source code changes
+- **Status:** READY FOR PLANNING
   *(Workflow: `READY FOR PLANNING` → `PLANNING` on presenting plan → approval → `RUNNING`)*
 
 ### Acceptance Criteria
-- [ ] Branch `baremetal` created cleanly with isolated root and zero merge contamination.
-- [ ] Canonical files on `baremetal`: `AGENTS.md`, `.agent/INVARIANTS.md`, `.agent/BASELINE.md`, `.agent/TUNINGS.md`, `.agent/skills/baremetal-tuning/SKILL.md`, `.agent/TASK.md`, `.agent/NOTES.md`, `.agent/ARCHIVE.md`, `init.sh`, `.gitignore`, `package.json`, `tests/smoke.test.js`.
-- [ ] Scaffolding and guardrail contracts asserted in `.github/scripts/assert-starter-contracts.sh` (`assert_baremetal`).
-- [ ] CI matrix in `.github/workflows/ci.yml` validates `baremetal` scaffolding hermetically.
-- [ ] Hub docs (`README.md`, `README.pt-br.md`, `AGENTS.md`) document the `baremetal` branch and quickstart.
-- [ ] All git checks pass (`git diff --check`).
+- [ ] [Verifiable criterion 1]
+- [ ] [Verifiable criterion 2]
 
 ---
 
@@ -36,6 +32,7 @@
 
 | Task | Title | Commit(s) | Date |
 |---|---|---|---|
+| [16.1] | Add Baremetal & Host Optimization Starter Template Branch (`baremetal`) | [`116aba9`, `4a081c5`, `7b6a874`, `66ba367`] | 2026-10-08 |
 | [15.1] | Standardize Agent-Facing Documentation in Technical English Across Templates | [`8b39dc8`, `9f44ed0`, `66d2955`, `71ce354`, `55d5f67`, `3c504c1`] | 2026-10-08 |
 | [14.1] | Starter Templates ADR Diary (`docs/adr/decisions.md`) and Active Contracts Isolation (`NOTES.md`) | [`2c28814`, `10b411d`, `444a058`, `434d9af`, `ad84677`] | 2026-10-05 |
 | [04.1] | Enxugar guardrails e corrigir incoerências de contexto | [`b25715e`, `d615950`, `254a3ef`, `2bdd0eb`, `2ea2d63`, `0231b5e`, `58a1fc3`, `376adbc`, `ae7c529`, `4c6c90c`, `6b2a7e4`] | 2026-09-06 |
