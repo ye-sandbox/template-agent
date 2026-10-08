@@ -61,6 +61,7 @@ assert_greenfield() {
   need_grep AGENTS.md 'npm test' -qF
   need_grep package.json '"test": "node --test"' -qF
   need_grep .agent/ECOSYSTEM.md 'Repository Topology Matrix' -qF
+  need_grep AGENTS.md 'Technical English' -qiF
   need_grep AGENTS.md 'circuit breaker' -qiE
   need_grep .gitignore '.env' -qF
   need_grep .gitignore '!.env.example' -qF
@@ -80,6 +81,7 @@ assert_brownfield() {
   need_file .agent/ARCHIVE.md
   need_grep AGENTS.md '.agent/INVARIANTS.md' -qF
   need_grep AGENTS.md 'characteriz|caracteriza' -qiE
+  need_grep AGENTS.md 'Technical English' -qiF
   need_grep AGENTS.md 'git push' -qiF
   need_grep .agent/INVARIANTS.md 'Chesterton' -qF
 }
@@ -112,6 +114,7 @@ assert_blackbox() {
   need_absent init.sh
   need_one_commit
   need_grep AGENTS.md 'git push' -qiF
+  need_grep AGENTS.md 'Technical English' -qiF
   need_grep AGENTS.md 'fixture' -qiE
   need_grep AGENTS.md 'npm test' -qF
   need_grep package.json '"test": "node --test"' -qF
@@ -150,6 +153,7 @@ assert_infra() {
   need_grep docs/incidents/README.md 'Tier 1' -qF
   need_grep docs/incidents/000-template.md 'author_type' -qF
   need_grep AGENTS.md 'down -v' -qF
+  need_grep AGENTS.md 'Technical English' -qiF
   need_grep AGENTS.md ':latest' -qF
   need_grep AGENTS.md 'healthcheck' -qF
   local healthcheck_count
