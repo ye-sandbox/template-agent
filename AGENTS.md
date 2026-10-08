@@ -113,6 +113,7 @@ OS/shell, architecture, language, package manager **already present in repo**, f
 4. **MUST NOT drop fields** from legacy payloads/routes. New fields MUST be optional with safe backward-compatible defaults.
 5. **Database safety:** MUST NOT alter existing columns in ways that break running versions. Add new columns as nullable or with defaults.
 6. **MUST NOT mutate** live production databases or execute destructive SQL queries.
+7. **Agent Documentation Language:** MUST write all agent-facing directives, skills, invariants, and task logs (`AGENTS.md`, `.agent/*`) in concise Technical English to minimize token consumption and maximize instruction compliance.
 
 ---
 
