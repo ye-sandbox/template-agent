@@ -158,6 +158,7 @@ Every project MUST define an official, reproducible test command (e.g. `"test": 
 - **MUST NOT** invent API parameters or endpoints without checking MCP or official docs.
 - **MUST NOT** ignore domain skills relevant to the active task.
 - **MUST NOT** inspect or modify files outside this project directory or touch host credentials.
+- **MUST** write all agent-facing directives, skills, contracts, and task logs (`AGENTS.md`, `.agent/*`) in concise Technical English to maximize instruction fidelity and minimize context token overhead.
 
 ---
 
