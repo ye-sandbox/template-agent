@@ -177,6 +177,12 @@ assert_baremetal() {
   need_file .agent/ARCHIVE.md
   need_file package.json
   need_file tests/smoke.test.js
+  need_file benchmarks/README.md
+  need_dir benchmarks/scripts
+  need_file benchmarks/scripts/bench-cpu.sh
+  need_file benchmarks/scripts/bench-io.sh
+  need_file benchmarks/scripts/bench-latency.sh
+  need_file benchmarks/scripts/monitor-thermals.sh
   need_file .gitignore
   need_dir .git
   need_absent init.sh
@@ -188,6 +194,8 @@ assert_baremetal() {
   need_grep package.json '"test": "node --test"' -qF
   need_grep .gitignore '.backups/' -qF
   need_grep .gitignore '.maestri/' -qF
+  need_grep .gitignore 'benchmarks/runs/' -qF
+  need_grep .gitignore '*.raw' -qF
   need_grep .agent/TUNINGS.md 'Registry' -qiE
   need_grep .agent/BASELINE.md 'Baseline' -qiE
   need_grep .agent/INVARIANTS.md 'Chesterton' -qF

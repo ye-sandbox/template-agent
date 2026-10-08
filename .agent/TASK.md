@@ -32,6 +32,7 @@
 
 | Task | Title | Commit(s) | Date |
 |---|---|---|---|
+| [16.2] | Baremetal Benchmark & Telemetry Harness Structure (`benchmarks/`, `.gitignore`, skill & contracts) | [`1590f6a`] | 2026-10-08 |
 | [16.1] | Add Baremetal & Host Optimization Starter Template Branch (`baremetal`) | [`116aba9`, `4a081c5`, `7b6a874`, `66ba367`] | 2026-10-08 |
 | [15.1] | Standardize Agent-Facing Documentation in Technical English Across Templates | [`8b39dc8`, `9f44ed0`, `66d2955`, `71ce354`, `55d5f67`, `3c504c1`] | 2026-10-08 |
 | [14.1] | Starter Templates ADR Diary (`docs/adr/decisions.md`) and Active Contracts Isolation (`NOTES.md`) | [`2c28814`, `10b411d`, `444a058`, `434d9af`, `ad84677`] | 2026-10-05 |
@@ -64,7 +65,7 @@
 
 ## Backlog (Upcoming, in priority order)
 
-*(empty)*
+- [ ] Baremetal continuous observability: stream hwmonitor and latency metrics to VictoriaLogs via Vector (vector + victorialogs integration)
 
 ---
 
