@@ -10,21 +10,19 @@
 
 ## Active Task
 
-### 📌 Task [15.1]: Standardize Agent-Facing Documentation in Technical English Across Templates
+### 📌 Task [XX.Y]: [Short descriptive title]
 
-- **Description:** Explicitly establish and enforce in `AGENTS.md` across all template branches (`main`, `greenfield`, `brownfield`, `blackbox`, `infra`) that all agent-facing directives, skills, contracts, and task logs must be written in Technical English for token economy and instruction-following fidelity.
-- **Systems Involved:** `hub`, `branch-greenfield`, `branch-brownfield`, `branch-blackbox`, `branch-infra`
+- **Description:** [2–4 lines for the agent to assemble a plan.]
+- **Systems Involved:** [e.g.: `docs`, `hub`, `branch-greenfield`]
 - **Action Type:**
-  - [x] Read-only / Documentation
+  - [ ] Read-only / Documentation
   - [ ] Source code changes
-- **Status:** RUNNING
+- **Status:** READY FOR PLANNING
   *(Workflow: `READY FOR PLANNING` → `PLANNING` on presenting plan → approval → `RUNNING`)*
 
 ### Acceptance Criteria
-- [ ] Explicit Technical English rule added to `AGENTS.md` on `main` under Golden Rules.
-- [ ] Rule propagated to `greenfield`, `brownfield`, `blackbox`, and `infra` templates without branch merge pollution.
-- [ ] `git diff --check` passes cleanly across all branches.
-- [ ] Automated starter contracts verification in `.github/scripts/assert-starter-contracts.sh` passes.
+- [ ] [Verifiable criterion 1]
+- [ ] [Verifiable criterion 2]
 
 ---
 
@@ -34,6 +32,7 @@
 
 | Task | Title | Commit(s) | Date |
 |---|---|---|---|
+| [15.1] | Standardize Agent-Facing Documentation in Technical English Across Templates | [`8b39dc8`, `9f44ed0`, `66d2955`, `71ce354`, `55d5f67`, `3c504c1`] | 2026-10-08 |
 | [14.1] | Starter Templates ADR Diary (`docs/adr/decisions.md`) and Active Contracts Isolation (`NOTES.md`) | [`2c28814`, `10b411d`, `444a058`, `434d9af`, `ad84677`] | 2026-10-05 |
 | [04.1] | Enxugar guardrails e corrigir incoerências de contexto | [`b25715e`, `d615950`, `254a3ef`, `2bdd0eb`, `2ea2d63`, `0231b5e`, `58a1fc3`, `376adbc`, `ae7c529`, `4c6c90c`, `6b2a7e4`] | 2026-09-06 |
 | [04.2] | Asserções de contrato no CI dos starters | [`c582fd1`, `0397624`, `e575ec0`] | 2026-09-06 |
