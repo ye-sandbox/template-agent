@@ -26,6 +26,7 @@ When a conflict cannot be resolved using this hierarchy, the agent MUST halt exe
 - **`brownfield`:** Injection template for existing/legacy codebases (`install.sh`, `.agent/INVARIANTS.md`, Task 00 Discovery).
 - **`blackbox`:** Template for reverse engineering, scrapers, automations, and undocumented closed APIs (`.agent/ENDPOINTS.md`, `.agent/skills/reverse-engineering/`, `init.sh`).
 - **`infra`:** Infrastructure-as-Code (IaC), Docker Compose, service orchestration, and Homelab (`.agent/SERVICES.md`, `.agent/skills/compose-service/`, `compose.yaml.example`, `init.sh`).
+- **`baremetal`:** Template for PC/workstation tuning, host OS administration, kernel/sysctl tweaks, and dotfiles (`.agent/BASELINE.md`, `.agent/INVARIANTS.md`, `.agent/TUNINGS.md`, `.agent/skills/baremetal-tuning/`, `init.sh`).
 
 ---
 
@@ -47,6 +48,7 @@ The agent MUST optimize context loading using the following progressive disclosu
    - For legacy injection or brownfield workflows: checkout and test on `brownfield`.
    - For reverse engineering, scrapers, or closed APIs: checkout and test on `blackbox`.
    - For infrastructure, Docker Compose, or services: checkout and test on `infra`.
+   - For baremetal, host OS tuning, or workstation ops: checkout and test on `baremetal`.
    - For hub docs, governance, or new template branches: work directly on `main`.
 3. **Execution Modes:**
    - **Fast-Path (Ad-Hoc & Operational Requests):**
@@ -120,14 +122,14 @@ Not restricted to phase `99.x`. When releasing `vX.Y.Z`:
 
 ## 🔄 Inter-Branch Synchronization Protocol
 
-Because branches `greenfield`, `brownfield`, `blackbox`, `infra`, and `main` have intentionally distinct root directories, **`git merge` between them is strictly prohibited**. Merging pollutes clean template roots.
+Because branches `greenfield`, `brownfield`, `blackbox`, `infra`, `baremetal`, and `main` have intentionally distinct root directories, **`git merge` between them is strictly prohibited**. Merging pollutes clean template roots.
 
 To propagate governance or shared tooling improvements across branches:
 
 ### 1. Atomic Commit Cherry-Picking
 When creating generic improvements applicable across templates:
 ```bash
-# On target branch (e.g., greenfield, brownfield, blackbox, infra):
+# On target branch (e.g., greenfield, brownfield, blackbox, infra, baremetal):
 git cherry-pick <commit-hash>
 ```
 
@@ -144,7 +146,7 @@ git commit -m "chore(sync): sync <file> from <source-branch>"
 - `.gitignore` and `.env.example`: Kept synchronized across all branches.
 - `.agent/TASK.md` and `.agent/NOTES.md`:
   - On `main`: Tracks ecosystem and Template Hub tasks/decisions.
-  - On `greenfield`, `brownfield`, `blackbox`, `infra`: Kept as clean canonical templates for end users.
+  - On `greenfield`, `brownfield`, `blackbox`, `infra`, `baremetal`: Kept as clean canonical templates for end users.
 
 ---
 
@@ -181,7 +183,7 @@ git commit -m "fix(installer): resolve remote execution flag parsing"
 
 ## Golden Rules of this Hub
 
-- **MUST NOT** run `git merge` between specialized branches (`main`, `greenfield`, `brownfield`, `blackbox`, `infra`). Propagate changes exclusively via `git cherry-pick` or selective file checkout.
+- **MUST NOT** run `git merge` between specialized branches (`main`, `greenfield`, `brownfield`, `blackbox`, `infra`, `baremetal`). Propagate changes exclusively via `git cherry-pick` or selective file checkout.
 - **MUST NOT** mix specific template files into `main`. Each starter MUST remain strictly isolated at the root of its own branch.
 - **MUST NOT** force-push (`git push --force`) to primary branches without explicit user permission.
 - **MUST NOT** break backward compatibility of `install.sh` and `init.sh`.

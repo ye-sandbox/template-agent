@@ -18,12 +18,12 @@ Rather than bundling multiple disparate starters into a bloated monolithic direc
                                   │   (Documentation & Hub)   │
                                   └─────────────┬─────────────┘
                                                 │
-         ┌───────────────────┬──────────────────┴──────────────────┬───────────────────┐
-         ▼                   ▼                                     ▼                   ▼
-┌─────────────────┐ ┌─────────────────┐                   ┌─────────────────┐ ┌─────────────────┐
-│branch greenfield│ │branch brownfield│                   │ branch blackbox │ │  branch infra   │
-│Scratch Projects │ │Existing Legacies│                   │Reverse Eng./Scra│ │ Services & IaC  │
-└─────────────────┘ └─────────────────┘                   └─────────────────┘ └─────────────────┘
+         ┌───────────────────┬──────────────────┼──────────────────┬───────────────────┐
+         ▼                   ▼                  ▼                  ▼                   ▼
+┌─────────────────┐ ┌─────────────────┐ ┌───────────────┐ ┌─────────────────┐ ┌─────────────────┐
+│branch greenfield│ │branch brownfield│ │branch blackbox│ │  branch infra   │ │branch baremetal │
+│Scratch Projects │ │Existing Legacies│ │Reverse Eng/Scr│ │ Services & IaC  │ │PC & Workstation │
+└─────────────────┘ └─────────────────┘ └───────────────┘ └─────────────────┘ └─────────────────┘
 ```
 
 | Branch | Project Scope | Core Components | When to Use |
@@ -32,6 +32,7 @@ Rather than bundling multiple disparate starters into a bloated monolithic direc
 | **`brownfield`** | **Existing / Legacy** codebases | `.agent/INVARIANTS.md` (Chesterton's Fences), `install.sh`, Task 00 Discovery, characterization tests, strict *no-push* rule (mandatory human review). | When onboarding AI agents safely onto an existing production codebase. |
 | **`blackbox`** | **Reverse Engineering & Integration** | `.agent/ENDPOINTS.md` (Discovered routes catalog), `.agent/skills/reverse-engineering/`, `init.sh`, replay fixtures, and defensive rate limiting. | When mapping, building clients/wrappers, or integrating with closed/undocumented legacy systems (e.g., enterprise portals, ERPs). |
 | **`infra`** | **Infrastructure & Services** | `.agent/SERVICES.md` (Topology & ports), `.agent/skills/compose-service/`, `compose.yaml.example`, `init.sh`, resource limits, and healthchecks. | When provisioning and orchestrating services (Docker Compose, VictoriaLogs, Uptime Kuma, databases, Homelab). |
+| **`baremetal`** | **Workstation & PC Tuning** | `.agent/BASELINE.md` (System inventory), `.agent/INVARIANTS.md`, `.agent/TUNINGS.md`, `.agent/skills/baremetal-tuning/`, `init.sh`, rollback-first contracts. | When tuning OS parameters, sysctl, kernel tweaks, systemd services, dotfiles, or maintenance on your local PC/host. |
 | **`main`** | **Governance Hub** | Global documentation, decision matrix, and template evolution history. | To maintain and consult this template ecosystem. |
 
 Cross-cutting playbooks spanning **multiple** repositories (UI contract, proto, port, agent QA) are **not** versioned in this `main` branch. Canonical source: [`ye-sandbox/agent-skills`](https://github.com/ye-sandbox/agent-skills) (private). On host: clone + `./install.sh`. Starter-specific skills remain embedded in the corresponding branches above.
@@ -128,6 +129,27 @@ rm -rf .git && git init -b main && git add . && git commit -m "chore: initial se
 
 ---
 
+### 5. PC, OS & Workstation Tuning (Baremetal)
+
+To optimize host OS parameters, sysctl, kernel tweaks, systemd services, or workstation dotfiles with rollback-first guarantees:
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/ye-sandbox/template-agent/baremetal/init.sh | bash -s -- my-workstation-ops
+cd my-workstation-ops
+```
+
+*Or via manual Git clone:*
+```bash
+git clone --depth 1 -b baremetal https://github.com/ye-sandbox/template-agent.git my-workstation-ops
+cd my-workstation-ops
+rm -rf .git && git init -b main && git add . && git commit -m "chore: initial setup"
+```
+
+**Initial prompt for the agent in a baremetal workstation repository:**
+> *"Read AGENTS.md, .agent/BASELINE.md, .agent/INVARIANTS.md, and .agent/skills/baremetal-tuning/SKILL.md. Present your implementation plan for Task [00.1] Baseline System Audit & Performance Discovery before running any modification or privileged commands."*
+
+---
+
 ## 🛡️ Governance & Philosophy Decision Tree
 
 ```mermaid
@@ -155,6 +177,12 @@ graph TD
     E --> E2[Standardized compose-service skill]
     E --> E3[Mandatory healthchecks and resource limits]
     E --> E4[Guardrails against accidental down -v volume drops]
+
+    A -- PC / Workstation / Host OS --> F[Use baremetal branch]
+    F --> F1[System inventory in .agent/BASELINE.md]
+    F --> F2[Rollback-first: backup and revert script pair]
+    F --> F3[Registry of changes in .agent/TUNINGS.md]
+    F --> F4[Critical subsystems guarded by INVARIANTS.md]
 ```
 
 ---
