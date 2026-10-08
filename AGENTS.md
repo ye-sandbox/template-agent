@@ -119,6 +119,7 @@ Every project MUST define an official, reproducible test command (e.g. `"test": 
 5. **Detect Expired Sessions:** Detect 302 redirects or login HTML forms and reauthenticate or fail explicitly.
 6. **Live Circuit Breaker:** 2 consecutive 401/403/429 failures $\rightarrow$ **halt immediately** to prevent account bans.
 7. **Canonical Test Runner:** **MUST NOT** invent ad-hoc test compilation loops or dynamic eval hacks. Tests MUST run via the official test command against sanitized fixtures.
+8. **Agent Documentation Language:** MUST write all agent-facing directives, skills, endpoint maps, and task logs (`AGENTS.md`, `.agent/*`) in concise Technical English to optimize token density and instruction fidelity.
 
 ---
 
