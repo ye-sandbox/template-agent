@@ -1,0 +1,37 @@
+# Secrets and credentials — never commit
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.id_rsa
+id_rsa*
+*.kdbx
+
+# Pre-change host backups (local only)
+.backups/
+backups/
+
+# High-frequency junk & logs
+*.log
+dmesg.txt
+syslog.txt
+sosreport*
+node_modules/
+dist/
+build/
+
+# Hardware dumps containing sensitive serial numbers
+*.dump
+hardware-profile.json
+
+# OS / IDE / agent scratch
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+.agent/scratch/
+.gemini/
+.claude/
+.maestri/
+*.tsbuildinfo
