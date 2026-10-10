@@ -32,6 +32,7 @@
 
 | Task | Title | Commit(s) | Date |
 |---|---|---|---|
+| [17.2] | Latest Stable and LTS Dependency Versioning Directives Across Starters | [`1f45d1d`, `fe49da6`, `bab0d1e`, `d94dfa0`] | 2026-10-10 |
 | [17.1] | Consultative Dependency Trade-offs in Greenfield and Brownfield Starters | [`b473c60`, `4142f6b`, `cde10b3`, `c452bc3`] | 2026-10-10 |
 | [16.2] | Baremetal Benchmark & Telemetry Harness Structure (`benchmarks/`, `.gitignore`, skill & contracts) | [`1590f6a`] | 2026-10-08 |
 | [16.1] | Add Baremetal & Host Optimization Starter Template Branch (`baremetal`) | [`116aba9`, `4a081c5`, `7b6a874`, `66ba367`] | 2026-10-08 |
