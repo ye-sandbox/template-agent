@@ -32,6 +32,7 @@
 
 | Task | Title | Commit(s) | Date |
 |---|---|---|---|
+| [17.1] | Consultative Dependency Trade-offs in Greenfield and Brownfield Starters | [`b473c60`, `4142f6b`, `cde10b3`, `c452bc3`] | 2026-10-10 |
 | [16.2] | Baremetal Benchmark & Telemetry Harness Structure (`benchmarks/`, `.gitignore`, skill & contracts) | [`1590f6a`] | 2026-10-08 |
 | [16.1] | Add Baremetal & Host Optimization Starter Template Branch (`baremetal`) | [`116aba9`, `4a081c5`, `7b6a874`, `66ba367`] | 2026-10-08 |
 | [15.1] | Standardize Agent-Facing Documentation in Technical English Across Templates | [`8b39dc8`, `9f44ed0`, `66d2955`, `71ce354`, `55d5f67`, `3c504c1`] | 2026-10-08 |
