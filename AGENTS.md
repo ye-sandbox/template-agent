@@ -13,7 +13,7 @@ When requirements or directives conflict, the agent MUST resolve them using the 
 2. **Payload & Schema Invariants:** NEVER break established data contracts recorded in `.agent/NOTES.md`, `.agent/ECOSYSTEM.md`, or schemas.
 3. **Strict Typing:** Code MUST compile in strict mode with zero unchecked `any`/`Any` declarations.
 4. **Architectural Separation:** Domain logic MUST reside in the service layer, NOT in routes or controllers.
-5. **Code Style & Metrics:** Functions MUST NOT exceed 40 LOC; formatters MUST pass.
+5. **Code Style & Complexity:** Functions SHOULD remain concise (typically ≤ 50 LOC) with low cognitive complexity; formatters MUST pass.
 
 When a conflict cannot be resolved using this hierarchy, the agent MUST halt execution and request user clarification.
 
@@ -181,9 +181,31 @@ When selecting libraries, frameworks, runtimes, or base images:
 
 ## Code Quality & Contrast Pairs
 
-Functions MUST NOT exceed 40 lines of code. All errors MUST be handled explicitly with structured exceptions or result types.
+Functions SHOULD remain concise (typically under 50 lines of code) with low cognitive complexity and no more than 2–3 levels of indentation (use early returns and guard clauses). Purely declarative constructs (schemas, route registrations, mapping tables, test suites) are exempt from arbitrary line limits. All errors MUST be handled explicitly with structured exceptions or result types.
 
 ### Contrast Pairs (DO / DON'T)
+
+```typescript
+// BAD: Deeply nested indentation and tangled logic
+function processOrder(order: Order) {
+  if (order.isValid) {
+    if (order.hasItems) {
+      if (order.isPaid) {
+        return ship(order);
+      }
+    }
+  }
+}
+
+// GOOD: Guard clauses, flat indentation, and early exit
+function processOrder(order: Order) {
+  if (!order.isValid) throw new ValidationError("Invalid order");
+  if (!order.hasItems) throw new EmptyOrderError("Order has no items");
+  if (!order.isPaid) throw new PaymentRequiredError("Order unpaid");
+
+  return ship(order);
+}
+```
 
 ```typescript
 // BAD: Loose typing and business logic inside route handler
