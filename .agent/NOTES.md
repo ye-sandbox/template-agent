@@ -56,6 +56,7 @@
 | 2026-10-08 | Branch `baremetal` para host OS & PC tuning | Diferenciação fundamental entre infraestrutura virtualizada/containers (`infra`) e sistema operacional nativo/hardware (`baremetal`). Exige guardrail Rollback-First (par obrigatório backup + `revert-*.sh` antes de tocar em `/etc` ou kernel) para prevenir quebras catastróficas do host. |
 | 2026-10-10 | Consultative dependencies vs reinvenção da roda | Proibir instalação autônoma de dependências sem diretriz consultiva levava agentes a escreverem lógica complexa (parsers, crypto, datas) do zero em stdlib. Guardrail agora instrui recomendar lib padrão no plano ao lado de alternativa stdlib com trade-offs (manutenção, attack surface, bundle), aguardando decisão humana. |
 | 2026-10-10 | Versão estável mais recente (data atual) e preferência por LTS | Agentes tendem a ancorar em versões defasadas devido ao corte de treino dos modelos ou a selecionar pre-releases instáveis (canary/alpha). Diretiva fixa o default na versão estável GA mais recente com base na data do dia, prioriza LTS para runtimes e imagens base, e subordina novidade à compatibilidade do ecossistema e invariantes. |
+| 2026-10-10 | Calibração de tamanho de função e complexidade cognitiva vs 40 LOC fixos | Teto rígido de 40 LOC causava fragmentação artificial (indirection hell) e quebrava código declarativo (schemas, rotas, testes). Substituído por heurística de concisão (alvo ≤ 50 LOC), baixo aninhamento (máx 2-3 níveis com guard clauses) e isenção expressa de estruturas declarativas. |
 
 ### Formal ADR Index
 
