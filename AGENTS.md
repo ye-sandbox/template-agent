@@ -143,12 +143,21 @@ Per service:
 
 Every project MUST define an official, reproducible test command (e.g. `"test": "vitest run"` or `"test": "node --test"` in `package.json`, or `pytest` in Python). Adding new dependencies REQUIRES user approval.
 
+### Consultative Dependency & Architectural Trade-offs
+When a non-trivial capability is required that is standardly addressed by established open-source libraries (e.g. complex parsing, cryptography, schema validation, date/time arithmetic):
+- **Do NOT** silently invent complex in-house logic from scratch using stdlib to avoid asking.
+- **Do NOT** install dependencies or unapproved package managers without explicit user permission.
+- **Recommend** the standard, battle-tested library in the implementation plan alongside a zero-dependency/stdlib alternative.
+- **Document trade-offs:** maintenance burden, security attack surface, bundle/binary size impact, and ecosystem maturity.
+- **Await explicit user decision** before adding dependencies to project configurations.
+
 ---
 
 ## Golden Rules
 
 - **MUST NOT** use loose typing (`any`/`Any`). All interfaces and return types MUST be explicitly typed.
 - **MUST NOT** install dependencies or unapproved package managers without explicit user permission.
+- **MUST NOT** reinvent complex standard capabilities from scratch without presenting battle-tested library alternatives and their trade-offs to the user.
 - **MUST NOT** invent ad-hoc test compilation loops, dynamic eval imports, or inline bundler scripts (e.g., inline esbuild in .mjs) to bypass a missing test runner. The test suite MUST run via the project's canonical test command.
 - **MUST NOT** break payload contracts documented in `.agent/NOTES.md` or `.agent/ECOSYSTEM.md`.
 - **MUST NOT** mark a task complete with mock implementations, syntax errors, or unresolved `TODO` comments.
