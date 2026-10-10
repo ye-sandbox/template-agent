@@ -64,6 +64,8 @@ assert_greenfield() {
   need_grep AGENTS.md 'Technical English' -qiF
   need_grep AGENTS.md 'circuit breaker' -qiE
   need_grep AGENTS.md 'Consultative Dependency' -qiF
+  need_grep AGENTS.md 'Dependency & Runtime Versioning' -qiF
+  need_grep AGENTS.md 'LTS' -qiF
   need_grep .gitignore '.env' -qF
   need_grep .gitignore '!.env.example' -qF
   need_grep .gitignore '.maestri/' -qF
@@ -85,6 +87,7 @@ assert_brownfield() {
   need_grep AGENTS.md 'Technical English' -qiF
   need_grep AGENTS.md 'git push' -qiF
   need_grep AGENTS.md 'Consultative Dependencies' -qiF
+  need_grep AGENTS.md 'Stable & LTS Versioning' -qiF
   need_grep .agent/INVARIANTS.md 'Chesterton' -qF
 }
 
