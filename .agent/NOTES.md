@@ -54,6 +54,7 @@
 | 2026-10-01 | Ignore cache incremental TS (`*.tsbuildinfo`) e estado de canvas (`.maestri/`) | `*.tsbuildinfo` causa churn e merge conflicts frequentes em builds incrementais; `.maestri/` isola metadados locais de canvas e terminais do Maestri sem poluir templates e repositórios gerados. |
 | 2026-10-05 | Diário cumulativo de ADRs em `docs/adr/decisions.md` e contratos ativos em `NOTES.md` | O diário de decisões cresce indefinidamente e polui a janela de contexto se mantido no `NOTES.md` always-on. Migrar para `docs/adr/decisions.md` habilita progressive disclosure sob demanda, enquanto `NOTES.md` preserva apenas contratos ativos (incluindo topologia canônica multi-agente `dev-trinity-sentinel`, rotas e gotchas). |
 | 2026-10-08 | Branch `baremetal` para host OS & PC tuning | Diferenciação fundamental entre infraestrutura virtualizada/containers (`infra`) e sistema operacional nativo/hardware (`baremetal`). Exige guardrail Rollback-First (par obrigatório backup + `revert-*.sh` antes de tocar em `/etc` ou kernel) para prevenir quebras catastróficas do host. |
+| 2026-10-10 | Consultative dependencies vs reinvenção da roda | Proibir instalação autônoma de dependências sem diretriz consultiva levava agentes a escreverem lógica complexa (parsers, crypto, datas) do zero em stdlib. Guardrail agora instrui recomendar lib padrão no plano ao lado de alternativa stdlib com trade-offs (manutenção, attack surface, bundle), aguardando decisão humana. |
 
 ### Formal ADR Index
 
