@@ -151,12 +151,20 @@ When a non-trivial capability is required that is standardly addressed by establ
 - **Document trade-offs:** maintenance burden, security attack surface, bundle/binary size impact, and ecosystem maturity.
 - **Await explicit user decision** before adding dependencies to project configurations.
 
+### Dependency & Runtime Versioning
+When selecting libraries, frameworks, runtimes, or base images:
+- **Default to Latest Stable / LTS:** Select the newest generally available (GA) stable release as of the current date, favoring active LTS (Long-Term Support) versions for foundational runtimes and base images.
+- **Prohibit Pre-releases:** MUST NOT adopt `alpha`, `beta`, `rc`, `preview`, or `canary` releases unless explicitly requested by the user.
+- **Preserve Compatibility:** Existing peer dependencies and project invariants take precedence over latest major versions.
+- **Verify Registry State:** Use official CLI commands (e.g., `npm view <pkg> version`, `pip index versions <pkg>`) or documentation rather than relying on model training cutoff assumptions.
+
 ---
 
 ## Golden Rules
 
 - **MUST NOT** use loose typing (`any`/`Any`). All interfaces and return types MUST be explicitly typed.
 - **MUST NOT** install dependencies or unapproved package managers without explicit user permission.
+- **MUST NOT** select outdated or unstable pre-release versions (alpha/beta/rc/canary) when introducing dependencies or runtimes; select the newest stable release (favoring LTS) grounded on current date, unless constrained by ecosystem compatibility.
 - **MUST NOT** reinvent complex standard capabilities from scratch without presenting battle-tested library alternatives and their trade-offs to the user.
 - **MUST NOT** invent ad-hoc test compilation loops, dynamic eval imports, or inline bundler scripts (e.g., inline esbuild in .mjs) to bypass a missing test runner. The test suite MUST run via the project's canonical test command.
 - **MUST NOT** break payload contracts documented in `.agent/NOTES.md` or `.agent/ECOSYSTEM.md`.
