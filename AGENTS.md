@@ -32,7 +32,7 @@ The agent MUST optimize context loading using the following progressive disclosu
 ## Execution Protocol
 
 1. Read `AGENTS.md`, `.agent/TASK.md`, and `.agent/NOTES.md`. Inspect `.agent/INVARIANTS.md` before touching schemas or integrations.
-2. **Plan first:** Set `Status` in `.agent/TASK.md` to `PLANNING`; submit plan (including regression risk, characterization strategy, and library vs stdlib trade-offs if new capabilities are required); await approval; then set to `RUNNING`.
+2. **Plan first:** Set `Status` in `.agent/TASK.md` to `PLANNING`; submit plan (including regression risk, characterization strategy, and library vs stdlib trade-offs favoring latest stable/LTS releases grounded on current date if new capabilities are required); await approval; then set to `RUNNING`.
 3. Confinement: Diffs MUST be surgical and microscopic.
 4. **Falsifiable Definition of Done (DoD):**
    A task MUST NOT be declared complete based on subjective appraisal. It MUST satisfy:
@@ -115,6 +115,7 @@ OS/shell, architecture, language, package manager **already present in repo**, f
 6. **MUST NOT mutate** live production databases or execute destructive SQL queries.
 7. **Agent Documentation Language:** MUST write all agent-facing directives, skills, invariants, and task logs (`AGENTS.md`, `.agent/*`) in concise Technical English to minimize token consumption and maximize instruction compliance.
 8. **Consultative Dependencies:** When addressing missing capabilities, do NOT silently write complex in-house logic from scratch or install packages autonomously. Recommend battle-tested libraries alongside zero-dependency/stdlib alternatives, detailing maintenance and compatibility trade-offs for user approval.
+9. **Stable & LTS Versioning:** Default to the newest stable release (favoring LTS) grounded on current date, strictly avoiding unapproved pre-releases (`alpha`/`beta`/`rc`/`canary`). Existing peer dependencies, runtime constraints, and `.agent/INVARIANTS.md` take strict precedence over latest major versions.
 
 ---
 
