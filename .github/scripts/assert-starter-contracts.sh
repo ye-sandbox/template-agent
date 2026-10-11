@@ -80,10 +80,13 @@ assert_brownfield() {
   need_file AGENTS.md
   need_dir .agent
   need_file .agent/INVARIANTS.md
+  need_file .agent/ECOSYSTEM.md
   need_file .agent/TASK.md
   need_file .agent/NOTES.md
   need_file .agent/ARCHIVE.md
   need_grep AGENTS.md '.agent/INVARIANTS.md' -qF
+  need_grep AGENTS.md '.agent/ECOSYSTEM.md' -qF
+  need_grep .agent/ECOSYSTEM.md 'Repository Topology Matrix' -qF
   need_grep AGENTS.md 'characteriz|caracteriza' -qiE
   need_grep AGENTS.md 'Technical English' -qiF
   need_grep AGENTS.md 'git push' -qiF
