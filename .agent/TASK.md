@@ -32,6 +32,7 @@
 
 | Task | Title | Commit(s) | Date |
 |---|---|---|---|
+| [18.1] | Multi-repo ecosystem topology template (.agent/ECOSYSTEM.md) and guardrails for brownfield | [`5cae3fc`, `1a5d86e`, `6f40138`] | 2026-10-10 |
 | [17.3] | Calibrate Function Length and Cognitive Complexity Guardrails in Greenfield Starter | [`81c6c4e`, `b6119f3`, `b9d1f40`] | 2026-10-10 |
 | [17.2] | Latest Stable and LTS Dependency Versioning Directives Across Starters | [`1f45d1d`, `fe49da6`, `bab0d1e`, `d94dfa0`] | 2026-10-10 |
 | [17.1] | Consultative Dependency Trade-offs in Greenfield and Brownfield Starters | [`b473c60`, `4142f6b`, `cde10b3`, `c452bc3`] | 2026-10-10 |
