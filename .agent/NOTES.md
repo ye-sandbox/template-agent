@@ -58,6 +58,7 @@
 | 2026-10-10 | Versão estável mais recente (data atual) e preferência por LTS | Agentes tendem a ancorar em versões defasadas devido ao corte de treino dos modelos ou a selecionar pre-releases instáveis (canary/alpha). Diretiva fixa o default na versão estável GA mais recente com base na data do dia, prioriza LTS para runtimes e imagens base, e subordina novidade à compatibilidade do ecossistema e invariantes. |
 | 2026-10-10 | Calibração de tamanho de função e complexidade cognitiva vs 40 LOC fixos | Teto rígido de 40 LOC causava fragmentação artificial (indirection hell) e quebrava código declarativo (schemas, rotas, testes). Substituído por heurística de concisão (alvo ≤ 50 LOC), baixo aninhamento (máx 2-3 níveis com guard clauses) e isenção expressa de estruturas declarativas. |
 | 2026-10-10 | `.agent/ECOSYSTEM.md` no starter brownfield | Sistemas legados e corporativos frequentemente operam como upstream ou downstream de múltiplos microsserviços. O template `ECOSYSTEM.md` provê a matriz de topologia e regras de expand/contract para evitar quebra de integrações durante a modernização. |
+| 2026-10-14 | Paridade de contratos em brownfield e blackbox (ECOSYSTEM.md e docs/adr/decisions.md) | Harmoniza os starters com greenfield, eliminando links quebrados nos gatilhos de AGENTS.md, garantindo que o installer do brownfield distribua topologia e diário de decisões com suporte stealth (.git/info/exclude). |
 
 ### Formal ADR Index
 
