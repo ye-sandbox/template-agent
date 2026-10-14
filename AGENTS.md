@@ -24,6 +24,7 @@ When a conflict cannot be resolved using this hierarchy, the agent MUST halt exe
 The agent MUST optimize context loading using the following progressive disclosure triggers:
 - **Default Context (Loaded on start):** `AGENTS.md`, `.agent/TASK.md`, `.agent/NOTES.md` (Active Contracts only).
 - **Invariants (`.agent/INVARIANTS.md`):** MUST load BEFORE modifying database schemas, shared payloads, or third-party integrations.
+- **Multi-Repo Ecosystem (`.agent/ECOSYSTEM.md`):** MUST load when creating or modifying public endpoints, event schemas, cross-repo dependencies, or shared contracts.
 - **Architectural Decisions (`docs/adr/decisions.md`):** Consult on demand when researching historical rationales or trade-offs.
 - **Legacy Discovery:** Inspect configuration files (`package.json`, `pyproject.toml`, `Makefile`) ONLY during Discovery or when dependency/tool changes are explicitly tasked.
 
