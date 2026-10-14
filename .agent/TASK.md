@@ -10,22 +10,19 @@
 
 ## Active Task
 
-### 📌 Task [18.2]: Harmonize Brownfield and Blackbox Contracts with Greenfield Maturity
+### 📌 Task [XX.Y]: [Short descriptive title]
 
-- **Description:** Resolve missing .agent/ECOSYSTEM.md and docs/adr/decisions.md in brownfield and blackbox starter templates, update installer scripts, and ensure contract assertions pass.
-- **Systems Involved:** `branch-brownfield`, `branch-blackbox`, `hub`, `ci`
+- **Description:** [2–4 lines for the agent to assemble a plan.]
+- **Systems Involved:** [e.g.: `docs`, `hub`, `branch-greenfield`]
 - **Action Type:**
   - [ ] Read-only / Documentation
-  - [x] Source code changes
-- **Status:** RUNNING
+  - [ ] Source code changes
+- **Status:** READY FOR PLANNING
   *(Workflow: `READY FOR PLANNING` → `PLANNING` on presenting plan → approval → `RUNNING`)*
 
 ### Acceptance Criteria
-- [ ] `.agent/ECOSYSTEM.md` added to `brownfield` and copied by `install.sh`.
-- [ ] `docs/adr/decisions.md` added to `brownfield` and `blackbox` templates.
-- [ ] Brownfield `AGENTS.md` updated with `.agent/ECOSYSTEM.md` context trigger and contracts.
-- [ ] `.github/scripts/assert-starter-contracts.sh` passes 100% for `brownfield`, `brownfield-stealth`, and `blackbox`.
-- [ ] `git diff --check` exits with code 0 on all modified branches.
+- [ ] [Verifiable criterion 1]
+- [ ] [Verifiable criterion 2]
 
 ---
 
@@ -35,6 +32,7 @@
 
 | Task | Title | Commit(s) | Date |
 |---|---|---|---|
+| [18.2] | Harmonize Brownfield and Blackbox Contracts with Greenfield Maturity | [`ca8197f`, `1d32d48`, `c2ff6cd`, `bbcfb1f`, `d3fefb0`] | 2026-10-14 |
 | [18.1] | Multi-repo ecosystem topology template (.agent/ECOSYSTEM.md) and guardrails for brownfield | [`5cae3fc`, `1a5d86e`, `6f40138`] | 2026-10-10 |
 | [17.3] | Calibrate Function Length and Cognitive Complexity Guardrails in Greenfield Starter | [`81c6c4e`, `b6119f3`, `b9d1f40`] | 2026-10-10 |
 | [17.2] | Latest Stable and LTS Dependency Versioning Directives Across Starters | [`1f45d1d`, `fe49da6`, `bab0d1e`, `d94dfa0`] | 2026-10-10 |
