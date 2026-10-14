@@ -129,7 +129,7 @@ else
 fi
 
 # 2. Install files into .agent directory
-AGENT_FILES=("INVARIANTS.md" "TASK.md" "NOTES.md" "ARCHIVE.md")
+AGENT_FILES=("INVARIANTS.md" "ECOSYSTEM.md" "TASK.md" "NOTES.md" "ARCHIVE.md")
 
 for file in "${AGENT_FILES[@]}"; do
     dest="$RESOLVED_TARGET/.agent/$file"
@@ -146,9 +146,24 @@ for file in "${AGENT_FILES[@]}"; do
     fi
 done
 
-# 3. Apply Local-Only / Stealth Mode configurations if requested
+# 3. Install architectural decision log into docs/adr
+mkdir -p "$RESOLVED_TARGET/docs/adr"
+dest_decisions="$RESOLVED_TARGET/docs/adr/decisions.md"
+if [ -f "$dest_decisions" ]; then
+    if [ "$FORCE_YES" = true ]; then
+        fetch_file "docs/adr/decisions.md" "$dest_decisions"
+        echo "✅ docs/adr/decisions.md updated (--force)."
+    else
+        echo "ℹ️  decisions.md already exists in docs/adr/. Retaining existing file."
+    fi
+else
+    fetch_file "docs/adr/decisions.md" "$dest_decisions"
+    echo "✅ docs/adr/decisions.md installed."
+fi
+
+# 4. Apply Local-Only / Stealth Mode configurations if requested
 if [ "$LOCAL_ONLY" = true ]; then
-    # 3.1 Exclude files in .git/info/exclude
+    # 4.1 Exclude files in .git/info/exclude
     if command -v git >/dev/null 2>&1 && git -C "$RESOLVED_TARGET" rev-parse --is-inside-work-tree >/dev/null 2>&1; then
         REPO_ROOT="$(git -C "$RESOLVED_TARGET" rev-parse --show-toplevel)"
         GIT_DIR="$(git -C "$RESOLVED_TARGET" rev-parse --git-dir)"
@@ -163,7 +178,7 @@ if [ "$LOCAL_ONLY" = true ]; then
             REL_PREFIX="${RESOLVED_TARGET#$REPO_ROOT/}/"
         fi
 
-        for entry in "${REL_PREFIX}AGENTS.md" "${REL_PREFIX}.agent/"; do
+        for entry in "${REL_PREFIX}AGENTS.md" "${REL_PREFIX}.agent/" "${REL_PREFIX}docs/adr/"; do
             pattern="/$entry"
             if ! grep -Fxq "$pattern" "$EXCLUDE_FILE"; then
                 echo "$pattern" >> "$EXCLUDE_FILE"
