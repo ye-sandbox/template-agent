@@ -59,4 +59,6 @@ Thumbs.db
 .idea/
 *.swp
 *.swo
+.agent/scratch/
+.agent/.cache/
 .maestri/
