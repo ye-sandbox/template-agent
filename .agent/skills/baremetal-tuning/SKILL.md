@@ -107,4 +107,8 @@ fi
   - Invariant assertion (network, audio, display).
   - Execute post-tuning benchmark runner: `./benchmarks/scripts/<bench-script>.sh`.
   - Compare `summary.json` against baseline or pre-tuning run.
+  - If continuous observability is enabled (`VECTOR_ENABLED=true` in `.env`), verify metrics in VictoriaLogs via LogsQL or MCP to correlate live scheduling latency, thermal throttling, and system response:
+    ```logsql
+    service:baremetal-workstation _time:15m
+    ```
 - Update status and metrics in [`.agent/TUNINGS.md`](../../TUNINGS.md).
