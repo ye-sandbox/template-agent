@@ -10,24 +10,19 @@
 
 ## Active Task
 
-### 📌 Task [19.1]: Standardize Knowledge Base (`.agent/knowledge/`) and Schema Across Template Branches
+### 📌 Task [XX.Y]: [Short descriptive title]
 
-- **Description:** Implement canonical knowledge cards structure (.agent/knowledge/), formal schema, template, DoD criteria in AGENTS.md, .agent/.cache/ gitignore rule, and propagate across all starter branches without branch merging.
-- **Systems Involved:** `hub`, `branch-greenfield`, `branch-brownfield`, `branch-blackbox`, `branch-infra`, `branch-baremetal`, `ci`
+- **Description:** [2–4 lines for the agent to assemble a plan.]
+- **Systems Involved:** [e.g.: `docs`, `hub`, `branch-greenfield`]
 - **Action Type:**
   - [ ] Read-only / Documentation
-  - [x] Source code changes
-- **Status:** RUNNING
+  - [ ] Source code changes
+- **Status:** READY FOR PLANNING
   *(Workflow: `READY FOR PLANNING` → `PLANNING` on presenting plan → approval → `RUNNING`)*
 
 ### Acceptance Criteria
-- [ ] `.agent/knowledge/000-schema.md` and `k-000-template.md` authored in Technical English on `main`.
-- [ ] `AGENTS.md` updated on `main` with `.agent/knowledge/` context triggers and DoD knowledge preservation criterion.
-- [ ] `.gitignore` updated with `.agent/.cache/` on `main` and all starter branches.
-- [ ] `.agent/knowledge/` directory and DoD criteria propagated to `greenfield`, `brownfield`, `blackbox`, `infra`, and `baremetal` branches.
-- [ ] `brownfield/install.sh` updated to provision `.agent/knowledge/` in target repositories.
-- [ ] `.github/scripts/assert-starter-contracts.sh` updated and exits with code 0 for all starter kinds.
-- [ ] `git diff --check` passes cleanly across all branches.
+- [ ] [Verifiable criterion 1]
+- [ ] [Verifiable criterion 2]
 
 ---
 
@@ -37,6 +32,7 @@
 
 | Task | Title | Commit(s) | Date |
 |---|---|---|---|
+| [19.1] | Standardize Knowledge Base (.agent/knowledge/) and Schema Across Template Branches | [`382efe9`, `6a6905e`, `0af2716`, `0f4771e`, `e19535a`, `0d52363`, `bd3d2aa`, `0159bab`, `8c62122`, `6ae7aed`] | 2026-10-17 |
 | [18.2] | Harmonize Brownfield and Blackbox Contracts with Greenfield Maturity | [`ca8197f`, `1d32d48`, `c2ff6cd`, `bbcfb1f`, `d3fefb0`] | 2026-10-14 |
 | [18.1] | Multi-repo ecosystem topology template (.agent/ECOSYSTEM.md) and guardrails for brownfield | [`5cae3fc`, `1a5d86e`, `6f40138`] | 2026-10-10 |
 | [17.3] | Calibrate Function Length and Cognitive Complexity Guardrails in Greenfield Starter | [`81c6c4e`, `b6119f3`, `b9d1f40`] | 2026-10-10 |
