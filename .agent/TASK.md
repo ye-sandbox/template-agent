@@ -10,21 +10,19 @@
 
 ## Active Task
 
-### 📌 Task [20.1]: Baremetal Continuous Observability: Stream Hardware Monitor & Latency Metrics to VictoriaLogs via Vector
+### 📌 Task [XX.Y]: [Short descriptive title]
 
-- **Description:** Equip the baremetal template harness with non-intrusive telemetry streaming to VictoriaLogs via Vector HTTP endpoint, adding structured JSON emission to benchmark scripts, environment variables in `.env.example`, LogsQL query documentation, and CI contract assertions.
-- **Systems Involved:** `hub`, `branch-baremetal`, `ci`
+- **Description:** [2–4 lines for the agent to assemble a plan.]
+- **Systems Involved:** [e.g.: `docs`, `hub`, `branch-greenfield`]
 - **Action Type:**
-  - [x] Source code changes
-- **Status:** RUNNING
+  - [ ] Read-only / Documentation
+  - [ ] Source code changes
+- **Status:** READY FOR PLANNING
   *(Workflow: `READY FOR PLANNING` → `PLANNING` on presenting plan → approval → `RUNNING`)*
 
 ### Acceptance Criteria
-- [ ] Add `VECTOR_HOST`, `VECTOR_HTTP_PORT`, and `VECTOR_ENABLED` to `.env.example` on `baremetal`.
-- [ ] Implement Vector HTTP POST streaming (`/logs`) in `benchmarks/scripts/monitor-thermals.sh` and `benchmarks/scripts/bench-latency.sh` following the `victorialogs-integration` canonical contract.
-- [ ] Document VictoriaLogs & Vector integration workflow and sample LogsQL queries in `benchmarks/README.md` and `.agent/skills/baremetal-tuning/SKILL.md`.
-- [ ] Update `.github/scripts/assert-starter-contracts.sh` to validate baremetal telemetry contracts.
-- [ ] All CI assertions pass cleanly (`.github/scripts/assert-starter-contracts.sh`).
+- [ ] [Verifiable criterion 1]
+- [ ] [Verifiable criterion 2]
 
 ---
 
@@ -34,6 +32,7 @@
 
 | Task | Title | Commit(s) | Date |
 |---|---|---|---|
+| [20.1] | Baremetal Continuous Observability: Stream Hardware Monitor & Latency Metrics to VictoriaLogs via Vector | [`7c2d69f`, `1a0d945`, `3afc350`, `62e3b7e`, `e8350ad`] | 2026-10-17 |
 | [19.1] | Standardize Knowledge Base (.agent/knowledge/) and Schema Across Template Branches | [`382efe9`, `6a6905e`, `0af2716`, `0f4771e`, `e19535a`, `0d52363`, `bd3d2aa`, `0159bab`, `8c62122`, `6ae7aed`] | 2026-10-17 |
 | [18.2] | Harmonize Brownfield and Blackbox Contracts with Greenfield Maturity | [`ca8197f`, `1d32d48`, `c2ff6cd`, `bbcfb1f`, `d3fefb0`] | 2026-10-14 |
 | [18.1] | Multi-repo ecosystem topology template (.agent/ECOSYSTEM.md) and guardrails for brownfield | [`5cae3fc`, `1a5d86e`, `6f40138`] | 2026-10-10 |
