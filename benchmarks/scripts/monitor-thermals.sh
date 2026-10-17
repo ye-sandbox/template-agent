@@ -6,6 +6,15 @@ set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 ROOT_DIR="$(cd "$SCRIPT_DIR/../.." && pwd)"
+
+# Source environment variables if .env exists
+if [ -f "$ROOT_DIR/.env" ]; then
+    # shellcheck disable=SC1091
+    set -a
+    source "$ROOT_DIR/.env"
+    set +a
+fi
+
 TIMESTAMP="$(date +%Y%m%d_%H%M%S)"
 RUN_DIR="$ROOT_DIR/benchmarks/runs/${TIMESTAMP}-thermals"
 
@@ -80,4 +89,35 @@ echo ""
 echo "✅ Thermal Snapshot Completed."
 cat "$RUN_DIR/summary.json"
 echo ""
+
+# 5. Stream telemetry to Vector / VictoriaLogs (opt-in)
+STREAM_SCRIPT="$SCRIPT_DIR/stream-telemetry.sh"
+if [ -x "$STREAM_SCRIPT" ]; then
+    TELEMETRY_LEVEL="info"
+    if [ "$MAX_CPU_TEMP_C" != "unknown" ]; then
+        IS_THROTTLING="$(awk -v t="$MAX_CPU_TEMP_C" 'BEGIN { print (t >= 85) ? "1" : "0" }' 2>/dev/null || echo "0")"
+        if [ "$IS_THROTTLING" = "1" ]; then
+            TELEMETRY_LEVEL="warn"
+        fi
+    fi
+
+    if [ "$MAX_CPU_TEMP_C" != "unknown" ]; then
+        TEMP_VAL="$MAX_CPU_TEMP_C"
+    else
+        TEMP_VAL="null"
+    fi
+
+    if [ "$AVG_CPU_FREQ_MHZ" != "unknown" ]; then
+        FREQ_VAL="$AVG_CPU_FREQ_MHZ"
+    else
+        FREQ_VAL="null"
+    fi
+
+    "$STREAM_SCRIPT" \
+        "thermals" \
+        "$TELEMETRY_LEVEL" \
+        "Hardware thermals and clocks snapshot on $(hostname)" \
+        "{\"max_cpu_temp_c\": $TEMP_VAL, \"avg_cpu_freq_mhz\": $FREQ_VAL, \"hostname\": \"$(hostname)\"}"
+fi
+
 echo "💡 Summarize these findings into .agent/BASELINE.md or .agent/TUNINGS.md"

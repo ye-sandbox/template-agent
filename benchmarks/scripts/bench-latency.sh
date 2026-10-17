@@ -6,6 +6,15 @@ set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 ROOT_DIR="$(cd "$SCRIPT_DIR/../.." && pwd)"
+
+# Source environment variables if .env exists
+if [ -f "$ROOT_DIR/.env" ]; then
+    # shellcheck disable=SC1091
+    set -a
+    source "$ROOT_DIR/.env"
+    set +a
+fi
+
 TIMESTAMP="$(date +%Y%m%d_%H%M%S)"
 RUN_DIR="$ROOT_DIR/benchmarks/runs/${TIMESTAMP}-latency"
 
@@ -19,6 +28,7 @@ echo "======================================================="
 TOOL="cyclictest"
 MAX_LATENCY_US="0"
 AVG_LATENCY_US="0"
+P99_LATENCY_US="null"
 
 if command -v cyclictest >/dev/null 2>&1; then
     echo "Running cyclictest (1000 loops, priority 80)..."
@@ -66,9 +76,11 @@ print(f"Avg: {round(avg_jitter, 2)}us, P99: {round(p99_jitter, 2)}us, Max: {roun
         if command -v jq >/dev/null 2>&1; then
             MAX_LATENCY_US="$(jq -r '.max_latency_us' "$RUN_DIR/raw.json" 2>/dev/null || echo "0")"
             AVG_LATENCY_US="$(jq -r '.avg_latency_us' "$RUN_DIR/raw.json" 2>/dev/null || echo "0")"
+            P99_LATENCY_US="$(jq -r '.p99_latency_us' "$RUN_DIR/raw.json" 2>/dev/null || echo "null")"
         else
             MAX_LATENCY_US="$(grep -oE '"max_latency_us":[[:space:]]*[0-9.]+' "$RUN_DIR/raw.json" | awk -F: '{print $2}' | tr -d ' ' || echo "0")"
             AVG_LATENCY_US="$(grep -oE '"avg_latency_us":[[:space:]]*[0-9.]+' "$RUN_DIR/raw.json" | awk -F: '{print $2}' | tr -d ' ' || echo "0")"
+            P99_LATENCY_US="$(grep -oE '"p99_latency_us":[[:space:]]*[0-9.]+' "$RUN_DIR/raw.json" | awk -F: '{print $2}' | tr -d ' ' || echo "null")"
         fi
     fi
 fi
@@ -79,7 +91,8 @@ cat <<EOF > "$RUN_DIR/summary.json"
   "hostname": "$(hostname)",
   "tool": "$TOOL",
   "avg_latency_us": "$AVG_LATENCY_US",
-  "max_latency_us": "$MAX_LATENCY_US"
+  "max_latency_us": "$MAX_LATENCY_US",
+  "p99_latency_us": $P99_LATENCY_US
 }
 EOF
 
@@ -87,4 +100,21 @@ echo ""
 echo "✅ Latency Benchmark Completed."
 cat "$RUN_DIR/summary.json"
 echo ""
+
+# Stream telemetry to Vector / VictoriaLogs (opt-in)
+STREAM_SCRIPT="$SCRIPT_DIR/stream-telemetry.sh"
+if [ -x "$STREAM_SCRIPT" ]; then
+    TELEMETRY_LEVEL="info"
+    IS_SPIKE="$(awk -v l="$MAX_LATENCY_US" 'BEGIN { print (l >= 500) ? "1" : "0" }' 2>/dev/null || echo "0")"
+    if [ "$IS_SPIKE" = "1" ]; then
+        TELEMETRY_LEVEL="warn"
+    fi
+
+    "$STREAM_SCRIPT" \
+        "latency" \
+        "$TELEMETRY_LEVEL" \
+        "Host latency benchmark on $(hostname) via $TOOL" \
+        "{\"tool\": \"$TOOL\", \"avg_latency_us\": $AVG_LATENCY_US, \"max_latency_us\": $MAX_LATENCY_US, \"p99_latency_us\": $P99_LATENCY_US, \"hostname\": \"$(hostname)\"}"
+fi
+
 echo "💡 Summarize these findings into .agent/BASELINE.md or .agent/TUNINGS.md"
