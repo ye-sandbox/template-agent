@@ -26,6 +26,7 @@ The agent MUST optimize context loading using the following progressive disclosu
 - **Invariants (`.agent/INVARIANTS.md`):** MUST load BEFORE modifying database schemas, shared payloads, or third-party integrations.
 - **Multi-Repo Ecosystem (`.agent/ECOSYSTEM.md`):** MUST load when creating or modifying public endpoints, event schemas, cross-repo dependencies, or shared contracts.
 - **Architectural Decisions (`docs/adr/decisions.md`):** Consult on demand when researching historical rationales or trade-offs.
+- **Knowledge Base (`.agent/knowledge/`):** Consult on demand when diagnosing obscure runtime errors, platform gotchas, or adding workarounds.
 - **Legacy Discovery:** Inspect configuration files (`package.json`, `pyproject.toml`, `Makefile`) ONLY during Discovery or when dependency/tool changes are explicitly tasked.
 
 ---
@@ -42,6 +43,7 @@ The agent MUST optimize context loading using the following progressive disclosu
    - [ ] Strict Typing: New code is strictly typed with 0 type errors.
    - [ ] Linters: Project validation commands exit with code 0.
    - [ ] Git Cleanliness: `git diff --check` exits with code 0.
+   - [ ] Knowledge Preservation: Document obscure platform/runtime gotchas or workarounds as an atomic card in `.agent/knowledge/` (if applicable).
    - [ ] Atomic Commit: Conventional Commits in English (`fix(legacy): ...`).
    - [ ] Task Log: Active task logged in `TASK.md`; discoveries recorded in `INVARIANTS.md` or `NOTES.md`.
 

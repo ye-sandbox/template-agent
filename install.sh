@@ -161,7 +161,26 @@ else
     echo "✅ docs/adr/decisions.md installed."
 fi
 
-# 4. Apply Local-Only / Stealth Mode configurations if requested
+# 4. Install knowledge base schema and template into .agent/knowledge
+mkdir -p "$RESOLVED_TARGET/.agent/knowledge"
+KNOWLEDGE_FILES=("000-schema.md" "k-000-template.md")
+
+for file in "${KNOWLEDGE_FILES[@]}"; do
+    dest="$RESOLVED_TARGET/.agent/knowledge/$file"
+    if [ -f "$dest" ]; then
+        if [ "$FORCE_YES" = true ]; then
+            fetch_file ".agent/knowledge/$file" "$dest"
+            echo "✅ .agent/knowledge/$file updated (--force)."
+        else
+            echo "ℹ️  $file already exists in .agent/knowledge/. Retaining existing file."
+        fi
+    else
+        fetch_file ".agent/knowledge/$file" "$dest"
+        echo "✅ .agent/knowledge/$file installed."
+    fi
+done
+
+# 5. Apply Local-Only / Stealth Mode configurations if requested
 if [ "$LOCAL_ONLY" = true ]; then
     # 4.1 Exclude files in .git/info/exclude
     if command -v git >/dev/null 2>&1 && git -C "$RESOLVED_TARGET" rev-parse --is-inside-work-tree >/dev/null 2>&1; then
