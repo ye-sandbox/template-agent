@@ -45,6 +45,8 @@ assert_greenfield() {
   need_file .agent/skills/database-migration/SKILL.md
   need_file .agent/skills/api-endpoint/SKILL.md
   need_file .agent/adr/000-template.md
+  need_file .agent/knowledge/000-schema.md
+  need_file .agent/knowledge/k-000-template.md
   need_file docs/adr/decisions.md
   need_file .agent/ECOSYSTEM.md
   need_file package.json
@@ -55,6 +57,8 @@ assert_greenfield() {
   need_grep AGENTS.md '.agent/TASK.md' -qF
   need_grep AGENTS.md '.agent/NOTES.md' -qF
   need_grep AGENTS.md 'docs/adr/decisions.md' -qF
+  need_grep AGENTS.md '.agent/knowledge/' -qF
+  need_grep AGENTS.md 'Knowledge [Pp]reservation' -qiE
   need_grep .agent/NOTES.md 'docs/adr/decisions.md' -qF
   need_grep .agent/NOTES.md 'Active Contracts' -qF
   need_grep AGENTS.md '.agent/ECOSYSTEM.md' -qF
@@ -71,6 +75,7 @@ assert_greenfield() {
   need_grep .gitignore '!.env.example' -qF
   need_grep .gitignore '.maestri/' -qF
   need_grep .gitignore 'tsbuildinfo' -qF
+  need_grep .gitignore '.agent/.cache/' -qF
   if grep -qiE 'Checklist de adaptação|Adaptation checklist' "$ROOT/AGENTS.md"; then
     fail "adaptation checklist leaked into generated AGENTS.md"
   fi
@@ -81,11 +86,15 @@ assert_brownfield() {
   need_dir .agent
   need_file .agent/INVARIANTS.md
   need_file .agent/ECOSYSTEM.md
+  need_file .agent/knowledge/000-schema.md
+  need_file .agent/knowledge/k-000-template.md
   need_file .agent/TASK.md
   need_file .agent/NOTES.md
   need_file .agent/ARCHIVE.md
   need_grep AGENTS.md '.agent/INVARIANTS.md' -qF
   need_grep AGENTS.md '.agent/ECOSYSTEM.md' -qF
+  need_grep AGENTS.md '.agent/knowledge/' -qF
+  need_grep AGENTS.md 'Knowledge [Pp]reservation' -qiE
   need_grep .agent/ECOSYSTEM.md 'Repository Topology Matrix' -qF
   need_grep AGENTS.md 'characteriz|caracteriza' -qiE
   need_grep AGENTS.md 'Technical English' -qiF
@@ -111,6 +120,8 @@ assert_blackbox() {
   need_file AGENTS.md
   need_dir .agent
   need_file .agent/ENDPOINTS.md
+  need_file .agent/knowledge/000-schema.md
+  need_file .agent/knowledge/k-000-template.md
   need_file .agent/skills/reverse-engineering/SKILL.md
   need_file .agent/TASK.md
   need_file .agent/NOTES.md
@@ -124,6 +135,8 @@ assert_blackbox() {
   need_one_commit
   need_grep AGENTS.md 'git push' -qiF
   need_grep AGENTS.md 'Technical English' -qiF
+  need_grep AGENTS.md '.agent/knowledge/' -qF
+  need_grep AGENTS.md 'Knowledge [Pp]reservation' -qiE
   need_grep AGENTS.md 'fixture' -qiE
   need_grep AGENTS.md 'npm test' -qF
   need_grep package.json '"test": "node --test"' -qF
@@ -132,6 +145,7 @@ assert_blackbox() {
   need_grep .gitignore 'tests/fixtures/real/' -qF
   need_grep .gitignore '.maestri/' -qF
   need_grep .gitignore '*.tsbuildinfo' -qF
+  need_grep .gitignore '.agent/.cache/' -qF
   need_grep .agent/ENDPOINTS.md '$TARGET_SESSION_COOKIE' -qF
   if grep -RIE --exclude-dir=.git 'eyJ[A-Za-z0-9_-]{20,}\.[A-Za-z0-9_-]+\.' "$ROOT"; then
     fail "JWT-like token found in scaffold"
@@ -142,6 +156,8 @@ assert_infra() {
   need_file AGENTS.md
   need_dir .agent
   need_file .agent/SERVICES.md
+  need_file .agent/knowledge/000-schema.md
+  need_file .agent/knowledge/k-000-template.md
   need_file .agent/skills/compose-service/SKILL.md
   need_file .agent/TASK.md
   need_file .agent/NOTES.md
@@ -149,6 +165,7 @@ assert_infra() {
   need_file .env.example
   need_file .gitignore
   need_grep .gitignore '.maestri/' -qF
+  need_grep .gitignore '.agent/.cache/' -qF
   need_file compose.yaml.example
   need_dir docs
   need_file docs/README.md
@@ -163,6 +180,8 @@ assert_infra() {
   need_grep docs/incidents/000-template.md 'author_type' -qF
   need_grep AGENTS.md 'down -v' -qF
   need_grep AGENTS.md 'Technical English' -qiF
+  need_grep AGENTS.md '.agent/knowledge/' -qF
+  need_grep AGENTS.md 'Knowledge [Pp]reservation' -qiE
   need_grep AGENTS.md ':latest' -qF
   need_grep AGENTS.md 'healthcheck' -qF
   local healthcheck_count
@@ -180,6 +199,8 @@ assert_baremetal() {
   need_file .agent/BASELINE.md
   need_file .agent/INVARIANTS.md
   need_file .agent/TUNINGS.md
+  need_file .agent/knowledge/000-schema.md
+  need_file .agent/knowledge/k-000-template.md
   need_file .agent/skills/baremetal-tuning/SKILL.md
   need_file .agent/TASK.md
   need_file .agent/NOTES.md
@@ -198,6 +219,8 @@ assert_baremetal() {
   need_one_commit
   need_grep AGENTS.md 'Rollback-First' -qiE
   need_grep AGENTS.md 'Technical English' -qiF
+  need_grep AGENTS.md '.agent/knowledge/' -qF
+  need_grep AGENTS.md 'Knowledge [Pp]reservation' -qiE
   need_grep AGENTS.md 'sudo' -qiF
   need_grep AGENTS.md 'npm test' -qF
   need_grep package.json '"test": "node --test"' -qF
@@ -205,6 +228,7 @@ assert_baremetal() {
   need_grep .gitignore '.maestri/' -qF
   need_grep .gitignore 'benchmarks/runs/' -qF
   need_grep .gitignore '*.raw' -qF
+  need_grep .gitignore '.agent/.cache/' -qF
   need_grep .agent/TUNINGS.md 'Registry' -qiE
   need_grep .agent/BASELINE.md 'Baseline' -qiE
   need_grep .agent/INVARIANTS.md 'Chesterton' -qF
