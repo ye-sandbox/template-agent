@@ -52,3 +52,69 @@ benchmarks/
    Do NOT commit raw logs to git. Instead, extract the summarized scores (`P50`, `P99`, `max`, `throughput`) into:
    - [`.agent/BASELINE.md`](../.agent/BASELINE.md) for initial host onboarding.
    - [`.agent/TUNINGS.md`](../.agent/TUNINGS.md) under `#### Verification & Benchmarks` when validating a tuning `[T-XX]`.
+
+---
+
+## 📡 Continuous Observability (Vector + VictoriaLogs)
+
+In addition to local raw runs, the harness supports non-intrusive metric streaming directly to a centralized **VictoriaLogs** cluster via **Vector**'s HTTP ingestion endpoint (`/logs`).
+
+### Architecture & Opt-In Configuration
+
+Telemetry streaming is strictly **opt-in** and disabled by default (`VECTOR_ENABLED=false`). When enabled, benchmark runners automatically invoke [`benchmarks/scripts/stream-telemetry.sh`](./scripts/stream-telemetry.sh) to forward NDJSON events using short, non-blocking HTTP POST requests (`|| true`).
+
+To activate streaming, copy `.env.example` to `.env` and set:
+
+```bash
+VECTOR_ENABLED=true
+VECTOR_HOST=localhost
+VECTOR_HTTP_PORT=8686
+SERVICE_NAME=baremetal-workstation
+ENV=production
+```
+
+### Canonical NDJSON Contract
+
+Events emitted by the harness conform strictly to the `victorialogs-integration` contract:
+
+```json
+{
+  "timestamp": "2026-10-17T15:00:00Z",
+  "service": "baremetal-workstation",
+  "app": "baremetal-tuning",
+  "env": "production",
+  "level": "info",
+  "message": "Hardware thermals and clocks snapshot on my-host",
+  "metric_type": "thermals",
+  "max_cpu_temp_c": 54.2,
+  "avg_cpu_freq_mhz": 3400,
+  "hostname": "my-host"
+}
+```
+
+*Note:* If hardware thermals exceed critical throttling thresholds (`max_cpu_temp_c >= 85`) or timer latency spikes (`max_latency_us >= 500`), runners automatically elevate the event level to `warn`.
+
+### Ready-to-Run LogsQL Query Recipes
+
+Operators and AI agents can query live telemetry in VictoriaLogs or via VictoriaLogs MCP tools:
+
+- **Filter all thermal snapshots:**
+  ```logsql
+  service:baremetal-workstation metric_type:thermals
+  ```
+- **Filter thermal throttling or scheduling latency warnings:**
+  ```logsql
+  service:baremetal-workstation level:warn
+  ```
+- **Find scheduling latency spikes exceeding 100 microseconds:**
+  ```logsql
+  service:baremetal-workstation metric_type:latency max_latency_us:>100
+  ```
+- **Find elevated CPU temperatures above 85°C:**
+  ```logsql
+  service:baremetal-workstation metric_type:thermals max_cpu_temp_c:>85
+  ```
+- **Track median and max latency trends over time:**
+  ```logsql
+  service:baremetal-workstation metric_type:latency | stats avg(avg_latency_us) by (_time:5m)
+  ```
