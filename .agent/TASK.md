@@ -10,19 +10,24 @@
 
 ## Active Task
 
-### 📌 Task [XX.Y]: [Short descriptive title]
+### 📌 Task [19.1]: Standardize Knowledge Base (`.agent/knowledge/`) and Schema Across Template Branches
 
-- **Description:** [2–4 lines for the agent to assemble a plan.]
-- **Systems Involved:** [e.g.: `docs`, `hub`, `branch-greenfield`]
+- **Description:** Implement canonical knowledge cards structure (.agent/knowledge/), formal schema, template, DoD criteria in AGENTS.md, .agent/.cache/ gitignore rule, and propagate across all starter branches without branch merging.
+- **Systems Involved:** `hub`, `branch-greenfield`, `branch-brownfield`, `branch-blackbox`, `branch-infra`, `branch-baremetal`, `ci`
 - **Action Type:**
   - [ ] Read-only / Documentation
-  - [ ] Source code changes
-- **Status:** READY FOR PLANNING
+  - [x] Source code changes
+- **Status:** RUNNING
   *(Workflow: `READY FOR PLANNING` → `PLANNING` on presenting plan → approval → `RUNNING`)*
 
 ### Acceptance Criteria
-- [ ] [Verifiable criterion 1]
-- [ ] [Verifiable criterion 2]
+- [ ] `.agent/knowledge/000-schema.md` and `k-000-template.md` authored in Technical English on `main`.
+- [ ] `AGENTS.md` updated on `main` with `.agent/knowledge/` context triggers and DoD knowledge preservation criterion.
+- [ ] `.gitignore` updated with `.agent/.cache/` on `main` and all starter branches.
+- [ ] `.agent/knowledge/` directory and DoD criteria propagated to `greenfield`, `brownfield`, `blackbox`, `infra`, and `baremetal` branches.
+- [ ] `brownfield/install.sh` updated to provision `.agent/knowledge/` in target repositories.
+- [ ] `.github/scripts/assert-starter-contracts.sh` updated and exits with code 0 for all starter kinds.
+- [ ] `git diff --check` passes cleanly across all branches.
 
 ---
 
