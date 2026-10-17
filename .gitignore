@@ -25,4 +25,6 @@ Thumbs.db
 .vscode/
 *.swp
 *~
+.agent/scratch/
+.agent/.cache/
 .maestri/

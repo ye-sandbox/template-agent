@@ -26,6 +26,7 @@ The agent MUST optimize context loading using the following progressive disclosu
 - **Services Topology (`.agent/SERVICES.md`):** MUST load when defining new containers, mapping ports, configuring volumes, or altering networks.
 - **Compose Service Skill (`.agent/skills/compose-service/SKILL.md`):** MUST load when scaffolding or configuring services.
 - **Documentation & Incident Narratives (`docs/`):** MUST load when investigating past incidents, postmortems (`docs/incidents/`), or authoring architectural guides (`docs/architecture/`).
+- **Knowledge Base (`.agent/knowledge/`):** Consult on demand when encountering daemon, driver, or container networking gotchas.
 
 ---
 
@@ -47,6 +48,7 @@ The agent MUST optimize context loading using the following progressive disclosu
    - [ ] Registry Invariants: `.agent/SERVICES.md` and `.env.example` synchronized.
    - [ ] Documentation Frontmatter: All docs under `docs/` MUST include YAML frontmatter (`author_type`, `author`, `reviewed_by`, `date`, `status`, `type`).
    - [ ] Git Cleanliness: `git diff --check` exits with code 0.
+   - [ ] Knowledge Preservation: Document obscure platform/runtime gotchas or workarounds as an atomic card in `.agent/knowledge/` (if applicable).
    - [ ] Atomic Commit: Conventional Commits in English (`feat(service): ...`).
    - [ ] Task Log: Active task logged in `TASK.md`; edge cases recorded in `NOTES.md`.
 
