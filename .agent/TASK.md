@@ -10,19 +10,21 @@
 
 ## Active Task
 
-### 📌 Task [XX.Y]: [Short descriptive title]
+### 📌 Task [20.1]: Baremetal Continuous Observability: Stream Hardware Monitor & Latency Metrics to VictoriaLogs via Vector
 
-- **Description:** [2–4 lines for the agent to assemble a plan.]
-- **Systems Involved:** [e.g.: `docs`, `hub`, `branch-greenfield`]
+- **Description:** Equip the baremetal template harness with non-intrusive telemetry streaming to VictoriaLogs via Vector HTTP endpoint, adding structured JSON emission to benchmark scripts, environment variables in `.env.example`, LogsQL query documentation, and CI contract assertions.
+- **Systems Involved:** `hub`, `branch-baremetal`, `ci`
 - **Action Type:**
-  - [ ] Read-only / Documentation
-  - [ ] Source code changes
-- **Status:** READY FOR PLANNING
+  - [x] Source code changes
+- **Status:** RUNNING
   *(Workflow: `READY FOR PLANNING` → `PLANNING` on presenting plan → approval → `RUNNING`)*
 
 ### Acceptance Criteria
-- [ ] [Verifiable criterion 1]
-- [ ] [Verifiable criterion 2]
+- [ ] Add `VECTOR_HOST`, `VECTOR_HTTP_PORT`, and `VECTOR_ENABLED` to `.env.example` on `baremetal`.
+- [ ] Implement Vector HTTP POST streaming (`/logs`) in `benchmarks/scripts/monitor-thermals.sh` and `benchmarks/scripts/bench-latency.sh` following the `victorialogs-integration` canonical contract.
+- [ ] Document VictoriaLogs & Vector integration workflow and sample LogsQL queries in `benchmarks/README.md` and `.agent/skills/baremetal-tuning/SKILL.md`.
+- [ ] Update `.github/scripts/assert-starter-contracts.sh` to validate baremetal telemetry contracts.
+- [ ] All CI assertions pass cleanly (`.github/scripts/assert-starter-contracts.sh`).
 
 ---
 
@@ -71,7 +73,7 @@
 
 ## Backlog (Upcoming, in priority order)
 
-- [ ] Baremetal continuous observability: stream hwmonitor and latency metrics to VictoriaLogs via Vector (vector + victorialogs integration)
+*(empty)*
 
 ---
 
