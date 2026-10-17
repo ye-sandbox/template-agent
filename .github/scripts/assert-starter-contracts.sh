@@ -213,6 +213,9 @@ assert_baremetal() {
   need_file benchmarks/scripts/bench-io.sh
   need_file benchmarks/scripts/bench-latency.sh
   need_file benchmarks/scripts/monitor-thermals.sh
+  need_file benchmarks/scripts/stream-telemetry.sh
+  [ -x "$ROOT/benchmarks/scripts/stream-telemetry.sh" ] || fail "benchmarks/scripts/stream-telemetry.sh is not executable"
+  need_file .env.example
   need_file .gitignore
   need_dir .git
   need_absent init.sh
@@ -224,6 +227,10 @@ assert_baremetal() {
   need_grep AGENTS.md 'sudo' -qiF
   need_grep AGENTS.md 'npm test' -qF
   need_grep package.json '"test": "node --test"' -qF
+  need_grep .env.example 'VECTOR_HOST' -qF
+  need_grep .env.example 'VECTOR_ENABLED' -qF
+  need_grep benchmarks/README.md 'VECTOR_HOST' -qF
+  need_grep benchmarks/README.md 'VictoriaLogs' -qF
   need_grep .gitignore '.backups/' -qF
   need_grep .gitignore '.maestri/' -qF
   need_grep .gitignore 'benchmarks/runs/' -qF
