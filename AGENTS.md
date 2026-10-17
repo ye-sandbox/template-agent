@@ -27,6 +27,7 @@ The agent MUST optimize context loading using the following progressive disclosu
 - **Host Invariants (`.agent/INVARIANTS.md`):** MUST load before proposing any modifications to system configurations, kernel flags, or systemd services.
 - **Tunings Registry (`.agent/TUNINGS.md`):** MUST load when reviewing past optimizations, auditing system state, or executing a rollback.
 - **Tuning Skill (`.agent/skills/baremetal-tuning/SKILL.md`):** MUST load when authoring apply/revert scripts, running benchmarks, or configuring OS parameters.
+- **Knowledge Base (`.agent/knowledge/`):** Consult on demand when encountering kernel, sysctl, or hardware-specific driver gotchas.
 
 ---
 
@@ -55,6 +56,7 @@ The agent MUST optimize context loading using the following progressive disclosu
    - [ ] Performance metrics recorded before vs. after in `.agent/TUNINGS.md`.
    - [ ] Verification command passes: `npm test` runs smoke tests.
    - [ ] Git cleanliness: `git diff --check` exits with code 0.
+   - [ ] Knowledge Preservation: Document obscure platform/runtime gotchas or workarounds as an atomic card in `.agent/knowledge/` (if applicable).
    - [ ] Atomic Commit: Conventional Commits in English (`feat(tuning): ...`).
    - [ ] Task Log: Active task logged in `TASK.md`; edge cases recorded in `NOTES.md`.
 
