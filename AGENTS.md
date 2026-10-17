@@ -26,6 +26,7 @@ The agent MUST optimize context loading using the following progressive disclosu
 - **Endpoint Registry (`.agent/ENDPOINTS.md`):** MUST load when documenting or implementing reverse-engineered routes.
 - **Architectural Decisions (`docs/adr/decisions.md`):** Consult on demand when researching historical rationales.
 - **Reverse Engineering Playbook (`.agent/skills/reverse-engineering/SKILL.md`):** MUST load when capturing flows or constructing fixtures.
+- **Knowledge Base (`.agent/knowledge/`):** Consult on demand when encountering undocumented API behaviors, platform quirks, or platform gotchas.
 
 ---
 
@@ -42,6 +43,7 @@ The agent MUST optimize context loading using the following progressive disclosu
    - [ ] Automated Tests: 1 success test + 1 error test (expired session/403) pass with exit code 0.
    - [ ] Strict Typing: Client schemas strictly typed with 0 errors.
    - [ ] Git Cleanliness: `git diff --check` exits with code 0.
+   - [ ] Knowledge Preservation: Document obscure platform/runtime gotchas or workarounds as an atomic card in `.agent/knowledge/` (if applicable).
    - [ ] Atomic Commit: Conventional Commits in English (`feat(endpoint): ...`).
    - [ ] Task Log: Active task logged in `TASK.md`; edge cases recorded in `NOTES.md`.
 
