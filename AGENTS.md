@@ -26,6 +26,7 @@ The agent MUST minimize default token load by following progressive disclosure:
 - **Architectural Decisions (`docs/adr/decisions.md` & `.agent/adr/`):** MUST load when creating new services, researching historical trade-offs, or changing system boundaries.
 - **Multi-Repo Ecosystem (`.agent/ECOSYSTEM.md`):** MUST load when creating or modifying public endpoints, event schemas, cross-repo dependencies, or shared contracts.
 - **Domain Skills (`.agent/skills/<name>/SKILL.md`):** MUST load only when the active task touches that skill's trigger.
+- **Knowledge Base (`.agent/knowledge/`):** MUST load relevant atomic cards when diagnosing obscure platform errors, runtime gotchas, or adding known workarounds.
 
 ---
 
@@ -40,6 +41,7 @@ The agent MUST minimize default token load by following progressive disclosure:
    - [ ] Automated Tests: All unit and integration test suites exit with code 0.
    - [ ] Linters: Linter and formatter checks exit with code 0.
    - [ ] Git Cleanliness: `git diff --check` exits with code 0.
+   - [ ] Knowledge Preservation: Document obscure platform/runtime gotchas or workarounds as an atomic card in `.agent/knowledge/` (if applicable).
    - [ ] Atomic Commit: Conventional Commits in English (`feat(scope): ...`).
    - [ ] Task Log: Active task logged in `.agent/TASK.md` with commit hash; next task promoted.
 
