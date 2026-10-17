@@ -34,7 +34,7 @@ When a conflict cannot be resolved using this hierarchy, the agent MUST halt exe
 
 The agent MUST optimize context loading using the following progressive disclosure triggers:
 - **Default Context (Loaded on start):** `AGENTS.md`, `.agent/TASK.md`, `.agent/NOTES.md` (Active Contracts only).
-- **On-Demand Context (Progressive Disclosure):** `docs/adr/decisions.md` (historical architectural decisions diary), `.agent/adr/` (formal ADRs), `.agent/ECOSYSTEM.md` (multi-repo topology).
+- **On-Demand Context (Progressive Disclosure):** `docs/adr/decisions.md` (historical architectural decisions diary), `.agent/adr/` (formal ADRs), `.agent/ECOSYSTEM.md` (multi-repo topology), `.agent/knowledge/` (runtime gotchas & platform cards).
 - **Branch-Specific Context:** Checkout target branch BEFORE inspecting its root files.
 - **Transversal Skills:** Reference [`ye-sandbox/agent-skills`](https://github.com/ye-sandbox/agent-skills) ONLY when tasks require UI porting, QA audit, or host-level orchestration.
 
@@ -68,6 +68,7 @@ The agent MUST optimize context loading using the following progressive disclosu
    - [ ] Automated git check passes: `git diff --check` exits with code 0.
    - [ ] Markdown relative links and branch targets validated.
    - [ ] Conventional Commits in English (`feat(hub): ...`, `docs(task): ...`).
+   - [ ] Knowledge preservation: Document obscure platform/runtime gotchas or workarounds as an atomic card in `.agent/knowledge/` (if applicable).
    - [ ] Active task logged in `.agent/TASK.md` completed log and next task promoted.
 
 ---
