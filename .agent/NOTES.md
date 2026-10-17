@@ -60,6 +60,7 @@
 | 2026-10-10 | `.agent/ECOSYSTEM.md` no starter brownfield | Sistemas legados e corporativos frequentemente operam como upstream ou downstream de múltiplos microsserviços. O template `ECOSYSTEM.md` provê a matriz de topologia e regras de expand/contract para evitar quebra de integrações durante a modernização. |
 | 2026-10-14 | Paridade de contratos em brownfield e blackbox (ECOSYSTEM.md e docs/adr/decisions.md) | Harmoniza os starters com greenfield, eliminando links quebrados nos gatilhos de AGENTS.md, garantindo que o installer do brownfield distribua topologia e diário de decisões com suporte stealth (.git/info/exclude). |
 | 2026-10-17 | `.agent/knowledge/` vs `NOTES.md` e `docs/incidents/` para gotchas e bugs | Gotchas de runtime em `NOTES.md` inflam o contexto default (always-on); `docs/incidents/` é pesado demais para bugs de plataforma corriqueiros. `.agent/knowledge/` implementa progressive disclosure com cards atômicos pesquisáveis via tags/symptoms (schema formal `000-schema.md`). |
+| 2026-10-17 | Baremetal continuous observability via Vector HTTP POST | Streaming opt-in via Vector HTTP endpoint (/logs) padroniza NDJSON e roteia para VictoriaLogs sem expor conexões diretas do cluster no host baremetal e sem criar arquivos locais não rastreados. |
 
 ### Formal ADR Index
 
