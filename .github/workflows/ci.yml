@@ -22,6 +22,9 @@ jobs:
           git config --global user.name "GitHub Action"
           git config --global user.email "action@github.com"
           chmod +x .github/scripts/assert-starter-contracts.sh
+          for branch in greenfield brownfield blackbox infra baremetal; do
+            git branch --track "$branch" "origin/$branch" 2>/dev/null || true
+          done
 
       - name: Test Greenfield init.sh (Project Scaffolding)
         run: |
