@@ -122,6 +122,7 @@ Every project MUST define an official, reproducible test command (e.g. `"test": 
 6. **Live Circuit Breaker:** 2 consecutive 401/403/429 failures $\rightarrow$ **halt immediately** to prevent account bans.
 7. **Canonical Test Runner:** **MUST NOT** invent ad-hoc test compilation loops or dynamic eval hacks. Tests MUST run via the official test command against sanitized fixtures.
 8. **Agent Documentation Language:** MUST write all agent-facing directives, skills, endpoint maps, and task logs (`AGENTS.md`, `.agent/*`) in concise Technical English to optimize token density and instruction fidelity.
+9. **In-Code Invariants:** MUST document non-obvious protocol quirks, scraper throttling rationale, signature calculation quirks, and anti-detection delays as in-code comments using explicit invariant prefixes (e.g., `# INVARIANT: <rationale>` or `// INVARIANT: <rationale>`), explaining the technical *why* rather than restating the syntax.
 
 ---
 
@@ -147,6 +148,18 @@ class TargetClient:
         headers = await self.session.get_authenticated_headers()
         response = await self.session.client.get("/v1/user", headers=headers)
         return UserProfile.model_validate(response.json())
+```
+
+```python
+# BAD: Restating trivial syntax or leaving obscure delay unexplained
+# Sleep 3.5 seconds
+time.sleep(3.5)
+fetch_next_page()
+
+# GOOD: In-code invariant explaining reverse-engineered rate limit and anti-fingerprinting constraint
+# INVARIANT: Minimum 3.5s jittered delay required to avoid Cloudflare rate-burst heuristic on route /api/search
+time.sleep(3.5)
+fetch_next_page()
 ```
 
 ---
