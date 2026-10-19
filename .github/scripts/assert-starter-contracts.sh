@@ -66,6 +66,7 @@ assert_greenfield() {
   need_grep package.json '"test": "node --test"' -qF
   need_grep .agent/ECOSYSTEM.md 'Repository Topology Matrix' -qF
   need_grep AGENTS.md 'Technical English' -qiF
+  need_grep AGENTS.md 'INVARIANT:' -qF
   need_grep AGENTS.md 'circuit breaker' -qiE
   need_grep AGENTS.md 'Consultative Dependency' -qiF
   need_grep AGENTS.md 'Dependency & Runtime Versioning' -qiF
@@ -98,6 +99,7 @@ assert_brownfield() {
   need_grep .agent/ECOSYSTEM.md 'Repository Topology Matrix' -qF
   need_grep AGENTS.md 'characteriz|caracteriza' -qiE
   need_grep AGENTS.md 'Technical English' -qiF
+  need_grep AGENTS.md 'INVARIANT:' -qF
   need_grep AGENTS.md 'git push' -qiF
   need_grep AGENTS.md 'Consultative Dependencies' -qiF
   need_grep AGENTS.md 'Stable & LTS Versioning' -qiF
@@ -135,6 +137,7 @@ assert_blackbox() {
   need_one_commit
   need_grep AGENTS.md 'git push' -qiF
   need_grep AGENTS.md 'Technical English' -qiF
+  need_grep AGENTS.md 'INVARIANT:' -qF
   need_grep AGENTS.md '.agent/knowledge/' -qF
   need_grep AGENTS.md 'Knowledge [Pp]reservation' -qiE
   need_grep AGENTS.md 'fixture' -qiE
@@ -180,6 +183,7 @@ assert_infra() {
   need_grep docs/incidents/000-template.md 'author_type' -qF
   need_grep AGENTS.md 'down -v' -qF
   need_grep AGENTS.md 'Technical English' -qiF
+  need_grep AGENTS.md 'INVARIANT:' -qF
   need_grep AGENTS.md '.agent/knowledge/' -qF
   need_grep AGENTS.md 'Knowledge [Pp]reservation' -qiE
   need_grep AGENTS.md ':latest' -qF
@@ -222,6 +226,7 @@ assert_baremetal() {
   need_one_commit
   need_grep AGENTS.md 'Rollback-First' -qiE
   need_grep AGENTS.md 'Technical English' -qiF
+  need_grep AGENTS.md 'INVARIANT:' -qF
   need_grep AGENTS.md '.agent/knowledge/' -qF
   need_grep AGENTS.md 'Knowledge [Pp]reservation' -qiE
   need_grep AGENTS.md 'sudo' -qiF
