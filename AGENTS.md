@@ -120,6 +120,7 @@ Not restricted to phase `99.x`. When releasing `vX.Y.Z`:
 - **MUST NOT** edit bootloader configurations (`/boot/grub/grub.cfg`, `/etc/default/grub`) without prior syntax validation (`grub-mkconfig` dry-run).
 - **MUST NOT** commit system passwords, private SSH/GPG keys, or hardware dumps into git.
 - **Circuit breaker:** 2 consecutive failures with the same root cause $\rightarrow$ stop and ask the user.
+- **MUST** document non-obvious kernel quirks, hardware timing constraints, sysfs side-effects, and safety thresholds as in-script comments using explicit invariant prefixes (e.g., `# INVARIANT: <rationale>`), explaining the system *why* rather than restating the command syntax.
 - **MUST** write all agent-facing directives, registries, skills, and task logs (`AGENTS.md`, `.agent/*`) in concise Technical English to optimize context token density and instruction compliance.
 
 ---
@@ -145,6 +146,16 @@ cat /proc/sys/vm/swappiness > "$BACKUP_DIR/original_value"
 echo "vm.swappiness = 10" | sudo tee /etc/sysctl.d/99-swappiness.conf > /dev/null
 sudo sysctl --system > /dev/null
 echo "✅ Applied vm.swappiness = 10 (backup at $BACKUP_DIR)"
+```
+
+```bash
+# BAD: Restating trivial syntax or leaving critical kernel side-effect unexplained
+# Drop page cache
+echo 1 > /proc/sys/vm/drop_caches
+
+# GOOD: In-script invariant explaining kernel side-effect, prerequisites, and system impact
+# INVARIANT: sync is required before drop_caches to flush dirty pages and prevent high I/O stall spikes
+sync && echo 1 > /proc/sys/vm/drop_caches
 ```
 
 ---
