@@ -177,6 +177,7 @@ When selecting libraries, frameworks, runtimes, or base images:
 - **MUST NOT** invent API parameters or endpoints without checking MCP or official docs.
 - **MUST NOT** ignore domain skills relevant to the active task.
 - **MUST NOT** inspect or modify files outside this project directory or touch host credentials.
+- **MUST** document non-obvious domain logic constraints, ordering dependencies, hardware/protocol quirks, and safety invariants as in-code comments using explicit invariant prefixes (e.g., `// INVARIANT: <rationale>` or `# INVARIANT: <rationale>`), explaining the architectural or domain *why* rather than restating the syntax.
 - **MUST** write all agent-facing directives, skills, contracts, and task logs (`AGENTS.md`, `.agent/*`) in concise Technical English to maximize instruction fidelity and minimize context token overhead.
 
 ---
@@ -235,6 +236,18 @@ const mod = await import(`data:text/javascript;base64,${Buffer.from(transformed.
 // package.json: { "scripts": { "test": "vitest run" } }
 import { describe, it, expect } from 'vitest';
 import { service } from '../src/service';
+```
+
+```typescript
+// BAD: Restating trivial syntax or omitting critical non-obvious constraints
+// Wait for sync then lock
+await syncSession();
+await lockResources();
+
+// GOOD: In-code invariant explaining non-obvious architectural rationale and ordering constraint
+// INVARIANT: Sequential await required; concurrent execution exhausts socket pool on upstream gateway (Issue #142)
+await syncSession();
+await lockResources();
 ```
 
 ---
