@@ -53,6 +53,7 @@ assert_greenfield() {
   need_file .agent/adr/000-template.md
   need_file .agent/knowledge/000-schema.md
   need_file .agent/knowledge/k-000-template.md
+  need_file .agent/knowledge/k-001-node-test-esm-resolution.md
   need_file docs/adr/decisions.md
   need_file .agent/ECOSYSTEM.md
   need_file package.json
@@ -65,6 +66,7 @@ assert_greenfield() {
   need_grep AGENTS.md 'docs/adr/decisions.md' -qF
   need_grep AGENTS.md '.agent/knowledge/' -qF
   need_grep AGENTS.md 'Knowledge [Pp]reservation' -qiE
+  need_grep .agent/knowledge/k-001-node-test-esm-resolution.md 'ERR_MODULE_NOT_FOUND' -qF
   need_grep .agent/NOTES.md 'docs/adr/decisions.md' -qF
   need_grep .agent/NOTES.md 'Active Contracts' -qF
   need_grep AGENTS.md '.agent/ECOSYSTEM.md' -qF
@@ -172,6 +174,7 @@ assert_infra() {
   need_file .agent/ECOSYSTEM.md
   need_file .agent/knowledge/000-schema.md
   need_file .agent/knowledge/k-000-template.md
+  need_file .agent/knowledge/k-001-docker-bind-mount-permissions.md
   need_file .agent/skills/compose-service/SKILL.md
   need_file .agent/TASK.md
   need_file .agent/NOTES.md
@@ -200,6 +203,7 @@ assert_infra() {
   need_grep AGENTS.md '.agent/ECOSYSTEM.md' -qF
   need_grep AGENTS.md '.agent/knowledge/' -qF
   need_grep AGENTS.md 'Knowledge [Pp]reservation' -qiE
+  need_grep .agent/knowledge/k-001-docker-bind-mount-permissions.md 'Permission denied' -qF
   need_grep .agent/ECOSYSTEM.md 'Repository Topology Matrix' -qF
   need_grep AGENTS.md ':latest' -qF
   need_grep AGENTS.md 'healthcheck' -qF
@@ -220,6 +224,8 @@ assert_baremetal() {
   need_file .agent/TUNINGS.md
   need_file .agent/knowledge/000-schema.md
   need_file .agent/knowledge/k-000-template.md
+  need_file .agent/knowledge/k-001-bash-parameter-expansion-braces.md
+  need_file .agent/knowledge/k-002-sysctl-persistence-systemd.md
   need_file .agent/skills/baremetal-tuning/SKILL.md
   need_file .agent/TASK.md
   need_file .agent/NOTES.md
@@ -248,6 +254,8 @@ assert_baremetal() {
   need_grep .agent/NOTES.md 'docs/adr/decisions.md' -qF
   need_grep AGENTS.md '.agent/knowledge/' -qF
   need_grep AGENTS.md 'Knowledge [Pp]reservation' -qiE
+  need_grep .agent/knowledge/k-001-bash-parameter-expansion-braces.md 'parameter expansion' -qiF
+  need_grep .agent/knowledge/k-002-sysctl-persistence-systemd.md 'sysctl' -qF
   need_grep AGENTS.md 'sudo' -qiF
   need_grep AGENTS.md 'npm test' -qF
   need_grep package.json '"test": "node --test"' -qF
