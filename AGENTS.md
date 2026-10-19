@@ -25,6 +25,7 @@ The agent MUST optimize context loading using the following progressive disclosu
 - **Default Context (Loaded on start):** `AGENTS.md`, `.agent/TASK.md`, `.agent/NOTES.md`.
 - **Architectural Decisions (`docs/adr/decisions.md`):** MUST load when reviewing historical trade-offs, service boundary rationales, or adding foundational architectural decisions.
 - **Services Topology (`.agent/SERVICES.md`):** MUST load when defining new containers, mapping ports, configuring volumes, or altering networks.
+- **Multi-Repo Ecosystem (`.agent/ECOSYSTEM.md`):** MUST load when mapping external upstream/downstream services, sibling repositories, shared schemas, or cross-repo contract boundaries.
 - **Compose Service Skill (`.agent/skills/compose-service/SKILL.md`):** MUST load when scaffolding or configuring services.
 - **Documentation & Incident Narratives (`docs/`):** MUST load when investigating past incidents, postmortems (`docs/incidents/`), or authoring architectural guides (`docs/architecture/`).
 - **Knowledge Base (`.agent/knowledge/`):** Consult on demand when encountering daemon, driver, or container networking gotchas.
