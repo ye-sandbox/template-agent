@@ -11,6 +11,7 @@ To maintain strict governance and prevent fragmentation between human operators 
 | Directory / Location | Purpose | Target Audience | Example |
 | :--- | :--- | :--- | :--- |
 | **`docs/architecture/`** | Macro decisions, physical/logical network topologies, VLAN segmentation, traffic flows, and evolution roadmaps. | Human / Agent | System topology, DNS split-horizon strategy, reverse proxy flow. |
+| **`docs/adr/decisions.md`** | Historical and cumulative architectural decisions log (progressive disclosure). | Human / Agent | Network segmentation choice, storage engine selection. |
 | **`docs/incidents/`** | Postmortems and Root Cause Analysis (RCA) narratives detailing real-world failures, symptom timelines, investigated hypotheses, root causes, remediation, and preventive actions. | Human / Agent | Outage RCA, storage exhaustion recovery, port collision investigation. |
 | **`docs/host/`** | Host OS configuration manuals, system daemon tuning, user provisioning, and access policies. | Human / Agent | Restricted SSH setup, BuildKit GC policy in `/etc/docker/daemon.json`. |
 | **`.agent/skills/`** | Deterministic, actionable runbooks (SOPs) consumed by the agent at runtime. | AI Agent | `compose-service`, `homelab-inspector`. |
