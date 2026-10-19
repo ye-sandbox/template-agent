@@ -10,19 +10,21 @@
 
 ## Active Task
 
-### 📌 Task [01.1]: Post-v1.0.0 Foundation & Starter Ecosystem Roadmap
+### 📌 Task [01.1]: Standardize In-Code Invariants (`// INVARIANT:`) across Starter Templates
 
-- **Description:** Define next foundation tasks, starter enhancements, and guardrails following the v1.0.0 milestone.
-- **Systems Involved:** `hub`, `docs`
+- **Description:** Establish explicit guardrails and contrast pairs across all starter templates (`greenfield`, `brownfield`, `blackbox`, `infra`, `baremetal`) and hub governance to standardize domain and architectural in-code invariant comments (`// INVARIANT: ...`, `# INVARIANT: ...`), explaining non-obvious domain logic constraints, ordering dependencies, and safety invariants.
+- **Systems Involved:** `hub`, `greenfield`, `brownfield`, `blackbox`, `infra`, `baremetal`
 - **Action Type:**
   - [x] Read-only / Documentation
-  - [ ] Source code changes
-- **Status:** READY FOR PLANNING
+  - [x] Source code changes
+- **Status:** RUNNING
   *(Workflow: `READY FOR PLANNING` → `PLANNING` on presenting plan → approval → `RUNNING`)*
 
 ### Acceptance Criteria
-- [ ] Review starter feedback and identify upcoming architectural milestones
-- [ ] Formulate prioritized tasks in backlog
+- [ ] Define invariant comment standards and contrast pair in `greenfield/AGENTS.md`.
+- [ ] Propagate invariant guidelines and customized contrast pairs to `brownfield`, `blackbox`, `infra`, and `baremetal`.
+- [ ] Document architectural rationale in `NOTES.md` on `main`.
+- [ ] Run `git diff --check` and verify branch isolation across all updated templates.
 
 ---
 
