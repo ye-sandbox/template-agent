@@ -96,6 +96,7 @@ assert_brownfield() {
   need_file .agent/ECOSYSTEM.md
   need_file .agent/knowledge/000-schema.md
   need_file .agent/knowledge/k-000-template.md
+  need_file docs/adr/decisions.md
   need_file .agent/TASK.md
   need_file .agent/NOTES.md
   need_file .agent/ARCHIVE.md
@@ -132,6 +133,7 @@ assert_blackbox() {
   need_file .agent/knowledge/000-schema.md
   need_file .agent/knowledge/k-000-template.md
   need_file .agent/skills/reverse-engineering/SKILL.md
+  need_file docs/adr/decisions.md
   need_file .agent/TASK.md
   need_file .agent/NOTES.md
   need_file .agent/ARCHIVE.md
@@ -180,6 +182,7 @@ assert_infra() {
   need_file compose.yaml.example
   need_dir docs
   need_file docs/README.md
+  need_file docs/adr/decisions.md
   need_file docs/incidents/README.md
   need_file docs/incidents/000-template.md
   need_file docs/architecture/000-template.md
@@ -192,6 +195,7 @@ assert_infra() {
   need_grep AGENTS.md 'down -v' -qF
   need_grep AGENTS.md 'Technical English' -qiF
   need_grep AGENTS.md 'INVARIANT:' -qF
+  need_grep AGENTS.md 'docs/adr/decisions.md' -qF
   need_grep AGENTS.md '.agent/knowledge/' -qF
   need_grep AGENTS.md 'Knowledge [Pp]reservation' -qiE
   need_grep AGENTS.md ':latest' -qF
@@ -219,6 +223,8 @@ assert_baremetal() {
   need_file .agent/ARCHIVE.md
   need_file package.json
   need_file tests/smoke.test.js
+  need_dir docs
+  need_file docs/adr/decisions.md
   need_file benchmarks/README.md
   need_dir benchmarks/scripts
   need_file benchmarks/scripts/bench-cpu.sh
@@ -235,6 +241,8 @@ assert_baremetal() {
   need_grep AGENTS.md 'Rollback-First' -qiE
   need_grep AGENTS.md 'Technical English' -qiF
   need_grep AGENTS.md 'INVARIANT:' -qF
+  need_grep AGENTS.md 'docs/adr/decisions.md' -qF
+  need_grep .agent/NOTES.md 'docs/adr/decisions.md' -qF
   need_grep AGENTS.md '.agent/knowledge/' -qF
   need_grep AGENTS.md 'Knowledge [Pp]reservation' -qiE
   need_grep AGENTS.md 'sudo' -qiF
