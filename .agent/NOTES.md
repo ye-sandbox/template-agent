@@ -3,6 +3,7 @@
 > Stores active workstation contracts, multi-agent ensemble roles, and critical OS gotchas.
 > Hardware inventory lives in [`.agent/BASELINE.md`](BASELINE.md).
 > Optimization history and rollback links live in [`.agent/TUNINGS.md`](TUNINGS.md).
+> Architectural decisions live in [`docs/adr/decisions.md`](../docs/adr/decisions.md).
 
 ---
 
@@ -10,7 +11,7 @@
 
 1. **Read before planning any task:** Active contracts prevent destructive commands and unintended system downtime.
 2. **Keep this file lean:** Only record active operational contracts, gotchas, and assumed technical debt.
-3. **Decisions & Rationale:** Record WHY optimizations were configured or why certain parameters were avoided.
+3. **Decisions & Rationale:** Record in [`docs/adr/decisions.md`](../docs/adr/decisions.md) WHY optimizations were configured or why certain parameters were avoided.
 
 ---
 
