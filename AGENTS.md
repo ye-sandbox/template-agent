@@ -119,6 +119,7 @@ OS/shell, architecture, language, package manager **already present in repo**, f
 7. **Agent Documentation Language:** MUST write all agent-facing directives, skills, invariants, and task logs (`AGENTS.md`, `.agent/*`) in concise Technical English to minimize token consumption and maximize instruction compliance.
 8. **Consultative Dependencies:** When addressing missing capabilities, do NOT silently write complex in-house logic from scratch or install packages autonomously. Recommend battle-tested libraries alongside zero-dependency/stdlib alternatives, detailing maintenance and compatibility trade-offs for user approval.
 9. **Stable & LTS Versioning:** Default to the newest stable release (favoring LTS) grounded on current date, strictly avoiding unapproved pre-releases (`alpha`/`beta`/`rc`/`canary`). Existing peer dependencies, runtime constraints, and `.agent/INVARIANTS.md` take strict precedence over latest major versions.
+10. **In-Code Invariants:** MUST document non-obvious legacy constraints, ordering quirks, and defensive workarounds as in-code comments using explicit invariant prefixes (e.g., `# INVARIANT: <rationale>` or `// INVARIANT: <rationale>`), explaining the architectural or domain *why* rather than restating the syntax.
 
 ---
 
@@ -143,6 +144,18 @@ def serialize_legacy_user(user):
         "full_name": user.name,     # Non-breaking addition
         "user_id": user.id,
     }
+```
+
+```python
+# BAD: Restating trivial syntax or leaving obscure workaround unexplained
+# Sleep 2 seconds before retry
+time.sleep(2)
+retry_call()
+
+# GOOD: In-code invariant explaining legacy timing constraint and upstream reason
+# INVARIANT: 2s sleep required for legacy ERP transaction replication lag before retry
+time.sleep(2)
+retry_call()
 ```
 
 ---
