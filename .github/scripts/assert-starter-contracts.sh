@@ -39,6 +39,12 @@ need_one_commit() {
   [ "$count" -eq 1 ] || fail "expected exactly 1 git commit, got $count"
 }
 
+need_clean_smoke_test() {
+  if [ -f "$ROOT/package.json" ]; then
+    ( cd "$ROOT" && npm test ) || fail "smoke test failed via npm test in $ROOT"
+  fi
+}
+
 assert_greenfield() {
   need_file AGENTS.md
   need_dir .agent
@@ -64,6 +70,7 @@ assert_greenfield() {
   need_grep AGENTS.md '.agent/ECOSYSTEM.md' -qF
   need_grep AGENTS.md 'npm test' -qF
   need_grep package.json '"test": "node --test"' -qF
+  need_clean_smoke_test
   need_grep .agent/ECOSYSTEM.md 'Repository Topology Matrix' -qF
   need_grep AGENTS.md 'Technical English' -qiF
   need_grep AGENTS.md 'INVARIANT:' -qF
@@ -143,6 +150,7 @@ assert_blackbox() {
   need_grep AGENTS.md 'fixture' -qiE
   need_grep AGENTS.md 'npm test' -qF
   need_grep package.json '"test": "node --test"' -qF
+  need_clean_smoke_test
   need_grep .gitignore '.env' -qF
   need_grep .gitignore '*.har' -qF
   need_grep .gitignore 'tests/fixtures/real/' -qF
@@ -232,6 +240,7 @@ assert_baremetal() {
   need_grep AGENTS.md 'sudo' -qiF
   need_grep AGENTS.md 'npm test' -qF
   need_grep package.json '"test": "node --test"' -qF
+  need_clean_smoke_test
   need_grep .env.example 'VECTOR_HOST' -qF
   need_grep .env.example 'VECTOR_ENABLED' -qF
   need_grep benchmarks/README.md 'VECTOR_HOST' -qF
