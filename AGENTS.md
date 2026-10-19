@@ -23,6 +23,7 @@ When a conflict cannot be resolved using this hierarchy, the agent MUST halt exe
 
 The agent MUST optimize context loading using the following progressive disclosure triggers:
 - **Default Context (Loaded on start):** `AGENTS.md`, `.agent/TASK.md`, `.agent/NOTES.md`.
+- **Architectural Decisions (`docs/adr/decisions.md`):** MUST load when reviewing historical trade-offs, service boundary rationales, or adding foundational architectural decisions.
 - **Services Topology (`.agent/SERVICES.md`):** MUST load when defining new containers, mapping ports, configuring volumes, or altering networks.
 - **Compose Service Skill (`.agent/skills/compose-service/SKILL.md`):** MUST load when scaffolding or configuring services.
 - **Documentation & Incident Narratives (`docs/`):** MUST load when investigating past incidents, postmortems (`docs/incidents/`), or authoring architectural guides (`docs/architecture/`).
