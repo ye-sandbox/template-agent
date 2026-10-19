@@ -17,7 +17,7 @@
 - **Action Type:**
   - [x] Read-only / Documentation
   - [ ] Source code changes
-- **Status:** READY FOR PLANNING
+- **Status:** RUNNING
   *(Workflow: `READY FOR PLANNING` → `PLANNING` on presenting plan → approval → `RUNNING`)*
 
 ### Acceptance Criteria
