@@ -23,6 +23,7 @@ When a conflict cannot be resolved using this hierarchy, the agent MUST halt exe
 
 The agent MUST optimize context loading using the following progressive disclosure triggers:
 - **Default Context (Loaded on start):** `AGENTS.md`, `.agent/TASK.md`, `.agent/NOTES.md`.
+- **Architectural Decisions (`docs/adr/decisions.md`):** MUST load when reviewing historical host trade-offs or recording substantive OS design decisions.
 - **System Baseline (`.agent/BASELINE.md`):** MUST load when diagnosing performance, benchmarking, inspecting hardware, or checking kernel/OS specifications.
 - **Host Invariants (`.agent/INVARIANTS.md`):** MUST load before proposing any modifications to system configurations, kernel flags, or systemd services.
 - **Tunings Registry (`.agent/TUNINGS.md`):** MUST load when reviewing past optimizations, auditing system state, or executing a rollback.
