@@ -25,7 +25,7 @@ When a conflict cannot be resolved using this hierarchy, the agent MUST halt exe
 - **`greenfield`:** Clean starter kit for projects built from scratch (`.agent/adr/`, `.agent/skills/`, etc. at root).
 - **`brownfield`:** Injection template for existing/legacy codebases (`install.sh`, `.agent/INVARIANTS.md`, `.agent/ECOSYSTEM.md`, Task 00 Discovery).
 - **`blackbox`:** Template for reverse engineering, scrapers, automations, and undocumented closed APIs (`.agent/ENDPOINTS.md`, `.agent/skills/reverse-engineering/`, `init.sh`).
-- **`infra`:** Infrastructure-as-Code (IaC), Docker Compose, service orchestration, and Homelab (`.agent/SERVICES.md`, `.agent/skills/compose-service/`, `compose.yaml.example`, `init.sh`).
+- **`infra`:** Infrastructure-as-Code (IaC), Docker Compose, service orchestration, and Homelab (`.agent/SERVICES.md`, `.agent/ECOSYSTEM.md`, `.agent/skills/compose-service/`, `compose.yaml.example`, `init.sh`).
 - **`baremetal`:** Template for PC/workstation tuning, host OS administration, kernel/sysctl tweaks, and dotfiles (`.agent/BASELINE.md`, `.agent/INVARIANTS.md`, `.agent/TUNINGS.md`, `.agent/skills/baremetal-tuning/`, `init.sh`).
 
 ---

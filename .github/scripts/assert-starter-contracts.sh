@@ -169,6 +169,7 @@ assert_infra() {
   need_file AGENTS.md
   need_dir .agent
   need_file .agent/SERVICES.md
+  need_file .agent/ECOSYSTEM.md
   need_file .agent/knowledge/000-schema.md
   need_file .agent/knowledge/k-000-template.md
   need_file .agent/skills/compose-service/SKILL.md
@@ -196,8 +197,10 @@ assert_infra() {
   need_grep AGENTS.md 'Technical English' -qiF
   need_grep AGENTS.md 'INVARIANT:' -qF
   need_grep AGENTS.md 'docs/adr/decisions.md' -qF
+  need_grep AGENTS.md '.agent/ECOSYSTEM.md' -qF
   need_grep AGENTS.md '.agent/knowledge/' -qF
   need_grep AGENTS.md 'Knowledge [Pp]reservation' -qiE
+  need_grep .agent/ECOSYSTEM.md 'Repository Topology Matrix' -qF
   need_grep AGENTS.md ':latest' -qF
   need_grep AGENTS.md 'healthcheck' -qF
   local healthcheck_count
