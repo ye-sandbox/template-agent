@@ -114,6 +114,7 @@ Not restricted to phase `99.x`. When releasing `vX.Y.Z`:
 - **MUST NOT** expose administrative or database ports to `0.0.0.0` without strong auth or network isolation.
 - **MUST NOT** add services to Compose without updating `.agent/SERVICES.md`.
 - **Circuit breaker:** 2 consecutive failures with the same root cause $\rightarrow$ stop and ask the user.
+- **MUST** document non-obvious orchestration constraints, dependency order requirements, kernel capabilities (`cap_add`), and network quirks as in-file comments using explicit invariant prefixes (e.g., `# INVARIANT: <rationale>`), explaining the architectural *why* rather than restating the YAML syntax.
 - **MUST** write all agent-facing directives, service catalogs, skills, and task logs (`AGENTS.md`, `.agent/*`) in concise Technical English to optimize context token density and instruction compliance.
 
 ---
@@ -150,6 +151,19 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+```
+
+```yaml
+# BAD: Restating trivial syntax or leaving critical orchestration dependency unexplained
+# Wait for redis
+depends_on:
+  - redis
+
+# GOOD: In-file invariant explaining orchestration ordering constraint and protocol requirement
+# INVARIANT: condition service_healthy required; celery worker crashes immediately if redis broker port is not yet accepting connections
+depends_on:
+  redis:
+    condition: service_healthy
 ```
 
 ---
