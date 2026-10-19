@@ -10,19 +10,19 @@
 
 ## Active Task
 
-### 📌 Task [01.2]: Post-v1.0.0 Foundation & Starter Ecosystem Roadmap
+### 📌 Task [01.3]: Active Starter Smoke Testing Assertions in CI Workflow
 
-- **Description:** Define next foundation tasks, starter enhancements, and guardrails following the v1.0.0 milestone.
-- **Systems Involved:** `hub`, `docs`
+- **Description:** Run and assert `npm test` / `node --test` execution cleanly with exit code 0 inside scaffolded test outputs (`greenfield`, `blackbox`, `baremetal`) during CI runs.
+- **Systems Involved:** `hub`, `ci`
 - **Action Type:**
-  - [x] Read-only / Documentation
-  - [ ] Source code changes
-- **Status:** RUNNING
+  - [ ] Read-only / Documentation
+  - [x] Source code changes
+- **Status:** READY FOR PLANNING
   *(Workflow: `READY FOR PLANNING` → `PLANNING` on presenting plan → approval → `RUNNING`)*
 
 ### Acceptance Criteria
-- [ ] Review starter feedback and identify upcoming architectural milestones
-- [ ] Formulate prioritized tasks in backlog
+- [ ] Add active smoke test execution step in `.github/scripts/assert-starter-contracts.sh` for starters containing `package.json`
+- [ ] Validate locally against scaffolded directories and ensure clean execution with zero exit code
 
 ---
 
@@ -33,12 +33,15 @@
 | Task | Title | Commit(s) | Date |
 |---|---|---|---|
 | `[01.1]` | Standardize In-Code Invariants across Starter Templates | `02270d7`, `d5a6a88`, `c1d8622`, `ba297fb`, `fc16dbd`, `8574f8b`, `873f942`, `58505d0` | 2026-10-19 |
+| `[01.2]` | Post-v1.0.0 Foundation & Starter Ecosystem Roadmap | `93d60be`, `d71f854` | 2026-10-19 |
 
 ---
 
 ## Backlog (Upcoming, in priority order)
 
-*(empty)*
+- [ ] `[02.1]` Harmonize ADR Diary (`docs/adr/decisions.md`) across Infra & Baremetal Starters
+- [ ] `[02.2]` Standardize Service Topology Template (`.agent/ECOSYSTEM.md`) in Infra Starter
+- [ ] `[03.1]` Pre-Seed Canonical Knowledge Base Cards (`.agent/knowledge/`) across Starters
 
 ---
 
