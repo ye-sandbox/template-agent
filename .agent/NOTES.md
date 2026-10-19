@@ -62,6 +62,7 @@
 | 2026-10-17 | `.agent/knowledge/` vs `NOTES.md` e `docs/incidents/` para gotchas e bugs | Gotchas de runtime em `NOTES.md` inflam o contexto default (always-on); `docs/incidents/` é pesado demais para bugs de plataforma corriqueiros. `.agent/knowledge/` implementa progressive disclosure com cards atômicos pesquisáveis via tags/symptoms (schema formal `000-schema.md`). |
 | 2026-10-17 | Baremetal continuous observability via Vector HTTP POST | Streaming opt-in via Vector HTTP endpoint (/logs) padroniza NDJSON e roteia para VictoriaLogs sem expor conexões diretas do cluster no host baremetal e sem criar arquivos locais não rastreados. |
 | 2026-10-19 | In-code invariants (`// INVARIANT:`) vs superficial comments | Comentários de código não devem repetir a sintaxe; devem documentar o PORQUÊ de restrições não óbvias (ordem de execução, protocolos externos, concorrência, segurança) usando prefixos canônicos (`// INVARIANT:` ou `# INVARIANT:`) para maximizar a fidelidade de inferência e clareza humana. |
+| 2026-10-19 | Post-v1.0.0 roadmap: CI runtime smoke testing & starter contract parity | Checagens estáticas com grep no CI pegam presença de arquivo mas não garantem execução real do runner (`node --test`). Prioriza asserção ativa em runtime (`npm test`), paridade do diário de ADRs (`docs/adr/decisions.md`) em `infra`/`baremetal`, e topologia em `infra`. |
 
 ### Formal ADR Index
 
