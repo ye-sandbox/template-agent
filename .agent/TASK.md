@@ -10,19 +10,21 @@
 
 ## Active Task
 
-### 📌 Task [02.2]: Standardize Service Topology Template (`.agent/ECOSYSTEM.md`) in Infra Starter
+### 📌 Task [03.1]: Pre-Seed Canonical Knowledge Base Cards (`.agent/knowledge/`) across Starters
 
-- **Description:** Add canonical `.agent/ECOSYSTEM.md` template for microservice / multi-container topology and contract boundaries to `infra` starter branch, document in `AGENTS.md` triggers, and assert in CI contracts.
-- **Systems Involved:** `infra`, `ci`
+- **Description:** Pre-seed realistic canonical platform and runtime gotcha cards (`.agent/knowledge/k-*.md`) across starters according to `000-schema.md` (e.g., Node test resolution, Docker volume UID permissions, Linux sysctl persistence) to demonstrate concrete progressive disclosure in action.
+- **Systems Involved:** `greenfield`, `brownfield`, `blackbox`, `infra`, `baremetal`
 - **Action Type:**
   - [ ] Read-only / Documentation
   - [x] Source code changes
-- **Status:** RUNNING
+- **Status:** READY FOR PLANNING
+  *(Workflow: `READY FOR PLANNING` → `PLANNING` on presenting plan → approval → `RUNNING`)*
 
 ### Acceptance Criteria
-- [ ] Add canonical `.agent/ECOSYSTEM.md` to `infra` starter branch
-- [ ] Update `AGENTS.md` Modular Context Triggers on `infra` branch
-- [ ] Add `need_file .agent/ECOSYSTEM.md` and content assertion in `.github/scripts/assert-starter-contracts.sh` for `infra`
+- [ ] Author canonical knowledge card for `greenfield` (Node test resolution / ESM gotchas)
+- [ ] Author canonical knowledge card for `infra` (Docker bind-mount UID permissions)
+- [ ] Author canonical knowledge card for `baremetal` (sysctl persistence / systemd overrides)
+- [ ] Update assertions in `.github/scripts/assert-starter-contracts.sh`
 - [ ] Validate contracts cleanly across starters
 
 ---
@@ -37,12 +39,13 @@
 | `[01.2]` | Post-v1.0.0 Foundation & Starter Ecosystem Roadmap | `93d60be`, `d71f854` | 2026-10-19 |
 | `[01.3]` | Active Starter Smoke Testing Assertions in CI Workflow | `b46342f` | 2026-10-19 |
 | `[02.1]` | Harmonize ADR Diary (`docs/adr/decisions.md`) across Infra & Baremetal Starters | `a6fd941`, `5ff38cf`, `38cbd0c`, `45f5c96` | 2026-10-19 |
+| `[02.2]` | Standardize Service Topology Template (`.agent/ECOSYSTEM.md`) in Infra Starter | `cef169a`, `5fb9546`, `5b7fa3f` | 2026-10-19 |
 
 ---
 
 ## Backlog (Upcoming, in priority order)
 
-- [ ] `[03.1]` Pre-Seed Canonical Knowledge Base Cards (`.agent/knowledge/`) across Starters
+*(empty)*
 
 ---
 

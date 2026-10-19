@@ -63,6 +63,7 @@
 | 2026-10-17 | Baremetal continuous observability via Vector HTTP POST | Streaming opt-in via Vector HTTP endpoint (/logs) padroniza NDJSON e roteia para VictoriaLogs sem expor conexões diretas do cluster no host baremetal e sem criar arquivos locais não rastreados. |
 | 2026-10-19 | In-code invariants (`// INVARIANT:`) vs superficial comments | Comentários de código não devem repetir a sintaxe; devem documentar o PORQUÊ de restrições não óbvias (ordem de execução, protocolos externos, concorrência, segurança) usando prefixos canônicos (`// INVARIANT:` ou `# INVARIANT:`) para maximizar a fidelidade de inferência e clareza humana. |
 | 2026-10-19 | Post-v1.0.0 roadmap: CI runtime smoke testing & starter contract parity | Checagens estáticas com grep no CI pegam presença de arquivo mas não garantem execução real do runner (`node --test`). Prioriza asserção ativa em runtime (`npm test`), paridade do diário de ADRs (`docs/adr/decisions.md`) em `infra`/`baremetal`, e topologia em `infra`. |
+| 2026-10-19 | Paridade de topologia de ecossistema (.agent/ECOSYSTEM.md) no starter infra | Stacks de infra e compose frequentemente expõem gateways ou consomem serviços externos (APIs irmãs, auth upstream, telemetry central). O template ECOSYSTEM.md isola essas fronteiras multi-repo sob demanda sem poluir SERVICES.md (que foca na orquestração interna de containers, portas e volumes). |
 
 ### Formal ADR Index
 
