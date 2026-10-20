@@ -10,13 +10,12 @@
 
 ## Active Task
 
-- **Task:** `[05.5]` Hub Governance: Inter-Branch Drift Detection Script and CLI Flags Standardization
-- **Status:** RUNNING
+- **Task:** `[06.1]` Starter Onboarding Harmonization: Standardize First-Turn Prompts and Post-Scaffolding Flow Across All Starters
+- **Status:** READY FOR PLANNING
 - **Scope:**
-  - Create governance script `.github/scripts/check-branch-drift.sh` to audit synchronization across specialized branches for shared canonical files (`.gitignore`, `.env.example`, `.agent/knowledge/000-schema.md`).
-  - Standardize CLI flags and usage text across `init.sh` and `install.sh` in all branches (`-y|--yes`, `-h|--help`, `-f|--force`).
-  - Wire drift detection into CI or local validation workflows.
-- **Target Branches:** `main`, `greenfield`, `brownfield`, `blackbox`, `infra`, `baremetal`
+  - Audit and harmonize the "Next Steps" output and initial AI prompt instructions across `init.sh` and `install.sh` (`greenfield`, `brownfield`, `blackbox`, `infra`, `baremetal`).
+  - Ensure zero divergence between CLI printed prompt and `AGENTS.md` / `TASK.md` Phase 00.1 contracts.
+- **Target Branches:** `greenfield`, `brownfield`, `blackbox`, `infra`, `baremetal`, `main`
 
 ---
 
@@ -40,12 +39,13 @@
 | `[05.2]` | Decouple Greenfield: Remove Boilerplate Skills and Add `--standalone` Flag in `init.sh` | `91b169b`, `6416052`, `1b65a40`, `56e0f47`, `7b1456a`, `2033b06` | 2026-10-20 |
 | `[05.3]` | Decouple Baremetal: Replace Node.js with Native Bash Test Runner (`tests/smoke.sh`) | `5d038d6`, `e6e1ce3`, `26be8d7`, `f4653b8` | 2026-10-20 |
 | `[05.4]` | Decouple Blackbox: Language-Agnostic Scaffolding & Zero-Dependency Validation | `a18dcfe`, `2376be3`, `78da786`, `e4d493e` | 2026-10-20 |
+| `[05.5]` | Hub Governance: Inter-Branch Drift Detection Script and CLI Flags Standardization | `495ba99`, `0e37a52`, `750b4bb`, `260d36c`, `eee5ee1`, `9cb3082`, `be492e9`, `6ab87fb`, `bbd087e`, `0a0fb7b`, `bf102f7`, `4021a07` | 2026-10-20 |
 
 ---
 
 ## Backlog (Upcoming, in priority order)
 
-*(empty — roadmap cycle 05 completion)*
+1. `[06.2]` Cross-Platform CI Matrix: Scaffolding Assertions on Ubuntu & macOS Runners
 
 ---
 
