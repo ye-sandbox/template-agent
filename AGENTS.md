@@ -22,7 +22,7 @@ When a conflict cannot be resolved using this hierarchy, the agent MUST halt exe
 ## 🌿 Repository Branch Map
 
 - **`main` (This Branch):** Central documentation hub, decision matrix, governance guidelines, and ecosystem evolution history.
-- **`greenfield`:** Clean starter kit for projects built from scratch (`.agent/adr/`, `.agent/skills/`, etc. at root).
+- **`greenfield`:** Clean starter kit for projects built from scratch (`docs/adr/decisions.md`, `.agent/skills/`, etc. at root).
 - **`brownfield`:** Injection template for existing/legacy codebases (`install.sh`, `.agent/INVARIANTS.md`, `.agent/ECOSYSTEM.md`, Task 00 Discovery).
 - **`blackbox`:** Template for reverse engineering, scrapers, automations, and undocumented closed APIs (`.agent/ENDPOINTS.md`, `.agent/skills/reverse-engineering/`, `init.sh`).
 - **`infra`:** Infrastructure-as-Code (IaC), Docker Compose, service orchestration, and Homelab (`.agent/SERVICES.md`, `.agent/ECOSYSTEM.md`, `.agent/skills/compose-service/`, `compose.yaml.example`, `init.sh`).
@@ -34,7 +34,7 @@ When a conflict cannot be resolved using this hierarchy, the agent MUST halt exe
 
 The agent MUST optimize context loading using the following progressive disclosure triggers:
 - **Default Context (Loaded on start):** `AGENTS.md`, `.agent/TASK.md`, `.agent/NOTES.md` (Active Contracts only).
-- **On-Demand Context (Progressive Disclosure):** `docs/adr/decisions.md` (historical architectural decisions diary), `.agent/adr/` (formal ADRs), `.agent/ECOSYSTEM.md` (multi-repo topology), `.agent/knowledge/` (runtime gotchas & platform cards).
+- **On-Demand Context (Progressive Disclosure):** `docs/adr/decisions.md` (historical architectural decisions diary), `.agent/ECOSYSTEM.md` (multi-repo topology), `.agent/knowledge/` (runtime gotchas & platform cards).
 - **Branch-Specific Context:** Checkout target branch BEFORE inspecting its root files.
 - **Transversal Skills:** Reference [`ye-sandbox/agent-skills`](https://github.com/ye-sandbox/agent-skills) ONLY when tasks require UI porting, QA audit, or host-level orchestration.
 
@@ -115,7 +115,7 @@ Format: `[Epic].[Sequence]` with two-digit epics. Subtasks: `[XX.Y.Z]`. Exactly 
 Not restricted to phase `99.x`. When releasing `vX.Y.Z`:
 
 1. **Archive:** Move completed log from `TASK.md` to `ARCHIVE.md` under `## [vX.Y.Z] - YYYY-MM-DD`.
-2. **Consolidate:** Promote definitive architectural decisions to `docs/adr/decisions.md` (and formal ADRs in `.agent/adr/`); prune ephemeral scratch notes in `.agent/NOTES.md` preserving only active contracts.
+2. **Consolidate:** Promote definitive architectural decisions to `docs/adr/decisions.md`; prune ephemeral scratch notes in `.agent/NOTES.md` preserving only active contracts.
 3. **Perimeter:** Sync `.env.example` and `README.md` to the release tag.
 4. **Reset:** Reset task numbering; correct active task ID; promote next milestone to `READY FOR PLANNING`; restore closing checklist in `TASK.md`.
 
