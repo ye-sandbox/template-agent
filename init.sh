@@ -85,7 +85,7 @@ if [ -d "$TARGET_DIR" ] && [ "$(ls -A "$TARGET_DIR" 2>/dev/null)" ]; then
 fi
 
 # Clone template into a temporary directory
-TEMP_CLONE_DIR="$(mktemp -d)"
+TEMP_CLONE_DIR="$(mktemp -d "${TMPDIR:-/tmp}/template-greenfield.XXXXXX")"
 trap 'rm -rf "$TEMP_CLONE_DIR"' EXIT
 
 echo "⏳ Cloning Greenfield template..."
