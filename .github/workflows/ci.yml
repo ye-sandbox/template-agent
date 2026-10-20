@@ -25,6 +25,11 @@ jobs:
             git branch --track "$branch" "origin/$branch" 2>/dev/null || true
           done
 
+      - name: Audit Inter-Branch Governance & Drift
+        run: |
+          chmod +x .github/scripts/check-branch-drift.sh
+          .github/scripts/check-branch-drift.sh
+
       - name: Run Unified Starter Test Suite
         run: |
           chmod +x .github/scripts/test-all-starters.sh
