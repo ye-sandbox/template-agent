@@ -1,0 +1,65 @@
+---
+author_type: human
+author: Architecture Team
+reviewed_by: Human Lead
+date: 2026-10-19
+status: accepted
+type: architectural-decision-log
+---
+
+# Architectural Decisions Log (Template Hub)
+
+> 🏛️ **Progressive Disclosure:** Historical and cumulative decisions live here so AI agents do not load them into working context on every interaction.
+> Active runtime contracts stay in [`.agent/NOTES.md`](../../.agent/NOTES.md).
+
+---
+
+## How to Record Architectural Decisions
+
+1. When a substantive design decision or trade-off is approved, append it here chronologically.
+2. Maintain decisions compact, rationale-focused, and falsifiable using the canonical schema below.
+3. If an extraordinary architectural decision requires a massive specification or complex C4 diagrams, create an attachment at `docs/adr/ADR-XXX-<name>.md` and link it directly from the entry here.
+4. In `.agent/NOTES.md`, maintain only **Active Contracts** and link to this file for background rationale.
+
+---
+
+## Cumulative Decisions
+
+| Data | Decisão / Contexto | Rationale & Trade-offs |
+|---|---|---|
+| 2026-09-06 | Checklist greenfield só no template; `init.sh` apaga no projeto gerado | Evita constituir permanente de um item “apague ao terminar”. |
+| 2026-09-06 | Contratos do CI em `.github/scripts/assert-starter-contracts.sh` | O YAML só orquestra o scaffold; âncoras ficam num arquivo rodável fora do Actions. |
+| 2026-09-08 | Requisitos de UI = skill `ui-contract`, não branch | Gerar `.agent/INTERFACE.md` é procedimento transversal (como VictoriaLogs). Quinta branch só faria sentido se o produto fosse um starter de app com constituição própria. |
+| 2026-09-08 | Chrome ≠ NFR de domínio | Tema (`light`/`system`/`dark`) é default do hub, não deriva de rota. Locale rascunho = `fixed` `en`; acordo humano na conclusão. 2+ idiomas → seletor com bandeira por território. Não inventar `/settings` nem catálogo. |
+| 2026-09-08 | Pipeline UI = 3 skills, não branch | Contrato → proto HTML → porte. `INTERFACE.md` viaja com `proto/`. Svelte é default do porte; stack oficial na ADR do frontend. Delta: backend → contrato → proto só se o visual mudar → porte. Svelte não descobre endpoint. |
+| 2026-09-10 | Kit de peças = skill `component-contract`, irmã de `ui-contract` | Telas (`INTERFACE.md`) e componentes (`COMPONENTS.md`) são handoffs distintos. Misturar no mesmo molde faz o agente inventar rotas de SPA. Nenhuma das duas skills gera código. |
+| 2026-09-10 | Stitch = layout A do `ui-port` | Export `proto/scr-<id>/code.html` + `DESIGN.md` é proto canônico quando existir. Achatar ou regenerar com `ui-prototype` apaga o visual aprovado. Mapa do frontend pode divergir do backend (ADR). |
+| 2026-09-10 | Porte = Svelte 5 de verdade, não dump HTML | Proto é HTML/CSS: Svelte porta markup/classes quase 1:1 (simples + runtime pequeno). React/Vue reescrevem o HTML. Visual 1:1 ≠ um `.svelte` por tela. Extração header/footer/átomos e runes são estrutura, não redesenho. `COMPONENTS.md` aprovado alimenta `src/components/`; ausência não bloqueia o porte. |
+| 2026-09-10 | Fidelidade = `class` + motion do HTML, não “clima” Stitch | Extração em componentes sem copiar grid/`absolute`/`@keyframes` redesenha (ex.: `md:grid-cols-3` → `xl:grid-cols-4`, drawer inventado). Stitch minifica `class` e `<style>` no `<head>`; o agente tem de abrir por `id`. `DESIGN.md` não substitui o CSS de animação do `code.html`. |
+| 2026-09-12 | Porte: reuse + Tailwind\|UnoCSS + padrão de tela | Dump e cópia de chrome/átomos inflacionam o app e divergem no delta. Stitch já é Tailwind; UnoCSS só se o repo já o tiver (mesma string `class`). Terceiro motor ou visual “só desta rota” é redesenho. Brief `.md` do Stitch não substitui `INTERFACE.md`. Drop cru entra como `proto/scr-<id>/`, não como slug. |
+| 2026-09-13 | Superfície de UI = chrome acordado, não persona da API | Audiência/densidade/motion/copy/formato não saem do OpenAPI. Sem campo, proto e Stitch improvisam clima. Enum fechado + Passo 5 (com locale); override só na ficha que diverge. Paleta/type ficam no proto. Formato (`desktop`/`touch`/`kiosk`) não é audiência. |
+| 2026-09-13 | Skill `qa-environment` (Mock, Seeding, Túnel e Prompt) | Teste de UI por agentes externos precisa de mock seguro para evitar disparos em produção, dados pré-carregados para testar listagens/estados e túnel HTTPS com prompt estruturado. |
+| 2026-09-13 | Livro de skills = `agent-skills`, não o hub | Playbook transversal (UI, QA) não é molde de starter. Canônico: `ye-sandbox/agent-skills` `skills/`. Hub `main` só aponta; `greenfield`/`blackbox`/`infra` mantêm skills que o `init.sh` entrega. |
+| 2026-09-15 | High-density Technical English in templates | Reduces token consumption by 30-40% across multi-turn agent sessions and improves instruction-following fidelity. Primary README in English with dedicated `README.pt-br.md` for Brazilian community. |
+| 2026-09-18 | Taxonomia `docs/`, RCA narrativo e cabeçalho de autoria | `NOTES.md` permanece enxuto ("WHY"). Narrativas profundas de incidentes (Causa, Linha de Raciocínio, Solução, Prevenção) ficam em `docs/incidents/`. Todo doc sob `docs/` exige cabeçalho YAML (`author_type: agent\|human\|agent-assisted`, `author`, `reviewed_by`, `date`, `status`, `type`) para diferenciar raciocínio de IA de fatos auditados. |
+| 2026-09-18 | Graduação de incidentes em 3 tiers e âncoras LogsQL | Tier 1 (Gotchas em `NOTES.md`), Tier 2 (Runbooks em `docs/host/`), Tier 3 (RCA com nome `YYYY-MM-DD-<slug>.md` em `docs/incidents/`). `docs/incidents/README.md` rastreia histórico e itens de ação preventiva. Template `000-template.md` ganha blocos estruturados de query VictoriaLogs/LogsQL. |
+| 2026-09-19 | Brownfield `--local-only` vs branch dedicada | Branch exclusiva para modo local causaria duplicação de 95% do starter legado. Modo stealth via flag no `install.sh` (`.git/info/exclude` + diretiva no `AGENTS.md`) resolve adoção corporativa sem branch sprawl. |
+| 2026-09-30 | `.agent/ECOSYSTEM.md` vs `NOTES.md` para multi-repo | Topologia de serviços irmãos, contratos externos e raio de impacto têm ciclo de vida próprio. Documentar no `NOTES.md` inflaria o contexto default a cada turno; `ECOSYSTEM.md` isola o mapa e só é carregado sob demanda (progressive disclosure) quando o agente altera contratos externos. |
+| 2026-10-01 | Runner canônico de testes no starter (`package.json`) vs descoberta ad-hoc | Omissão do script "test" no scaffold (ex: `create-vite`) causava ~30 steps de overhead com o agente tentando compilações inline (esbuild em base64). Starter agora nasce com `package.json` zero-dependência (`node --test`), `tests/smoke.test.js` e guardrail no `AGENTS.md` exigindo comando oficial (`npm test`/`vitest run`/`pytest`). |
+| 2026-10-01 | Ignore cache incremental TS (`*.tsbuildinfo`) e estado de canvas (`.maestri/`) | `*.tsbuildinfo` causa churn e merge conflicts frequentes em builds incrementais; `.maestri/` isola metadados locais de canvas e terminais do Maestri sem poluir templates e repositórios gerados. |
+| 2026-10-05 | Diário cumulativo de ADRs em `docs/adr/decisions.md` e contratos ativos em `NOTES.md` | O diário de decisões cresce indefinidamente e polui a janela de contexto se mantido no `NOTES.md` always-on. Migrar para `docs/adr/decisions.md` habilita progressive disclosure sob demanda, enquanto `NOTES.md` preserva apenas contratos ativos (incluindo topologia canônica multi-agente `dev-trinity-sentinel`, rotas e gotchas). |
+| 2026-10-08 | Branch `baremetal` para host OS & PC tuning | Diferenciação fundamental entre infraestrutura virtualizada/containers (`infra`) e sistema operacional nativo/hardware (`baremetal`). Exige guardrail Rollback-First (par obrigatório backup + `revert-*.sh` antes de tocar em `/etc` ou kernel) para prevenir quebras catastróficas do host. |
+| 2026-10-10 | Consultative dependencies vs reinvenção da roda | Proibir instalação autônoma de dependências sem diretriz consultiva levava agentes a escreverem lógica complexa (parsers, crypto, datas) do zero em stdlib. Guardrail agora instrui recomendar lib padrão no plano ao lado de alternativa stdlib com trade-offs (manutenção, attack surface, bundle), aguardando decisão humana. |
+| 2026-10-10 | Versão estável mais recente (data atual) e preferência por LTS | Agentes tendem a ancorar em versões defasadas devido ao corte de treino dos modelos ou a selecionar pre-releases instáveis (canary/alpha). Diretiva fixa o default na versão estável GA mais recente com base na data do dia, prioriza LTS para runtimes e imagens base, e subordina novidade à compatibilidade do ecossistema e invariantes. |
+| 2026-10-10 | Calibração de tamanho de função e complexidade cognitiva vs 40 LOC fixos | Teto rígido de 40 LOC causava fragmentação artificial (indirection hell) e quebrava código declarativo (schemas, rotas, testes). Substituído por heurística de concisão (alvo ≤ 50 LOC), baixo aninhamento (máx 2-3 níveis com guard clauses) e isenção expressa de estruturas declarativas. |
+| 2026-10-10 | `.agent/ECOSYSTEM.md` no starter brownfield | Sistemas legados e corporativos frequentemente operam como upstream ou downstream de múltiplos microsserviços. O template `ECOSYSTEM.md` provê a matriz de topologia e regras de expand/contract para evitar quebra de integrações durante a modernização. |
+| 2026-10-14 | Paridade de contratos em brownfield e blackbox (ECOSYSTEM.md e docs/adr/decisions.md) | Harmoniza os starters com greenfield, eliminando links quebrados nos gatilhos de AGENTS.md, garantindo que o installer do brownfield distribua topologia e diário de decisões com suporte stealth (.git/info/exclude). |
+| 2026-10-17 | `.agent/knowledge/` vs `NOTES.md` e `docs/incidents/` para gotchas e bugs | Gotchas de runtime em `NOTES.md` inflam o contexto default (always-on); `docs/incidents/` é pesado demais para bugs de plataforma corriqueiros. `.agent/knowledge/` implementa progressive disclosure com cards atômicos pesquisáveis via tags/symptoms (schema formal `000-schema.md`). |
+| 2026-10-17 | Baremetal continuous observability via Vector HTTP POST | Streaming opt-in via Vector HTTP endpoint (/logs) padroniza NDJSON e roteia para VictoriaLogs sem expor conexões diretas do cluster no host baremetal e sem criar arquivos locais não rastreados. |
+| 2026-10-19 | In-code invariants (`// INVARIANT:`) vs superficial comments | Comentários de código não devem repetir a sintaxe; devem documentar o PORQUÊ de restrições não óbvias (ordem de execução, protocolos externos, concorrência, segurança) usando prefixos canônicos (`// INVARIANT:` ou `# INVARIANT:`) para maximizar a fidelidade de inferência e clareza humana. |
+| 2026-10-19 | Post-v1.0.0 roadmap: CI runtime smoke testing & starter contract parity | Checagens estáticas com grep no CI pegam presença de arquivo mas não garantem execução real do runner (`node --test`). Prioriza asserção ativa em runtime (`npm test`), paridade do diário de ADRs (`docs/adr/decisions.md`) em `infra`/`baremetal`, e topologia em `infra`. |
+| 2026-10-19 | Paridade de topologia de ecossistema (.agent/ECOSYSTEM.md) no starter infra | Stacks de infra e compose frequentemente expõem gateways ou consomem serviços externos (APIs irmãs, auth upstream, telemetry central). O template ECOSYSTEM.md isola essas fronteiras multi-repo sob demanda sem poluir SERVICES.md (que foca na orquestração interna de containers, portas e volumes). |
+| 2026-10-19 | Pre-seeding de cards canônicos de knowledge base nos starters | Demonstra na prática o schema `000-schema.md` com gotchas reais dos domínios (Node test ESM em `greenfield`, UID bind-mounts em `infra`, sysctl persistence em `baremetal`) sem inflar o contexto always-on (`NOTES.md`). |
+| 2026-10-19 | Runner unificado de testes locais e CI (`.github/scripts/test-all-starters.sh`) | Evita duplicação de dezenas de linhas de script no workflow de CI (`ci.yml`), habilita validação hermética rápida dos 5 starters no ambiente local antes do push/PR (resolvendo refs locais vs origin), e isola execuções temporárias com cleanup automático em traps (`mktemp -d`). |
+| 2026-10-19 | Desacoplamento agnóstico do greenfield vs imposição de Node.js | Forçar `package.json`, `tests/smoke.test.js` e card ESM de Node em greenfield violava a premissa de um starter de aplicação do zero agnóstico de stack (Python, Rust, Go, etc.). O scaffold preserva o framework de knowledge cards (`000-schema.md`), enquanto a fase 00.1 instrui o agente a configurar o harness oficial e validações da linguagem definida pelo usuário. |
+| 2026-10-19 | Consolidação arquitetural de ADRs no `decisions.md` e purga de `.agent/adr/` | A convivência de dois locais de ADRs (`.agent/adr/` vs `docs/adr/decisions.md`) causava ambiguidade para agentes e assimetria entre templates. Unifica em `docs/adr/decisions.md` como Single Source of Truth para todos os starters e o Hub, preservando alta densidade de tokens e progressive disclosure. |

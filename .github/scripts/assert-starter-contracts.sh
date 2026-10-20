@@ -50,13 +50,13 @@ assert_greenfield() {
   need_dir .agent
   need_file .agent/skills/database-migration/SKILL.md
   need_file .agent/skills/api-endpoint/SKILL.md
-  need_file .agent/adr/000-template.md
   need_file .agent/knowledge/000-schema.md
   need_file .agent/knowledge/k-000-template.md
   need_file docs/adr/decisions.md
   need_file .agent/ECOSYSTEM.md
   need_dir .git
   need_absent init.sh
+  need_absent .agent/adr/000-template.md
   need_one_commit
   need_grep AGENTS.md '.agent/TASK.md' -qF
   need_grep AGENTS.md '.agent/NOTES.md' -qF
