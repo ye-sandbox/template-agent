@@ -10,7 +10,25 @@
 
 ## Active Task
 
-*(No active task. Awaiting user instruction for next roadmap epic or milestone.)*
+### 📌 Task [04.2]: Language-Agnostic Greenfield Decoupling and CI Contract Calibration
+
+- **Description:** Decouple the `greenfield` starter from forced Node.js artifacts (`package.json`, `tests/smoke.test.js`, and Node ESM knowledge card), adjust `AGENTS.md` and phase 00.1 to be language-agnostic while preserving the `.agent/knowledge/` foundation, and calibrate CI contract assertions in `.github/scripts/assert-starter-contracts.sh`.
+- **Systems Involved:** `greenfield`, `ci`, `hub`
+- **Action Type:**
+  - [ ] Read-only / Documentation
+  - [x] Source code changes
+- **Status:** RUNNING
+  *(Workflow: `READY FOR PLANNING` → `PLANNING` on presenting plan → approval → `RUNNING`)*
+
+### Acceptance Criteria
+- [ ] On `greenfield`: remove `package.json`, `tests/smoke.test.js`, and `.agent/knowledge/k-001-node-test-esm-resolution.md`
+- [ ] On `greenfield`: preserve `.agent/knowledge/000-schema.md` and `k-000-template.md`
+- [ ] On `greenfield`: update `AGENTS.md` test sections and contrast pairs to be language-agnostic (`npm test`, `pytest`, `cargo test`, `go test`) and instruct phase 00.1 to configure the language test harness
+- [ ] On `greenfield`: update `.agent/TASK.md` backlog to reflect language-agnostic test runner setup in `[00.1]`
+- [ ] On `main`: calibrate `assert_greenfield()` in `.github/scripts/assert-starter-contracts.sh` by removing Node-specific file and text assertions while maintaining conditional `need_clean_smoke_test()`
+- [ ] Verification: `.github/scripts/test-all-starters.sh greenfield` and `.github/scripts/test-all-starters.sh all` succeed
+- [ ] `git diff --check` exits with 0 on all modified branches
+
 
 ---
 
