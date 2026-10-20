@@ -21,7 +21,7 @@ if [ ! -x "$ASSERT_SCRIPT" ]; then
   chmod +x "$ASSERT_SCRIPT"
 fi
 
-TMP_BASE="$(mktemp -d /tmp/test-all-starters.XXXXXX)"
+TMP_BASE="$(mktemp -d "${TMPDIR:-/tmp}/test-all-starters.XXXXXX")"
 trap 'rm -rf "$TMP_BASE"' EXIT INT TERM
 
 log_info() {

@@ -240,7 +240,11 @@ assert_infra() {
   if grep -qE 'image:[[:space:]]*[^[:space:]]+:latest' "$ROOT/compose.yaml.example"; then
     fail ":latest image tag found in compose.yaml.example"
   fi
-  docker compose --env-file "$ROOT/.env.example" -f "$ROOT/compose.yaml.example" config --quiet
+  if command -v docker >/dev/null 2>&1; then
+    docker compose --env-file "$ROOT/.env.example" -f "$ROOT/compose.yaml.example" config --quiet
+  else
+    echo "⚠️  docker command not found; skipping compose config validation on $(uname -s)"
+  fi
 }
 
 assert_baremetal() {
