@@ -10,7 +10,13 @@
 
 ## Active Task
 
-*(No active task. Awaiting user instruction for next roadmap epic or milestone.)*
+- **Task:** `[05.1]` Purge Residual .agent/adr References Across Starters and Sync Documentation
+- **Status:** RUNNING
+- **Scope:**
+  - Branches `brownfield`, `blackbox`, `infra`, `baremetal`: Clean residual `.agent/adr/` references in `docs/adr/decisions.md`.
+  - Branch `main`: Update `README.md` and `README.pt-br.md` to reflect `docs/adr/decisions.md` instead of `.agent/adr/`.
+  - Verification: Run `.github/scripts/test-all-starters.sh all` and `git diff --check`.
+- **Target Branches:** `brownfield`, `blackbox`, `infra`, `baremetal`, `main`
 
 ---
 
@@ -35,7 +41,10 @@
 
 ## Backlog (Upcoming, in priority order)
 
-*(empty)*
+1. `[05.2]` Decouple Greenfield: Remove Boilerplate Skills (`api-endpoint`, `database-migration`) and Add `--standalone` Flag in `init.sh`
+2. `[05.3]` Decouple Baremetal: Replace Node.js with Native Bash Test Runner (`tests/smoke.sh`)
+3. `[05.4]` Decouple Blackbox: Language-Agnostic Scaffolding & Zero-Dependency Validation
+4. `[05.5]` Hub Governance: Inter-Branch Drift Detection Script and CLI Flags Standardization
 
 ---
 
