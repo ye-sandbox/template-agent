@@ -67,15 +67,21 @@ extract_branch_archive() {
 test_greenfield() {
   log_info "Testing Greenfield starter scaffolding & contracts..."
   local target_dir="$TMP_BASE/greenfield"
+  local standalone_dir="$TMP_BASE/greenfield-standalone"
   local init_script="$TMP_BASE/init-greenfield.sh"
 
   extract_branch_file greenfield init.sh "$init_script"
   chmod +x "$init_script"
   TEMPLATE_REPO_URL="$TEMPLATE_REPO_URL" "$init_script" -y "$target_dir"
+  "$ASSERT_SCRIPT" greenfield "$target_dir"
+  log_success "Greenfield standard starter passed all assertions"
+
+  log_info "Testing Greenfield starter in Standalone Mode (--standalone)..."
+  TEMPLATE_REPO_URL="$TEMPLATE_REPO_URL" "$init_script" -y --standalone "$standalone_dir"
   rm -f "$init_script"
 
-  "$ASSERT_SCRIPT" greenfield "$target_dir"
-  log_success "Greenfield starter passed all assertions"
+  "$ASSERT_SCRIPT" greenfield-standalone "$standalone_dir"
+  log_success "Greenfield standalone starter passed all assertions"
 }
 
 test_brownfield() {
