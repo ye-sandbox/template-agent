@@ -56,7 +56,7 @@ assert_greenfield() {
   need_file .agent/ECOSYSTEM.md
   need_dir .git
   need_absent init.sh
-  need_absent .agent/adr/000-template.md
+  need_absent .agent/adr
   need_one_commit
   need_grep AGENTS.md '.agent/TASK.md' -qF
   need_grep AGENTS.md '.agent/NOTES.md' -qF
@@ -98,6 +98,7 @@ assert_brownfield() {
   need_file .agent/TASK.md
   need_file .agent/NOTES.md
   need_file .agent/ARCHIVE.md
+  need_absent .agent/adr
   need_grep AGENTS.md '.agent/INVARIANTS.md' -qF
   need_grep AGENTS.md '.agent/ECOSYSTEM.md' -qF
   need_grep AGENTS.md '.agent/knowledge/' -qF
@@ -144,6 +145,7 @@ assert_blackbox() {
   need_file .gitignore
   need_dir .git
   need_absent init.sh
+  need_absent .agent/adr
   need_one_commit
   need_grep AGENTS.md 'git push' -qiF
   need_grep AGENTS.md 'Technical English' -qiF
@@ -193,6 +195,7 @@ assert_infra() {
   need_file docs/architecture/000-template.md
   need_dir .git
   need_absent init.sh
+  need_absent .agent/adr
   need_one_commit
   need_grep docs/README.md 'author_type' -qF
   need_grep docs/incidents/README.md 'Tier 1' -qF
@@ -247,6 +250,7 @@ assert_baremetal() {
   need_file .gitignore
   need_dir .git
   need_absent init.sh
+  need_absent .agent/adr
   need_one_commit
   need_grep AGENTS.md 'Rollback-First' -qiE
   need_grep AGENTS.md 'Technical English' -qiF
