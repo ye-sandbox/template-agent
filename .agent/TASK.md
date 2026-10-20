@@ -10,19 +10,20 @@
 
 ## Active Task
 
-### 📌 Task [03.1]: Pre-Seed Canonical Knowledge Base Cards (`.agent/knowledge/`) across Starters
+### 📌 Task [03.2]: Pre-Seed Canonical Knowledge Base Cards in Brownfield & Blackbox Starters
 
-- **Description:** Pre-seed realistic canonical platform and runtime gotcha cards (`.agent/knowledge/k-*.md`) across starters according to `000-schema.md` (e.g., Node test resolution, Docker volume UID permissions, Linux sysctl persistence) to demonstrate concrete progressive disclosure in action.
-- **Systems Involved:** `greenfield`, `brownfield`, `blackbox`, `infra`, `baremetal`
+- **Description:** Pre-seed realistic canonical platform and runtime gotcha cards (`.agent/knowledge/k-*.md`) in `brownfield` and `blackbox` starters to demonstrate concrete progressive disclosure in reverse-engineering and legacy modernization.
+- **Systems Involved:** `brownfield`, `blackbox`, `ci`
 - **Action Type:**
   - [ ] Read-only / Documentation
   - [x] Source code changes
-- **Status:** RUNNING
+- **Status:** READY FOR PLANNING
+  *(Workflow: `READY FOR PLANNING` → `PLANNING` on presenting plan → approval → `RUNNING`)*
 
 ### Acceptance Criteria
-- [ ] Author canonical knowledge card for `greenfield` (Node test resolution / ESM gotchas)
-- [ ] Author canonical knowledge card for `infra` (Docker bind-mount UID permissions)
-- [ ] Author canonical knowledge card for `baremetal` (sysctl persistence / systemd overrides)
+- [ ] Author canonical knowledge card for `blackbox`
+- [ ] Author canonical knowledge card for `brownfield`
+- [ ] Update installer / scaffold copy logic if needed
 - [ ] Update assertions in `.github/scripts/assert-starter-contracts.sh`
 - [ ] Validate contracts cleanly across starters
 
@@ -39,6 +40,7 @@
 | `[01.3]` | Active Starter Smoke Testing Assertions in CI Workflow | `b46342f` | 2026-10-19 |
 | `[02.1]` | Harmonize ADR Diary (`docs/adr/decisions.md`) across Infra & Baremetal Starters | `a6fd941`, `5ff38cf`, `38cbd0c`, `45f5c96` | 2026-10-19 |
 | `[02.2]` | Standardize Service Topology Template (`.agent/ECOSYSTEM.md`) in Infra Starter | `cef169a`, `5fb9546`, `5b7fa3f` | 2026-10-19 |
+| `[03.1]` | Pre-Seed Canonical Knowledge Base Cards across Starters | `006db0e`, `577dbe7`, `0e28c34`, `05e8fb4`, `86caa2b` | 2026-10-19 |
 
 ---
 
