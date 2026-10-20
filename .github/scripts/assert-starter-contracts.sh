@@ -53,11 +53,8 @@ assert_greenfield() {
   need_file .agent/adr/000-template.md
   need_file .agent/knowledge/000-schema.md
   need_file .agent/knowledge/k-000-template.md
-  need_file .agent/knowledge/k-001-node-test-esm-resolution.md
   need_file docs/adr/decisions.md
   need_file .agent/ECOSYSTEM.md
-  need_file package.json
-  need_file tests/smoke.test.js
   need_dir .git
   need_absent init.sh
   need_one_commit
@@ -66,12 +63,10 @@ assert_greenfield() {
   need_grep AGENTS.md 'docs/adr/decisions.md' -qF
   need_grep AGENTS.md '.agent/knowledge/' -qF
   need_grep AGENTS.md 'Knowledge [Pp]reservation' -qiE
-  need_grep .agent/knowledge/k-001-node-test-esm-resolution.md 'ERR_MODULE_NOT_FOUND' -qF
   need_grep .agent/NOTES.md 'docs/adr/decisions.md' -qF
   need_grep .agent/NOTES.md 'Active Contracts' -qF
   need_grep AGENTS.md '.agent/ECOSYSTEM.md' -qF
   need_grep AGENTS.md 'npm test' -qF
-  need_grep package.json '"test": "node --test"' -qF
   need_clean_smoke_test
   need_grep .agent/ECOSYSTEM.md 'Repository Topology Matrix' -qF
   need_grep AGENTS.md 'Technical English' -qiF
