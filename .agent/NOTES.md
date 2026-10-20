@@ -64,6 +64,7 @@
 | 2026-10-19 | In-code invariants (`// INVARIANT:`) vs superficial comments | Comentários de código não devem repetir a sintaxe; devem documentar o PORQUÊ de restrições não óbvias (ordem de execução, protocolos externos, concorrência, segurança) usando prefixos canônicos (`// INVARIANT:` ou `# INVARIANT:`) para maximizar a fidelidade de inferência e clareza humana. |
 | 2026-10-19 | Post-v1.0.0 roadmap: CI runtime smoke testing & starter contract parity | Checagens estáticas com grep no CI pegam presença de arquivo mas não garantem execução real do runner (`node --test`). Prioriza asserção ativa em runtime (`npm test`), paridade do diário de ADRs (`docs/adr/decisions.md`) em `infra`/`baremetal`, e topologia em `infra`. |
 | 2026-10-19 | Paridade de topologia de ecossistema (.agent/ECOSYSTEM.md) no starter infra | Stacks de infra e compose frequentemente expõem gateways ou consomem serviços externos (APIs irmãs, auth upstream, telemetry central). O template ECOSYSTEM.md isola essas fronteiras multi-repo sob demanda sem poluir SERVICES.md (que foca na orquestração interna de containers, portas e volumes). |
+| 2026-10-19 | Pre-seeding de cards canônicos de knowledge base nos starters | Demonstra na prática o schema `000-schema.md` com gotchas reais dos domínios (Node test ESM em `greenfield`, UID bind-mounts em `infra`, sysctl persistence em `baremetal`) sem inflar o contexto always-on (`NOTES.md`). |
 
 ### Formal ADR Index
 
