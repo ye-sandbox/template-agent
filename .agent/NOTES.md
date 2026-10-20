@@ -65,6 +65,7 @@
 | 2026-10-19 | Post-v1.0.0 roadmap: CI runtime smoke testing & starter contract parity | Checagens estáticas com grep no CI pegam presença de arquivo mas não garantem execução real do runner (`node --test`). Prioriza asserção ativa em runtime (`npm test`), paridade do diário de ADRs (`docs/adr/decisions.md`) em `infra`/`baremetal`, e topologia em `infra`. |
 | 2026-10-19 | Paridade de topologia de ecossistema (.agent/ECOSYSTEM.md) no starter infra | Stacks de infra e compose frequentemente expõem gateways ou consomem serviços externos (APIs irmãs, auth upstream, telemetry central). O template ECOSYSTEM.md isola essas fronteiras multi-repo sob demanda sem poluir SERVICES.md (que foca na orquestração interna de containers, portas e volumes). |
 | 2026-10-19 | Pre-seeding de cards canônicos de knowledge base nos starters | Demonstra na prática o schema `000-schema.md` com gotchas reais dos domínios (Node test ESM em `greenfield`, UID bind-mounts em `infra`, sysctl persistence em `baremetal`) sem inflar o contexto always-on (`NOTES.md`). |
+| 2026-10-19 | Runner unificado de testes locais e CI (`.github/scripts/test-all-starters.sh`) | Evita duplicação de dezenas de linhas de script no workflow de CI (`ci.yml`), habilita validação hermética rápida dos 5 starters no ambiente local antes do push/PR (resolvendo refs locais vs origin), e isola execuções temporárias com cleanup automático em traps (`mktemp -d`). |
 
 ### Formal ADR Index
 
