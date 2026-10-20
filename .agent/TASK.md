@@ -10,13 +10,7 @@
 
 ## Active Task
 
-- **Task:** `[04.3]` Consolidate ADR Architecture on decisions.md and Purge .agent/adr Residue
-- **Status:** RUNNING
-- **Scope:**
-  - Branch `greenfield`: remove `.agent/adr/000-template.md`, streamline `docs/adr/decisions.md` and update `AGENTS.md`.
-  - Branch `main`: remove `.agent/adr/000-template.md` and contract assertion in `.github/scripts/assert-starter-contracts.sh`, update `AGENTS.md` and `.agent/NOTES.md`.
-  - Verification: run `.github/scripts/test-all-starters.sh all` and `git diff --check`.
-- **Target Branches:** `greenfield`, `main`
+*(No active task. Awaiting user instruction for next roadmap epic or milestone.)*
 
 ---
 
@@ -35,6 +29,7 @@
 | `[03.2]` | Pre-Seed Canonical Knowledge Base Cards in Brownfield & Blackbox Starters | `5f963f5`, `3b20bd2`, `c6773e3`, `56370e1` | 2026-10-19 |
 | `[04.1]` | Unified Multi-Starter Local & CI Test Runner Script | `ccbddd4` | 2026-10-19 |
 | `[04.2]` | Language-Agnostic Greenfield Decoupling and CI Contract Calibration | `0a172d1`, `1fab7e1` | 2026-10-19 |
+| `[04.3]` | Consolidate ADR Architecture on decisions.md and Purge .agent/adr Residue | `3d73da5`, `09194e7` | 2026-10-19 |
 
 ---
 
