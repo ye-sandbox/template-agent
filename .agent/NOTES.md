@@ -2,7 +2,6 @@
 
 > Stores the active runtime contracts (WHAT interacts with WHAT), live communication topology, and critical gotchas.
 > Historical architectural decisions live in [`docs/adr/decisions.md`](../docs/adr/decisions.md).
-> Formal individual ADRs live in [`.agent/adr/`](adr/).
 
 ---
 
