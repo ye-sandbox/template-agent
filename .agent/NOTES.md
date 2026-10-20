@@ -66,6 +66,7 @@
 | 2026-10-19 | Paridade de topologia de ecossistema (.agent/ECOSYSTEM.md) no starter infra | Stacks de infra e compose frequentemente expõem gateways ou consomem serviços externos (APIs irmãs, auth upstream, telemetry central). O template ECOSYSTEM.md isola essas fronteiras multi-repo sob demanda sem poluir SERVICES.md (que foca na orquestração interna de containers, portas e volumes). |
 | 2026-10-19 | Pre-seeding de cards canônicos de knowledge base nos starters | Demonstra na prática o schema `000-schema.md` com gotchas reais dos domínios (Node test ESM em `greenfield`, UID bind-mounts em `infra`, sysctl persistence em `baremetal`) sem inflar o contexto always-on (`NOTES.md`). |
 | 2026-10-19 | Runner unificado de testes locais e CI (`.github/scripts/test-all-starters.sh`) | Evita duplicação de dezenas de linhas de script no workflow de CI (`ci.yml`), habilita validação hermética rápida dos 5 starters no ambiente local antes do push/PR (resolvendo refs locais vs origin), e isola execuções temporárias com cleanup automático em traps (`mktemp -d`). |
+| 2026-10-19 | Desacoplamento agnóstico do greenfield vs imposição de Node.js | Forçar `package.json`, `tests/smoke.test.js` e card ESM de Node em greenfield violava a premissa de um starter de aplicação do zero agnóstico de stack (Python, Rust, Go, etc.). O scaffold preserva o framework de knowledge cards (`000-schema.md`), enquanto a fase 00.1 instrui o agente a configurar o harness oficial e validações da linguagem definida pelo usuário. |
 
 ### Formal ADR Index
 
