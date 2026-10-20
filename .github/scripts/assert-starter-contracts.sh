@@ -1,13 +1,13 @@
 #!/usr/bin/env bash
 # Assert scaffolding + guardrail contracts on a generated starter.
-# Usage: assert-starter-contracts.sh <greenfield|brownfield|brownfield-stealth|blackbox|infra|baremetal> <dir>
+# Usage: assert-starter-contracts.sh <greenfield|greenfield-standalone|brownfield|brownfield-stealth|blackbox|infra|baremetal> <dir>
 set -euo pipefail
 
 KIND="${1:-}"
 ROOT="${2:-}"
 
 if [ -z "$KIND" ] || [ -z "$ROOT" ] || [ ! -d "$ROOT" ]; then
-  echo "Usage: $0 <greenfield|brownfield|brownfield-stealth|blackbox|infra|baremetal> <generated-dir>" >&2
+  echo "Usage: $0 <greenfield|greenfield-standalone|brownfield|brownfield-stealth|blackbox|infra|baremetal> <generated-dir>" >&2
   exit 2
 fi
 
@@ -45,15 +45,16 @@ need_clean_smoke_test() {
   fi
 }
 
-assert_greenfield() {
+assert_greenfield_base() {
   need_file AGENTS.md
   need_dir .agent
-  need_file .agent/skills/database-migration/SKILL.md
-  need_file .agent/skills/api-endpoint/SKILL.md
+  need_file .agent/skills/000-template.md
+  need_file .agent/skills/README.md
+  need_absent .agent/skills/database-migration
+  need_absent .agent/skills/api-endpoint
   need_file .agent/knowledge/000-schema.md
   need_file .agent/knowledge/k-000-template.md
   need_file docs/adr/decisions.md
-  need_file .agent/ECOSYSTEM.md
   need_dir .git
   need_absent init.sh
   need_absent .agent/adr
@@ -65,10 +66,8 @@ assert_greenfield() {
   need_grep AGENTS.md 'Knowledge [Pp]reservation' -qiE
   need_grep .agent/NOTES.md 'docs/adr/decisions.md' -qF
   need_grep .agent/NOTES.md 'Active Contracts' -qF
-  need_grep AGENTS.md '.agent/ECOSYSTEM.md' -qF
   need_grep AGENTS.md 'npm test' -qF
   need_clean_smoke_test
-  need_grep .agent/ECOSYSTEM.md 'Repository Topology Matrix' -qF
   need_grep AGENTS.md 'Technical English' -qiF
   need_grep AGENTS.md 'INVARIANT:' -qF
   need_grep AGENTS.md 'circuit breaker' -qiE
@@ -83,6 +82,21 @@ assert_greenfield() {
   need_grep .gitignore '.agent/.cache/' -qF
   if grep -qiE 'Checklist de adaptação|Adaptation checklist' "$ROOT/AGENTS.md"; then
     fail "adaptation checklist leaked into generated AGENTS.md"
+  fi
+}
+
+assert_greenfield() {
+  assert_greenfield_base
+  need_file .agent/ECOSYSTEM.md
+  need_grep AGENTS.md '.agent/ECOSYSTEM.md' -qF
+  need_grep .agent/ECOSYSTEM.md 'Repository Topology Matrix' -qF
+}
+
+assert_greenfield_standalone() {
+  assert_greenfield_base
+  need_absent .agent/ECOSYSTEM.md
+  if grep -qF '.agent/ECOSYSTEM.md' "$ROOT/AGENTS.md"; then
+    fail ".agent/ECOSYSTEM.md reference found in AGENTS.md for standalone mode"
   fi
 }
 
@@ -281,6 +295,7 @@ assert_baremetal() {
 
 case "$KIND" in
   greenfield) assert_greenfield ;;
+  greenfield-standalone) assert_greenfield_standalone ;;
   brownfield) assert_brownfield ;;
   brownfield-stealth) assert_brownfield_stealth ;;
   blackbox) assert_blackbox ;;
