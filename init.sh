@@ -6,6 +6,7 @@
 set -euo pipefail
 
 FORCE_YES=false
+STANDALONE=false
 TARGET_DIR=""
 
 # Parse arguments
@@ -15,15 +16,21 @@ while [[ $# -gt 0 ]]; do
             FORCE_YES=true
             shift
             ;;
+        -s|--standalone)
+            STANDALONE=true
+            shift
+            ;;
         -h|--help)
-            echo "Usage: init.sh [-y|--yes] [PROJECT_NAME_OR_DIR]"
+            echo "Usage: init.sh [-y|--yes] [-s|--standalone] [PROJECT_NAME_OR_DIR]"
             echo ""
             echo "Options:"
             echo "  -y, --yes, -f, --force    Run non-interactively without confirmation prompts"
+            echo "  -s, --standalone          Scaffold as standalone repository (omits .agent/ECOSYSTEM.md)"
             echo "  -h, --help                Show this help message"
             echo ""
             echo "Example:"
             echo "  curl -fsSL https://raw.githubusercontent.com/ye-sandbox/template-agent/greenfield/init.sh | bash -s -- my-project"
+            echo "  curl -fsSL https://raw.githubusercontent.com/ye-sandbox/template-agent/greenfield/init.sh | bash -s -- --standalone my-project"
             exit 0
             ;;
         *)
@@ -94,6 +101,16 @@ rm -f "$TARGET_DIR/init.sh"
 # Enter destination and initialize fresh Git history
 cd "$TARGET_DIR"
 rm -rf .git
+
+# Handle standalone mode
+if [ "$STANDALONE" = true ]; then
+    echo "ℹ️  Standalone mode: removing multi-repo ecosystem topology (.agent/ECOSYSTEM.md)..."
+    rm -f .agent/ECOSYSTEM.md
+    if [ -f AGENTS.md ]; then
+        sed -e 's/, `\.agent\/ECOSYSTEM\.md`//g' -e 's/ or `\.agent\/ECOSYSTEM\.md`//g' AGENTS.md | grep -v '\.agent/ECOSYSTEM\.md.*MUST load' > AGENTS.md.tmp
+        mv AGENTS.md.tmp AGENTS.md
+    fi
+fi
 
 # Drop the one-shot adaptation checklist so it is not baked into the generated repo
 if [ -f AGENTS.md ]; then
