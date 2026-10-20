@@ -153,8 +153,10 @@ assert_blackbox() {
   need_file .agent/TASK.md
   need_file .agent/NOTES.md
   need_file .agent/ARCHIVE.md
-  need_file package.json
-  need_file tests/smoke.test.js
+  need_absent package.json
+  need_absent tests/smoke.test.js
+  need_file tests/smoke.sh
+  [ -x "$ROOT/tests/smoke.sh" ] || fail "tests/smoke.sh is not executable"
   need_file .env.example
   need_file .gitignore
   need_dir .git
@@ -169,9 +171,8 @@ assert_blackbox() {
   need_grep .agent/knowledge/k-001-soft-200-session-expiry-detection.md 'SessionExpiredError' -qF
   need_grep .agent/knowledge/k-001-soft-200-session-expiry-detection.md 'Soft 200' -qF
   need_grep AGENTS.md 'fixture' -qiE
-  need_grep AGENTS.md 'npm test' -qF
-  need_grep package.json '"test": "node --test"' -qF
-  need_clean_smoke_test
+  need_grep AGENTS.md './tests/smoke.sh' -qF
+  ( cd "$ROOT" && ./tests/smoke.sh ) || fail "smoke test failed via ./tests/smoke.sh in $ROOT"
   need_grep .gitignore '.env' -qF
   need_grep .gitignore '*.har' -qF
   need_grep .gitignore 'tests/fixtures/real/' -qF
