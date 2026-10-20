@@ -11,7 +11,7 @@
 ## Active Task
 
 - **Task:** `[05.4]` Decouple Blackbox: Language-Agnostic Scaffolding & Zero-Dependency Validation
-- **Status:** READY FOR PLANNING
+- **Status:** RUNNING
 - **Scope:**
   - Branch `blackbox`: Remove forced Node.js coupling (`package.json`, `tests/smoke.test.js`) and migrate to stack-agnostic testing / bash contract runner (`tests/smoke.sh`).
   - Branch `blackbox`: Calibrate `AGENTS.md` and `init.sh` validation instructions.
