@@ -10,14 +10,14 @@
 
 ## Active Task
 
-- **Task:** `[05.3]` Decouple Baremetal: Replace Node.js with Native Bash Test Runner (`tests/smoke.sh`)
-- **Status:** RUNNING
+- **Task:** `[05.4]` Decouple Blackbox: Language-Agnostic Scaffolding & Zero-Dependency Validation
+- **Status:** READY FOR PLANNING
 - **Scope:**
-  - Branch `baremetal`: Remove Node.js coupling (`package.json`, `tests/smoke.test.js`) and introduce pure native bash test runner `tests/smoke.sh`.
-  - Branch `baremetal`: Update `AGENTS.md` validation commands to use `./tests/smoke.sh`.
-  - Branch `main`: Update CI assertions in `.github/scripts/assert-starter-contracts.sh` for `baremetal`.
-  - Verification: Run `.github/scripts/test-all-starters.sh baremetal` and `.github/scripts/test-all-starters.sh all`.
-- **Target Branches:** `baremetal`, `main`
+  - Branch `blackbox`: Remove forced Node.js coupling (`package.json`, `tests/smoke.test.js`) and migrate to stack-agnostic testing / bash contract runner (`tests/smoke.sh`).
+  - Branch `blackbox`: Calibrate `AGENTS.md` and `init.sh` validation instructions.
+  - Branch `main`: Update CI assertions in `.github/scripts/assert-starter-contracts.sh` for `blackbox`.
+  - Verification: Run `.github/scripts/test-all-starters.sh blackbox` and `.github/scripts/test-all-starters.sh all`.
+- **Target Branches:** `blackbox`, `main`
 
 ---
 
@@ -39,13 +39,13 @@
 | `[04.3]` | Consolidate ADR Architecture on decisions.md and Purge .agent/adr Residue | `3d73da5`, `09194e7` | 2026-10-19 |
 | `[05.1]` | Purge Residual .agent/adr References Across Starters and Sync Documentation | `86de3d9`, `d86b6c3`, `5065bc2`, `87f670a`, `94cb7bf`, `47dd652` | 2026-10-20 |
 | `[05.2]` | Decouple Greenfield: Remove Boilerplate Skills and Add `--standalone` Flag in `init.sh` | `91b169b`, `6416052`, `1b65a40`, `56e0f47`, `7b1456a`, `2033b06` | 2026-10-20 |
+| `[05.3]` | Decouple Baremetal: Replace Node.js with Native Bash Test Runner (`tests/smoke.sh`) | `5d038d6`, `e6e1ce3`, `26be8d7`, `f4653b8` | 2026-10-20 |
 
 ---
 
 ## Backlog (Upcoming, in priority order)
 
-1. `[05.4]` Decouple Blackbox: Language-Agnostic Scaffolding & Zero-Dependency Validation
-2. `[05.5]` Hub Governance: Inter-Branch Drift Detection Script and CLI Flags Standardization
+1. `[05.5]` Hub Governance: Inter-Branch Drift Detection Script and CLI Flags Standardization
 
 ---
 
