@@ -17,11 +17,15 @@ The structure directly addresses the primary bottlenecks when using autonomous a
 │   ├── NOTES.md              # Rapid architectural decisions, data contracts, and gotchas
 │   ├── ARCHIVE.md            # Historical log of completed tasks (preserves lean context)
 │   ├── ECOSYSTEM.md          # Multi-repo topology, cross-repo contracts, and blast radius (optional)
-│   ├── adr/                  # Complex Architectural Decision Records (formal ADRs)
-│   │   └── 000-template.md   # Standard ADR template
+│   ├── knowledge/            # Modular runtime gotchas and platform cards
+│   │   ├── 000-schema.md     # Knowledge card schema specification
+│   │   └── k-000-template.md # Template for new knowledge cards
 │   └── skills/               # Specialized procedural skills for the project
 │       ├── README.md         # Guide on when and how to create skills
 │       └── 000-template.md   # Standard SKILL.md template
+├── docs/
+│   └── adr/
+│       └── decisions.md      # Architectural Decision Records (ADR Diary)
 ├── .env.example              # Example environment variables
 ├── .gitignore                # Comprehensive defaults (Node, Python, Docker, agent caches)
 └── README.md                 # This guide (for human developers)
@@ -36,7 +40,11 @@ The structure directly addresses the primary bottlenecks when using autonomous a
 Bootstrap a new project instantly from your terminal:
 
 ```bash
+# Standard scaffolding (with multi-repo ECOSYSTEM.md)
 curl -fsSL https://raw.githubusercontent.com/ye-sandbox/template-agent/greenfield/init.sh | bash -s -- my-new-project
+
+# Standalone mode (omits multi-repo ECOSYSTEM.md)
+curl -fsSL https://raw.githubusercontent.com/ye-sandbox/template-agent/greenfield/init.sh | bash -s -- --standalone my-new-project
 ```
 
 The script clones the `greenfield` branch, initializes a fresh Git repository, and drops setup-only files automatically.
