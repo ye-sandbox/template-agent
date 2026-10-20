@@ -140,6 +140,19 @@ for branch in "${INIT_BRANCHES[@]}"; do
   if ! echo "$init_content" | grep -q '\-h|--help)'; then
     fail "Branch '$branch' ($ref) init.sh does not parse -h|--help."
   fi
+
+  # Onboarding flow & prompt standardization
+  if ! echo "$init_content" | grep -q '👉 Next steps:'; then
+    fail "Branch '$branch' ($ref) init.sh missing standardized '👉 Next steps:' header."
+  fi
+
+  if ! echo "$init_content" | grep -q 'Read AGENTS\.md, \.agent/TASK\.md'; then
+    fail "Branch '$branch' ($ref) init.sh does not instruct agent to read AGENTS.md and .agent/TASK.md."
+  fi
+
+  if ! echo "$init_content" | grep -q 'Present your implementation plan for Task \[00\.1\]'; then
+    fail "Branch '$branch' ($ref) init.sh does not instruct agent to present plan for Task [00.1]."
+  fi
 done
 
 # 5b. Brownfield install.sh
@@ -170,6 +183,19 @@ else
 
   if ! echo "$install_content" | grep -q '\-h|--help)'; then
     fail "Branch 'brownfield' ($BROWNFIELD_REF) install.sh does not parse -h|--help."
+  fi
+
+  # Onboarding flow & prompt standardization
+  if ! echo "$install_content" | grep -q '👉 Next steps:'; then
+    fail "Branch 'brownfield' ($BROWNFIELD_REF) install.sh missing standardized '👉 Next steps:' header."
+  fi
+
+  if ! echo "$install_content" | grep -q 'Read AGENTS\.md, \.agent/TASK\.md, and \.agent/NOTES\.md\.'; then
+    fail "Branch 'brownfield' ($BROWNFIELD_REF) install.sh does not instruct agent to read AGENTS.md, .agent/TASK.md, and .agent/NOTES.md."
+  fi
+
+  if ! echo "$install_content" | grep -q 'Present your implementation plan for Task \[00\.1\] Project Discovery and Context Mapping'; then
+    fail "Branch 'brownfield' ($BROWNFIELD_REF) install.sh does not instruct agent to present plan for Task [00.1]."
   fi
 fi
 
