@@ -141,6 +141,11 @@ for branch in "${INIT_BRANCHES[@]}"; do
     fail "Branch '$branch' ($ref) init.sh does not parse -h|--help."
   fi
 
+  # Portable temporary directory idioms
+  if echo "$init_content" | grep -qE 'mktemp[[:space:]]+-d[[:space:]]*$'; then
+    fail "Branch '$branch' ($ref) init.sh uses non-portable 'mktemp -d' without explicit template."
+  fi
+
   # Onboarding flow & prompt standardization
   if ! echo "$init_content" | grep -q '👉 Next steps:'; then
     fail "Branch '$branch' ($ref) init.sh missing standardized '👉 Next steps:' header."
@@ -183,6 +188,11 @@ else
 
   if ! echo "$install_content" | grep -q '\-h|--help)'; then
     fail "Branch 'brownfield' ($BROWNFIELD_REF) install.sh does not parse -h|--help."
+  fi
+
+  # Portable temporary file idioms
+  if echo "$install_content" | grep -qE 'mktemp[[:space:]]*$'; then
+    fail "Branch 'brownfield' ($BROWNFIELD_REF) install.sh uses non-portable 'mktemp' without explicit template."
   fi
 
   # Onboarding flow & prompt standardization

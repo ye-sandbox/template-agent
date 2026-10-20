@@ -9,8 +9,12 @@ on:
 
 jobs:
   test-installers:
-    name: Test Greenfield, Brownfield, Blackbox, Infra & Baremetal Starters
-    runs-on: ubuntu-latest
+    name: Test Greenfield, Brownfield, Blackbox, Infra & Baremetal Starters (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest]
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
