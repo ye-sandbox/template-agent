@@ -10,12 +10,12 @@
 
 ## Active Task
 
-- **Task:** `[06.2]` Cross-Platform CI Matrix: Scaffolding Assertions on Ubuntu & macOS Runners
-- **Status:** RUNNING
+- **Task:** `(none - cycle 06 complete)`
+- **Status:** READY FOR PLANNING
 - **Scope:**
-  - Expand `.github/workflows/ci.yml` matrix to validate installers and smoke test suites across both `ubuntu-latest` and `macos-latest` runners.
-  - Audit portable bash idioms in `init.sh`, `install.sh`, `tests/smoke.sh`, and test assertions for BSD/macOS compatibility (e.g. `sed -i`, `tar`, `mktemp`).
-- **Target Branches:** `main`, `greenfield`, `brownfield`, `blackbox`, `infra`, `baremetal`
+  - All roadmap tasks in cycle 06 completed.
+  - Await user direction for cycle 07 planning or cycle wrap-up / release instructions.
+- **Target Branches:** `main`
 
 ---
 
@@ -41,12 +41,13 @@
 | `[05.4]` | Decouple Blackbox: Language-Agnostic Scaffolding & Zero-Dependency Validation | `a18dcfe`, `2376be3`, `78da786`, `e4d493e` | 2026-10-20 |
 | `[05.5]` | Hub Governance: Inter-Branch Drift Detection Script and CLI Flags Standardization | `495ba99`, `0e37a52`, `750b4bb`, `260d36c`, `eee5ee1`, `9cb3082`, `be492e9`, `6ab87fb`, `bbd087e`, `0a0fb7b`, `bf102f7`, `4021a07` | 2026-10-20 |
 | `[06.1]` | Starter Onboarding Harmonization: Standardize First-Turn Prompts and Post-Scaffolding Flow | `38e812c`, `3af681a`, `124781b`, `6756652`, `7e824fe`, `bcf5f6b`, `29db81b`, `b81226d` | 2026-10-20 |
+| `[06.2]` | Cross-Platform CI Matrix: Scaffolding Assertions on Ubuntu & macOS Runners | `6e2ade2`, `6307fae`, `31c4173`, `9b69bb7`, `eb5293a`, `d022134`, `efce79c` | 2026-10-20 |
 
 ---
 
 ## Backlog (Upcoming, in priority order)
 
-*(empty)*
+*(empty — roadmap cycle 06 completion)*
 
 ---
 
