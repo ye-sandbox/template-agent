@@ -5,7 +5,7 @@
 # assertions for all 5 starter templates locally or in CI.
 #
 # Usage:
-#   .github/scripts/test-all-starters.sh [all|greenfield|brownfield|blackbox|infra|baremetal]
+#   .github/scripts/test-all-starters.sh [all|drift|greenfield|brownfield|blackbox|infra|baremetal]
 # ==============================================================================
 set -euo pipefail
 
@@ -154,14 +154,28 @@ test_baremetal() {
   log_success "Baremetal starter passed all assertions"
 }
 
+check_drift() {
+  local drift_script="$SCRIPT_DIR/check-branch-drift.sh"
+  if [ -f "$drift_script" ]; then
+    log_info "Auditing inter-branch governance & drift..."
+    chmod +x "$drift_script"
+    "$drift_script"
+    log_success "Inter-branch governance audit passed"
+  fi
+}
+
 case "$TARGET" in
   all)
+    check_drift
     test_greenfield
     test_brownfield
     test_blackbox
     test_infra
     test_baremetal
     log_info "All 5 starter templates validated successfully!"
+    ;;
+  drift)
+    check_drift
     ;;
   greenfield)
     test_greenfield
