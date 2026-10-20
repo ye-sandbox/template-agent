@@ -104,11 +104,12 @@ HTTP client with timeouts/retries (`[httpx/…]`), DOM/JSON parser, schema valid
 
 ## Validation Commands (fill in real project commands)
 
-- Sync dependencies: `[npm install | poetry install]`
-- Run tests: `[npm test | pytest]` (Exit code MUST be 0)
-- Lint / format: `[command]` (Exit code MUST be 0)
+- Baseline smoke test: `./tests/smoke.sh`
+- Sync dependencies: `[npm install | poetry install | cargo fetch | go mod download]`
+- Run tests: `[pytest | npm test | cargo test | go test ./...]` (Exit code MUST be 0)
+- Lint / format: `[ruff check | npm run lint | cargo clippy | golangci-lint run]` (Exit code MUST be 0)
 
-Every project MUST define an official, reproducible test command (e.g. `"test": "node --test"` in `package.json` or `pytest`).
+During **Phase 00.1 (Discovery & Session)**, the agent MUST configure the official, reproducible test harness and validation commands for the language/stack chosen for the project (e.g. `pytest` via `pyproject.toml`, `npm test` via `"test": "node --test"` or `"test": "vitest run"` in `package.json`, `cargo test` in `Cargo.toml`, or `go test ./...` in `go.mod`). Adding new dependencies REQUIRES user approval.
 
 ---
 
@@ -120,7 +121,7 @@ Every project MUST define an official, reproducible test command (e.g. `"test": 
 4. **MUST NOT invent form fields:** Inspect previous HTML payload (`infra_hash`, hidden fields, CSRF tokens) before POSTing.
 5. **Detect Expired Sessions:** Detect 302 redirects or login HTML forms and reauthenticate or fail explicitly.
 6. **Live Circuit Breaker:** 2 consecutive 401/403/429 failures $\rightarrow$ **halt immediately** to prevent account bans.
-7. **Canonical Test Runner:** **MUST NOT** invent ad-hoc test compilation loops or dynamic eval hacks. Tests MUST run via the official test command against sanitized fixtures.
+7. **Canonical Test Runner:** **MUST NOT** invent ad-hoc test compilation loops or dynamic eval hacks. Tests MUST run via the project's canonical test command (e.g., `pytest`, `npm test`, `cargo test`, `go test`) against sanitized fixtures.
 8. **Agent Documentation Language:** MUST write all agent-facing directives, skills, endpoint maps, and task logs (`AGENTS.md`, `.agent/*`) in concise Technical English to optimize token density and instruction fidelity.
 9. **In-Code Invariants:** MUST document non-obvious protocol quirks, scraper throttling rationale, signature calculation quirks, and anti-detection delays as in-code comments using explicit invariant prefixes (e.g., `# INVARIANT: <rationale>` or `// INVARIANT: <rationale>`), explaining the technical *why* rather than restating the syntax.
 
