@@ -122,7 +122,7 @@ echo "2. Open in your AI coding environment (Cursor, Windsurf, VS Code, Antigrav
 echo "   code ."
 echo ""
 echo "3. Run baseline smoke test:"
-echo "   npm test"
+echo "   ./tests/smoke.sh"
 echo ""
 echo "4. Send the initial prompt to the AI agent:"
 echo ""

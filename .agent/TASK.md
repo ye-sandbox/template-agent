@@ -23,7 +23,7 @@
 - [ ] Baseline memory metrics and swap/zram configuration recorded.
 - [ ] Essential host invariants confirmed in `.agent/INVARIANTS.md`.
 - [ ] Initial boot analysis captured (`systemd-analyze`).
-- [ ] Smoke test passes: `npm test`.
+- [ ] Smoke test passes: `./tests/smoke.sh`.
 
 ---
 

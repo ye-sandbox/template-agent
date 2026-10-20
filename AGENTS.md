@@ -55,7 +55,7 @@ The agent MUST optimize context loading using the following progressive disclosu
    - [ ] Revert script tested in dry-run mode or pre-verified against original backup.
    - [ ] Invariants respected: zero degradation to network, audio, or desktop session.
    - [ ] Performance metrics recorded before vs. after in `.agent/TUNINGS.md`.
-   - [ ] Verification command passes: `npm test` runs smoke tests.
+   - [ ] Verification command passes: `./tests/smoke.sh` runs smoke tests.
    - [ ] Git cleanliness: `git diff --check` exits with code 0.
    - [ ] Knowledge Preservation: Document obscure platform/runtime gotchas or workarounds as an atomic card in `.agent/knowledge/` (if applicable).
    - [ ] Atomic Commit: Conventional Commits in English (`feat(tuning): ...`).
@@ -163,7 +163,7 @@ sync && echo 1 > /proc/sys/vm/drop_caches
 
 ## Validation Commands
 
-- Run test suite: `npm test`
+- Run test suite: `./tests/smoke.sh`
 - Kernel parameters: `sysctl <parameter>` or `sysctl -a | grep <pattern>`
 - Systemd status: `systemctl is-active <service>`, `systemctl status <service>`
 - Memory & swap: `free -h`, `swapon --show`, `zramctl`
