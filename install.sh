@@ -161,9 +161,9 @@ else
     echo "✅ docs/adr/decisions.md installed."
 fi
 
-# 4. Install knowledge base schema and template into .agent/knowledge
+# 4. Install knowledge base schema, template, and canonical cards into .agent/knowledge
 mkdir -p "$RESOLVED_TARGET/.agent/knowledge"
-KNOWLEDGE_FILES=("000-schema.md" "k-000-template.md")
+KNOWLEDGE_FILES=("000-schema.md" "k-000-template.md" "k-001-characterization-test-state-leakage.md")
 
 for file in "${KNOWLEDGE_FILES[@]}"; do
     dest="$RESOLVED_TARGET/.agent/knowledge/$file"
