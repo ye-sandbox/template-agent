@@ -7,19 +7,22 @@
 
 ## Active Task
 
-### 📌 Task [XX.Y]: [Short descriptive title]
+### 📌 Task [00.1]: Project Bootstrap & Stack Setup
 
-- **Description:** [2–4 lines for the agent to devise a plan.]
-- **Systems Involved:** [e.g. `api-service`, `frontend`]
+- **Description:** Select and configure project stack, package manager, canonical test harness (e.g., npm test, pytest, cargo test, go test), linters, formatters, and populate validation commands and guidelines in `AGENTS.md`.
+- **Systems Involved:** `bootstrap`, `tooling`, `tests`
 - **Action Type:**
-  - [ ] Read-only / Documentation
-  - [ ] Source code changes
+  - [x] Read-only / Documentation
+  - [x] Source code changes
 - **Status:** READY FOR PLANNING
   *(Workflow: `READY FOR PLANNING` → `PLANNING` on presenting plan → approval → `RUNNING`)*
 
 ### Acceptance Criteria
-- [ ] [Verifiable criterion 1]
-- [ ] [Verifiable criterion 2]
+- [ ] Language runtime, package manager, and build tooling initialized.
+- [ ] Canonical test runner configured and smoke test passes.
+- [ ] Linter, formatter, and strict typing configured.
+- [ ] Validation commands documented in `AGENTS.md`.
+- [ ] `.env.example` and `.gitignore` updated with project-specific dependencies.
 
 ---
 
@@ -33,8 +36,8 @@
 
 ## Backlog (Upcoming, in priority order)
 
-- [ ] **[00.1]** [Setup stack, test harness (e.g., npm test, pytest, cargo test, go test), linters, and validation commands] — `[setup]`
-- [ ] **[01.1]** [First foundation epic] — `[system]`
+- [ ] **[01.1]** [First foundation epic or domain core] — `[system]`
+- [ ] **[01.2]** [Subsequent foundation feature] — `[system]`
 
 ---
 
