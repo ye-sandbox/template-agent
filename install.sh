@@ -239,10 +239,21 @@ else
     echo "🎉 Installation completed successfully!"
 fi
 echo ""
-echo "👉 Next steps with your AI agent:"
-echo "1. Open your project in your AI coding environment."
-echo "2. Send the following kickoff prompt:"
+echo "👉 Next steps:"
+STEP=1
+if [ "$TARGET_DIR" != "." ]; then
+    echo "${STEP}. Navigate into your project folder:"
+    echo "   cd $TARGET_DIR"
+    echo ""
+    STEP=$((STEP + 1))
+fi
+echo "${STEP}. Open in your AI coding environment (Cursor, Windsurf, VS Code, Antigravity):"
+echo "   code ."
 echo ""
-echo "   \"Read AGENTS.md and Task [00.1] in .agent/TASK.md. Present your implementation plan"
-echo "    for Project Discovery and Audit before modifying any code.\""
+STEP=$((STEP + 1))
+echo "${STEP}. Send the initial prompt to the AI agent:"
+echo ""
+echo "   \"Read AGENTS.md, .agent/TASK.md, and .agent/NOTES.md."
+echo "    Present your implementation plan for Task [00.1] Project Discovery and Context Mapping"
+echo "    before modifying any code.\""
 echo "======================================================="
