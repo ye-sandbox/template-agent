@@ -10,14 +10,13 @@
 
 ## Active Task
 
-- **Task:** `[05.4]` Decouple Blackbox: Language-Agnostic Scaffolding & Zero-Dependency Validation
-- **Status:** RUNNING
+- **Task:** `[05.5]` Hub Governance: Inter-Branch Drift Detection Script and CLI Flags Standardization
+- **Status:** READY FOR PLANNING
 - **Scope:**
-  - Branch `blackbox`: Remove forced Node.js coupling (`package.json`, `tests/smoke.test.js`) and migrate to stack-agnostic testing / bash contract runner (`tests/smoke.sh`).
-  - Branch `blackbox`: Calibrate `AGENTS.md` and `init.sh` validation instructions.
-  - Branch `main`: Update CI assertions in `.github/scripts/assert-starter-contracts.sh` for `blackbox`.
-  - Verification: Run `.github/scripts/test-all-starters.sh blackbox` and `.github/scripts/test-all-starters.sh all`.
-- **Target Branches:** `blackbox`, `main`
+  - Create governance script `.github/scripts/check-branch-drift.sh` to audit synchronization across specialized branches for shared canonical files (`.gitignore`, `.env.example`, `.agent/knowledge/000-schema.md`).
+  - Standardize CLI flags and usage text across `init.sh` and `install.sh` in all branches (`-y|--yes`, `-h|--help`, `-f|--force`).
+  - Wire drift detection into CI or local validation workflows.
+- **Target Branches:** `main`, `greenfield`, `brownfield`, `blackbox`, `infra`, `baremetal`
 
 ---
 
@@ -40,12 +39,13 @@
 | `[05.1]` | Purge Residual .agent/adr References Across Starters and Sync Documentation | `86de3d9`, `d86b6c3`, `5065bc2`, `87f670a`, `94cb7bf`, `47dd652` | 2026-10-20 |
 | `[05.2]` | Decouple Greenfield: Remove Boilerplate Skills and Add `--standalone` Flag in `init.sh` | `91b169b`, `6416052`, `1b65a40`, `56e0f47`, `7b1456a`, `2033b06` | 2026-10-20 |
 | `[05.3]` | Decouple Baremetal: Replace Node.js with Native Bash Test Runner (`tests/smoke.sh`) | `5d038d6`, `e6e1ce3`, `26be8d7`, `f4653b8` | 2026-10-20 |
+| `[05.4]` | Decouple Blackbox: Language-Agnostic Scaffolding & Zero-Dependency Validation | `a18dcfe`, `2376be3`, `78da786`, `e4d493e` | 2026-10-20 |
 
 ---
 
 ## Backlog (Upcoming, in priority order)
 
-1. `[05.5]` Hub Governance: Inter-Branch Drift Detection Script and CLI Flags Standardization
+*(empty — roadmap cycle 05 completion)*
 
 ---
 
