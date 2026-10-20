@@ -16,7 +16,7 @@ while [[ $# -gt 0 ]]; do
             shift
             ;;
         -h|--help)
-            echo "Usage: init.sh [-y|--yes] [PROJECT_NAME_OR_DIR]"
+            echo "Usage: init.sh [-y|--yes|-f|--force] [PROJECT_NAME_OR_DIR]"
             echo ""
             echo "Options:"
             echo "  -y, --yes, -f, --force    Run non-interactively without confirmation prompts"
