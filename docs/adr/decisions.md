@@ -10,15 +10,16 @@ type: architectural-decision-log
 # Architectural Decisions Log
 
 > 🏛️ **Progressive Disclosure:** Historical and cumulative decisions live here so AI agents do not load them into working context on every interaction.
-> Active runtime contracts stay in [`.agent/NOTES.md`](../../.agent/NOTES.md). Formal individual specs live in [`.agent/adr/`](../../.agent/adr/).
+> Active runtime contracts stay in [`.agent/NOTES.md`](../../.agent/NOTES.md).
 
 ---
 
 ## How to Record Architectural Decisions
 
 1. When a substantive design decision or trade-off is approved, append it here chronologically.
-2. For formal RFC/ADR specs, use the template in `.agent/adr/000-template.md`.
-3. In `.agent/NOTES.md`, maintain only **Active Contracts** and link to this file for background rationale.
+2. Maintain decisions compact and falsifiable using the canonical schema below.
+3. If an extraordinary architectural decision requires a massive specification or complex C4 diagrams, create an attachment at `docs/adr/ADR-XXX-<name>.md` and link it directly from the entry here.
+4. In `.agent/NOTES.md`, maintain only **Active Contracts** and link to this file for background rationale.
 
 ---
 
