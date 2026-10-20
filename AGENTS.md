@@ -129,8 +129,7 @@ Read `.agent/skills/<name>/SKILL.md` when a task matches the skill domain. For r
 
 | Skill | Trigger |
 | :--- | :--- |
-| `database-migration` | Schema migrations with expand/contract and verified rollback |
-| `api-endpoint` | HTTP routes: thin router $\rightarrow$ service $\rightarrow$ repository |
+| `[skill-name]` | [Workflow trigger and scope (e.g., domain mutations, external sync)] |
 
 ---
 
