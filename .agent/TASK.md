@@ -11,7 +11,7 @@
 ## Active Task
 
 - **Task:** `[05.3]` Decouple Baremetal: Replace Node.js with Native Bash Test Runner (`tests/smoke.sh`)
-- **Status:** PLANNING
+- **Status:** RUNNING
 - **Scope:**
   - Branch `baremetal`: Remove Node.js coupling (`package.json`, `tests/smoke.test.js`) and introduce pure native bash test runner `tests/smoke.sh`.
   - Branch `baremetal`: Update `AGENTS.md` validation commands to use `./tests/smoke.sh`.
