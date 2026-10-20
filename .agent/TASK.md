@@ -10,7 +10,13 @@
 
 ## Active Task
 
-*(No active task. Awaiting user instruction for next roadmap epic or milestone.)*
+- **Task:** `[04.3]` Consolidate ADR Architecture on decisions.md and Purge .agent/adr Residue
+- **Status:** RUNNING
+- **Scope:**
+  - Branch `greenfield`: remove `.agent/adr/000-template.md`, streamline `docs/adr/decisions.md` and update `AGENTS.md`.
+  - Branch `main`: remove `.agent/adr/000-template.md` and contract assertion in `.github/scripts/assert-starter-contracts.sh`, update `AGENTS.md` and `.agent/NOTES.md`.
+  - Verification: run `.github/scripts/test-all-starters.sh all` and `git diff --check`.
+- **Target Branches:** `greenfield`, `main`
 
 ---
 
