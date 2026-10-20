@@ -11,7 +11,7 @@
 ## Active Task
 
 - **Task:** `[06.1]` Starter Onboarding Harmonization: Standardize First-Turn Prompts and Post-Scaffolding Flow Across All Starters
-- **Status:** READY FOR PLANNING
+- **Status:** RUNNING
 - **Scope:**
   - Audit and harmonize the "Next Steps" output and initial AI prompt instructions across `init.sh` and `install.sh` (`greenfield`, `brownfield`, `blackbox`, `infra`, `baremetal`).
   - Ensure zero divergence between CLI printed prompt and `AGENTS.md` / `TASK.md` Phase 00.1 contracts.
