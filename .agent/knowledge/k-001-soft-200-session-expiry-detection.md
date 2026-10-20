@@ -108,7 +108,7 @@ Create and execute a test fixture replicating the portal's dead-session HTML res
 
 ```bash
 # Verify that the HTTP client raises SessionExpiredError when presented with dead-session HTML
-node --test tests/smoke.test.js
+pytest tests/test_session.py  # or: npm test
 ```
 
 ## References
