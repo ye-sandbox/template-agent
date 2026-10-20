@@ -55,6 +55,11 @@ assert_greenfield_base() {
   need_file .agent/knowledge/000-schema.md
   need_file .agent/knowledge/k-000-template.md
   need_file docs/adr/decisions.md
+  need_file .agent/TASK.md
+  need_grep .agent/TASK.md 'Task \[00\.1\]: Project Bootstrap & Stack Setup' -qE
+  if grep -qF 'Task [XX.Y]' "$ROOT/.agent/TASK.md"; then
+    fail "unresolved Task [XX.Y] placeholder found in .agent/TASK.md"
+  fi
   need_dir .git
   need_absent init.sh
   need_absent .agent/adr
@@ -112,6 +117,7 @@ assert_brownfield() {
   need_file .agent/TASK.md
   need_file .agent/NOTES.md
   need_file .agent/ARCHIVE.md
+  need_grep .agent/TASK.md 'Task \[00\.1\]: Project Discovery and Context Mapping' -qE
   need_absent .agent/adr
   need_grep AGENTS.md '.agent/INVARIANTS.md' -qF
   need_grep AGENTS.md '.agent/ECOSYSTEM.md' -qF
@@ -153,6 +159,7 @@ assert_blackbox() {
   need_file .agent/TASK.md
   need_file .agent/NOTES.md
   need_file .agent/ARCHIVE.md
+  need_grep .agent/TASK.md 'Task \[00\.1\]: Environment Setup and Authentication/Session Mapping' -qE
   need_absent package.json
   need_absent tests/smoke.test.js
   need_file tests/smoke.sh
@@ -197,6 +204,7 @@ assert_infra() {
   need_file .agent/TASK.md
   need_file .agent/NOTES.md
   need_file .agent/ARCHIVE.md
+  need_grep .agent/TASK.md 'Task \[00\.1\]: Map Topology and Provision Baseline Services' -qE
   need_file .env.example
   need_file .gitignore
   need_grep .gitignore '.maestri/' -qF
@@ -249,6 +257,7 @@ assert_baremetal() {
   need_file .agent/TASK.md
   need_file .agent/NOTES.md
   need_file .agent/ARCHIVE.md
+  need_grep .agent/TASK.md 'Task \[00\.1\]: Baseline System Audit & Performance Discovery' -qE
   need_absent package.json
   need_absent tests/smoke.test.js
   need_file tests/smoke.sh
