@@ -21,7 +21,7 @@ while [[ $# -gt 0 ]]; do
             shift
             ;;
         -h|--help)
-            echo "Usage: install.sh [-y|--yes] [-l|--local-only] [TARGET_DIR]"
+            echo "Usage: install.sh [-y|--yes|-f|--force] [-l|--local-only|--stealth] [TARGET_DIR]"
             echo ""
             echo "Options:"
             echo "  -l, --local-only, --stealth  Configure stealth mode for enterprise/shared repos (.git/info/exclude + stealth guardrails)"
