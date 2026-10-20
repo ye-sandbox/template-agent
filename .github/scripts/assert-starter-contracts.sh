@@ -98,6 +98,7 @@ assert_brownfield() {
   need_file .agent/ECOSYSTEM.md
   need_file .agent/knowledge/000-schema.md
   need_file .agent/knowledge/k-000-template.md
+  need_file .agent/knowledge/k-001-characterization-test-state-leakage.md
   need_file docs/adr/decisions.md
   need_file .agent/TASK.md
   need_file .agent/NOTES.md
@@ -106,6 +107,8 @@ assert_brownfield() {
   need_grep AGENTS.md '.agent/ECOSYSTEM.md' -qF
   need_grep AGENTS.md '.agent/knowledge/' -qF
   need_grep AGENTS.md 'Knowledge [Pp]reservation' -qiE
+  need_grep .agent/knowledge/k-001-characterization-test-state-leakage.md 'characterization' -qiE
+  need_grep .agent/knowledge/k-001-characterization-test-state-leakage.md 'detectOpenHandles' -qF
   need_grep .agent/ECOSYSTEM.md 'Repository Topology Matrix' -qF
   need_grep AGENTS.md 'characteriz|caracteriza' -qiE
   need_grep AGENTS.md 'Technical English' -qiF
@@ -134,6 +137,7 @@ assert_blackbox() {
   need_file .agent/ENDPOINTS.md
   need_file .agent/knowledge/000-schema.md
   need_file .agent/knowledge/k-000-template.md
+  need_file .agent/knowledge/k-001-soft-200-session-expiry-detection.md
   need_file .agent/skills/reverse-engineering/SKILL.md
   need_file docs/adr/decisions.md
   need_file .agent/TASK.md
@@ -151,6 +155,8 @@ assert_blackbox() {
   need_grep AGENTS.md 'INVARIANT:' -qF
   need_grep AGENTS.md '.agent/knowledge/' -qF
   need_grep AGENTS.md 'Knowledge [Pp]reservation' -qiE
+  need_grep .agent/knowledge/k-001-soft-200-session-expiry-detection.md 'SessionExpiredError' -qF
+  need_grep .agent/knowledge/k-001-soft-200-session-expiry-detection.md 'Soft 200' -qF
   need_grep AGENTS.md 'fixture' -qiE
   need_grep AGENTS.md 'npm test' -qF
   need_grep package.json '"test": "node --test"' -qF
