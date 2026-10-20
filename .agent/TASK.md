@@ -11,7 +11,7 @@
 ## Active Task
 
 - **Task:** `[06.2]` Cross-Platform CI Matrix: Scaffolding Assertions on Ubuntu & macOS Runners
-- **Status:** READY FOR PLANNING
+- **Status:** RUNNING
 - **Scope:**
   - Expand `.github/workflows/ci.yml` matrix to validate installers and smoke test suites across both `ubuntu-latest` and `macos-latest` runners.
   - Audit portable bash idioms in `init.sh`, `install.sh`, `tests/smoke.sh`, and test assertions for BSD/macOS compatibility (e.g. `sed -i`, `tar`, `mktemp`).
