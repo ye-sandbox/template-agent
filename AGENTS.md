@@ -76,7 +76,7 @@ Format: `[Epic].[Sequence]` with two-digit epics. Subtasks: `[XX.Y.Z]`. Exactly 
 
 | Prefix | Phase | Focus |
 | :---: | :--- | :--- |
-| **`00.x`** | Bootstrap & Setup | Linters, types, MCPs, starter skills |
+| **`00.x`** | Bootstrap & Setup | Stack selection, test harness setup, linters, types, MCPs, starter skills |
 | **`01.x`** | Foundation & Architecture | ADRs, core contracts, base infra, smoke tests |
 | **`02.x`–`89.x`** | Epics | Domain features |
 | **`90.x`** | Refactoring | Performance and technical debt |
@@ -137,13 +137,13 @@ Read `.agent/skills/<name>/SKILL.md` when a task matches the skill domain. For r
 ## Validation Commands (fill in real project commands)
 
 Per service:
-- Sync dependencies: `[npm install | poetry install | cargo fetch]`
-- Run tests: `[npm test | pytest | cargo test]` (Exit code MUST be 0)
-- Lint / format: `[npm run lint | ruff check | cargo clippy]` (Exit code MUST be 0)
+- Sync dependencies: `[npm install | poetry install | cargo fetch | go mod download]`
+- Run tests: `[npm test | pytest | cargo test | go test ./...]` (Exit code MUST be 0)
+- Lint / format: `[npm run lint | ruff check | cargo clippy | golangci-lint run]` (Exit code MUST be 0)
 - Typecheck: `[npm run typecheck | mypy | tsc --noEmit]` (Exit code MUST be 0)
-- Build: `[npm run build | cargo build]` (Exit code MUST be 0)
+- Build: `[npm run build | cargo build | go build]` (Exit code MUST be 0)
 
-Every project MUST define an official, reproducible test command (e.g. `"test": "vitest run"` or `"test": "node --test"` in `package.json`, or `pytest` in Python). Adding new dependencies REQUIRES user approval.
+During **Phase 00.1 (Bootstrap & Setup)**, the agent MUST configure the official, reproducible test harness and validation commands for the language/stack specified by the user (e.g., `npm test` via `"test": "node --test"` or `"test": "vitest run"` in `package.json`, `pytest` via `pyproject.toml`, `cargo test` in `Cargo.toml`, or `go test ./...` in `go.mod`). Adding new dependencies REQUIRES user approval.
 
 ### Consultative Dependency & Architectural Trade-offs
 When a non-trivial capability is required that is standardly addressed by established open-source libraries (e.g. complex parsing, cryptography, schema validation, date/time arithmetic):
@@ -168,7 +168,7 @@ When selecting libraries, frameworks, runtimes, or base images:
 - **MUST NOT** install dependencies or unapproved package managers without explicit user permission.
 - **MUST NOT** select outdated or unstable pre-release versions (alpha/beta/rc/canary) when introducing dependencies or runtimes; select the newest stable release (favoring LTS) grounded on current date, unless constrained by ecosystem compatibility.
 - **MUST NOT** reinvent complex standard capabilities from scratch without presenting battle-tested library alternatives and their trade-offs to the user.
-- **MUST NOT** invent ad-hoc test compilation loops, dynamic eval imports, or inline bundler scripts (e.g., inline esbuild in .mjs) to bypass a missing test runner. The test suite MUST run via the project's canonical test command.
+- **MUST NOT** invent ad-hoc test compilation loops, dynamic eval imports, or inline bundler scripts (e.g., inline esbuild in .mjs) to bypass a missing test runner. The test suite MUST run via the project's canonical test command (e.g., `npm test`, `pytest`, `cargo test`, `go test`).
 - **MUST NOT** break payload contracts documented in `.agent/NOTES.md` or `.agent/ECOSYSTEM.md`.
 - **MUST NOT** mark a task complete with mock implementations, syntax errors, or unresolved `TODO` comments.
 - **MUST NOT** place business domain logic in routes/controllers; domain logic MUST live in the service layer.
@@ -226,16 +226,19 @@ app.post("/users", async (req: Request<CreateUserDto>, res: Response<UserRespons
 ```
 
 ```typescript
-// BAD: Inlining ad-hoc bundlers/eval in test files to bypass missing test runner
+// BAD: Inlining ad-hoc bundlers/eval or custom test runners to bypass a missing test harness
 import esbuild from 'esbuild';
 const code = fs.readFileSync('src/service.ts', 'utf8');
 const transformed = esbuild.transformSync(code, { loader: 'ts' });
 const mod = await import(`data:text/javascript;base64,${Buffer.from(transformed.code).toString('base64')}`);
 
-// GOOD: Canonical test runner configured in package.json and executed directly
-// package.json: { "scripts": { "test": "vitest run" } }
-import { describe, it, expect } from 'vitest';
-import { service } from '../src/service';
+// GOOD: Canonical test harness configured for the chosen stack in Phase 00.1 and executed directly
+// Node: package.json { "scripts": { "test": "node --test" } } -> npm test
+// Python: pyproject.toml [tool.pytest] -> pytest
+// Rust: Cargo.toml -> cargo test
+// Go: go.mod -> go test ./...
+import { describe, it } from 'node:test';
+import assert from 'node:assert/strict';
 ```
 
 ```typescript
