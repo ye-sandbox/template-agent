@@ -211,7 +211,7 @@ if [ "$LOCAL_ONLY" = true ]; then
     # 3.2 Inject Stealth Guardrail into AGENTS.md
     STEALTH_HEADER="> 🔒 **Enterprise / Local-Only Mode Active:**"
     if [ -f "$RESOLVED_TARGET/AGENTS.md" ] && ! grep -Fq "$STEALTH_HEADER" "$RESOLVED_TARGET/AGENTS.md"; then
-        TMP_FILE="$(mktemp)"
+        TMP_FILE="$(mktemp "${TMPDIR:-/tmp}/agents-stealth.XXXXXX")"
         {
             head -n 2 "$RESOLVED_TARGET/AGENTS.md"
             cat << 'EOF'
