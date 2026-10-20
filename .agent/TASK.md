@@ -11,7 +11,7 @@
 ## Active Task
 
 - **Task:** `[05.5]` Hub Governance: Inter-Branch Drift Detection Script and CLI Flags Standardization
-- **Status:** READY FOR PLANNING
+- **Status:** RUNNING
 - **Scope:**
   - Create governance script `.github/scripts/check-branch-drift.sh` to audit synchronization across specialized branches for shared canonical files (`.gitignore`, `.env.example`, `.agent/knowledge/000-schema.md`).
   - Standardize CLI flags and usage text across `init.sh` and `install.sh` in all branches (`-y|--yes`, `-h|--help`, `-f|--force`).
