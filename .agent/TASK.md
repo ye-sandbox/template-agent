@@ -11,7 +11,7 @@
 ## Active Task
 
 - **Task:** `[05.2]` Decouple Greenfield: Remove Boilerplate Skills and Add `--standalone` Flag in `init.sh`
-- **Status:** PLANNING
+- **Status:** RUNNING
 - **Scope:**
   - Branch `greenfield`: Remove domain-specific boilerplate skills (`.agent/skills/api-endpoint`, `.agent/skills/database-migration`) to ensure pure language- and stack-agnosticism.
   - Branch `greenfield`: Add `--standalone` flag to `init.sh` for bare-bones scaffolding.
