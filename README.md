@@ -28,7 +28,7 @@ Rather than bundling multiple disparate starters into a bloated monolithic direc
 
 | Branch | Project Scope | Core Components | When to Use |
 | :--- | :--- | :--- | :--- |
-| **`greenfield`** | Projects built **from scratch** | `.agent/adr/` (Formal ADRs), `.agent/skills/` (Starter skills), unconstrained architecture, open contracts. | When creating a brand new application, microservice, or library from zero. |
+| **`greenfield`** | Projects built **from scratch** | `docs/adr/decisions.md` (ADR log), `.agent/skills/` (Starter skills), unconstrained architecture, open contracts. | When creating a brand new application, microservice, or library from zero. |
 | **`brownfield`** | **Existing / Legacy** codebases | `.agent/INVARIANTS.md` (Chesterton's Fences), `install.sh`, Task 00 Discovery, characterization tests, strict *no-push* rule (mandatory human review). | When onboarding AI agents safely onto an existing production codebase. |
 | **`blackbox`** | **Reverse Engineering & Integration** | `.agent/ENDPOINTS.md` (Discovered routes catalog), `.agent/skills/reverse-engineering/`, `init.sh`, replay fixtures, and defensive rate limiting. | When mapping, building clients/wrappers, or integrating with closed/undocumented legacy systems (e.g., enterprise portals, ERPs). |
 | **`infra`** | **Infrastructure & Services** | `.agent/SERVICES.md` (Topology & ports), `.agent/skills/compose-service/`, `compose.yaml.example`, `init.sh`, resource limits, and healthchecks. | When provisioning and orchestrating services (Docker Compose, VictoriaLogs, Uptime Kuma, databases, Homelab). |
