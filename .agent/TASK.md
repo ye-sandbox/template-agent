@@ -1,5 +1,5 @@
 # TASK.md — Current Task and Roadmap
- 
+
 > Defines WHAT needs to be done. Detailed history lives in `git log`.
 > User requests during conversation take precedence — report discrepancies before acting.
 > 
@@ -10,21 +10,7 @@
 
 ## Active Task
 
-### 📌 Task [04.1]: Unified Multi-Starter Local & CI Test Runner Script
-
-- **Description:** Create a unified starter test runner script (`.github/scripts/test-all-starters.sh`) that executes hermetic scaffolding, idempotent reinstallations, and contract assertions for all 5 starter templates both in local development and GitHub Actions CI.
-- **Systems Involved:** `ci`, `hub`
-- **Action Type:**
-  - [ ] Read-only / Documentation
-  - [x] Source code changes
-- **Status:** READY FOR PLANNING
-  *(Workflow: `READY FOR PLANNING` → `PLANNING` on presenting plan → approval → `RUNNING`)*
-
-### Acceptance Criteria
-- [ ] Create `.github/scripts/test-all-starters.sh` orchestrating all 5 starters (greenfield, brownfield standard + stealth, blackbox, infra, baremetal)
-- [ ] Support both local workspace (`TEMPLATE_REPO_URL="$PWD"`) and CI (`TEMPLATE_REPO_URL="$GITHUB_WORKSPACE"`)
-- [ ] Streamline `.github/workflows/ci.yml` to invoke the unified runner
-- [ ] Validate clean execution with zero exit code locally
+*(No active task. Awaiting user instruction for next roadmap epic or milestone.)*
 
 ---
 
@@ -41,6 +27,7 @@
 | `[02.2]` | Standardize Service Topology Template (`.agent/ECOSYSTEM.md`) in Infra Starter | `cef169a`, `5fb9546`, `5b7fa3f` | 2026-10-19 |
 | `[03.1]` | Pre-Seed Canonical Knowledge Base Cards across Starters | `006db0e`, `577dbe7`, `0e28c34`, `05e8fb4`, `86caa2b` | 2026-10-19 |
 | `[03.2]` | Pre-Seed Canonical Knowledge Base Cards in Brownfield & Blackbox Starters | `5f963f5`, `3b20bd2`, `c6773e3`, `56370e1` | 2026-10-19 |
+| `[04.1]` | Unified Multi-Starter Local & CI Test Runner Script | `ccbddd4` | 2026-10-19 |
 
 ---
 
