@@ -17,11 +17,15 @@ A estrutura foi desenhada para resolver os maiores problemas no uso de agentes e
 │   ├── NOTES.md              # Decisões arquiteturais rápidas, contratos de dados e armadilhas
 │   ├── ARCHIVE.md            # Histórico de tarefas antigas (preserva contexto enxuto)
 │   ├── ECOSYSTEM.md          # Topologia multi-repo, contratos entre serviços e raio de impacto (opcional)
-│   ├── adr/                  # Registros de Decisões Arquiteturais complexas (ADRs formais)
-│   │   └── 000-template.md   # Template padrão de ADR
+│   ├── knowledge/            # Armadilhas e gotchas de runtime modulares
+│   │   ├── 000-schema.md     # Especificação do schema de knowledge cards
+│   │   └── k-000-template.md # Template para novos knowledge cards
 │   └── skills/               # Habilidades procedurais especializadas do projeto
 │       ├── README.md         # Guia de quando e como criar skills
 │       └── 000-template.md   # Template padrão de SKILL.md
+├── docs/
+│   └── adr/
+│       └── decisions.md      # Registros de Decisões Arquiteturais (Diário de ADRs)
 ├── .env.example              # Exemplo de variáveis de ambiente do projeto
 ├── .gitignore                # Padrão amplo (Node, Python, Docker, caches de agentes)
 └── README.md                 # Este guia (para desenvolvedores humanos)
@@ -36,7 +40,11 @@ A estrutura foi desenhada para resolver os maiores problemas no uso de agentes e
 Crie um novo projeto instantaneamente a partir do seu terminal:
 
 ```bash
+# Scaffolding padrão (com topologia multi-repo ECOSYSTEM.md)
 curl -fsSL https://raw.githubusercontent.com/ye-sandbox/template-agent/greenfield/init.sh | bash -s -- meu-novo-projeto
+
+# Modo standalone (omite ECOSYSTEM.md multi-repo)
+curl -fsSL https://raw.githubusercontent.com/ye-sandbox/template-agent/greenfield/init.sh | bash -s -- --standalone meu-novo-projeto
 ```
 
 O script clonará a branch `greenfield` e inicializará automaticamente um repositório Git novo e limpo, pronto para uso.
