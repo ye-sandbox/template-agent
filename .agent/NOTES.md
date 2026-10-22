@@ -14,21 +14,21 @@
 
 ---
 
-## Active Contracts & Multi-Agent Topology
+## Active Contracts
 
-### 1. Multi-Agent Topology & Ensemble Contract (Dev Trinity Sentinel)
-
-When operating under Maestri / Antigravity orchestration:
-- **Planner:** Manages `.agent/TASK.md` and dispatches execution.
-- **Developer:** Executes probe/client code under `aether-guard wrap`.
-- **Auditor:** Verifies mock isolation and zero hardcoded credentials against DoD.
-- **Aether Sentinel:** Live supervisor terminal monitoring command security and rate limits.
-
-### 2. Active Session & Integration Contracts
+### 1. Active Session & Integration Contracts
 
 - **HTTP Client Baseline:** [e.g. httpx with connection pooling and HTTP/2 support]
 - **HTML/DOM Parser:** [e.g. selectolax / BeautifulSoup for mixed encoding HTML]
 - **Session Lifecycle:** [e.g. automatic refresh via interceptor on 302 login redirect]
+
+### 2. Multi-Agent Collaboration Roles (Optional)
+
+> For reverse engineering or scraper operations utilizing multiple AI agents. If single-agent, leave as default.
+
+- **Planner:** Manages target priorities in `.agent/TASK.md` and defines extraction scope.
+- **Investigator (Developer):** Implements client probes, parsers, and replay scripts strictly within task scope.
+- **Auditor:** Verifies mock isolation, rate limiting guardrails, and zero hardcoded credentials against DoD.
 
 ---
 
