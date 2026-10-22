@@ -15,20 +15,20 @@
 
 ---
 
-## Active Host & Multi-Agent Contracts
+## Active Contracts
 
-### 1. Multi-Agent Topology & Ensemble Contract (Dev Trinity Sentinel)
-
-When operating under Maestri / Antigravity orchestration:
-- **Planner:** Manages `.agent/TASK.md` and prioritizes non-destructive optimizations.
-- **Operator (Developer):** Inspects OS state, writes symmetrical `apply` and `revert` scripts.
-- **Auditor:** Verifies pre-change backups exist in `.backups/`, asserts syntax (`bash -n`), and checks invariants.
-- **Host Sentinel:** Live supervisor monitoring commands for blacklisted patterns (`rm -rf /etc`, `dd`, `apt purge`).
-
-### 2. Active Storage & Privilege Invariants
+### 1. Active Storage & Privilege Invariants
 
 - **Backup Standard:** Every modified system file is backed up to `.backups/<timestamp>-<slug>/` before write.
 - **Privilege Boundary:** No automated execution of `sudo` without displaying the full script and receiving human confirmation.
+
+### 2. Multi-Agent Collaboration Roles (Optional)
+
+> For host administration or workstation tuning operations utilizing multiple AI agents. If single-agent, leave as default.
+
+- **Planner:** Manages `.agent/TASK.md` and prioritizes non-destructive optimizations.
+- **Operator (Developer):** Inspects OS state, writes symmetrical `apply` and `revert` scripts within task scope.
+- **Auditor:** Verifies pre-change backups exist in `.backups/`, asserts syntax (`bash -n`), and checks invariants.
 
 ---
 
