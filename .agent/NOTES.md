@@ -15,18 +15,7 @@
 
 ## Active Contracts
 
-### 1. Multi-Agent Topology & Ensemble Contract (Dev Trinity Sentinel)
-
-For multi-agent orchestration via Maestri or Antigravity, the canonical topology is defined by the **Dev Trinity Sentinel Ensemble** (`dev-trinity-sentinel.maestripartitura`):
-
-| Node / Role | Channel / Protocol | Consumer | Contract / Responsibilities |
-|---|---|---|---|
-| **Project Architect (Planner)** | Maestri IPC / Socket | Developer Terminal | Decomposes initiatives into `.agent/TASK.md`, promotes tasks with `taskctl next`, dispatches execution. |
-| **Software Developer** | PTY / Subshell (`aether-guard wrap`) | Scope Auditor | Surgical code implementation confined strictly to `Systems Involved`. Invokes `taskctl audit`. |
-| **Task & Scope Auditor** | Read-Only CLI / Socket | Planner & Developer | Independent audit against `.agent/TASK.md` criteria and DoD. Semantic exit codes: 0 (`[APPROVED]`), 1 (`[CHANGES REQUIRED]`), 2 (`[REJECTED]`). |
-| **Aether Sentinel** | Live Terminal & Rope (`#30D158`) | Developer Subshell | Real-time command interception, risk scoring (Safe/Audit/Block), NDJSON telemetry sink to VictoriaLogs. |
-
-### 2. Runtime Data & Payload Contracts
+### 1. Runtime Data & Payload Contracts
 
 Full schemas live in code (`[src/models/]` or `[core/schemas/]`). This table maps high-level contracts:
 
@@ -36,6 +25,16 @@ Full schemas live in code (`[src/models/]` or `[core/schemas/]`). This table map
 | `[e.g.: queue:events:raw]` | `[Ingestion Worker]` | `[Event Parser]` | `[RawEventPayload]` | `[Redis stream / Kafka topic]` |
 
 Contract changes require updating schemas on both sides within the same task.
+
+### 2. Multi-Agent Collaboration Contracts (Optional)
+
+> For projects operating with multiple AI agents or specialized subagents. If single-agent, leave as default.
+
+| Role | Interface / Channel | Responsibilities | Boundary |
+|---|---|---|---|
+| **Planner / Architect** | `.agent/TASK.md` / Chat | Decomposes initiatives, defines acceptance criteria and scope. | Does not edit source code directly. |
+| **Developer / Implementer** | Workspace / Terminal | Implements code changes strictly within task scope. | Follows Definition of Done in `AGENTS.md`. |
+| **Auditor / Reviewer** | Diffs / Test Suite | Asserts test coverage, invariants, and DoD before task completion. | Read-only inspection; reports approval or rejection. |
 
 ---
 
