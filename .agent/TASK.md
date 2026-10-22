@@ -10,14 +10,12 @@
 
 ## Active Task
 
-- **Task:** `[07.1]`
-- **Status:** RUNNING
+- **Task:** `(none - cycle 07 in progress)`
+- **Status:** READY FOR PLANNING
 - **Scope:**
-  - Decouple starter templates from Maestri-specific tooling (`dev-trinity-sentinel.maestripartitura`, `Maestri IPC`, `aether-guard wrap`, `taskctl`).
-  - Standardize `.agent/NOTES.md` across all 5 starter branches (`greenfield`, `brownfield`, `blackbox`, `infra`, `baremetal`) to focus on application runtime contracts first, with tool-agnostic multi-agent collaboration guidelines as an optional section.
-  - Retain `.maestri/` in `.gitignore` to prevent canvas/session state pollution.
-  - Validate with `.github/scripts/test-all-starters.sh` and ensure zero drift.
-- **Target Branches:** `main`, `greenfield`, `brownfield`, `blackbox`, `infra`, `baremetal`
+  - Task [07.1] completed.
+  - Await user direction for next cycle 07 roadmap task or maintenance.
+- **Target Branches:** `main`
 
 ---
 
@@ -27,6 +25,7 @@
 
 | Task | Title | Commit(s) | Date |
 |---|---|---|---|
+| `[07.1]` | Decouple Starter Templates from Maestri Tooling to Tool-Agnostic Runtime Contracts | `abe7ba4`, `6b742b8`, `32197db`, `a885ac7`, `044723a`, `0ee86fa` | 2026-10-21 |
 | `[01.1]` | Standardize In-Code Invariants across Starter Templates | `02270d7`, `d5a6a88`, `c1d8622`, `ba297fb`, `fc16dbd`, `8574f8b`, `873f942`, `58505d0` | 2026-10-19 |
 | `[01.2]` | Post-v1.0.0 Foundation & Starter Ecosystem Roadmap | `93d60be`, `d71f854` | 2026-10-19 |
 | `[01.3]` | Active Starter Smoke Testing Assertions in CI Workflow | `b46342f` | 2026-10-19 |
