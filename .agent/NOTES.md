@@ -14,20 +14,20 @@
 
 ---
 
-## Active Infrastructure & Multi-Agent Contracts
+## Active Contracts
 
-### 1. Multi-Agent Topology & Ensemble Contract (Dev Trinity Sentinel)
-
-When operating under Maestri / Antigravity orchestration:
-- **Planner:** Manages `.agent/TASK.md` and coordinates service deployment tasks.
-- **Developer:** Authors Compose files, Dockerfiles, and IaC manifests under `aether-guard wrap`.
-- **Auditor:** Verifies resource limits, non-root users, healthchecks, and strict zero `-v` in teardown commands.
-- **Aether Sentinel:** Live supervisor terminal monitoring destructive commands (`prune`, `down -v`, `rm -rf`).
-
-### 2. Active Storage & Port Invariants
+### 1. Active Storage & Port Invariants
 
 - **Persistence Policy:** Named volumes for databases/high-write engines (VictoriaLogs, Postgres, SQLite); read-only bind mounts (`:ro`) for configuration files.
 - **Host Port Mapping:** Must match allocation in `.agent/SERVICES.md`.
+
+### 2. Multi-Agent Collaboration Roles (Optional)
+
+> For infrastructure or homelab environments operating with multiple AI agents. If single-agent, leave as default.
+
+- **Planner:** Manages `.agent/TASK.md` and coordinates service deployment tasks.
+- **Operator (Developer):** Authors Compose files, Dockerfiles, and IaC manifests strictly within task scope.
+- **Auditor:** Verifies resource boundaries, non-root users, healthchecks, and strict zero `-v` in teardown commands.
 
 ---
 
