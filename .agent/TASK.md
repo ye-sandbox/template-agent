@@ -10,12 +10,14 @@
 
 ## Active Task
 
-- **Task:** `(none - cycle 06 complete)`
-- **Status:** READY FOR PLANNING
+- **Task:** `[07.1]`
+- **Status:** RUNNING
 - **Scope:**
-  - All roadmap tasks in cycle 06 completed.
-  - Await user direction for cycle 07 planning or cycle wrap-up / release instructions.
-- **Target Branches:** `main`
+  - Decouple starter templates from Maestri-specific tooling (`dev-trinity-sentinel.maestripartitura`, `Maestri IPC`, `aether-guard wrap`, `taskctl`).
+  - Standardize `.agent/NOTES.md` across all 5 starter branches (`greenfield`, `brownfield`, `blackbox`, `infra`, `baremetal`) to focus on application runtime contracts first, with tool-agnostic multi-agent collaboration guidelines as an optional section.
+  - Retain `.maestri/` in `.gitignore` to prevent canvas/session state pollution.
+  - Validate with `.github/scripts/test-all-starters.sh` and ensure zero drift.
+- **Target Branches:** `main`, `greenfield`, `brownfield`, `blackbox`, `infra`, `baremetal`
 
 ---
 
