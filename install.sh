@@ -42,7 +42,7 @@ done
 
 TARGET_DIR="${TARGET_DIR:-.}"
 mkdir -p "$TARGET_DIR/.agent"
-RESOLVED_TARGET="$(cd "$TARGET_DIR" && pwd)"
+RESOLVED_TARGET="$(cd "$TARGET_DIR" && pwd -P)"
 
 # Remote repository URL for piped execution
 TEMPLATE_REPO_URL="${TEMPLATE_REPO_URL:-https://raw.githubusercontent.com/ye-sandbox/template-agent/brownfield}"
@@ -51,7 +51,7 @@ TEMPLATE_REPO_URL="${TEMPLATE_REPO_URL:-https://raw.githubusercontent.com/ye-san
 SCRIPT_SOURCE="${BASH_SOURCE[0]:-}"
 SCRIPT_DIR=""
 if [ -n "$SCRIPT_SOURCE" ] && [ -f "$SCRIPT_SOURCE" ]; then
-    SCRIPT_DIR="$(cd "$(dirname "$SCRIPT_SOURCE")" && pwd)"
+    SCRIPT_DIR="$(cd "$(dirname "$SCRIPT_SOURCE")" && pwd -P)"
 fi
 
 if [ -n "$SCRIPT_DIR" ] && [ -f "$SCRIPT_DIR/AGENTS.md" ] && [ -d "$SCRIPT_DIR/.agent" ]; then
@@ -192,10 +192,7 @@ if [ "$LOCAL_ONLY" = true ]; then
         mkdir -p "$(dirname "$EXCLUDE_FILE")"
         touch "$EXCLUDE_FILE"
 
-        REL_PREFIX=""
-        if [ "$RESOLVED_TARGET" != "$REPO_ROOT" ]; then
-            REL_PREFIX="${RESOLVED_TARGET#$REPO_ROOT/}/"
-        fi
+        REL_PREFIX="$(git -C "$RESOLVED_TARGET" rev-parse --show-prefix)"
 
         for entry in "${REL_PREFIX}AGENTS.md" "${REL_PREFIX}.agent/" "${REL_PREFIX}docs/adr/"; do
             pattern="/$entry"
