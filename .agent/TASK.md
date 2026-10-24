@@ -10,12 +10,14 @@
 
 ## Active Task
 
-- **Task:** `(none - cycle 07 in progress)`
-- **Status:** READY FOR PLANNING
+- **Task:** `Task [07.2]: Fix Brownfield Stealth Path Resolution for macOS Symlinks in CI/CD`
+- **Status:** RUNNING
 - **Scope:**
-  - Task [07.1] completed.
-  - Await user direction for next cycle 07 roadmap task or maintenance.
-- **Target Branches:** `main`
+  - Resolve symlink path discrepancy on macOS runners (`/var` vs `/private/var`) in `brownfield:install.sh`.
+  - Use `pwd -P` and native `git rev-parse --show-prefix` for relative stealth exclude calculation.
+  - Verify starter test assertions pass locally with `.github/scripts/test-all-starters.sh brownfield`.
+  - Push fix to `brownfield` and verify CI/CD execution across both `ubuntu-latest` and `macos-latest`.
+- **Target Branches:** `brownfield`, `main`
 
 ---
 
