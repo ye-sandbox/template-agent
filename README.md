@@ -35,7 +35,7 @@ Rather than bundling multiple disparate starters into a bloated monolithic direc
 | **`baremetal`** | **Workstation & PC Tuning** | `.agent/BASELINE.md` (System inventory), `.agent/INVARIANTS.md`, `.agent/TUNINGS.md`, `.agent/skills/baremetal-tuning/`, `init.sh`, rollback-first contracts. | When tuning OS parameters, sysctl, kernel tweaks, systemd services, dotfiles, or maintenance on your local PC/host. |
 | **`main`** | **Governance Hub** | Global documentation, decision matrix, and template evolution history. | To maintain and consult this template ecosystem. |
 
-Cross-cutting playbooks spanning **multiple** repositories (UI contract, proto, port, agent QA) are **not** versioned in this `main` branch. Canonical source: [`ye-sandbox/agent-skills`](https://github.com/ye-sandbox/agent-skills) (private). On host: clone + `./install.sh`. Starter-specific skills remain embedded in the corresponding branches above.
+Cross-cutting playbooks spanning **multiple** repositories (UI contract, proto, port, agent QA, `readme-standard`) are **not** versioned in this `main` branch. Canonical source: [`ye-sandbox/agent-skills`](https://github.com/ye-sandbox/agent-skills) (private). On host: clone + `./install.sh`. Starter-specific skills remain embedded in the corresponding branches above.
 
 ---
 

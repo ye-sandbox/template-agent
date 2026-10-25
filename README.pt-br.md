@@ -35,7 +35,7 @@ Em vez de misturar múltiplos starters em uma árvore inchada, este repositório
 | **`baremetal`** | **Otimização de PC & Workstation** | `.agent/BASELINE.md` (Inventário do sistema), `.agent/INVARIANTS.md`, `.agent/TUNINGS.md`, `.agent/skills/baremetal-tuning/`, `init.sh`, contratos de rollback. | Quando for calibrar parâmetros do SO, kernel, sysctl, serviços systemd, dotfiles ou manutenção no PC/host local. |
 | **`main`** | **Governança & Hub** | Documentação geral, matriz de decisão, histórico de evolução dos templates. | Para manter e consultar este ecossistema. |
 
-Playbooks que valem para **vários** repositórios (contrato de UI, proto, porte, QA de agentes) **não** ficam nesta `main`. Fonte: [`ye-sandbox/agent-skills`](https://github.com/ye-sandbox/agent-skills) (privado). No host: clone + `./install.sh`. Skills que o starter **embarca** continuam nas branches acima.
+Playbooks que valem para **vários** repositórios (contrato de UI, proto, porte, QA de agentes, `readme-standard`) **não** ficam nesta `main`. Fonte: [`ye-sandbox/agent-skills`](https://github.com/ye-sandbox/agent-skills) (privado). No host: clone + `./install.sh`. Skills que o starter **embarca** continuam nas branches acima.
 
 ---
 
