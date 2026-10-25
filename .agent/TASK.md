@@ -24,6 +24,7 @@
 - [ ] Healthchecks configured across all provisioned containers.
 - [ ] Memory and CPU limits specified in Compose service blocks.
 - [ ] Ports and sensitive configuration parameters documented in `.env.example`.
+- [ ] `README.md` and `README.pt-br.md` populated with real architecture (Mermaid), quickstart, configuration table (`.env.example`), and validation commands (zero heading emojis or unquantified buzzwords — see `readme-standard` skill).
 
 ---
 

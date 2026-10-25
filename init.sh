@@ -94,6 +94,118 @@ rm -f "$TARGET_DIR/init.sh"
 # Enter destination and initialize fresh Git history
 cd "$TARGET_DIR"
 rm -rf .git
+
+# Generate clean market-standard product README skeletons (replacing template documentation)
+PROJECT_NAME="$(basename "$(pwd)")"
+
+cat <<EOF > README.md
+# $PROJECT_NAME
+
+**[English](README.md)** | **[Português (Brasil)](README.pt-br.md)**
+
+[![CI](https://img.shields.io/badge/CI-pending-lightgrey.svg)]()
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+
+---
+
+## Overview
+
+Service orchestration and infrastructure stack for \`$PROJECT_NAME\`. Populate this section during Task \`[00.1]\` following the \`readme-standard\` skill.
+
+## Architecture
+
+\`\`\`mermaid
+flowchart LR
+    Proxy["Reverse Proxy"] -->|"Internal Network"| Services["$PROJECT_NAME Containers"]
+    Services -->|"Bind / Volume"| Storage["Persistent Volumes"]
+\`\`\`
+
+## Quickstart
+
+\`\`\`bash
+cp .env.example .env
+cp compose.yaml.example compose.yaml
+docker compose config --quiet
+docker compose up -d
+\`\`\`
+
+## Configuration
+
+| Variable | Description | Default | Required |
+| :--- | :--- | :--- | :--- |
+| \`TZ\` | Container timezone | \`UTC\` | No |
+
+## Usage
+
+\`\`\`bash
+docker compose ps
+\`\`\`
+
+## Development
+
+\`\`\`bash
+docker compose config --quiet
+\`\`\`
+
+## License
+
+Released under the [MIT License](LICENSE).
+EOF
+
+cat <<EOF > README.pt-br.md
+# $PROJECT_NAME
+
+**[English](README.md)** | **[Português (Brasil)](README.pt-br.md)**
+
+[![CI](https://img.shields.io/badge/CI-pending-lightgrey.svg)]()
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+
+---
+
+## Visão Geral
+
+Orquestração de serviços e stack de infraestrutura para \`$PROJECT_NAME\`. Preencha esta seção durante a Task \`[00.1]\` seguindo a skill \`readme-standard\`.
+
+## Arquitetura
+
+\`\`\`mermaid
+flowchart LR
+    Proxy["Proxy Reverso"] -->|"Rede Interna"| Services["Containers $PROJECT_NAME"]
+    Services -->|"Bind / Volume"| Storage["Volumes Persistentes"]
+\`\`\`
+
+## Início Rápido
+
+\`\`\`bash
+cp .env.example .env
+cp compose.yaml.example compose.yaml
+docker compose config --quiet
+docker compose up -d
+\`\`\`
+
+## Configuração
+
+| Variável | Descrição | Padrão | Obrigatório |
+| :--- | :--- | :--- | :--- |
+| \`TZ\` | Fuso horário dos containers | \`UTC\` | Não |
+
+## Uso
+
+\`\`\`bash
+docker compose ps
+\`\`\`
+
+## Desenvolvimento
+
+\`\`\`bash
+docker compose config --quiet
+\`\`\`
+
+## Licença
+
+Distribuído sob a licença [MIT](LICENSE).
+EOF
+
 git init -b main >/dev/null 2>&1
 
 # Configure fallback author if not set globally
