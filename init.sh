@@ -94,6 +94,116 @@ rm -f "$TARGET_DIR/init.sh"
 # Enter destination and initialize fresh Git history
 cd "$TARGET_DIR"
 rm -rf .git
+
+# Generate clean market-standard product README skeletons (replacing template documentation)
+PROJECT_NAME="$(basename "$(pwd)")"
+
+cat <<EOF > README.md
+# $PROJECT_NAME
+
+**[English](README.md)** | **[Português (Brasil)](README.pt-br.md)**
+
+[![CI](https://img.shields.io/badge/CI-pending-lightgrey.svg)]()
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+
+---
+
+## Overview
+
+Host OS administration, kernel tuning, and rollback-first workstation automation for \`$PROJECT_NAME\`. Populate this section during Task \`[00.1]\` following the \`readme-standard\` skill.
+
+## Architecture
+
+\`\`\`mermaid
+flowchart LR
+    Backup["Pre-Change Backup (.backups/)"] -->|"Apply Script"| Kernel["Host OS / Kernel"]
+    Revert["Symmetrical Revert Script"] -.->|"Rollback"| Kernel
+\`\`\`
+
+## Quickstart
+
+\`\`\`bash
+cp .env.example .env
+./tests/smoke.sh
+\`\`\`
+
+## Configuration
+
+| Variable | Description | Default | Required |
+| :--- | :--- | :--- | :--- |
+| \`VECTOR_ENABLED\` | Enable telemetry streaming | \`false\` | No |
+| \`VECTOR_HOST\` | VictoriaLogs / Vector ingestion host | \`127.0.0.1\` | No |
+
+## Usage
+
+\`\`\`bash
+./tests/smoke.sh
+\`\`\`
+
+## Development
+
+\`\`\`bash
+./tests/smoke.sh
+\`\`\`
+
+## License
+
+Released under the [MIT License](LICENSE).
+EOF
+
+cat <<EOF > README.pt-br.md
+# $PROJECT_NAME
+
+**[English](README.md)** | **[Português (Brasil)](README.pt-br.md)**
+
+[![CI](https://img.shields.io/badge/CI-pending-lightgrey.svg)]()
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+
+---
+
+## Visão Geral
+
+Administração de SO host, ajuste de kernel e automação rollback-first para \`$PROJECT_NAME\`. Preencha esta seção durante a Task \`[00.1]\` seguindo a skill \`readme-standard\`.
+
+## Arquitetura
+
+\`\`\`mermaid
+flowchart LR
+    Backup["Backup Pré-Mudança (.backups/)"] -->|"Script Apply"| Kernel["SO Host / Kernel"]
+    Revert["Script Revert Simétrico"] -.->|"Rollback"| Kernel
+\`\`\`
+
+## Início Rápido
+
+\`\`\`bash
+cp .env.example .env
+./tests/smoke.sh
+\`\`\`
+
+## Configuração
+
+| Variável | Descrição | Padrão | Obrigatório |
+| :--- | :--- | :--- | :--- |
+| \`VECTOR_ENABLED\` | Habilitar envio de telemetria | \`false\` | Não |
+| \`VECTOR_HOST\` | Host de ingestão VictoriaLogs / Vector | \`127.0.0.1\` | Não |
+
+## Uso
+
+\`\`\`bash
+./tests/smoke.sh
+\`\`\`
+
+## Desenvolvimento
+
+\`\`\`bash
+./tests/smoke.sh
+\`\`\`
+
+## Licença
+
+Distribuído sob a licença [MIT](LICENSE).
+EOF
+
 git init -b main >/dev/null 2>&1
 
 # Configure fallback author if not set globally

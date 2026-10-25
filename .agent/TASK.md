@@ -24,6 +24,7 @@
 - [ ] Essential host invariants confirmed in `.agent/INVARIANTS.md`.
 - [ ] Initial boot analysis captured (`systemd-analyze`).
 - [ ] Smoke test passes: `./tests/smoke.sh`.
+- [ ] `README.md` and `README.pt-br.md` populated with real hardware/OS baseline, architecture (Mermaid), configuration table (`.env.example`), and validation commands (zero heading emojis or unquantified buzzwords — see `readme-standard` skill).
 
 ---
 

@@ -57,6 +57,7 @@ The agent MUST optimize context loading using the following progressive disclosu
    - [ ] Performance metrics recorded before vs. after in `.agent/TUNINGS.md`.
    - [ ] Verification command passes: `./tests/smoke.sh` runs smoke tests.
    - [ ] Git cleanliness: `git diff --check` exits with code 0.
+   - [ ] Documentation Perimeter: If `.env.example` variables, benchmark scripts, or baseline tunings changed, synchronize `README.md` and `README.pt-br.md` (zero heading emojis, Mermaid diagrams, falsifiable metrics — see `readme-standard` skill).
    - [ ] Knowledge Preservation: Document obscure platform/runtime gotchas or workarounds as an atomic card in `.agent/knowledge/` (if applicable).
    - [ ] Atomic Commit: Conventional Commits in English (`feat(tuning): ...`).
    - [ ] Task Log: Active task logged in `TASK.md`; edge cases recorded in `NOTES.md`.
@@ -107,7 +108,7 @@ Not restricted to phase `99.x`. When releasing `vX.Y.Z`:
 
 1. **Archive:** Move completed log from `TASK.md` to `ARCHIVE.md` under `## [vX.Y.Z] - YYYY-MM-DD`.
 2. **Consolidate:** Record active system baseline in `BASELINE.md`; prune ephemeral scratch notes in `NOTES.md`.
-3. **Perimeter:** Sync `.env.example`, `README.md`, and registry files to the release tag.
+3. **Perimeter:** Sync `.env.example`, `README.md`, `README.pt-br.md` (following `readme-standard`), and registry files to the release tag.
 4. **Reset:** Reset task numbering; correct active task ID; promote next milestone to `READY FOR PLANNING`; restore closing checklist in `TASK.md`.
 
 ---
