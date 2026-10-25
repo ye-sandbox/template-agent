@@ -94,6 +94,110 @@ rm -f "$TARGET_DIR/init.sh"
 # Enter destination and initialize fresh Git history
 cd "$TARGET_DIR"
 rm -rf .git
+
+# Generate clean market-standard product README skeletons (replacing template documentation)
+PROJECT_NAME="$(basename "$(pwd)")"
+
+cat <<EOF > README.md
+# $PROJECT_NAME
+
+**[English](README.md)** | **[Português (Brasil)](README.pt-br.md)**
+
+[![CI](https://img.shields.io/badge/CI-pending-lightgrey.svg)]()
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+
+---
+
+## Overview
+
+Reverse-engineered client and integration wrapper for \`$PROJECT_NAME\`. Populate this section during Task \`[00.1]\` following the \`readme-standard\` skill.
+
+## Architecture
+
+\`\`\`mermaid
+flowchart LR
+    Caller["Caller"] -->|"Typed Client"| Wrapper["$PROJECT_NAME"]
+    Wrapper -->|"HTTPS + Session"| Target["Upstream Target"]
+\`\`\`
+
+## Quickstart
+
+\`\`\`bash
+cp .env.example .env
+./tests/smoke.sh
+\`\`\`
+
+## Configuration
+
+| Variable | Description | Default | Required |
+| :--- | :--- | :--- | :--- |
+| \`TARGET_BASE_URL\` | Upstream base URL | — | Yes |
+
+## Usage
+
+Document verified cURL requests and client invocations here during Task \`[00.1]\`.
+
+## Development
+
+\`\`\`bash
+./tests/smoke.sh
+\`\`\`
+
+## License
+
+Released under the [MIT License](LICENSE).
+EOF
+
+cat <<EOF > README.pt-br.md
+# $PROJECT_NAME
+
+**[English](README.md)** | **[Português (Brasil)](README.pt-br.md)**
+
+[![CI](https://img.shields.io/badge/CI-pending-lightgrey.svg)]()
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+
+---
+
+## Visão Geral
+
+Cliente de engenharia reversa e integração para \`$PROJECT_NAME\`. Preencha esta seção durante a Task \`[00.1]\` seguindo a skill \`readme-standard\`.
+
+## Arquitetura
+
+\`\`\`mermaid
+flowchart LR
+    Caller["Cliente"] -->|"Client Tipado"| Wrapper["$PROJECT_NAME"]
+    Wrapper -->|"HTTPS + Sessão"| Target["Sistema Alvo"]
+\`\`\`
+
+## Início Rápido
+
+\`\`\`bash
+cp .env.example .env
+./tests/smoke.sh
+\`\`\`
+
+## Configuração
+
+| Variável | Descrição | Padrão | Obrigatório |
+| :--- | :--- | :--- | :--- |
+| \`TARGET_BASE_URL\` | URL base do sistema alvo | — | Sim |
+
+## Uso
+
+Documente chamadas cURL verificadas e uso do cliente durante a Task \`[00.1]\`.
+
+## Desenvolvimento
+
+\`\`\`bash
+./tests/smoke.sh
+\`\`\`
+
+## Licença
+
+Distribuído sob a licença [MIT](LICENSE).
+EOF
+
 git init -b main >/dev/null 2>&1
 
 # Configure fallback author if not set globally

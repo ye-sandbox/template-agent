@@ -43,6 +43,7 @@ The agent MUST optimize context loading using the following progressive disclosu
    - [ ] Automated Tests: 1 success test + 1 error test (expired session/403) pass with exit code 0.
    - [ ] Strict Typing: Client schemas strictly typed with 0 errors.
    - [ ] Git Cleanliness: `git diff --check` exits with code 0.
+   - [ ] Documentation Perimeter: If CLI flags, `.env.example` variables, cataloged routes, or validation commands changed, synchronize `README.md` and `README.pt-br.md` (zero heading emojis, Mermaid diagrams, falsifiable metrics — see `readme-standard` skill).
    - [ ] Knowledge Preservation: Document obscure platform/runtime gotchas or workarounds as an atomic card in `.agent/knowledge/` (if applicable).
    - [ ] Atomic Commit: Conventional Commits in English (`feat(endpoint): ...`).
    - [ ] Task Log: Active task logged in `TASK.md`; edge cases recorded in `NOTES.md`.
@@ -93,7 +94,7 @@ Not restricted to phase `99.x`. When releasing `vX.Y.Z`:
 
 1. **Archive:** Move completed log from `TASK.md` to `ARCHIVE.md` under `## [vX.Y.Z] - YYYY-MM-DD`.
 2. **Consolidate:** Promote validated routes in `ENDPOINTS.md`; audit `tests/fixtures/` (zero cookies/tokens/PII); purge `*.har` dumps and scratch notes.
-3. **Perimeter:** Sync `.env.example` and `README.md` (cURL examples) to the release tag.
+3. **Perimeter:** Sync `.env.example`, `README.md`, and `README.pt-br.md` (cURL examples, following `readme-standard`) to the release tag.
 4. **Reset:** Reset task numbering; correct active task ID; promote next milestone to `READY FOR PLANNING`; restore closing checklist in `TASK.md`.
 
 ---

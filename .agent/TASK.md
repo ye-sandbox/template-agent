@@ -23,6 +23,7 @@
 - [ ] Section 1 (Global Context) of `.agent/ENDPOINTS.md` completed.
 - [ ] Test harness configured for project stack (e.g., pytest, npm test, cargo test, go test) and smoke test verified.
 - [ ] Reproducible minimal cURL call for login or session verification tested successfully.
+- [ ] `README.md` and `README.pt-br.md` populated with real architecture (Mermaid), quickstart, configuration table (`.env.example`), and validation commands (zero heading emojis or unquantified buzzwords — see `readme-standard` skill).
 
 ---
 
