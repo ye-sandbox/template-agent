@@ -13,7 +13,7 @@
 - **Task:** `(none - cycle 07 in progress)`
 - **Status:** READY FOR PLANNING
 - **Scope:**
-  - Task [07.2] completed (resolved macOS symlink path prefix in brownfield stealth installer).
+  - Task [07.3] completed (standardized product README scaffolding in `init.sh`, enforced `readme-standard` across all 5 starters, and added CI contract assertions).
   - Await user direction for next cycle 07 roadmap task or maintenance.
 - **Target Branches:** `main`
 
@@ -25,6 +25,7 @@
 
 | Task | Title | Commit(s) | Date |
 |---|---|---|---|
+| `[07.3]` | Standardize Market-Grade Product README Scaffolding & Governance Across Starters | `828e4c9`, `6e9c15e`, `241d8a5`, `b9c4ada`, `1087889`, `38d711f`, `88d6b1b` | 2026-10-25 |
 | `[07.2]` | Fix Brownfield Stealth Path Resolution for macOS Symlinks in CI/CD | `b7617d3` | 2026-10-24 |
 | `[07.1]` | Decouple Starter Templates from Maestri Tooling to Tool-Agnostic Runtime Contracts | `abe7ba4`, `6b742b8`, `32197db`, `a885ac7`, `044723a`, `0ee86fa` | 2026-10-21 |
 | `[01.1]` | Standardize In-Code Invariants across Starter Templates | `02270d7`, `d5a6a88`, `c1d8622`, `ba297fb`, `fc16dbd`, `8574f8b`, `873f942`, `58505d0` | 2026-10-19 |
