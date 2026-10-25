@@ -23,6 +23,7 @@
 - [ ] Linter, formatter, and strict typing configured.
 - [ ] Validation commands documented in `AGENTS.md`.
 - [ ] `.env.example` and `.gitignore` updated with project-specific dependencies.
+- [ ] `README.md` and `README.pt-br.md` populated with real architecture (Mermaid), quickstart, configuration table (`.env.example`), and validation commands (zero heading emojis or unquantified buzzwords — see `readme-standard` skill).
 
 ---
 

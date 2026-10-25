@@ -118,6 +118,107 @@ if [ -f AGENTS.md ]; then
     mv AGENTS.md.tmp AGENTS.md
 fi
 
+# Generate clean market-standard product README skeletons (replacing template documentation)
+PROJECT_NAME="$(basename "$(pwd)")"
+
+cat <<EOF > README.md
+# $PROJECT_NAME
+
+**[English](README.md)** | **[Português (Brasil)](README.pt-br.md)**
+
+[![CI](https://img.shields.io/badge/CI-pending-lightgrey.svg)]()
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+
+---
+
+## Overview
+
+Core service and domain implementation for \`$PROJECT_NAME\`. Populate this section during Task \`[00.1]\` following the \`readme-standard\` skill.
+
+## Architecture
+
+\`\`\`mermaid
+flowchart LR
+    Client["Caller / Ingress"] -->|"Request"| App["$PROJECT_NAME"]
+    App -->|"Persistence"| Storage["Datastore"]
+\`\`\`
+
+## Quickstart
+
+\`\`\`bash
+cp .env.example .env
+\`\`\`
+
+## Configuration
+
+| Variable | Description | Default | Required |
+| :--- | :--- | :--- | :--- |
+| \`NODE_ENV\` | Runtime environment mode | \`development\` | No |
+
+## Usage
+
+Document primary CLI commands, HTTP endpoints, or SDK calls here during Task \`[00.1]\`.
+
+## Development
+
+\`\`\`bash
+# Populate exact test, lint, and typecheck commands during Task [00.1]
+\`\`\`
+
+## License
+
+Released under the [MIT License](LICENSE).
+EOF
+
+cat <<EOF > README.pt-br.md
+# $PROJECT_NAME
+
+**[English](README.md)** | **[Português (Brasil)](README.pt-br.md)**
+
+[![CI](https://img.shields.io/badge/CI-pending-lightgrey.svg)]()
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+
+---
+
+## Visão Geral
+
+Implementação principal e domínio do projeto \`$PROJECT_NAME\`. Preencha esta seção durante a Task \`[00.1]\` seguindo a skill \`readme-standard\`.
+
+## Arquitetura
+
+\`\`\`mermaid
+flowchart LR
+    Client["Origem / Cliente"] -->|"Requisição"| App["$PROJECT_NAME"]
+    App -->|"Persistência"| Storage["Armazenamento"]
+\`\`\`
+
+## Início Rápido
+
+\`\`\`bash
+cp .env.example .env
+\`\`\`
+
+## Configuração
+
+| Variável | Descrição | Padrão | Obrigatório |
+| :--- | :--- | :--- | :--- |
+| \`NODE_ENV\` | Modo do ambiente de execução | \`development\` | Não |
+
+## Uso
+
+Documente os principais comandos de CLI, endpoints HTTP ou chamadas de SDK durante a Task \`[00.1]\`.
+
+## Desenvolvimento
+
+\`\`\`bash
+# Preencha os comandos exatos de teste, lint e typecheck durante a Task [00.1]
+\`\`\`
+
+## Licença
+
+Distribuído sob a licença [MIT](LICENSE).
+EOF
+
 git init -b main >/dev/null 2>&1
 
 # Configure fallback author if not set globally

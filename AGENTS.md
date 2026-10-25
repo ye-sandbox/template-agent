@@ -41,6 +41,7 @@ The agent MUST minimize default token load by following progressive disclosure:
    - [ ] Automated Tests: All unit and integration test suites exit with code 0.
    - [ ] Linters: Linter and formatter checks exit with code 0.
    - [ ] Git Cleanliness: `git diff --check` exits with code 0.
+   - [ ] Documentation Perimeter: If CLI flags, `.env.example` variables, public ports, or validation commands changed, synchronize `README.md` and `README.pt-br.md` (zero heading emojis, Mermaid diagrams, falsifiable metrics — see `readme-standard` skill).
    - [ ] Knowledge Preservation: Document obscure platform/runtime gotchas or workarounds as an atomic card in `.agent/knowledge/` (if applicable).
    - [ ] Atomic Commit: Conventional Commits in English (`feat(scope): ...`).
    - [ ] Task Log: Active task logged in `.agent/TASK.md` with commit hash; next task promoted.
@@ -90,7 +91,7 @@ Not restricted to phase `99.x`. When releasing `vX.Y.Z`:
 
 1. **Archive:** Move completed log from `TASK.md` to `ARCHIVE.md` under `## [vX.Y.Z] - YYYY-MM-DD`.
 2. **Consolidate:** Promote definitive architectural decisions to `docs/adr/decisions.md`; prune ephemeral scratch notes in `.agent/NOTES.md` preserving only active contracts.
-3. **Perimeter:** Sync `.env.example` and `README.md` to the release tag.
+3. **Perimeter:** Sync `.env.example`, `README.md`, and `README.pt-br.md` (following `readme-standard`) to the release tag.
 4. **Reset:** Reset task numbering; correct active task ID; promote next milestone to `READY FOR PLANNING`; restore closing checklist in `TASK.md`.
 
 ---
