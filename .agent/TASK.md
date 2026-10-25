@@ -25,6 +25,7 @@
 - [ ] Map primary application entrypoints (HTTP routes, queue workers, CLI scripts, or schedulers).
 - [ ] Audit environment variables and verify that `.env.example` aligns with references in source code.
 - [ ] Document initial quirks or invariants discovered in `.agent/INVARIANTS.md`.
+- [ ] Audit `README.md` (and `README.pt-br.md`) against discovered architecture, `.env.example`, and validation commands (`readme-standard` skill).
 
 ---
 
