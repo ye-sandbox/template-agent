@@ -228,6 +228,7 @@ assert_infra() {
   need_file .agent/knowledge/000-schema.md
   need_file .agent/knowledge/k-000-template.md
   need_file .agent/knowledge/k-001-docker-bind-mount-permissions.md
+  need_file .agent/knowledge/k-002-healthcheck-logging-contract.md
   need_file .agent/skills/compose-service/SKILL.md
   need_file .agent/TASK.md
   need_file .agent/NOTES.md
@@ -259,6 +260,9 @@ assert_infra() {
   need_grep AGENTS.md '.agent/knowledge/' -qF
   need_grep AGENTS.md 'Knowledge [Pp]reservation' -qiE
   need_grep .agent/knowledge/k-001-docker-bind-mount-permissions.md 'Permission denied' -qF
+  need_grep .agent/knowledge/k-002-healthcheck-logging-contract.md 'healthz' -qF
+  need_grep .agent/skills/compose-service/SKILL.md 'healthz' -qF
+  need_grep .agent/skills/compose-service/SKILL.md 'Probe Log Discarding' -qF
   need_grep .agent/ECOSYSTEM.md 'Repository Topology Matrix' -qF
   need_grep AGENTS.md ':latest' -qF
   need_grep AGENTS.md 'healthcheck' -qF
