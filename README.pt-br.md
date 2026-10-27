@@ -2,14 +2,14 @@
 
 🌐 **[English](README.md) | Português**
 
-Este template é o starter kit canônico do ecossistema ADD para desenvolvimento orientado a agentes em sistemas **sem documentação oficial de API** (ex: SEI, SIP, ERPs legados, portais governamentais, portais web e APIs móveis fechadas).
+Este template é o starter kit canônico do ecossistema ADD para desenvolvimento orientado a agentes em sistemas **sem documentação oficial de API** (ex: ERPs legados, portais corporativos internos, sistemas web legados e APIs móveis não documentadas).
 
 ---
 
 ## 🎯 Por que um template dedicado para Blackbox?
 
 Agentes de IA frequentemente falham em engenharia reversa porque:
-1. **Alucinam nomes de parâmetros:** Em formulários legados (como os do SEI), campos como `hdnInfraItemSelecionado` ou tokens de hash são omitidos ou inventados.
+1. **Alucinam nomes de parâmetros:** Em formulários legados (como em formulários corporativos antigos), campos como `hdnItemSelecionado` ou tokens de hash são omitidos ou inventados.
 2. **Ignoram o ciclo de vida da sessão:** Cookies e tokens CSRF expiram, fazendo com que requisições subsequentes falhem silenciosamente.
 3. **Fazem requisições reais durante o CI:** Sem fixtures mockadas, a suite de testes quebra toda vez que a rede oscila ou a sessão expira.
 
@@ -46,14 +46,14 @@ Este template resolve esses problemas com:
 Via script rápido (One-Liner):
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/ye-sandbox/template-agent/blackbox/init.sh | bash -s -- meu-projeto-sei
-cd meu-projeto-sei
+curl -fsSL https://raw.githubusercontent.com/ye-sandbox/template-agent/blackbox/init.sh | bash -s -- meu-projeto-blackbox
+cd meu-projeto-blackbox
 ```
 
 *Ou via clone manual do Git:*
 ```bash
-git clone --depth 1 -b blackbox https://github.com/ye-sandbox/template-agent.git meu-projeto-sei
-cd meu-projeto-sei
+git clone --depth 1 -b blackbox https://github.com/ye-sandbox/template-agent.git meu-projeto-blackbox
+cd meu-projeto-blackbox
 rm -rf .git && git init -b main && git add . && git commit -m "chore: initial blackbox setup"
 ```
 

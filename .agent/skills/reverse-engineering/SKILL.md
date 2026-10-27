@@ -81,20 +81,20 @@ Immediately after terminal validation:
 ### Canonical Example
 
 ```markdown
-### 📌 [POST] `controlador.php?acao=procedimento_trabalhar`
+### 📌 [POST] `portal.php?action=view_record`
 
-- **Headers:** `Cookie: SEI_SESSION=<session-token>` · `Content-Type: application/x-www-form-urlencoded`
-- **Body:** `id_procedimento` (int) · `infra_hash` (CSRF from prior page)
-- **Success 200:** HTML `ISO-8859-1`; `#divArvoreHtml [data-id-documento]`; `#txtNumeroProcesso`
-- **Dead Session:** 302 or 200 with `<input id="txtUsuario">`
+- **Headers:** `Cookie: PORTAL_SESSION=<session-token>` · `Content-Type: application/x-www-form-urlencoded`
+- **Body:** `record_id` (int) · `csrf_token` (CSRF from prior page)
+- **Success 200:** HTML `UTF-8` or `ISO-8859-1`; `#mainContent [data-record-id]`; `#recordNumber`
+- **Dead Session:** 302 or 200 with `<input id="username">` or `<form id="loginForm">`
 - **cURL:**
   ```bash
-  curl -s -X POST "$TARGET_BASE_URL/controlador.php?acao=procedimento_trabalhar" \
+  curl -s -X POST "$TARGET_BASE_URL/portal.php?action=view_record" \
     -H "Content-Type: application/x-www-form-urlencoded" \
-    -b "SEI_SESSION=$TARGET_SESSION_COOKIE" \
-    -d "id_procedimento=1234567&infra_hash=$TARGET_CSRF_HASH"
+    -b "PORTAL_SESSION=$TARGET_SESSION_COOKIE" \
+    -d "record_id=1234567&csrf_token=$TARGET_CSRF_TOKEN"
   ```
-- **Gotchas:** ISO-8859-1 charset; empty `id_procedimento` returns home dashboard without HTTP error.
+- **Gotchas:** Legacy charset encoding; empty `record_id` returns home dashboard without HTTP error.
 ```
 
 ---
