@@ -10,12 +10,13 @@
 
 ## Active Task
 
-- **Task:** `(none - cycle 07 in progress)`
-- **Status:** READY FOR PLANNING
+- **Task:** `[08.1]` Agnosticismo de Skills & Desacoplamento de Links Privados
+- **Status:** RUNNING
 - **Scope:**
-  - Task [07.4] completed (standardized /health and /healthz endpoints, probe log discarding in infra compose-service skill, and pre-seeded k-002 knowledge card).
-  - Await user direction for next cycle 07 roadmap task or maintenance.
-- **Target Branches:** `main`
+  - Generalizar `~/.cursor/skills` em `.agent/skills/README.md` (`main` e `greenfield`) para padrão agnóstico (`.agent/skills/` local e multi-IDE/CLI).
+  - Substituir links quebrados para `ye-sandbox/agent-skills` e `infra-victoria-logs` em `main`, `greenfield` e `infra` por referências conceituais e padrões públicos de playbook.
+  - Assegurar conformidade no CI (`tests/smoke.sh`, `./scripts/test-starters.sh`).
+- **Target Branches:** `main`, `greenfield`, `infra`
 
 ---
 
@@ -51,7 +52,9 @@
 
 ## Backlog (Upcoming, in priority order)
 
-*(empty — cycle 07 in progress)*
+- `[08.2]` Neutralização de Identificadores Pessoais e Mocks do Domínio SEI (`blackbox`, `infra`)
+- `[08.3]` Ajuste de Generalidade da Stack de Observabilidade (`infra`, `baremetal`)
+- `[08.4]` Higienização e Purga Segura do Histórico Git (Git History Purge) (`all branches`)
 
 
 ---
