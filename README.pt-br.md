@@ -30,7 +30,7 @@ Em vez de misturar múltiplos starters em uma árvore inchada, este repositório
 | :--- | :--- | :--- | :--- |
 | **`greenfield`** | Projetos iniciados **do zero** | `docs/adr/decisions.md` (Log de ADRs), `.agent/skills/` (Skills locais), setup arquitetural livre, contratos em aberto. | Quando você vai criar uma nova aplicação, microserviço ou biblioteca do zero. |
 | **`brownfield`** | Código **legado / já existente** | `.agent/INVARIANTS.md` (Cercas de Chesterton), `install.sh`, Task 00 de Discovery, testes de caracterização, política estrita de *no-push* (revisão humana obrigatória). | Quando você quer colocar agentes para trabalhar com segurança em um projeto que já existe e roda em produção. |
-| **`blackbox`** | **Engenharia Reversa & Integração** | `.agent/ENDPOINTS.md` (Catálogo de rotas descobertas), `.agent/skills/reverse-engineering/`, `init.sh`, fixtures de replay e backoff defensivo. | Quando você precisa mapear, criar wrappers, scrapers ou integrar com sistemas legados/fechados sem documentação (ex: SEI/SIP). |
+| **`blackbox`** | **Engenharia Reversa & Integração** | `.agent/ENDPOINTS.md` (Catálogo de rotas descobertas), `.agent/skills/reverse-engineering/`, `init.sh`, fixtures de replay e backoff defensivo. | Quando você precisa mapear, criar wrappers, scrapers ou integrar com sistemas legados/fechados sem documentação (ex: portais legados ou ERPs sem API pública). |
 | **`infra`** | **Infraestrutura & Serviços** | `.agent/SERVICES.md` (Topologia e portas), `.agent/skills/compose-service/`, `compose.yaml.example`, `init.sh`, limites de recursos e healthchecks. | Quando você quer provisionar e orquestrar serviços (Docker Compose, VictoriaLogs, Uptime Kuma, bancos de dados, Homelab). |
 | **`baremetal`** | **Otimização de PC & Workstation** | `.agent/BASELINE.md` (Inventário do sistema), `.agent/INVARIANTS.md`, `.agent/TUNINGS.md`, `.agent/skills/baremetal-tuning/`, `init.sh`, contratos de rollback. | Quando for calibrar parâmetros do SO, kernel, sysctl, serviços systemd, dotfiles ou manutenção no PC/host local. |
 | **`main`** | **Governança & Hub** | Documentação geral, matriz de decisão, histórico de evolução dos templates. | Para manter e consultar este ecossistema. |
@@ -89,17 +89,17 @@ curl -fsSL https://raw.githubusercontent.com/ye-sandbox/template-agent/brownfiel
 
 ### 3. Engenharia Reversa e Integração com Sistemas Fechados (Blackbox)
 
-Para criar clientes, wrappers, scrapers ou integrações com sistemas sem documentação (como SEI, SIP ou ERPs monolíticos):
+Para criar clientes, wrappers, scrapers ou integrações com sistemas sem documentação (como portais corporativos legados ou ERPs monolíticos):
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/ye-sandbox/template-agent/blackbox/init.sh | bash -s -- meu-projeto-sei
-cd meu-projeto-sei
+curl -fsSL https://raw.githubusercontent.com/ye-sandbox/template-agent/blackbox/init.sh | bash -s -- meu-projeto-blackbox
+cd meu-projeto-blackbox
 ```
 
 *Ou via clone manual do Git:*
 ```bash
-git clone --depth 1 -b blackbox https://github.com/ye-sandbox/template-agent.git meu-projeto-sei
-cd meu-projeto-sei
+git clone --depth 1 -b blackbox https://github.com/ye-sandbox/template-agent.git meu-projeto-blackbox
+cd meu-projeto-blackbox
 rm -rf .git && git init -b main && git add . && git commit -m "chore: initial setup"
 ```
 
@@ -218,7 +218,7 @@ curl -fsSL https://raw.githubusercontent.com/SUA_ORGANIZACAO/template-agent/brow
 ### 3. Criar projeto Blackbox a partir do seu fork:
 ```bash
 TEMPLATE_REPO_URL="https://github.com/SUA_ORGANIZACAO/template-agent.git" \
-curl -fsSL https://raw.githubusercontent.com/SUA_ORGANIZACAO/template-agent/blackbox/init.sh | bash -s -- meu-projeto-sei
+curl -fsSL https://raw.githubusercontent.com/SUA_ORGANIZACAO/template-agent/blackbox/init.sh | bash -s -- meu-projeto-blackbox
 ```
 
 ### 4. Criar projeto Infra a partir do seu fork:
