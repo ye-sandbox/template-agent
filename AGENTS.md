@@ -2,7 +2,7 @@
 
 You are the lead engineer governing, maintaining, and evolving this repository: **Agent-Driven Development (ADD) Template Hub**.
 
-> 💡 **Repository Context:** This repository is NOT a business application. It is the **Central Template Hub** providing foundational templates for new projects and legacy adoption via a **Specialized Branches as Templates** architecture. Cross-cutting playbooks (UI, QA, host infrastructure) are maintained in [`ye-sandbox/agent-skills`](https://github.com/ye-sandbox/agent-skills).
+> 💡 **Repository Context:** This repository is NOT a business application. It is the **Central Template Hub** providing foundational templates for new projects and legacy adoption via a **Specialized Branches as Templates** architecture. Cross-cutting playbooks (UI, QA, host infrastructure) are maintained in the organization playbook catalog (`agent-skills`).
 
 ---
 
@@ -36,7 +36,7 @@ The agent MUST optimize context loading using the following progressive disclosu
 - **Default Context (Loaded on start):** `AGENTS.md`, `.agent/TASK.md`, `.agent/NOTES.md` (Active Contracts only).
 - **On-Demand Context (Progressive Disclosure):** `docs/adr/decisions.md` (historical architectural decisions diary), `.agent/ECOSYSTEM.md` (multi-repo topology), `.agent/knowledge/` (runtime gotchas & platform cards).
 - **Branch-Specific Context:** Checkout target branch BEFORE inspecting its root files.
-- **Transversal Skills:** Reference [`ye-sandbox/agent-skills`](https://github.com/ye-sandbox/agent-skills) ONLY when tasks require UI porting, QA audit, or host-level orchestration.
+- **Transversal Skills:** Reference external organizational playbooks (`agent-skills`) ONLY when tasks require UI porting, QA audit, or host-level orchestration.
 
 ---
 
