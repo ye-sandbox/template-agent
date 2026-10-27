@@ -10,15 +10,12 @@
 
 ## Active Task
 
-- **Task:** `Task [07.4]: Standardize Healthcheck Endpoint and Probe Log Discarding Across Starter Templates`
-- **Status:** RUNNING
+- **Task:** `(none - cycle 07 in progress)`
+- **Status:** READY FOR PLANNING
 - **Scope:**
-  - Update `infra` starter branch (`.agent/skills/compose-service/SKILL.md` and `compose.yaml.example`) with mandatory `/health` and `/healthz` endpoints and probe access log discarding convention.
-  - Create canonical knowledge base card `k-002-healthcheck-logging-contract.md` on `infra`.
-  - Update `.agent/SERVICES.md` and `AGENTS.md` on `infra` to enforce healthcheck & log discarding invariants.
-  - Add CI contract assertions in `.github/scripts/assert-starter-contracts.sh` on `main`.
-  - Validate with `.github/scripts/test-all-starters.sh infra` and `.github/scripts/test-all-starters.sh all`.
-- **Target Branches:** `infra`, `main`
+  - Task [07.4] completed (standardized /health and /healthz endpoints, probe log discarding in infra compose-service skill, and pre-seeded k-002 knowledge card).
+  - Await user direction for next cycle 07 roadmap task or maintenance.
+- **Target Branches:** `main`
 
 ---
 
@@ -28,6 +25,7 @@
 
 | Task | Title | Commit(s) | Date |
 |---|---|---|---|
+| `[07.4]` | Standardize Healthcheck Endpoint and Probe Log Discarding Across Starter Templates | `86c95bd`, `699d7b6`, `6482a7b` | 2026-10-27 |
 | `[07.3]` | Standardize Market-Grade Product README Scaffolding & Governance Across Starters | `828e4c9`, `6e9c15e`, `241d8a5`, `b9c4ada`, `1087889`, `38d711f`, `88d6b1b` | 2026-10-25 |
 | `[07.2]` | Fix Brownfield Stealth Path Resolution for macOS Symlinks in CI/CD | `b7617d3` | 2026-10-24 |
 | `[07.1]` | Decouple Starter Templates from Maestri Tooling to Tool-Agnostic Runtime Contracts | `abe7ba4`, `6b742b8`, `32197db`, `a885ac7`, `044723a`, `0ee86fa` | 2026-10-21 |
