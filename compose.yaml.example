@@ -19,6 +19,8 @@ services:
       - victorialogs_data:/vlogs-data
     networks:
       - monitoring_internal
+    # INVARIANT: Probe /health on loopback; endpoint responds with minimal status payload
+    # INVARIANT: Access logs for successful (2xx) probes must be suppressed at proxy/app layer (see k-002)
     healthcheck:
       test: ["CMD-SHELL", "wget -q --spider http://127.0.0.1:9428/health || exit 1"]
       interval: 15s

@@ -13,9 +13,10 @@ description: Standard operating procedure for adding or updating services in Doc
 
 1. **Prior Topology Review:** The agent MUST read [.agent/SERVICES.md](../../SERVICES.md) before modifying configuration.
 2. **Pinned Images:** Tag `:latest` is forbidden. Always use stable semantic tags (e.g. `v1.2.3`, `1.23-alpine`) or SHA digests.
-3. **Mandatory Healthcheck:** Every container must define an explicit `healthcheck` block.
-4. **Resource Limits:** Every container must define CPU and memory limits (`cpus` and `memory`).
-5. **Zero Plaintext Secrets:** Passwords and tokens must be injected via environment variables (`${VAR_NAME}`).
+3. **Mandatory Healthcheck & Endpoint Convention:** Every container MUST define an explicit `healthcheck` block. HTTP-based services MUST expose dedicated `/health` or `/healthz` endpoints.
+4. **Probe Log Discarding:** Web servers, reverse proxies, and applications MUST discard or suppress access logs for successful (2xx) `/health` and `/healthz` probes to prevent disk churn and VictoriaLogs telemetry pollution (see [.agent/knowledge/k-002-healthcheck-logging-contract.md](../../knowledge/k-002-healthcheck-logging-contract.md)).
+5. **Resource Limits:** Every container must define CPU and memory limits (`cpus` and `memory`).
+6. **Zero Plaintext Secrets:** Passwords and tokens must be injected via environment variables (`${VAR_NAME}`).
 
 ---
 
@@ -58,12 +59,13 @@ Author the service block following canonical syntax:
     volumes:
       - service_data:/path/in/container
       - ./config/service.conf:/etc/service/service.conf:ro
+    # INVARIANT: Probe /health or /healthz on loopback; probe access logs must be suppressed
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
-      interval: 30s
+      test: ["CMD-SHELL", "wget -q --spider http://127.0.0.1:8080/health || exit 1"]
+      interval: 15s
       timeout: 5s
       retries: 3
-      start_period: 20s
+      start_period: 10s
     deploy:
       resources:
         limits:
@@ -86,7 +88,14 @@ Author the service block following canonical syntax:
    docker compose config --quiet
    ```
 2. If validation reports errors, correct formatting or missing variables before proceeding.
-3. If authorized to launch:
+3. Verify that `/health` or `/healthz` responds with HTTP 200 and access logs discard probe heartbeats:
+   ```bash
+   # Assert probe endpoint responds cleanly
+   curl -f http://127.0.0.1:<PORT>/health || curl -f http://127.0.0.1:<PORT>/healthz
+   # Assert probe heartbeats do not flood container logs
+   docker compose logs --tail=50 service-name | grep -E "GET /(health|healthz)" || echo "Probe logs suppressed"
+   ```
+4. If authorized to launch:
    ```bash
    docker compose up -d service-name
    docker compose ps service-name

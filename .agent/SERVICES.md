@@ -50,6 +50,8 @@
 ## 4. Services, Images, and Healthchecks Catalog
 
 > Every service MUST use a pinned image tag (never plain `:latest`) and an explicit `healthcheck` block.
+> HTTP services MUST standardize on `/health` or `/healthz` endpoints.
+> Access logs for successful (2xx) probes MUST be suppressed at the reverse proxy or application layer to prevent VictoriaLogs telemetry pollution (see [k-002](knowledge/k-002-healthcheck-logging-contract.md)).
 
 ### 📌 `victorialogs`
 - **Image:** `victoriametrics/victoria-logs:v1.1.0`

@@ -46,7 +46,7 @@ The agent MUST optimize context loading using the following progressive disclosu
    A task MUST NOT be marked done based on subjective appraisal. It MUST satisfy:
    - [ ] Syntax Validation: `docker compose config --quiet` exits with code 0.
    - [ ] Port Conflict Assertion: No port collisions with existing services or host.
-   - [ ] Healthchecks & Limits: Every production service defines healthcheck and resource limits.
+   - [ ] Healthchecks & Limits: Every production service defines healthcheck and resource limits; HTTP services standardize on `/health` or `/healthz` with probe access log suppression.
    - [ ] Registry Invariants: `.agent/SERVICES.md` and `.env.example` synchronized.
    - [ ] Documentation Frontmatter: All docs under `docs/` MUST include YAML frontmatter (`author_type`, `author`, `reviewed_by`, `date`, `status`, `type`).
    - [ ] Git Cleanliness: `git diff --check` exits with code 0.
@@ -113,6 +113,7 @@ Not restricted to phase `99.x`. When releasing `vX.Y.Z`:
 - **MUST NOT** execute `docker compose down -v`, `docker volume rm`, or `docker volume prune`.
 - **MUST NOT** use the `:latest` image tag — pin semantic tags or SHA digests.
 - **MUST NOT** start a production service without a `healthcheck` and CPU/memory limits.
+- **MUST** standardize HTTP container healthchecks on `/health` or `/healthz` and discard/suppress successful probe access logs to prevent telemetry pollution (see `k-002`).
 - **MUST NOT** change bind mounts without verifying existing data and host UID:GID permissions.
 - **MUST NOT** expose administrative or database ports to `0.0.0.0` without strong auth or network isolation.
 - **MUST NOT** add services to Compose without updating `.agent/SERVICES.md`.
