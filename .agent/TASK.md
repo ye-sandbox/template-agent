@@ -10,13 +10,12 @@
 
 ## Active Task
 
-- **Task:** `[08.1]` Agnosticismo de Skills & Desacoplamento de Links Privados
-- **Status:** RUNNING
+- **Task:** `[08.2]` Neutralização de Identificadores Pessoais e Mocks do Domínio SEI
+- **Status:** READY FOR PLANNING
 - **Scope:**
-  - Generalizar `~/.cursor/skills` em `.agent/skills/README.md` (`main` e `greenfield`) para padrão agnóstico (`.agent/skills/` local e multi-IDE/CLI).
-  - Substituir links quebrados para `ye-sandbox/agent-skills` e `infra-victoria-logs` em `main`, `greenfield` e `infra` por referências conceituais e padrões públicos de playbook.
-  - Assegurar conformidade no CI (`tests/smoke.sh`, `./scripts/test-starters.sh`).
-- **Target Branches:** `main`, `greenfield`, `infra`
+  - Neutralizar referências a identificadores pessoais e dados sensíveis/mocks específicos do domínio SEI em `blackbox` e `infra`.
+  - Padronizar variáveis de ambiente e fixtures com dados fictícios neutros (ex: RFC 2606 / RFC 5737).
+- **Target Branches:** `blackbox`, `infra`
 
 ---
 
@@ -26,6 +25,7 @@
 
 | Task | Title | Commit(s) | Date |
 |---|---|---|---|
+| `[08.1]` | Generalize Skills Directory and Decouple Private Links across Hub and Starters | `efdbd7a`, `9ff4bd9`, `336ee3f` | 2026-10-27 |
 | `[07.4]` | Standardize Healthcheck Endpoint and Probe Log Discarding Across Starter Templates | `86c95bd`, `699d7b6`, `6482a7b` | 2026-10-27 |
 | `[07.3]` | Standardize Market-Grade Product README Scaffolding & Governance Across Starters | `828e4c9`, `6e9c15e`, `241d8a5`, `b9c4ada`, `1087889`, `38d711f`, `88d6b1b` | 2026-10-25 |
 | `[07.2]` | Fix Brownfield Stealth Path Resolution for macOS Symlinks in CI/CD | `b7617d3` | 2026-10-24 |
@@ -52,7 +52,6 @@
 
 ## Backlog (Upcoming, in priority order)
 
-- `[08.2]` Neutralização de Identificadores Pessoais e Mocks do Domínio SEI (`blackbox`, `infra`)
 - `[08.3]` Ajuste de Generalidade da Stack de Observabilidade (`infra`, `baremetal`)
 - `[08.4]` Higienização e Purga Segura do Histórico Git (Git History Purge) (`all branches`)
 
