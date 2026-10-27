@@ -155,5 +155,5 @@ healthcheck:
 
 ## References
 - [Docker Compose Healthcheck Specification](https://docs.docker.com/reference/compose-file/services/#healthcheck)
-- [VictoriaLogs Integration Guide (`victorialogs-integration` skill)](https://github.com/ye-sandbox/infra-victoria-logs)
-- [Docker Compose Hygiene Guide (`docker-compose-hygiene` skill)](https://github.com/ye-sandbox/agent-skills)
+- [VictoriaLogs Documentation](https://docs.victoriametrics.com/victorialogs/) (`victorialogs-integration` playbook)
+- [Docker Compose Specification](https://docs.docker.com/compose/compose-file/) (`docker-compose-hygiene` playbook)
