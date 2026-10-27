@@ -10,12 +10,15 @@
 
 ## Active Task
 
-- **Task:** `(none - cycle 07 in progress)`
-- **Status:** READY FOR PLANNING
+- **Task:** `Task [07.4]: Standardize Healthcheck Endpoint and Probe Log Discarding Across Starter Templates`
+- **Status:** RUNNING
 - **Scope:**
-  - Task [07.3] completed (standardized product README scaffolding in `init.sh`, enforced `readme-standard` across all 5 starters, and added CI contract assertions).
-  - Await user direction for next cycle 07 roadmap task or maintenance.
-- **Target Branches:** `main`
+  - Update `infra` starter branch (`.agent/skills/compose-service/SKILL.md` and `compose.yaml.example`) with mandatory `/health` and `/healthz` endpoints and probe access log discarding convention.
+  - Create canonical knowledge base card `k-002-healthcheck-logging-contract.md` on `infra`.
+  - Update `.agent/SERVICES.md` and `AGENTS.md` on `infra` to enforce healthcheck & log discarding invariants.
+  - Add CI contract assertions in `.github/scripts/assert-starter-contracts.sh` on `main`.
+  - Validate with `.github/scripts/test-all-starters.sh infra` and `.github/scripts/test-all-starters.sh all`.
+- **Target Branches:** `infra`, `main`
 
 ---
 
@@ -50,7 +53,8 @@
 
 ## Backlog (Upcoming, in priority order)
 
-*(empty — roadmap cycle 06 completion)*
+*(empty — cycle 07 in progress)*
+
 
 ---
 
