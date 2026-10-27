@@ -10,12 +10,11 @@
 
 ## Active Task
 
-- **Task:** `[08.2]` Neutralização de Identificadores Pessoais e Mocks do Domínio SEI
+- **Task:** `[08.3]` Ajuste de Generalidade da Stack de Observabilidade
 - **Status:** READY FOR PLANNING
 - **Scope:**
-  - Neutralizar referências a identificadores pessoais e dados sensíveis/mocks específicos do domínio SEI em `blackbox` e `infra`.
-  - Padronizar variáveis de ambiente e fixtures com dados fictícios neutros (ex: RFC 2606 / RFC 5737).
-- **Target Branches:** `blackbox`, `infra`
+  - Ajustar referências da stack de observabilidade (VictoriaLogs, Vector, topologias e portas) em `infra` e `baremetal` para garantir neutralidade e generalidade como starter kits canônicos.
+- **Target Branches:** `infra`, `baremetal`
 
 ---
 
@@ -25,6 +24,7 @@
 
 | Task | Title | Commit(s) | Date |
 |---|---|---|---|
+| `[08.2]` | Neutralização de Identificadores Pessoais e Mocks do Domínio SEI | `5db8cf4`, `7612507`, `23337eb` | 2026-10-27 |
 | `[08.1]` | Generalize Skills Directory and Decouple Private Links across Hub and Starters | `efdbd7a`, `9ff4bd9`, `336ee3f` | 2026-10-27 |
 | `[07.4]` | Standardize Healthcheck Endpoint and Probe Log Discarding Across Starter Templates | `86c95bd`, `699d7b6`, `6482a7b` | 2026-10-27 |
 | `[07.3]` | Standardize Market-Grade Product README Scaffolding & Governance Across Starters | `828e4c9`, `6e9c15e`, `241d8a5`, `b9c4ada`, `1087889`, `38d711f`, `88d6b1b` | 2026-10-25 |
@@ -52,7 +52,6 @@
 
 ## Backlog (Upcoming, in priority order)
 
-- `[08.3]` Ajuste de Generalidade da Stack de Observabilidade (`infra`, `baremetal`)
 - `[08.4]` Higienização e Purga Segura do Histórico Git (Git History Purge) (`all branches`)
 
 
