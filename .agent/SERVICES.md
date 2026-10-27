@@ -9,6 +9,7 @@
 ## 1. Host Port Allocations
 
 > Record all ports bound on the host to avoid binding collisions (`bind: address already in use`).
+> For multi-host or multi-VM topologies (e.g., Proxmox, Baremetal + VPS), segregate allocations per node using subheadings (e.g., `### Node: core-infra`, `### Node: apps-worker`). Host ports only collide within the same operating system instance or network namespace.
 
 | Host Port | Protocol | Service | Container Port | Exposure | Purpose / Endpoint |
 | :---: | :---: | :--- | :---: | :--- | :--- |
