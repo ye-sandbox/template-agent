@@ -11,9 +11,12 @@
 ## Active Task
 
 - **Task:** `[09.1]` Starter Ecosystem Pre-Release Validation and Final Readiness
-- **Status:** PLANNING
+- **Status:** RUNNING
 - **Scope:**
   - Auditar integridade final dos starters, documentação pública e preparar alinhamento para publicação do release.
+  - Corrigir links relativos residuais em `blackbox` e ancorar `docs/host/` em `infra`.
+  - Consolidar histórico de melhorias dos ciclos 01–08 em `CHANGELOG.md` na seção `[Unreleased]`.
+  - Executar suíte completa de drift e testes de scaffolding em todos os starters.
 - **Target Branches:** `main`, `all branches`
 
 ---
