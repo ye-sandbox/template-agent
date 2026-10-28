@@ -11,7 +11,7 @@
 ## Active Task
 
 - **Task:** `[08.4]` Higienização e Purga Segura do Histórico Git (Git History Purge)
-- **Status:** READY FOR PLANNING
+- **Status:** PLANNING
 - **Scope:**
   - Auditar e executar purga cirúrgica e segura de identificadores pessoais e credenciais obsoletas no histórico Git em todas as branches antes da publicação oficial.
 - **Target Branches:** `all branches`
