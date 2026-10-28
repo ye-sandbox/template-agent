@@ -11,9 +11,11 @@
 ## Active Task
 
 - **Task:** `[08.4]` Higienização e Purga Segura do Histórico Git (Git History Purge)
-- **Status:** PLANNING
+- **Status:** RUNNING
 - **Scope:**
   - Auditar e executar purga cirúrgica e segura de identificadores pessoais e credenciais obsoletas no histórico Git em todas as branches antes da publicação oficial.
+  - Neutralizar autores/committers para `Antigravity Lead <lead@template-hub.internal>`.
+  - Neutralizar referências a domínios internos e identificadores em blobs e mensagens de commit.
 - **Target Branches:** `all branches`
 
 ---
