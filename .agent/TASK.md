@@ -10,12 +10,11 @@
 
 ## Active Task
 
-- **Task:** `[09.2]` Release Staging and Remote Push Coordination
-- **Status:** RUNNING
+- **Task:** `[99.1]` Pre-Release Hardening & Version Tagging (Awaiting Explicit Human Request)
+- **Status:** READY FOR PLANNING
 - **Scope:**
-  - Sincronizar branches higienizadas e tag `v1.0.0` atualizada para o origin usando `force-with-lease`.
-  - Validar integridade dos refs remotos após a publicação.
-- **Target Branches:** `all branches`
+  - Executar protocolo de post-release hygiene (arquivar TASK.md em ARCHIVE.md, consolidar decisões e gerar tag oficial v1.1.0) mediante comando humano explícito.
+- **Target Branches:** `main`, `all branches`
 
 ---
 
@@ -25,6 +24,7 @@
 
 | Task | Title | Commit(s) | Date |
 |---|---|---|---|
+| `[09.2]` | Release Staging and Remote Push Coordination | `4404ba3` | 2026-10-28 |
 | `[09.1]` | Starter Ecosystem Pre-Release Validation and Final Readiness | `3d26daf`, `b5e271d`, `2ed4883` | 2026-10-28 |
 | `[08.4]` | Safe Git History Purge and Identity Neutralization Across All Branches | `9768c9c` | 2026-10-28 |
 | `[08.3]` | Generalize Observability Stack References Across Starters | `271fdbe`, `5e9b14a`, `d733420` | 2026-10-28 |
