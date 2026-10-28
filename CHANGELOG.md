@@ -7,6 +7,38 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- **Greenfield Standalone Mode**: Added `--standalone` flag to `init.sh` for single-repository projects, safely removing multi-repo ecosystem topology (`.agent/ECOSYSTEM.md`).
+- **Zero-Dependency Test Runners**:
+  - Replaced Node.js test harness on `baremetal` with native Bash smoke test runner (`tests/smoke.sh`).
+  - Added standalone Bash smoke test runner and language-agnostic scaffolding to `blackbox`.
+- **Inter-Branch Governance & Drift Auditing**:
+  - Introduced `.github/scripts/check-branch-drift.sh` to enforce byte-for-byte knowledge card parity, mandatory `.gitignore` invariants, and CLI argument standardization across starter branches.
+- **Onboarding Harmonization**:
+  - Standardized first-turn prompt recommendations and post-scaffolding terminal output across all 5 starter installers.
+- **Cross-Platform Scaffolding Matrix**:
+  - Expanded GitHub Actions CI to assert starter scaffolding idempotency across both Ubuntu and macOS runners.
+- **Host Operational Runbooks**:
+  - Added operational runbooks directory index (`docs/host/README.md`) on `infra`.
+
+### Changed
+- **Tool-Agnostic Starter Contracts**:
+  - Fully decoupled starter templates from external workspace tools and canvas sidecars into pure tool-agnostic runtime contracts.
+- **Market-Grade Documentation Standard**:
+  - Standardized bilingual documentation (`README.md` and `README.pt-br.md`) across all starter templates following modern technical documentation standards.
+- **Observability Stack Generalization**:
+  - Harmonized VictoriaLogs, Vector, and telemetry port bindings across `infra` and `baremetal` to neutral canonical starter defaults.
+  - Standardized healthcheck probe log suppression to prevent periodic pings from polluting application and access logs.
+- **Skills Directory Normalization**:
+  - Standardized all starter skill directories under `.agent/skills/` and decoupled private organizational catalog links.
+- **ADR Architecture Harmonization**:
+  - Consolidated progressive architectural decision logs under `docs/adr/decisions.md` across all starters, removing residual `.agent/adr/` folders.
+
+### Security & Sanitization
+- **Full Git History Purge & Identity Neutralization**:
+  - Executed safe repository-wide history purge rewriting commit authors and committers to canonical generic identity (`Antigravity Lead <lead@template-hub.internal>`).
+  - Purged historical internal domains, reviewer usernames, and local workstation paths from all historical blobs and commit messages.
+
 ## [1.0.0] - 2026-10-17
 
 ### Added
