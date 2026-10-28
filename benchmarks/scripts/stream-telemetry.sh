@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # ==============================================================================
 # stream-telemetry.sh — Vector & VictoriaLogs Telemetry Forwarder
-# Pattern 5: Shell Scripts HTTP POST (NDJSON) to Vector endpoint (/logs)
+# Non-blocking HTTP POST (NDJSON) forwarder to observability collector endpoint (/logs)
 # ==============================================================================
 set -euo pipefail
 
@@ -16,11 +16,11 @@ MESSAGE="${3:-Baremetal telemetry event}"
 DEFAULT_EXTRA="{}"
 EXTRA_JSON="${4:-$DEFAULT_EXTRA}"
 
-VECTOR_HOST="${VECTOR_HOST:-localhost}"
+VECTOR_HOST="${VECTOR_HOST:-127.0.0.1}"
 VECTOR_HTTP_PORT="${VECTOR_HTTP_PORT:-8686}"
 SERVICE_NAME="${SERVICE_NAME:-baremetal-workstation}"
 ENV="${ENV:-production}"
-APP="baremetal-tuning"
+APP="${APP:-baremetal-tuning}"
 TIMESTAMP="$(date -u +"%Y-%m-%dT%H:%M:%SZ")"
 
 # 2. Construct canonical NDJSON payload

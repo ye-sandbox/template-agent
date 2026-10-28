@@ -67,7 +67,7 @@ To activate streaming, copy `.env.example` to `.env` and set:
 
 ```bash
 VECTOR_ENABLED=true
-VECTOR_HOST=localhost
+VECTOR_HOST=127.0.0.1
 VECTOR_HTTP_PORT=8686
 SERVICE_NAME=baremetal-workstation
 ENV=production
@@ -75,7 +75,7 @@ ENV=production
 
 ### Canonical NDJSON Contract
 
-Events emitted by the harness conform strictly to the `victorialogs-integration` contract:
+Events emitted by the harness conform strictly to the standard structured NDJSON observability schema:
 
 ```json
 {
