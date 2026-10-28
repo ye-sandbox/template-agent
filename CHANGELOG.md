@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.1.0] - 2026-10-28
+
 ### Added
 - **Greenfield Standalone Mode**: Added `--standalone` flag to `init.sh` for single-repository projects, safely removing multi-repo ecosystem topology (`.agent/ECOSYSTEM.md`).
 - **Zero-Dependency Test Runners**:
