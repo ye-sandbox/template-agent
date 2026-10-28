@@ -48,7 +48,7 @@ Document the diagnostic thought process, evidence gathered, and hypotheses evalu
 
 ### Hypothesis 1: [Initial Assumption / Suspected Cause]
 - **Reasoning:** [Why this was initially suspected]
-- **VictoriaLogs / LogsQL Query:**
+- **Log Engine Query (e.g. VictoriaLogs / LogsQL):**
   ```text
   _stream:{service="<service_name>"} AND (level:error OR "fatal" OR "panic")
   timerange: YYYY-MM-DDTHH:MM:00Z to YYYY-MM-DDTHH:MM:00Z
@@ -62,7 +62,7 @@ Document the diagnostic thought process, evidence gathered, and hypotheses evalu
 
 ### Hypothesis 2: [Subsequent Assumption]
 - **Reasoning:** [Why this avenue was explored]
-- **VictoriaLogs / LogsQL Query:**
+- **Log Engine Query (e.g. VictoriaLogs / LogsQL):**
   ```text
   _stream:{host="<host_name>"} AND "<keyword>"
   ```
@@ -102,6 +102,6 @@ docker compose restart <service>
 
 ## 7. References and Evidence Anchors
 
-- VictoriaLogs Query / Stream: `_stream:{service="gateway"} AND level:error`
+- Log Query / Stream Anchor: `_stream:{service="gateway"} AND level:error` (VictoriaLogs)
 - Related Task: `[XX.Y]` in [`.agent/TASK.md`](../../.agent/TASK.md)
 - Architectural Gotcha: [`.agent/NOTES.md`](../../.agent/NOTES.md)

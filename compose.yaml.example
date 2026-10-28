@@ -1,10 +1,10 @@
 # ==============================================================================
-# Exemplo Canônico de Orquestração de Serviços (Docker Compose)
-# Copie este arquivo para compose.yaml e adapte conforme a necessidade do projeto
+# Canonical Service Orchestration Example (Docker Compose)
+# Copy this file to compose.yaml and adapt as required for your project
 # ==============================================================================
 services:
   # ----------------------------------------------------------------------------
-  # VictoriaLogs — Mecanismo de Ingestão e Armazenamento de Logs
+  # VictoriaLogs — Log Ingestion and Storage Engine (Canonical Baseline)
   # ----------------------------------------------------------------------------
   victorialogs:
     image: victoriametrics/victoria-logs:v1.1.0
@@ -34,7 +34,7 @@ services:
           memory: 1024M
 
   # ----------------------------------------------------------------------------
-  # Uptime Kuma — Dashboard de Monitoramento de Uptime e Status Pages
+  # Uptime Kuma — Uptime Monitoring and Status Pages Dashboard
   # ----------------------------------------------------------------------------
   uptime-kuma:
     image: louislam/uptime-kuma:1.23.13
@@ -60,7 +60,7 @@ services:
           memory: 512M
 
 # ------------------------------------------------------------------------------
-# Redes Segregadas
+# Segregated Virtual Networks
 # ------------------------------------------------------------------------------
 networks:
   proxy_public:
@@ -69,7 +69,7 @@ networks:
     driver: bridge
 
 # ------------------------------------------------------------------------------
-# Volumes Persistentes Gerenciados
+# Managed Persistent Volumes
 # ------------------------------------------------------------------------------
 volumes:
   victorialogs_data:

@@ -155,5 +155,5 @@ healthcheck:
 
 ## References
 - [Docker Compose Healthcheck Specification](https://docs.docker.com/reference/compose-file/services/#healthcheck)
-- [VictoriaLogs Documentation](https://docs.victoriametrics.com/victorialogs/) (`victorialogs-integration` playbook)
+- [VictoriaLogs Documentation](https://docs.victoriametrics.com/victorialogs/) (Log Ingestion & Querying)
 - [Docker Compose Specification](https://docs.docker.com/compose/compose-file/) (`docker-compose-hygiene` playbook)
