@@ -113,4 +113,4 @@ pytest tests/test_session.py  # or: npm test
 
 ## References
 - [OWASP Session Management Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/Session_Management_Cheat_Sheet.html)
-- [Reverse Engineering Skill Protocol: Step 2 & Step 6](.agent/skills/reverse-engineering/SKILL.md)
+- [Reverse Engineering Skill Protocol: Step 2 & Step 6](../skills/reverse-engineering/SKILL.md)
