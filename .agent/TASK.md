@@ -11,7 +11,7 @@
 ## Active Task
 
 - **Task:** `[09.1]` Starter Ecosystem Pre-Release Validation and Final Readiness
-- **Status:** READY FOR PLANNING
+- **Status:** PLANNING
 - **Scope:**
   - Auditar integridade final dos starters, documentação pública e preparar alinhamento para publicação do release.
 - **Target Branches:** `main`, `all branches`
