@@ -11,7 +11,7 @@
 ## Active Task
 
 - **Task:** `[09.2]` Release Staging and Remote Push Coordination
-- **Status:** READY FOR PLANNING
+- **Status:** PLANNING
 - **Scope:**
   - Coordenar publicação remota com force-with-lease para origin após purga de histórico e alinhar tagging oficial sob comando humano.
 - **Target Branches:** `all branches`
