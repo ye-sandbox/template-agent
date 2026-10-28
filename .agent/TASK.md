@@ -10,13 +10,11 @@
 
 ## Active Task
 
-- **Task:** `[08.4]` Higienização e Purga Segura do Histórico Git (Git History Purge)
-- **Status:** RUNNING
+- **Task:** `[09.1]` Starter Ecosystem Pre-Release Validation and Final Readiness
+- **Status:** READY FOR PLANNING
 - **Scope:**
-  - Auditar e executar purga cirúrgica e segura de identificadores pessoais e credenciais obsoletas no histórico Git em todas as branches antes da publicação oficial.
-  - Neutralizar autores/committers para `Antigravity Lead <lead@template-hub.internal>`.
-  - Neutralizar referências a domínios internos e identificadores em blobs e mensagens de commit.
-- **Target Branches:** `all branches`
+  - Auditar integridade final dos starters, documentação pública e preparar alinhamento para publicação do release.
+- **Target Branches:** `main`, `all branches`
 
 ---
 
@@ -26,6 +24,7 @@
 
 | Task | Title | Commit(s) | Date |
 |---|---|---|---|
+| `[08.4]` | Safe Git History Purge and Identity Neutralization Across All Branches | `9768c9c` | 2026-10-28 |
 | `[08.3]` | Generalize Observability Stack References Across Starters | `271fdbe`, `5e9b14a`, `d733420` | 2026-10-28 |
 | `[08.2]` | Neutralização de Identificadores Pessoais e Mocks do Domínio SEI | `5db8cf4`, `7612507`, `23337eb` | 2026-10-27 |
 | `[08.1]` | Generalize Skills Directory and Decouple Private Links across Hub and Starters | `efdbd7a`, `9ff4bd9`, `336ee3f` | 2026-10-27 |

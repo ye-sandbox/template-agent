@@ -28,3 +28,4 @@ Active contracts and live gotchas stay below.
 - **Starter CI:** The job on `main` runs `git show origin/<branch>:init.sh` — requires `fetch-depth: 0`.
 - **Brownfield `install.sh`:** Does not copy `.gitignore` or `.env.example` — existing project already has them. Starter CI must not require them on injection target.
 - **Healthcheck Probe Log Suppression:** Do not allow periodic HTTP 200 healthcheck pings to flood access logs or VictoriaLogs; suppress successful `/health` and `/healthz` access logs at the proxy or application layer (see `infra:k-002`).
+- **Git History Purge & Identity Neutralization:** Complete purge executed across all branches using `git-filter-repo` with canonical generic identity `Antigravity Lead <lead@template-hub.internal>`. All historical commit hashes across branches have been rewritten; upstream publication requires `git push --force-with-lease --all --tags`.
