@@ -11,7 +11,7 @@
 ## Active Task
 
 - **Task:** `[99.1]` Pre-Release Hardening & Version Tagging (Awaiting Explicit Human Request)
-- **Status:** READY FOR PLANNING
+- **Status:** PLANNING
 - **Scope:**
   - Executar protocolo de post-release hygiene (arquivar TASK.md em ARCHIVE.md, consolidar decisões e gerar tag oficial v1.1.0) mediante comando humano explícito.
 - **Target Branches:** `main`, `all branches`
