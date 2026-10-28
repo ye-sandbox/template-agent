@@ -11,9 +11,11 @@
 ## Active Task
 
 - **Task:** `[08.3]` Ajuste de Generalidade da Stack de Observabilidade
-- **Status:** READY FOR PLANNING
+- **Status:** RUNNING
 - **Scope:**
   - Ajustar referências da stack de observabilidade (VictoriaLogs, Vector, topologias e portas) em `infra` e `baremetal` para garantir neutralidade e generalidade como starter kits canônicos.
+  - Eliminar referências residuais a playbooks privados (`victorialogs-integration`) e padronizar contratos NDJSON e comentários em Technical English.
+  - Harmonizar defaults de configuração (`VECTOR_HOST`, `APP`) em `baremetal` e manter conformidade total com CI (`assert-starter-contracts.sh`).
 - **Target Branches:** `infra`, `baremetal`
 
 ---
