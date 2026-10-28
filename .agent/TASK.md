@@ -10,14 +10,11 @@
 
 ## Active Task
 
-- **Task:** `[09.1]` Starter Ecosystem Pre-Release Validation and Final Readiness
-- **Status:** RUNNING
+- **Task:** `[09.2]` Release Staging and Remote Push Coordination
+- **Status:** READY FOR PLANNING
 - **Scope:**
-  - Auditar integridade final dos starters, documentação pública e preparar alinhamento para publicação do release.
-  - Corrigir links relativos residuais em `blackbox` e ancorar `docs/host/` em `infra`.
-  - Consolidar histórico de melhorias dos ciclos 01–08 em `CHANGELOG.md` na seção `[Unreleased]`.
-  - Executar suíte completa de drift e testes de scaffolding em todos os starters.
-- **Target Branches:** `main`, `all branches`
+  - Coordenar publicação remota com force-with-lease para origin após purga de histórico e alinhar tagging oficial sob comando humano.
+- **Target Branches:** `all branches`
 
 ---
 
@@ -27,6 +24,7 @@
 
 | Task | Title | Commit(s) | Date |
 |---|---|---|---|
+| `[09.1]` | Starter Ecosystem Pre-Release Validation and Final Readiness | `3d26daf`, `b5e271d`, `2ed4883` | 2026-10-28 |
 | `[08.4]` | Safe Git History Purge and Identity Neutralization Across All Branches | `9768c9c` | 2026-10-28 |
 | `[08.3]` | Generalize Observability Stack References Across Starters | `271fdbe`, `5e9b14a`, `d733420` | 2026-10-28 |
 | `[08.2]` | Neutralização de Identificadores Pessoais e Mocks do Domínio SEI | `5db8cf4`, `7612507`, `23337eb` | 2026-10-27 |
