@@ -10,13 +10,11 @@
 
 ## Active Task
 
-- **Task:** `[08.3]` Ajuste de Generalidade da Stack de Observabilidade
-- **Status:** RUNNING
+- **Task:** `[08.4]` Higienização e Purga Segura do Histórico Git (Git History Purge)
+- **Status:** READY FOR PLANNING
 - **Scope:**
-  - Ajustar referências da stack de observabilidade (VictoriaLogs, Vector, topologias e portas) em `infra` e `baremetal` para garantir neutralidade e generalidade como starter kits canônicos.
-  - Eliminar referências residuais a playbooks privados (`victorialogs-integration`) e padronizar contratos NDJSON e comentários em Technical English.
-  - Harmonizar defaults de configuração (`VECTOR_HOST`, `APP`) em `baremetal` e manter conformidade total com CI (`assert-starter-contracts.sh`).
-- **Target Branches:** `infra`, `baremetal`
+  - Auditar e executar purga cirúrgica e segura de identificadores pessoais e credenciais obsoletas no histórico Git em todas as branches antes da publicação oficial.
+- **Target Branches:** `all branches`
 
 ---
 
@@ -26,6 +24,7 @@
 
 | Task | Title | Commit(s) | Date |
 |---|---|---|---|
+| `[08.3]` | Generalize Observability Stack References Across Starters | `271fdbe`, `5e9b14a`, `d733420` | 2026-10-28 |
 | `[08.2]` | Neutralização de Identificadores Pessoais e Mocks do Domínio SEI | `5db8cf4`, `7612507`, `23337eb` | 2026-10-27 |
 | `[08.1]` | Generalize Skills Directory and Decouple Private Links across Hub and Starters | `efdbd7a`, `9ff4bd9`, `336ee3f` | 2026-10-27 |
 | `[07.4]` | Standardize Healthcheck Endpoint and Probe Log Discarding Across Starter Templates | `86c95bd`, `699d7b6`, `6482a7b` | 2026-10-27 |
@@ -54,7 +53,7 @@
 
 ## Backlog (Upcoming, in priority order)
 
-- `[08.4]` Higienização e Purga Segura do Histórico Git (Git History Purge) (`all branches`)
+*(empty — all cycle 08 tasks promoted or completed)*
 
 
 ---
