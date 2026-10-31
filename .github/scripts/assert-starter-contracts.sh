@@ -236,6 +236,7 @@ assert_infra() {
   need_grep .agent/TASK.md 'Task \[00\.1\]: Map Topology and Provision Baseline Services' -qE
   need_file .env.example
   need_file .gitignore
+  need_grep .gitignore '!.env.example' -qF
   need_grep .gitignore '.maestri/' -qF
   need_grep .gitignore '.agent/.cache/' -qF
   need_file compose.yaml.example

@@ -78,6 +78,7 @@ done
 # 3. Audit Mandatory Invariants in .gitignore Across All Branches
 MANDATORY_GITIGNORE_RULES=(
   ".env"
+  "!.env.example"
   ".agent/scratch/"
   ".agent/.cache/"
   ".maestri/"
