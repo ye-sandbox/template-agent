@@ -1,242 +1,282 @@
-# Central de Templates Orientados a Agentes (ADD - Agent-Driven Development)
+# template-agent
 
-🌐 **[English](README.md) | Português**
+Hub de governança técnica e starters isolados por branch para engenharia de software colaborativa com agentes de IA.
 
-Este repositório é o **Hub Central** de starters e padrões de governança para desenvolvimento de software colaborativo com **agentes de Inteligência Artificial** (ex: Antigravity, Claude Code, Cursor, Windsurf, Roo Code, Aider, etc.).
+**[English](README.md)** | **[Português (Brasil)](README.pt-br.md)**
 
-A estrutura resolve os maiores gargalos no uso de agentes autônomos em ambientes reais: **perda de contexto em tarefas longas**, **alucinação de contratos**, **refatorações destrutivas em legados** e **ausência de Definition of Done (DoD)**.
+[![CI](https://github.com/ye-sandbox/template-agent/actions/workflows/ci.yml/badge.svg)](https://github.com/ye-sandbox/template-agent/actions)
+[![Release](https://img.shields.io/github/v/release/ye-sandbox/template-agent?color=blue)](https://github.com/ye-sandbox/template-agent/releases)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+[![Arquitetura: Starters Isolados](https://img.shields.io/badge/Arquitetura-Starters_Isolados-purple.svg)]()
 
 ---
 
-## 🌿 Organização dos Templates por Branches
+## Visão Geral
 
-Em vez de misturar múltiplos starters em uma árvore inchada, este repositório organiza seus templates em **branches especializadas e limpas**:
+O `template-agent` é o hub central de starters e protocolos de governança de engenharia para desenvolvimento colaborativo com agentes de IA (Antigravity, Claude Code, Cursor, Windsurf, Roo Code, Aider).
 
-```text
-                                  ┌───────────────────────────┐
-                                  │        branch main        │
-                                  │   (Documentação e Hub)    │
-                                  └─────────────┬─────────────┘
-                                                │
-         ┌───────────────────┬──────────────────┼──────────────────┬───────────────────┐
-         ▼                   ▼                  ▼                  ▼                   ▼
-┌─────────────────┐ ┌─────────────────┐ ┌───────────────┐ ┌─────────────────┐ ┌─────────────────┐
-│branch greenfield│ │branch brownfield│ │branch blackbox│ │  branch infra   │ │branch baremetal │
-│Projetos do Zero │ │Projetos Exist.  │ │Engenharia Rev.│ │ Serviços & IaC  │ │PC & Workstation │
-└─────────────────┘ └─────────────────┘ └───────────────┘ └─────────────────┘ └─────────────────┘
+A estrutura resolve os quatro principais modos de falha em fluxos de trabalho autônomos e agentic:
+- **Degradação de Contexto:** Carregamento com orçamento fixo de contexto (`AGENTS.md`, `.agent/TASK.md`, `.agent/NOTES.md`) elimina a saturação da janela em tarefas complexas.
+- **Desvio de Contrato e Alucinação:** Definições de conclusão verificáveis (DoD), testes de caracterização e esquemas validáveis por máquina restringem as saídas do agente.
+- **Refatoração Destrutiva:** Cercas de Chesterton (`INVARIANTS.md`) e restrições cirúrgicas de diff impedem refatorações não solicitadas em bases legadas.
+- **Isolamento de Branches:** Os starters residem na raiz de branches git limpas e desacopladas, evitando monorepos inflados.
+
+Playbooks transversais que abrangem múltiplos repositórios (contratos de UI, prototipagem HTML, auditoria de QA com navegador externo, padrões de documentação) são centralizados no catálogo organizacional de playbooks (`agent-skills`). Habilidades específicas e fluxos de onboarding permanecem integrados diretamente nas suas respectivas branches de template.
+
+## Arquitetura
+
+Os templates são isolados em raízes de branches dedicadas e independentes. Merges entre branches especializadas são estritamente proibidos; melhorias canônicas compartilhadas propagam-se exclusivamente via cherry-picks atômicos.
+
+```mermaid
+flowchart TD
+    Main["main (Governança e Hub)"]
+    Main -.->|"Sincronização seletiva / Cherry-pick"| Greenfield["greenfield (Projetos do Zero)"]
+    Main -.->|"Sincronização seletiva / Cherry-pick"| Brownfield["brownfield (Adoção em Legados)"]
+    Main -.->|"Sincronização seletiva / Cherry-pick"| Blackbox["blackbox (Engenharia Reversa)"]
+    Main -.->|"Sincronização seletiva / Cherry-pick"| Infra["infra (Serviços e Homelab)"]
+    Main -.->|"Sincronização seletiva / Cherry-pick"| Baremetal["baremetal (Workstation e Tuning)"]
 ```
 
-| Branch | Foco do Projeto | Principais Componentes | Quando Usar |
+### Matriz de Branches dos Starters
+
+| Branch | Escopo Alvo | Artefatos Principais | Mecanismo Primário |
 | :--- | :--- | :--- | :--- |
-| **`greenfield`** | Projetos iniciados **do zero** | `docs/adr/decisions.md` (Log de ADRs), `.agent/skills/` (Skills locais), setup arquitetural livre, contratos em aberto. | Quando você vai criar uma nova aplicação, microserviço ou biblioteca do zero. |
-| **`brownfield`** | Código **legado / já existente** | `.agent/INVARIANTS.md` (Cercas de Chesterton), `install.sh`, Task 00 de Discovery, testes de caracterização, política estrita de *no-push* (revisão humana obrigatória). | Quando você quer colocar agentes para trabalhar com segurança em um projeto que já existe e roda em produção. |
-| **`blackbox`** | **Engenharia Reversa & Integração** | `.agent/ENDPOINTS.md` (Catálogo de rotas descobertas), `.agent/skills/reverse-engineering/`, `init.sh`, fixtures de replay e backoff defensivo. | Quando você precisa mapear, criar wrappers, scrapers ou integrar com sistemas legados/fechados sem documentação (ex: portais legados ou ERPs sem API pública). |
-| **`infra`** | **Infraestrutura & Serviços** | `.agent/SERVICES.md` (Topologia e portas), `.agent/skills/compose-service/`, `compose.yaml.example`, `init.sh`, limites de recursos e healthchecks. | Quando você quer provisionar e orquestrar serviços (Docker Compose, VictoriaLogs, Uptime Kuma, bancos de dados, Homelab). |
-| **`baremetal`** | **Otimização de PC & Workstation** | `.agent/BASELINE.md` (Inventário do sistema), `.agent/INVARIANTS.md`, `.agent/TUNINGS.md`, `.agent/skills/baremetal-tuning/`, `init.sh`, contratos de rollback. | Quando for calibrar parâmetros do SO, kernel, sysctl, serviços systemd, dotfiles ou manutenção no PC/host local. |
-| **`main`** | **Governança & Hub** | Documentação geral, matriz de decisão, histórico de evolução dos templates. | Para manter e consultar este ecossistema. |
+| **`greenfield`** | Projetos novos construídos do zero | `docs/adr/decisions.md`, `.agent/skills/`, `init.sh` | Raiz Git limpa, diário de decisões ADR, setup arquitetural aberto. |
+| **`brownfield`** | Bases de código existentes e legados | `.agent/INVARIANTS.md`, `.agent/ECOSYSTEM.md`, `install.sh` | Injeção não destrutiva, cercas de Chesterton, Task 00 Discovery. |
+| **`blackbox`** | Engenharia reversa e APIs fechadas | `.agent/ENDPOINTS.md`, `.agent/skills/reverse-engineering/`, `init.sh` | Catálogo de rotas descobertas, fixtures de replay, rate limits defensivos. |
+| **`infra`** | Docker Compose, serviços e Homelab | `.agent/SERVICES.md`, `.agent/skills/compose-service/`, `compose.yaml.example` | Topologia de serviços, healthchecks estritos, limites de memória. |
+| **`baremetal`** | Otimização de workstation e SO | `.agent/BASELINE.md`, `.agent/INVARIANTS.md`, `.agent/TUNINGS.md`, `init.sh` | Scripts rollback-first, inventário de sistema, proteção de kernel. |
+| **`main`** | Governança do hub e matriz geral | `AGENTS.md`, `.agent/TASK.md`, `.github/workflows/ci.yml` | Documentação central, auditoria de deriva e roadmap do ecossistema. |
 
-Playbooks que valem para **vários** repositórios (contrato de UI, proto, porte, QA de agentes, `readme-standard`) **não** ficam nesta `main`. Eles pertencem ao repositório central de playbooks da organização (`agent-skills`) ou ao catálogo global/local de skills dos seus agentes. Skills que o starter **embarca** continuam nas branches acima.
+## Início Rápido
 
----
+### Pré-requisitos
 
-## 🚀 Como Utilizar
+- Git 2.30+
+- Bash 4.0+
+- `curl` 7.60+
 
 ### 1. Criando um Projeto do Zero (Greenfield)
 
-Inicialize um novo projeto com repositório Git limpo via script one-liner:
+Inicialize um novo repositório limpo a partir do starter greenfield:
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/ye-sandbox/template-agent/greenfield/init.sh | bash -s -- meu-novo-projeto
 cd meu-novo-projeto
 ```
 
-*Ou via clone manual do Git:*
+*Alternativa via clone do Git:*
 ```bash
 git clone --depth 1 -b greenfield https://github.com/ye-sandbox/template-agent.git meu-novo-projeto
 cd meu-novo-projeto
 rm -rf .git && git init -b main && git add . && git commit -m "chore: initial setup"
 ```
 
-**Primeiro prompt para o agente no projeto novo:**
-> *"Leia o AGENTS.md, .agent/TASK.md, .agent/NOTES.md e as skills em .agent/skills/. Apresente seu plano de implementação para a Tarefa Ativa do TASK.md antes de alterar qualquer código."*
-
----
+**Primeiro prompt para o agente:**
+> "Leia AGENTS.md, .agent/TASK.md, .agent/NOTES.md e as skills em .agent/skills/. Apresente seu plano de implementação para a Tarefa Ativa do TASK.md antes de alterar qualquer código."
 
 ### 2. Adotando em um Projeto Existente (Brownfield)
 
-Você não precisa recriar seu projeto. Basta injetar a estrutura do agente na raiz do seu repositório existente:
+Injete a estrutura de governança do agente diretamente na raiz do repositório existente:
 
 ```bash
-# Estando na raiz do seu projeto legado existente:
+# Execute a partir da raiz do repositório legado:
 curl -fsSL https://raw.githubusercontent.com/ye-sandbox/template-agent/brownfield/install.sh | bash
 ```
 
-> 💡 **Dica:** Para automações ou CI sem confirmações interativas, use `bash -s -- -y`. Para instalar em um diretório específico, passe o caminho como argumento (`bash -s -- ./outro-caminho`).
+*Execução não interativa:*
+```bash
+curl -fsSL https://raw.githubusercontent.com/ye-sandbox/template-agent/brownfield/install.sh | bash -s -- -y
+```
 
-> 🔒 **Modo Empresarial / Stealth (`--local-only`):**
-> Ao adotar em repositórios empresariais ou compartilhados onde arquivos de governança de IA não devem ser comitados no histórico do Git:
-> ```bash
-> curl -fsSL https://raw.githubusercontent.com/ye-sandbox/template-agent/brownfield/install.sh | bash -s -- --local-only
-> ```
-> Isso adiciona automaticamente `/AGENTS.md` e `/.agent/` ao `.git/info/exclude` (mantendo o `.gitignore` e o `git status` 100% limpos) e injeta guardrails estritos de modo stealth proibindo o staging de arquivos do agente.
+*Modo Stealth Corporativo (`--local-only`):*
+```bash
+# Impede que arquivos de governança de IA apareçam no git status ou no histórico compartilhado:
+curl -fsSL https://raw.githubusercontent.com/ye-sandbox/template-agent/brownfield/install.sh | bash -s -- --local-only
+```
 
-*Ou clone a branch `brownfield` e execute `./install.sh /caminho/do/projeto` (ou com `--local-only`) localmente.*
+**Primeiro prompt para o agente:**
+> "Leia AGENTS.md e o .agent/TASK.md. Apresente seu plano de implementação para a Tarefa [00.1] Auditoria e Discovery do Projeto antes de alterar qualquer código."
 
-**Primeiro prompt para o agente no projeto legado:**
-> *"Leia o AGENTS.md e o .agent/TASK.md. Apresente seu plano de implementação para a Tarefa [00.1] de Auditoria e Discovery do projeto antes de alterar qualquer código."*
+### 3. Engenharia Reversa e Sistemas Fechados (Blackbox)
 
----
-
-### 3. Engenharia Reversa e Integração com Sistemas Fechados (Blackbox)
-
-Para criar clientes, wrappers, scrapers ou integrações com sistemas sem documentação (como portais corporativos legados ou ERPs monolíticos):
+Inicialize um ambiente blackbox para descoberta de rotas, scrapers ou integrações com APIs fechadas:
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/ye-sandbox/template-agent/blackbox/init.sh | bash -s -- meu-projeto-blackbox
 cd meu-projeto-blackbox
 ```
 
-*Ou via clone manual do Git:*
+*Alternativa via clone do Git:*
 ```bash
 git clone --depth 1 -b blackbox https://github.com/ye-sandbox/template-agent.git meu-projeto-blackbox
 cd meu-projeto-blackbox
 rm -rf .git && git init -b main && git add . && git commit -m "chore: initial setup"
 ```
 
-**Primeiro prompt para o agente em engenharia reversa:**
-> *"Leia o AGENTS.md, .agent/TASK.md, .agent/ENDPOINTS.md e a skill em .agent/skills/reverse-engineering/SKILL.md. Apresente seu plano para a Tarefa [00.1] de descoberta de autenticação antes de rodar requisições."*
-
----
+**Primeiro prompt para o agente:**
+> "Leia AGENTS.md, .agent/TASK.md, .agent/ENDPOINTS.md e a skill em .agent/skills/reverse-engineering/SKILL.md. Apresente seu plano para a Tarefa [00.1] Descoberta de Autenticação antes de executar requisições ativas."
 
 ### 4. Provisionando Infraestrutura e Serviços (Infra)
 
-Para gerenciar e orquestrar serviços com Docker Compose, Homelab e IaC (como VictoriaLogs, Uptime Kuma, bancos e observabilidade):
+Inicialize um repositório para orquestração de serviços com Docker Compose e Homelab:
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/ye-sandbox/template-agent/infra/init.sh | bash -s -- meu-homelab
 cd meu-homelab
 ```
 
-*Ou via clone manual do Git:*
+*Alternativa via clone do Git:*
 ```bash
 git clone --depth 1 -b infra https://github.com/ye-sandbox/template-agent.git meu-homelab
 cd meu-homelab
 rm -rf .git && git init -b main && git add . && git commit -m "chore: initial setup"
 ```
 
-**Primeiro prompt para o agente em infraestrutura:**
-> *"Leia o AGENTS.md, .agent/SERVICES.md, .agent/TASK.md e a skill em .agent/skills/compose-service/SKILL.md. Apresente seu plano para a Tarefa [00.1] de provisionamento base antes de alterar qualquer arquivo de configuração."*
+**Primeiro prompt para o agente:**
+> "Leia AGENTS.md, .agent/SERVICES.md, .agent/TASK.md e a skill em .agent/skills/compose-service/SKILL.md. Apresente seu plano para a Tarefa [00.1] Provisionamento de Serviços Base antes de alterar arquivos de configuração."
 
----
+### 5. Otimização de PC e Workstation (Baremetal)
 
-### 5. Otimização de PC, SO & Workstation (Baremetal)
-
-Para calibrar parâmetros de sistema operacional, sysctl, tweaks de kernel, serviços systemd ou dotfiles com garantias de rollback:
+Inicialize repositório de administração de host e tuning de SO com garantias de rollback:
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/ye-sandbox/template-agent/baremetal/init.sh | bash -s -- meu-workstation-ops
 cd meu-workstation-ops
 ```
 
-*Ou via clone manual do Git:*
+*Alternativa via clone do Git:*
 ```bash
 git clone --depth 1 -b baremetal https://github.com/ye-sandbox/template-agent.git meu-workstation-ops
 cd meu-workstation-ops
 rm -rf .git && git init -b main && git add . && git commit -m "chore: initial setup"
 ```
 
-**Primeiro prompt para o agente em repositório de workstation baremetal:**
-> *"Leia o AGENTS.md, .agent/BASELINE.md, .agent/INVARIANTS.md e a skill em .agent/skills/baremetal-tuning/SKILL.md. Apresente seu plano de implementação para a Tarefa [00.1] Auditoria de Baseline e Descoberta de Performance antes de executar qualquer modificação ou comando privilegiado."*
+**Primeiro prompt para o agente:**
+> "Leia AGENTS.md, .agent/BASELINE.md, .agent/INVARIANTS.md e a skill em .agent/skills/baremetal-tuning/SKILL.md. Apresente seu plano de implementação para a Tarefa [00.1] Auditoria de Baseline e Descoberta de Performance antes de executar modificações ou comandos privilegiados."
 
----
+## Configuração
 
-## 🛡️ Comparativo de Filosofia e Governança
+Variáveis de configuração definidas no `.env.example` e variáveis em nível de hub:
+
+| Variável | Descrição | Padrão | Obrigatório |
+| :--- | :--- | :--- | :--- |
+| `APP_ENV` | Modo de ambiente de execução da aplicação (`development`, `production`, `test`) | `development` | Não |
+| `APP_PORT` | Porta de escuta do servidor HTTP | `8000` | Não |
+| `APP_SECRET_KEY` | Chave criptográfica para assinatura e cifragem de sessões | `change-me-in-production` | Sim (em produção) |
+| `DATABASE_URL` | String de conexão PostgreSQL do banco de dados persistente principal | `postgresql://user:password@localhost:5432/dbname` | Não |
+| `REDIS_URL` | String de conexão Redis para broker de fila, cache e mensageria | `redis://localhost:6379/0` | Não |
+| `TEMPLATE_REPO_URL` | Sobrescrita de URL do repositório upstream para mirrors corporativos e forks | `https://github.com/ye-sandbox/template-agent.git` | Não |
+
+## Matriz de Governança e Decisão
 
 ```mermaid
-graph TD
-    A{Qual o cenário do projeto?}
-    A -- Projeto Novo do Zero --> B[Use branch greenfield]
-    B --> B1[Decisões registradas em ADRs formais]
-    B --> B2[Setup arquitetural e stack livre]
-    B --> B3[Skills de projeto em .agent/skills/]
+flowchart TD
+    A{"Qual o cenário do projeto?"}
+    A -->|"Projeto Novo do Zero"| B["branch greenfield"]
+    B --> B1["Decisões registradas em ADRs formais"]
+    B --> B2["Setup arquitetural e stack livre"]
+    B --> B3["Skills de projeto em .agent/skills/"]
 
-    A -- Código Legado Existente --> C[Use branch brownfield]
-    C --> C1[Sem ADRs do passado - Foco em INVARIANTS.md]
-    C --> C2[Task 00 de Discovery para mapear a stack]
-    C --> C3[Testes de Caracterização obrigatórios antes de refatorar]
-    C --> C4[Diffs cirúrgicos e sem refatoração oportunista]
+    A -->|"Código Legado Existente"| C["branch brownfield"]
+    C --> C1["Sem ADRs retroativas; cercas em INVARIANTS.md"]
+    C --> C2["Task 00 Discovery para mapear a stack"]
+    C --> C3["Testes de caracterização obrigatórios antes de refatorar"]
+    C --> C4["Diffs cirúrgicos com revisão de gate humana"]
 
-    A -- Sistema Fechado / Sem Docs --> D[Use branch blackbox]
-    D --> D1[Catálogo canônico de rotas em .agent/ENDPOINTS.md]
-    D --> D2[Skill de engenharia reversa passo a passo]
-    D --> D3[Mocks de requisição/resposta antes de código final]
-    D --> D4[Taxas de requisição defensivas e proteção de sessão]
+    A -->|"Sistema Fechado / Sem Docs"| D["branch blackbox"]
+    D --> D1["Catálogo de rotas em .agent/ENDPOINTS.md"]
+    D --> D2["Playbook de engenharia reversa passo a passo"]
+    D --> D3["Fixtures de replay e mocks antes do código final"]
+    D --> D4["Taxas defensivas de requisição e proteção de tokens"]
 
-    A -- Serviços / Homelab / IaC --> E[Use branch infra]
-    E --> E1[Topologia e portas em .agent/SERVICES.md]
-    E --> E2[Skill padronizada compose-service]
-    E --> E3[Healthchecks e limites de recursos obrigatórios]
-    E --> E4[Proteção contra exclusão acidental de volumes]
+    A -->|"Serviços / Homelab / IaC"| E["branch infra"]
+    E --> E1["Topologia e portas em .agent/SERVICES.md"]
+    E --> E2["Playbook padronizado compose-service"]
+    E --> E3["Healthchecks e limites de memória obrigatórios"]
+    E --> E4["Proteção contra exclusão destrutiva de volumes"]
 
-    A -- PC / Workstation / Host OS --> F[Use branch baremetal]
-    F --> F1[Inventário de sistema em .agent/BASELINE.md]
-    F --> F2[Regra Rollback-First: par de backup e script de reversão]
-    F --> F3[Registro de mudanças em .agent/TUNINGS.md]
-    F --> F4[Subsistemas críticos protegidos por INVARIANTS.md]
+    A -->|"SO Host / Otimização de PC"| F["branch baremetal"]
+    F --> F1["Inventário do sistema em .agent/BASELINE.md"]
+    F --> F2["Rollback-first: scripts de backup e reversão atômicos"]
+    F --> F3["Modificações auditadas em .agent/TUNINGS.md"]
+    F --> F4["Parâmetros de kernel e host protegidos por INVARIANTS.md"]
 ```
 
----
+## Forks e Ambientes Corporativos
 
-## 🤝 Como Contribuir ou Evoluir os Templates
+Para instâncias auto-hospedadas (GitHub Enterprise, GitLab, Gitea ou servidores Git barebone), os scripts `init.sh` e `install.sh` aceitam repositórios remotos personalizados via `TEMPLATE_REPO_URL`:
 
-Ao efetuar melhorias nos templates:
-1. Mudanças que afetam exclusivamente a criação de novos projetos devem ser commitadas na branch **`greenfield`**.
-2. Mudanças voltadas à proteção e auditoria de sistemas legados devem ser commitadas na branch **`brownfield`**.
-3. Mudanças voltadas a scrapers e engenharia reversa devem ser commitadas na branch **`blackbox`**.
-4. Mudanças voltadas a infraestrutura e Docker Compose devem ser commitadas na branch **`infra`**.
-5. Mudanças na documentação geral, novas branches ou matrizes de governança pertencem à branch **`main`**.
-6. **NUNCA** execute `git merge` entre branches de templates diferentes — use `git cherry-pick` para propagar commits pontuais (ver detalhes em [AGENTS.md](./AGENTS.md)).
-
----
-
-## 🍴 Forks e Ambientes Corporativos (Self-Hosted)
-
-Se você ou sua organização mantêm um **fork privado** deste repositório (GitHub Enterprise, GitLab, Gitea ou infraestrutura local), os scripts `init.sh` e `install.sh` são 100% parametrizáveis via a variável de ambiente **`TEMPLATE_REPO_URL`**:
-
-### 1. Criar novo projeto Greenfield a partir do seu fork:
 ```bash
+# Greenfield a partir de fork customizado
 TEMPLATE_REPO_URL="https://github.com/SUA_ORGANIZACAO/template-agent.git" \
 curl -fsSL https://raw.githubusercontent.com/SUA_ORGANIZACAO/template-agent/greenfield/init.sh | bash -s -- meu-novo-projeto
-```
 
-### 2. Injetar Brownfield em legado a partir do seu fork:
-```bash
+# Brownfield a partir de fork customizado
 TEMPLATE_REPO_URL="https://raw.githubusercontent.com/SUA_ORGANIZACAO/template-agent/brownfield" \
 curl -fsSL https://raw.githubusercontent.com/SUA_ORGANIZACAO/template-agent/brownfield/install.sh | bash
-```
 
-### 3. Criar projeto Blackbox a partir do seu fork:
-```bash
+# Blackbox a partir de fork customizado
 TEMPLATE_REPO_URL="https://github.com/SUA_ORGANIZACAO/template-agent.git" \
 curl -fsSL https://raw.githubusercontent.com/SUA_ORGANIZACAO/template-agent/blackbox/init.sh | bash -s -- meu-projeto-blackbox
-```
 
-### 4. Criar projeto Infra a partir do seu fork:
-```bash
+# Infra a partir de fork customizado
 TEMPLATE_REPO_URL="https://github.com/SUA_ORGANIZACAO/template-agent.git" \
 curl -fsSL https://raw.githubusercontent.com/SUA_ORGANIZACAO/template-agent/infra/init.sh | bash -s -- meu-homelab
 ```
 
-### Sincronização do Fork com o Upstream
-Para atualizar seu fork mantendo o isolamento estrito das branches:
+### Sincronização de Forks com o Upstream
+
+Mantenha seu fork atualizado preservando o isolamento estrito entre branches:
+
 ```bash
 git remote add upstream https://github.com/ye-sandbox/template-agent.git
 git fetch upstream
 
-# Atualize cada branch isoladamente (nunca faça merge entre branches de templates diferentes):
+# Atualize cada branch isoladamente (nunca faça merge entre branches de starters diferentes):
 git checkout main && git merge upstream/main
 git checkout greenfield && git merge upstream/greenfield
 git checkout brownfield && git merge upstream/brownfield
 git checkout blackbox && git merge upstream/blackbox
 git checkout infra && git merge upstream/infra
+git checkout baremetal && git merge upstream/baremetal
 ```
+
+## Desenvolvimento
+
+### Estrutura do Projeto
+
+```text
+├── .agent/
+│   ├── TASK.md               # Tarefa ativa, status de execução e log de roadmap
+│   ├── NOTES.md              # Contratos arquiteturais e gotchas de runtime
+│   ├── ARCHIVE.md            # Tarefas arquivadas de ciclos anteriores
+│   └── knowledge/            # Cards modulares de runtime e plataforma
+├── .github/
+│   ├── workflows/ci.yml      # Workflow de CI para matriz multibranch
+│   └── scripts/              # Validação de drift e contratos de starters
+├── docs/
+│   └── adr/decisions.md      # Registros consolidados de decisão arquitetural
+├── .env.example              # Esquema canônico de variáveis de ambiente
+├── AGENTS.md                 # Constituição do repositório e regras de engenharia
+├── CHANGELOG.md              # Notas de versão e histórico do ecossistema
+├── README.md                 # Documentação em inglês
+└── README.pt-br.md           # Documentação em português (Brasil)
+```
+
+### Comandos de Validação
+
+```bash
+# Validar contratos de governança e deriva de arquivos entre as branches
+.github/scripts/check-branch-drift.sh
+
+# Executar suíte de testes de ponta a ponta dos starters
+.github/scripts/test-all-starters.sh
+
+# Verificar integridade de formatação e espaços em branco
+git diff --check
+```
+
+## Licença
+
+Distribuído sob a licença [MIT](LICENSE).
