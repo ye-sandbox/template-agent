@@ -1,90 +1,129 @@
-# Brownfield Agent-Driven Development (ADD) Template
+# Brownfield Starter Kit
 
-🌐 **English | [Português](README.pt-br.md)**
+Technical governance framework for introducing AI coding agents safely into existing production repositories.
 
-> 🧱 **Tailored for Legacy Codebases and Existing Repositories.**  
-> A governance framework designed to introduce AI coding agents (Antigravity, Claude Code, Cursor, Windsurf, Roo Code, Aider, etc.) safely into existing production repositories without breaking implicit contracts or introducing silent regressions.
+**[English](README.md)** | **[Português (Brasil)](README.pt-br.md)**
 
----
-
-## 💡 Why a Dedicated Template for Legacies?
-
-Working with AI agents in scratch projects (Greenfield) differs fundamentally from legacy codebases (Brownfield):
-- **Greenfield:** The agent designs architectures from scratch, authors ADRs, and defines new contracts.
-- **Brownfield:** Decisions were already made. The agent must proceed with surgical restraint (*Chesterton's Fence*), write **characterization tests** before refactoring, and strictly respect legacy system contracts.
+[![CI](https://github.com/ye-sandbox/template-agent/actions/workflows/ci.yml/badge.svg)](https://github.com/ye-sandbox/template-agent/actions)
+[![Starter: Brownfield](https://img.shields.io/badge/Starter-Brownfield-amber.svg)]()
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
 ---
 
-## 📁 Template Structure
+## Overview
+
+The Brownfield starter kit provides a structured governance harness for introducing AI coding agents (Antigravity, Claude Code, Cursor, Windsurf, Roo Code, Aider) into established, production codebases without risking regressions or violating unspoken architectural contracts.
+
+Unlike Greenfield projects where agents design systems freely, Brownfield repositories operate under strict constraints:
+- **Non-Destructive Injection:** The template injects governance scaffolding into existing project trees without touching source code or dependency manifests.
+- **Chesterton's Fences:** Critical system quirks, frozen dependencies, and domain invariants are recorded in `.agent/INVARIANTS.md` to prevent accidental refactoring.
+- **Enterprise Stealth Mode:** The `--local-only` flag stores all agent configuration inside `.git/info/exclude`, leaving `.gitignore` untouched and git status 100% clean.
+- **Task 00 Discovery:** A dedicated bootstrap protocol maps repository entrypoints, package managers, and test suites into `AGENTS.md` before code changes begin.
+
+## Architecture
+
+```mermaid
+flowchart TD
+    Inject["install.sh (Inject Governance)"] --> Task00["Task 00 Discovery & Audit"]
+    Task00 --> Calibrate["Calibrate AGENTS.md & INVARIANTS.md"]
+    Calibrate --> Task["Active Roadmap Task in TASK.md"]
+    Task --> Characterize["Characterization Tests (Prove Current Behavior)"]
+    Characterize --> Plan["Agent Implementation Plan"]
+    Plan --> Gate{"Human Review Gate"}
+    Gate -->|"Approved"| Code["Surgical Diff Implementation"]
+    Gate -->|"Revisions Requested"| Plan
+    Code --> Verify["Verification (Existing Suites + DoD)"]
+    Verify --> Commit["Atomic Commit (Local / Human Push Gate)"]
+```
+
+### Injected Directory Structure
 
 ```text
 ├── AGENTS.md                 # Constitution for legacy code (non-regression rules, surgical scope)
-├── install.sh                # Script to inject this template into any existing repository
+├── install.sh                # Injection installer for existing repositories
+├── docs/adr/decisions.md     # Architectural Decision Records (ADR log)
 └── .agent/
-    ├── TASK.md               # Active task (starting with Task 00 Discovery)
+    ├── TASK.md               # Active task (initialized with Task 00 Discovery)
     ├── INVARIANTS.md         # Untouchable behaviors, frozen dependencies, and justified quirks
-    ├── NOTES.md              # Mapped active contracts and recent gotchas
-    └── ARCHIVE.md            # Completed task history to preserve lean context
+    ├── NOTES.md              # Mapped active contracts, entrypoints, and gotchas
+    ├── ARCHIVE.md            # Completed task history preserving lean context
+    ├── ECOSYSTEM.md          # Multi-repo topology, cross-service contracts, and boundaries
+    └── knowledge/            # Modular runtime gotchas and platform cards
+        ├── 000-schema.md     # Knowledge card specification
+        └── k-000-template.md # Template for runtime cards
 ```
 
----
+## Quickstart
 
-## 🚀 How to Inject this Template into an Existing Repository
+### Prerequisites
 
-### Option 1: Automated Script (Recommended)
+- Git 2.30+
+- Bash 4.0+
+- `curl` 7.60+
 
-From the root of your existing legacy project, run the one-line installer via `curl`:
+### Injecting into an Existing Repository
+
+Execute the installer directly from the root of your existing codebase:
 
 ```bash
+# Standard automated injection
 curl -fsSL https://raw.githubusercontent.com/ye-sandbox/template-agent/brownfield/install.sh | bash
 ```
 
-> 💡 **Tip for automation or CI:** Pass `-y` to bypass interactive prompts:
-> ```bash
-> curl -fsSL https://raw.githubusercontent.com/ye-sandbox/template-agent/brownfield/install.sh | bash -s -- -y
-> ```
-> To target a specific folder:
-> ```bash
-> curl -fsSL https://raw.githubusercontent.com/ye-sandbox/template-agent/brownfield/install.sh | bash -s -- ./path/to/project
-> ```
-
-> 🔒 **Enterprise / Local-Only Mode (Stealth):**
-> If working in an enterprise codebase where you cannot or do not want to commit agentic governance files:
-> ```bash
-> curl -fsSL https://raw.githubusercontent.com/ye-sandbox/template-agent/brownfield/install.sh | bash -s -- --local-only
-> ```
-> This automatically excludes `.agent/` and `AGENTS.md` via `.git/info/exclude` (leaving `.gitignore` untouched and git status 100% clean) and injects strict stealth guardrails.
-
-*Or run locally from a cloned copy of the `brownfield` branch:*
 ```bash
-./install.sh /path/to/your-legacy-project
-# or with stealth mode:
-./install.sh --local-only /path/to/your-legacy-project
+# Non-interactive automated injection (for CI or unattended setup)
+curl -fsSL https://raw.githubusercontent.com/ye-sandbox/template-agent/brownfield/install.sh | bash -s -- -y
 ```
 
-### Option 2: Manual Copy
-Copy `AGENTS.md` and the `.agent/` directory directly into the root of your existing project.
+```bash
+# Enterprise Stealth Mode (local-only, hides all AI governance from git status)
+curl -fsSL https://raw.githubusercontent.com/ye-sandbox/template-agent/brownfield/install.sh | bash -s -- --local-only
+```
 
----
+*Alternative via local script execution:*
 
-## 🔄 The Adoption Lifecycle: Task 00 (Discovery)
+```bash
+./install.sh /path/to/existing-project
+# or with enterprise stealth mode:
+./install.sh --local-only /path/to/existing-project
+```
 
-Once template files are injected into your legacy project:
+### Discovery Kickoff Prompt
 
-1. Open your AI coding environment at the project root.
-2. Send the initial kickoff prompt:
-   > *"Read AGENTS.md and .agent/TASK.md. Present your implementation plan for Task [00.1] Project Discovery and Audit before modifying any code."*
-3. The agent will:
-   - Identify languages, versions, and official package managers from manifests (`package.json`, `pyproject.toml`, etc.).
-   - Record actual test, lint, and build commands in `AGENTS.md`.
-   - Map key entrypoints and environment variables.
-   - Record initial critical quirks in `.agent/INVARIANTS.md`.
-4. Once Discovery is complete, your repository is fully calibrated for safe tasks, bugfixes, and refactorings!
+Provide this prompt to your AI coding agent immediately after injection:
 
----
+> "Read AGENTS.md and .agent/TASK.md. Present your implementation plan for Task [00.1] Project Discovery & Audit before modifying any code."
 
-## 🛡️ Core Rules of this Template
+## Configuration
 
-1. **Characterization Tests:** If a legacy function lacks test coverage and requires modification, write a test proving current behavior before touching application logic.
-2. **No Opportunistic Refactoring:** Keep diffs surgical. Do not reformat untouched files or alter adjacent code styles.
-3. **Respect Invariants:** Consult `INVARIANTS.md` before altering logic that seems suboptimal or redundant.
+The template provides canonical configuration schemas via `.env.example`:
+
+| Variable | Description | Default | Required |
+| :--- | :--- | :--- | :--- |
+| `APP_ENV` | Application runtime environment mode (`development`, `production`, `test`) | `development` | No |
+| `APP_PORT` | HTTP server listening port | `8000` | No |
+| `APP_SECRET_KEY` | Cryptographic secret key for session encryption and signing | `change-me-in-production` | Yes (in production) |
+| `DATABASE_URL` | PostgreSQL connection string for primary persistent datastore | `postgresql://user:password@localhost:5432/dbname` | No |
+| `REDIS_URL` | Redis connection string for broker, cache, and queue storage | `redis://localhost:6379/0` | No |
+
+## Usage
+
+### Core Brownfield Invariants
+
+1. **Characterization Tests First:** When modifying legacy functions lacking tests, write a characterization test proving existing behavior before altering any application logic.
+2. **Zero Opportunistic Refactoring:** Keep diffs surgical. Never reformat untouched files, clean whitespace, or alter adjacent conventions.
+3. **Mandatory Human Review Gate:** In production legacy codebases, autonomous pushes to shared remotes are forbidden. All commits require human sign-off.
+4. **Preserve Invariants:** Consult `.agent/INVARIANTS.md` before altering code that appears suboptimal or redundant.
+
+## Development
+
+### Validation Commands
+
+```bash
+# Verify repository formatting and whitespace integrity
+git diff --check
+```
+
+## License
+
+Released under the [MIT License](LICENSE).
