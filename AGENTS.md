@@ -75,18 +75,19 @@ The agent MUST optimize context loading using the following progressive disclosu
 
 ## Fail-Stop Protocol & Escalation Hierarchy
 
-If an automated command or build step fails **2 consecutive times** with the same root cause:
+If an automated command or build step fails **3 consecutive times** with the same root cause:
 1. The agent MUST STOP execution immediately.
 2. The agent MUST NOT attempt unapproved workarounds.
 3. The agent MUST escalate to the user with a structured diagnostic block:
    ```yaml
    failure_stage: "command or step name"
    error_signature: "exact error string"
-   consecutive_failures: 2
+   consecutive_failures: 3
    root_cause_analysis: "technical description"
    attempted_fixes:
      - "attempt 1 summary"
      - "attempt 2 summary"
+     - "attempt 3 summary"
    pending_decision: "question or proposed options for the user"
    ```
 
