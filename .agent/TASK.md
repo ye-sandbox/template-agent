@@ -10,12 +10,11 @@
 
 ## Active Task
 
-- **Task:** `[01.1]` Adjust Circuit Breaker Fail-Stop Threshold to 3 Consecutive Attempts on General Starters
-- **Status:** RUNNING
+- **Task:** `[01.2]` Post-v1.1.0 Ecosystem Roadmap & Community Starter Enhancements
+- **Status:** READY FOR PLANNING
 - **Scope:**
-  - Atualizar o limite do Fail-Stop Protocol de 2 para 3 tentativas consecutivas com a mesma causa raiz em templates gerais (`main`, `greenfield`, `brownfield`).
-  - Preservar o limite estrito de 2 tentativas em `blackbox` (anti-ban), `infra` (daemon/containers) e `baremetal` (host/kernel).
-- **Target Branches:** `main`, `greenfield`, `brownfield`
+  - Levantar e estruturar próximos objetivos para starters, novos playbooks de projeto e automações de conformidade.
+- **Target Branches:** `main`, `all branches`
 
 ---
 
@@ -25,6 +24,7 @@
 
 | Task | Title | Commit(s) | Date |
 |---|---|---|---|
+| `[01.1]` | Adjust circuit breaker threshold to 3 consecutive failures on general starters | `b7731e8` (main), `2b5128c` (greenfield), `e3f681c` (brownfield) | 2026-10-31 |
 
 ---
 
