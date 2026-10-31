@@ -1,117 +1,134 @@
-# Core / Greenfield Agent-Driven Development (ADD) Template
+# Greenfield Starter Kit
 
-🌐 **English | [Português](README.pt-br.md)**
+Technical foundation for building software from scratch with AI coding agents.
 
-This repository is the canonical **Core / Greenfield** starter kit designed to empower software development from scratch with **AI coding agents** (e.g., Antigravity, Claude Code, Cursor, Windsurf, Roo Code, Aider, etc.).
+**[English](README.md)** | **[Português (Brasil)](README.pt-br.md)**
 
-The structure directly addresses the primary bottlenecks when using autonomous agents in real-world projects: **context loss**, **hallucinations during long tasks**, **violation of coding standards**, and **destructive rework**.
+[![CI](https://github.com/ye-sandbox/template-agent/actions/workflows/ci.yml/badge.svg)](https://github.com/ye-sandbox/template-agent/actions)
+[![Starter: Greenfield](https://img.shields.io/badge/Starter-Greenfield-success.svg)]()
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
 ---
 
-## 📁 Template Structure
+## Overview
+
+The Greenfield starter kit provides a clean foundation for developing new applications, microservices, and libraries using AI coding agents (Antigravity, Claude Code, Cursor, Windsurf, Roo Code, Aider). Greenfield projects begin with an unconstrained architectural setup governed by formal Architectural Decision Records (ADRs) and strict Definition of Done (DoD) verification gates.
+
+The starter resolves key failure modes in agent-driven development:
+- **Context Preservation:** Enforces fixed-budget context loading (`AGENTS.md`, `.agent/TASK.md`, `.agent/NOTES.md`), archiving completed tasks to `.agent/ARCHIVE.md`.
+- **Architectural Traceability:** Retains durable architectural decisions in `docs/adr/decisions.md` while keeping active operational notes lean.
+- **Modular Extension:** Supports isolated domain procedures in `.agent/skills/` and runtime gotcha capture in `.agent/knowledge/`.
+- **Automated Scaffolding:** Provisions a fresh Git repository and clean product documentation via `init.sh` in a single command.
+
+## Architecture
+
+```mermaid
+flowchart TD
+    Task["TASK.md (Active Task)"] --> Plan["Agent Implementation Plan"]
+    Plan --> Review{"Human Approval"}
+    Review -->|"Approved"| Running["Status: RUNNING"]
+    Review -->|"Revisions Requested"| Plan
+    Running --> Code["Implementation & Tests"]
+    Code --> DoD["Definition of Done (100% Tests Pass)"]
+    DoD --> Commit["Conventional Commit in English"]
+    Commit --> Done["Log to Completed Tasks & Promote Next"]
+```
+
+### Directory Layout
 
 ```text
-├── AGENTS.md                 # Project "Constitution" (strict rules, stack, MCPs, validation commands)
+├── AGENTS.md                 # Project constitution (rules, stack, MCPs, validation gates)
 ├── .agent/
 │   ├── TASK.md               # Active task, acceptance criteria, and immediate roadmap
-│   ├── NOTES.md              # Rapid architectural decisions, data contracts, and gotchas
-│   ├── ARCHIVE.md            # Historical log of completed tasks (preserves lean context)
-│   ├── ECOSYSTEM.md          # Multi-repo topology, cross-repo contracts, and blast radius (optional)
+│   ├── NOTES.md              # Rapid architectural decisions, contracts, and gotchas
+│   ├── ARCHIVE.md            # Completed tasks history preserving lean context
+│   ├── ECOSYSTEM.md          # Multi-repo topology and service boundaries (optional)
 │   ├── knowledge/            # Modular runtime gotchas and platform cards
-│   │   ├── 000-schema.md     # Knowledge card schema specification
-│   │   └── k-000-template.md # Template for new knowledge cards
+│   │   ├── 000-schema.md     # Knowledge card specification
+│   │   └── k-000-template.md # Template for runtime cards
 │   └── skills/               # Specialized procedural skills for the project
-│       ├── README.md         # Guide on when and how to create skills
+│       ├── README.md         # Guide on skill creation and usage
 │       └── 000-template.md   # Standard SKILL.md template
 ├── docs/
 │   └── adr/
-│       └── decisions.md      # Architectural Decision Records (ADR Diary)
-├── .env.example              # Example environment variables
+│       └── decisions.md      # Consolidated Architectural Decision Records (ADR log)
+├── .env.example              # Canonical environment variable contract
 ├── .gitignore                # Comprehensive defaults (Node, Python, Docker, agent caches)
-└── README.md                 # This guide (for human developers)
+├── init.sh                   # Scaffolding script for new project repositories
+└── README.md                 # Starter documentation
 ```
 
----
+## Quickstart
 
-## 🚀 Quickstart
+### Prerequisites
 
-### Option 1: Automated One-Liner (Recommended)
+- Git 2.30+
+- Bash 4.0+
+- `curl` 7.60+
 
-Bootstrap a new project instantly from your terminal:
+### Scaffolding a New Project
+
+Execute the one-liner initialization script from your terminal:
 
 ```bash
-# Standard scaffolding (with multi-repo ECOSYSTEM.md)
+# Standard scaffolding (includes multi-repo ECOSYSTEM.md)
 curl -fsSL https://raw.githubusercontent.com/ye-sandbox/template-agent/greenfield/init.sh | bash -s -- my-new-project
-
-# Standalone mode (omits multi-repo ECOSYSTEM.md)
-curl -fsSL https://raw.githubusercontent.com/ye-sandbox/template-agent/greenfield/init.sh | bash -s -- --standalone my-new-project
+cd my-new-project
 ```
 
-The script clones the `greenfield` branch, initializes a fresh Git repository, and drops setup-only files automatically.
+```bash
+# Standalone mode (omits multi-repo ECOSYSTEM.md)
+curl -fsSL https://raw.githubusercontent.com/ye-sandbox/template-agent/greenfield/init.sh | bash -s -- --standalone my-new-project
+cd my-new-project
+```
 
----
-
-### Option 2: Manual Git Clone
+*Alternative via manual Git clone:*
 
 ```bash
 git clone --depth 1 -b greenfield https://github.com/ye-sandbox/template-agent.git my-new-project
 cd my-new-project
-rm -rf .git && git init -b main
-git add . && git commit -m "chore: initial template setup"
+rm -rf .git && git init -b main && git add . && git commit -m "chore: initial setup"
 ```
 
-### Step 2: Configure `AGENTS.md`
-Open [`AGENTS.md`](./AGENTS.md) and replace all placeholder fields in `[BRACKETS]`:
-1. Project name and architectural overview.
-2. Operating system and **default shell** (e.g., Bash or PowerShell).
-3. Technology stack for each module/service (languages, versions, official package managers).
-4. Authorized MCP servers and domain skills.
-5. Exact validation commands (`test`, `lint`, `typecheck`, `build`).
-6. Remove inapplicable sections (e.g. Docker section if containers are not used).
-7. Delete the `Adaptation checklist` at the bottom when finished.
+### Kickoff Prompt
 
-### Step 3: Configure Environment Variables & MCPs
-Copy the example environment file and configure local values:
+Provide this prompt to your AI coding agent during the first turn:
+
+> "Read AGENTS.md, .agent/TASK.md, .agent/NOTES.md, and skills in .agent/skills/. Present your implementation plan for the Active Task in TASK.md before modifying any code."
+
+## Configuration
+
+The template provides canonical configuration schemas via `.env.example`:
+
+| Variable | Description | Default | Required |
+| :--- | :--- | :--- | :--- |
+| `APP_ENV` | Application runtime environment mode (`development`, `production`, `test`) | `development` | No |
+| `APP_PORT` | HTTP server listening port | `8000` | No |
+| `APP_SECRET_KEY` | Cryptographic secret key for session encryption and signing | `change-me-in-production` | Yes (in production) |
+| `DATABASE_URL` | PostgreSQL connection string for primary persistent datastore | `postgresql://user:password@localhost:5432/dbname` | No |
+| `REDIS_URL` | Redis connection string for broker, cache, and queue storage | `redis://localhost:6379/0` | No |
+
+## Usage
+
+### Task Lifecycle Protocol
+
+1. **Task Definition:** Define the target objective in `Active Task` inside `.agent/TASK.md` with explicit acceptance criteria.
+2. **Plan-First Review:** The agent sets status to `PLANNING` and presents an implementation plan. Await user confirmation before code modification.
+3. **Execution & Validation:** Update status to `RUNNING`. Execute implementation, running validation commands until 100% passing.
+4. **Completion:** Commit changes with an atomic Conventional Commit (`feat(...)`, `fix(...)`), log completion in `.agent/TASK.md`, and promote the next task.
+
+## Development
+
+### Validation Commands
+
 ```bash
-cp .env.example .env
-```
-If using MCP servers (local databases, API docs, observability), register them in your agent configuration (`antigravity`, `claude_desktop`, etc.).
+# Verify repository formatting and whitespace integrity
+git diff --check
 
-### Step 4: Define the First Task in `.agent/TASK.md`
-Open [`.agent/TASK.md`](./.agent/TASK.md):
-1. Fill the **📌 Active Task** section with the initial concrete goal (e.g., `Bootstrap project skeleton and validation tooling`).
-2. Specify clear, measurable **Acceptance Criteria**.
-3. Set status to `READY FOR PLANNING`.
-
-### Step 5: Begin Development with your AI Agent
-Send the kickoff prompt in your AI agent interface:
-> *"Read AGENTS.md, .agent/TASK.md, .agent/NOTES.md, and skills in .agent/skills/. Present your implementation plan for the Active Task in TASK.md before modifying any code."*
-
----
-
-## 🔄 Task Lifecycle Workflow
-
-```mermaid
-graph TD
-    A[User defines task in TASK.md] --> B[Agent reads docs and sets status to PLANNING]
-    B --> C[Agent presents Implementation Plan]
-    C --> D{User approves?}
-    D -- No / Revisions --> C
-    D -- Yes --> E[Status: RUNNING]
-    E --> F[Implementation with Strict Typing]
-    F --> G[100% Validation Commands Pass]
-    G --> H[Conventional Commit in English]
-    H --> I[Log task in Completed Log of TASK.md]
-    I --> J[Promote next task from Backlog]
+# Execute local project test suite (configure in AGENTS.md during Task 00.1)
+npm test
 ```
 
----
+## License
 
-## 💡 Best Practices for AI Agents
-
-1. **One task at a time:** Keep tasks atomic. Break large goals into subtasks in `TASK.md`.
-2. **Enforce DoD (Definition of Done):** Never accept tasks with failing tests or unaddressed linter errors.
-3. **Keep context files lean:**
-   - `TASK.md` holds only the active task and titles of upcoming items.
-   - `NOTES.md` holds non-obvious rationale, contracts, and gotchas not evident from git diffs.
-   - Deep implementation details belong in git commit messages and history.
+Released under the [MIT License](LICENSE).
