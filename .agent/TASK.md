@@ -38,6 +38,8 @@
 
 ## Backlog (Upcoming, in priority order)
 
+> Tag pre-approved script/doc tasks having strictly disjoint file scopes with `[APPROVED]` `[PARALLEL: W1]` and `Paths: ...` for concurrent `task-queue` execution (live host tunings remain sequential).
+
 - [ ] **[01.1]** Memory subsystem tuning: optimize `vm.swappiness` and `vfs_cache_pressure` with rollback pair
 - [ ] **[01.2]** Storage and I/O scheduler tuning: verify NVMe scheduler and dirty page ratios
 - [ ] **[02.1]** Background systemd unit audit: identify and disable redundant startup services

@@ -47,7 +47,7 @@ The agent MUST optimize context loading using the following progressive disclosu
    - Symmetrical script paths (`scripts/apply-<name>.sh` and `scripts/revert-<name>.sh`).
    - Expected performance gain and benchmark commands.
    - Await explicit user approval before executing any system changes.
-   - If task scope and apply/revert scripts were already decided during planning (`Status: APPROVED`) with zero open questions/blockers, transition directly to `RUNNING` on `proceed` (or use the `task-queue` skill on `proceed queue` to execute tasks sequentially in isolated subagents; `sudo` execution still requires explicit user confirmation). Halt and revert to `PLANNING` if any invariant risk arises.
+   - If task scope and apply/revert scripts were already decided during planning (`Status: APPROVED`) with zero open questions/blockers, transition directly to `RUNNING` on `proceed` (or use the `task-queue` skill on `proceed queue` to execute sequential/parallel subagents with multi-account quota routing; tag non-overlapping script authoring tasks with `[PARALLEL: Wx]` and `Paths:`, while keeping live host `sudo` tunings strictly sequential and user-confirmed). Halt and revert to `PLANNING` if any invariant risk arises.
 3. **Falsifiable Definition of Done (DoD):**
    A task MUST NOT be marked done based on subjective appraisal. It MUST satisfy:
    - [ ] Pre-change backup created in `.backups/` and verified non-empty.
