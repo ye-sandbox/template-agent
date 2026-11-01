@@ -39,4 +39,5 @@ Thumbs.db
 .gemini/
 .claude/
 .maestri/
+.multigravity/
 *.tsbuildinfo
