@@ -10,7 +10,7 @@
 
 ## Active Task
 
-- **Task:** `[01.3]` Post-v1.1.0 Ecosystem Roadmap & Community Starter Enhancements
+- **Task:** `[01.4]` Post-v1.1.0 Ecosystem Roadmap & Community Starter Enhancements
 - **Status:** READY FOR PLANNING
 - **Scope:**
   - Define next ecosystem milestones for starter templates, domain playbooks, and compliance automation.
@@ -26,6 +26,7 @@
 |---|---|---|---|
 | `[01.1]` | Adjust circuit breaker threshold to 3 consecutive failures on general starters | `b7731e8` (main), `2b5128c` (greenfield), `e3f681c` (brownfield) | 2026-10-31 |
 | `[01.2]` | Pre-Approved Task Fast-Track (`APPROVED`) & `task-queue` Skill Integration | `cdbec44` (main), `7fddee8` (greenfield), `7e5fc61` (brownfield), `9c520f5` (blackbox), `c4a92b7` (infra), `03f8e0e` (baremetal) | 2026-10-31 |
+| `[01.3]` | Parallel Task Waves (`[PARALLEL: Wx]`) & Multi-Account Quota Routing in `task-queue` | `e8d74b4` (main), `a62c937` (greenfield), `5428136` (brownfield), `135cbd5` (blackbox), `c253b20` (infra), `6512f5b` (baremetal) | 2026-10-31 |
 
 ---
 
