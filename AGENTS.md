@@ -36,7 +36,7 @@ The agent MUST optimize context loading using the following progressive disclosu
 - **Default Context (Loaded on start):** `AGENTS.md`, `.agent/TASK.md`, `.agent/NOTES.md` (Active Contracts only).
 - **On-Demand Context (Progressive Disclosure):** `docs/adr/decisions.md` (historical architectural decisions diary), `.agent/ECOSYSTEM.md` (multi-repo topology), `.agent/knowledge/` (runtime gotchas & platform cards).
 - **Branch-Specific Context:** Checkout target branch BEFORE inspecting its root files.
-- **Transversal Skills:** Reference external organizational playbooks (`agent-skills`) ONLY when tasks require UI porting, QA audit, or host-level orchestration.
+- **Transversal Skills:** Reference external organizational playbooks (`agent-skills`) ONLY when tasks require UI porting, QA audit, sequential subagent queue execution (`task-queue`), or host-level orchestration.
 
 ---
 
@@ -59,10 +59,8 @@ The agent MUST optimize context loading using the following progressive disclosu
      Execute these requests **immediately and directly** without interrupting the user.
    - **Plan-First Workflow (Tracked Roadmap Tasks):**
      Applies ONLY to substantive repository changes, architectural updates, multi-file features, or template modifications:
-     - Update `Status` in `.agent/TASK.md` to `PLANNING`.
-     - Present a detailed action plan listing affected branches and files.
-     - Await explicit user approval before executing changes or switching branches.
-     - Upon approval, update `Status` to `RUNNING`.
+     - **Standard (`READY FOR PLANNING`):** Update `Status` in `.agent/TASK.md` to `PLANNING`, present a detailed action plan listing affected branches and files, await explicit user approval, then update `Status` to `RUNNING`.
+     - **Pre-Approved (`APPROVED`):** When task scope and acceptance criteria were already decided during an interactive planning session (`Status: APPROVED`) and zero ambiguities or blockers exist, transition directly to `RUNNING` on `proceed` (or orchestrate sequential isolated subagents via the `task-queue` skill on `proceed queue`). Halt and set `Status` to `PLANNING` if any pending human decision arises.
 4. **Falsifiable Definition of Done (DoD) for Roadmap Tasks:**
    Tracked roadmap tasks MUST NOT be declared complete until ALL checks pass:
    - [ ] Automated git check passes: `git diff --check` exits with code 0.

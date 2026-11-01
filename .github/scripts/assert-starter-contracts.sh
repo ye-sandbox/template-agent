@@ -101,7 +101,10 @@ assert_greenfield_base() {
   need_grep AGENTS.md 'LTS' -qiF
   need_grep AGENTS.md 'cognitive complexity' -qiF
   need_grep AGENTS.md 'readme-standard' -qF
+  need_grep AGENTS.md 'APPROVED' -qF
+  need_grep AGENTS.md 'task-queue' -qF
   need_grep .agent/TASK.md 'readme-standard' -qF
+  need_grep .agent/TASK.md 'APPROVED' -qF
   assert_product_readme
   need_grep .gitignore '.env' -qF
   need_grep .gitignore '!.env.example' -qF
@@ -156,7 +159,10 @@ assert_brownfield() {
   need_grep AGENTS.md 'Consultative Dependencies' -qiF
   need_grep AGENTS.md 'Stable & LTS Versioning' -qiF
   need_grep AGENTS.md 'readme-standard' -qF
+  need_grep AGENTS.md 'APPROVED' -qF
+  need_grep AGENTS.md 'task-queue' -qF
   need_grep .agent/TASK.md 'readme-standard' -qF
+  need_grep .agent/TASK.md 'APPROVED' -qF
   need_grep .agent/INVARIANTS.md 'Chesterton' -qF
 }
 
@@ -204,7 +210,10 @@ assert_blackbox() {
   need_grep .agent/knowledge/k-001-soft-200-session-expiry-detection.md 'Soft 200' -qF
   need_grep AGENTS.md 'fixture' -qiE
   need_grep AGENTS.md 'readme-standard' -qF
+  need_grep AGENTS.md 'APPROVED' -qF
+  need_grep AGENTS.md 'task-queue' -qF
   need_grep .agent/TASK.md 'readme-standard' -qF
+  need_grep .agent/TASK.md 'APPROVED' -qF
   assert_product_readme
   need_grep AGENTS.md './tests/smoke.sh' -qF
   ( cd "$ROOT" && ./tests/smoke.sh ) || fail "smoke test failed via ./tests/smoke.sh in $ROOT"
@@ -268,7 +277,10 @@ assert_infra() {
   need_grep AGENTS.md ':latest' -qF
   need_grep AGENTS.md 'healthcheck' -qF
   need_grep AGENTS.md 'readme-standard' -qF
+  need_grep AGENTS.md 'APPROVED' -qF
+  need_grep AGENTS.md 'task-queue' -qF
   need_grep .agent/TASK.md 'readme-standard' -qF
+  need_grep .agent/TASK.md 'APPROVED' -qF
   assert_product_readme
   local healthcheck_count
   healthcheck_count="$(grep -c '^    healthcheck:' "$ROOT/compose.yaml.example" || true)"
@@ -276,10 +288,10 @@ assert_infra() {
   if grep -qE 'image:[[:space:]]*[^[:space:]]+:latest' "$ROOT/compose.yaml.example"; then
     fail ":latest image tag found in compose.yaml.example"
   fi
-  if command -v docker >/dev/null 2>&1; then
+  if command -v docker >/dev/null 2>&1 && docker compose version >/dev/null 2>&1; then
     docker compose --env-file "$ROOT/.env.example" -f "$ROOT/compose.yaml.example" config --quiet
   else
-    echo "⚠️  docker command not found; skipping compose config validation on $(uname -s)"
+    echo "⚠️  docker compose command not available; skipping compose config validation on $(uname -s)"
   fi
 }
 
@@ -329,7 +341,10 @@ assert_baremetal() {
   need_grep .agent/knowledge/k-002-sysctl-persistence-systemd.md 'sysctl' -qF
   need_grep AGENTS.md 'sudo' -qiF
   need_grep AGENTS.md 'readme-standard' -qF
+  need_grep AGENTS.md 'APPROVED' -qF
+  need_grep AGENTS.md 'task-queue' -qF
   need_grep .agent/TASK.md 'readme-standard' -qF
+  need_grep .agent/TASK.md 'APPROVED' -qF
   assert_product_readme
   need_grep AGENTS.md './tests/smoke.sh' -qF
   ( cd "$ROOT" && ./tests/smoke.sh ) || fail "smoke test failed via ./tests/smoke.sh in $ROOT"
