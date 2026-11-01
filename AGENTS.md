@@ -60,7 +60,7 @@ The agent MUST optimize context loading using the following progressive disclosu
    - **Plan-First Workflow (Tracked Roadmap Tasks):**
      Applies ONLY to substantive repository changes, architectural updates, multi-file features, or template modifications:
      - **Standard (`READY FOR PLANNING`):** Update `Status` in `.agent/TASK.md` to `PLANNING`, present a detailed action plan listing affected branches and files, await explicit user approval, then update `Status` to `RUNNING`.
-     - **Pre-Approved (`APPROVED`):** When task scope and acceptance criteria were already decided during an interactive planning session (`Status: APPROVED`) and zero ambiguities or blockers exist, transition directly to `RUNNING` on `proceed` (or orchestrate sequential isolated subagents via the `task-queue` skill on `proceed queue`). Halt and set `Status` to `PLANNING` if any pending human decision arises.
+     - **Pre-Approved (`APPROVED`):** When task scope and acceptance criteria were already decided during an interactive planning session (`Status: APPROVED`) and zero ambiguities or blockers exist, transition directly to `RUNNING` on `proceed` (or orchestrate sequential/parallel subagents and multi-account quota routing via the `task-queue` skill on `proceed queue`; tag tasks that have strictly disjoint file scopes with `[PARALLEL: Wx]` and `Paths:`). Halt and set `Status` to `PLANNING` if any pending human decision arises.
 4. **Falsifiable Definition of Done (DoD) for Roadmap Tasks:**
    Tracked roadmap tasks MUST NOT be declared complete until ALL checks pass:
    - [ ] Automated git check passes: `git diff --check` exits with code 0.

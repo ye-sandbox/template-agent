@@ -105,6 +105,7 @@ assert_greenfield_base() {
   need_grep AGENTS.md 'task-queue' -qF
   need_grep .agent/TASK.md 'readme-standard' -qF
   need_grep .agent/TASK.md 'APPROVED' -qF
+  need_grep .agent/TASK.md 'PARALLEL' -qF
   assert_product_readme
   need_grep .gitignore '.env' -qF
   need_grep .gitignore '!.env.example' -qF
@@ -163,6 +164,7 @@ assert_brownfield() {
   need_grep AGENTS.md 'task-queue' -qF
   need_grep .agent/TASK.md 'readme-standard' -qF
   need_grep .agent/TASK.md 'APPROVED' -qF
+  need_grep .agent/TASK.md 'PARALLEL' -qF
   need_grep .agent/INVARIANTS.md 'Chesterton' -qF
 }
 
@@ -214,6 +216,7 @@ assert_blackbox() {
   need_grep AGENTS.md 'task-queue' -qF
   need_grep .agent/TASK.md 'readme-standard' -qF
   need_grep .agent/TASK.md 'APPROVED' -qF
+  need_grep .agent/TASK.md 'PARALLEL' -qF
   assert_product_readme
   need_grep AGENTS.md './tests/smoke.sh' -qF
   ( cd "$ROOT" && ./tests/smoke.sh ) || fail "smoke test failed via ./tests/smoke.sh in $ROOT"
@@ -281,6 +284,7 @@ assert_infra() {
   need_grep AGENTS.md 'task-queue' -qF
   need_grep .agent/TASK.md 'readme-standard' -qF
   need_grep .agent/TASK.md 'APPROVED' -qF
+  need_grep .agent/TASK.md 'PARALLEL' -qF
   assert_product_readme
   local healthcheck_count
   healthcheck_count="$(grep -c '^    healthcheck:' "$ROOT/compose.yaml.example" || true)"
@@ -345,6 +349,7 @@ assert_baremetal() {
   need_grep AGENTS.md 'task-queue' -qF
   need_grep .agent/TASK.md 'readme-standard' -qF
   need_grep .agent/TASK.md 'APPROVED' -qF
+  need_grep .agent/TASK.md 'PARALLEL' -qF
   assert_product_readme
   need_grep AGENTS.md './tests/smoke.sh' -qF
   ( cd "$ROOT" && ./tests/smoke.sh ) || fail "smoke test failed via ./tests/smoke.sh in $ROOT"
