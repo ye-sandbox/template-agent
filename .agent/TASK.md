@@ -15,7 +15,7 @@
   - [x] Read-only / Documentation
   - [ ] Source code changes
 - **Status:** READY FOR PLANNING
-  *(Workflow: `READY FOR PLANNING` → `PLANNING` on presenting plan → approval → `RUNNING`)*
+  *(Workflow: `READY FOR PLANNING` → `PLANNING` on presenting plan → approval/`APPROVED` → `RUNNING`)*
 
 ### Acceptance Criteria
 - [ ] Authentication mechanism and session lifecycle identified (cookies, CSRF tokens, required headers).
