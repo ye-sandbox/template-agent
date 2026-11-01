@@ -39,7 +39,7 @@
 
 ## Backlog (Upcoming, in priority order)
 
-> Tag pre-approved tasks having strictly disjoint file scopes with `[APPROVED]` `[PARALLEL: W1]` and `Paths: ...` for concurrent `task-queue` execution.
+> Tag pre-approved tasks having strictly disjoint file scopes with `[APPROVED]` `[PARALLEL: W1]` and `Read: / Paths: / Verify:` for concurrent `task-queue` execution.
 
 - [ ] **[01.1]** [First business task, bugfix, or feature in legacy] — `[module]`
 - [ ] **[01.2]** [Subsequent task] — `[module]`
