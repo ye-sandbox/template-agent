@@ -34,7 +34,7 @@ The agent MUST optimize context loading using the following progressive disclosu
 ## Execution Protocol
 
 1. Read `AGENTS.md`, `.agent/TASK.md`, and `.agent/NOTES.md`. Inspect `.agent/INVARIANTS.md` before touching schemas or integrations.
-2. **Plan first:** Set `Status` in `.agent/TASK.md` to `PLANNING`; submit plan (including regression risk, characterization strategy, and library vs stdlib trade-offs favoring latest stable/LTS releases grounded on current date if new capabilities are required); await approval; then set to `RUNNING`.
+2. **Plan first (or Pre-Approved Fast-Track):** If `Status` in `.agent/TASK.md` is `READY FOR PLANNING`, set to `PLANNING`, submit plan (including regression risk, characterization strategy, and library vs stdlib trade-offs favoring latest stable/LTS releases grounded on current date if new capabilities are required), await approval, then set to `RUNNING`. If task scope was already decided during planning (`Status: APPROVED`) with zero open questions/blockers, transition directly to `RUNNING` on `proceed` (or use the `task-queue` skill on `proceed queue` to execute tasks sequentially in isolated subagents). Halt and revert to `PLANNING` if any ambiguity or legacy invariant risk arises.
 3. Confinement: Diffs MUST be surgical and microscopic.
 4. **Falsifiable Definition of Done (DoD):**
    A task MUST NOT be declared complete based on subjective appraisal. It MUST satisfy:
