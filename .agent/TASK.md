@@ -37,7 +37,7 @@
 
 ## Backlog (Upcoming, in priority order)
 
-> Tag pre-approved tasks having strictly disjoint file scopes with `[APPROVED]` `[PARALLEL: W1]` and `Paths: ...` for concurrent `task-queue` execution.
+> Tag pre-approved tasks having strictly disjoint file scopes with `[APPROVED]` `[PARALLEL: W1]` and `Read: / Paths: / Verify:` for concurrent `task-queue` execution.
 
 - [ ] **[00.2]** Map and dissect the first business endpoint in `.agent/ENDPOINTS.md` — `[endpoints]`
 - [ ] **[01.1]** Implement resilient HTTP client with session, retry, and backoff — `[client]`
