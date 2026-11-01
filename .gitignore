@@ -30,4 +30,5 @@ Thumbs.db
 .agent/scratch/
 .agent/.cache/
 .maestri/
+.multigravity/
 *.tsbuildinfo

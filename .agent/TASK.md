@@ -38,7 +38,7 @@
 
 ## Backlog (Upcoming, in priority order)
 
-> Tag pre-approved tasks having strictly disjoint file scopes with `[APPROVED]` `[PARALLEL: W1]` and `Paths: ...` for concurrent `task-queue` execution.
+> Tag pre-approved tasks having strictly disjoint file scopes with `[APPROVED]` `[PARALLEL: W1]` and `Read: / Paths: / Verify:` for concurrent `task-queue` execution.
 
 - [ ] **[01.1]** Configure reverse proxy (Traefik or Nginx) with automated SSL termination
 - [ ] **[01.2]** Implement automated backup routine for persistent volumes
