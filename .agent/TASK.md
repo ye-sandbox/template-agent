@@ -15,7 +15,7 @@
   - [x] Read-only / Documentation
   - [x] Source code changes
 - **Status:** READY FOR PLANNING
-  *(Workflow: `READY FOR PLANNING` → `PLANNING` on presenting plan → approval → `RUNNING`)*
+  *(Workflow: `READY FOR PLANNING` → `PLANNING` on presenting plan → approval/`APPROVED` → `RUNNING`)*
 
 ### Acceptance Criteria
 - [ ] `compose.yaml` created and validated with `docker compose config`.
