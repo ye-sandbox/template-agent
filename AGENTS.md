@@ -41,12 +41,13 @@ The agent MUST optimize context loading using the following progressive disclosu
 ## Execution Protocol
 
 1. Read `AGENTS.md`, `.agent/TASK.md`, and `.agent/NOTES.md`. Inspect `.agent/BASELINE.md` and `.agent/INVARIANTS.md` before planning system tweaks.
-2. **Plan first:** Set `Status` in `.agent/TASK.md` to `PLANNING`; submit an implementation plan listing:
+2. **Plan first (or Pre-Approved Fast-Track):** If `Status` in `.agent/TASK.md` is `READY FOR PLANNING`, set to `PLANNING`; submit an implementation plan listing:
    - Target configuration or subsystem.
    - Pre-change backup directory (`.backups/<timestamp>-<name>/`).
    - Symmetrical script paths (`scripts/apply-<name>.sh` and `scripts/revert-<name>.sh`).
    - Expected performance gain and benchmark commands.
    - Await explicit user approval before executing any system changes.
+   - If task scope and apply/revert scripts were already decided during planning (`Status: APPROVED`) with zero open questions/blockers, transition directly to `RUNNING` on `proceed` (or use the `task-queue` skill on `proceed queue` to execute tasks sequentially in isolated subagents; `sudo` execution still requires explicit user confirmation). Halt and revert to `PLANNING` if any invariant risk arises.
 3. **Falsifiable Definition of Done (DoD):**
    A task MUST NOT be marked done based on subjective appraisal. It MUST satisfy:
    - [ ] Pre-change backup created in `.backups/` and verified non-empty.
