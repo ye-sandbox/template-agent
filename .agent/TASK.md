@@ -10,10 +10,10 @@
 
 ## Active Task
 
-- **Task:** `[01.2]` Post-v1.1.0 Ecosystem Roadmap & Community Starter Enhancements
+- **Task:** `[01.3]` Post-v1.1.0 Ecosystem Roadmap & Community Starter Enhancements
 - **Status:** READY FOR PLANNING
 - **Scope:**
-  - Levantar e estruturar próximos objetivos para starters, novos playbooks de projeto e automações de conformidade.
+  - Define next ecosystem milestones for starter templates, domain playbooks, and compliance automation.
 - **Target Branches:** `main`, `all branches`
 
 ---
@@ -25,6 +25,7 @@
 | Task | Title | Commit(s) | Date |
 |---|---|---|---|
 | `[01.1]` | Adjust circuit breaker threshold to 3 consecutive failures on general starters | `b7731e8` (main), `2b5128c` (greenfield), `e3f681c` (brownfield) | 2026-10-31 |
+| `[01.2]` | Pre-Approved Task Fast-Track (`APPROVED`) & `task-queue` Skill Integration | `cdbec44` (main), `7fddee8` (greenfield), `7e5fc61` (brownfield), `9c520f5` (blackbox), `c4a92b7` (infra), `03f8e0e` (baremetal) | 2026-10-31 |
 
 ---
 
