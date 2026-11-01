@@ -82,6 +82,7 @@ MANDATORY_GITIGNORE_RULES=(
   ".agent/scratch/"
   ".agent/.cache/"
   ".maestri/"
+  ".multigravity/"
   "*.tsbuildinfo"
 )
 
