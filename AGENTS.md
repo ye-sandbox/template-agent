@@ -34,7 +34,7 @@ The agent MUST optimize context loading using the following progressive disclosu
 
 1. Read `AGENTS.md`, `.agent/TASK.md`, and `.agent/NOTES.md`. Inspect `.agent/ENDPOINTS.md` and the reverse-engineering skill.
 2. `ENDPOINTS.md` is the source of truth: No cataloged route $\rightarrow$ no production client code.
-3. **Plan first (or Pre-Approved Fast-Track):** If `Status` in `.agent/TASK.md` is `READY FOR PLANNING`, set to `PLANNING`, submit plan (routes, headers, sanitize strategy), await approval, then set to `RUNNING`. If task scope was already decided during planning (`Status: APPROVED`) with zero open questions/blockers, transition directly to `RUNNING` on `proceed` (or use the `task-queue` skill on `proceed queue` to execute tasks sequentially in isolated subagents). Halt and revert to `PLANNING` if any ambiguity or anti-ban risk arises.
+3. **Plan first (or Pre-Approved Fast-Track):** If `Status` in `.agent/TASK.md` is `READY FOR PLANNING`, set to `PLANNING`, submit plan (routes, headers, sanitize strategy), await approval, then set to `RUNNING`. If task scope was already decided during planning (`Status: APPROVED`) with zero open questions/blockers, transition directly to `RUNNING` on `proceed` (or use the `task-queue` skill on `proceed queue` to execute sequential/parallel subagents with multi-account quota routing; tag independent tasks that have strictly disjoint file scopes with `[PARALLEL: Wx]` and `Paths:`). Halt and revert to `PLANNING` if any ambiguity or anti-ban risk arises.
 4. Hermetic cycle: **minimal cURL $\rightarrow$ sanitized fixture $\rightarrow$ mocked test $\rightarrow$ typed client**.
 5. **Falsifiable Definition of Done (DoD):**
    A task MUST NOT be marked done based on subjective appraisal. It MUST satisfy:
