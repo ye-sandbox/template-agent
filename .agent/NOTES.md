@@ -11,6 +11,7 @@
 1. **Read before planning any task:** Active contracts prevent host-level port collisions and volume wipes.
 2. **Keep this file lean:** Only store active infrastructure contracts, multi-agent topology, and critical runtime gotchas.
 3. **Architectural decisions:** Record in [`docs/adr/decisions.md`](../docs/adr/decisions.md).
+4. **CRITICAL INVARIANT:** NEVER create task-specific headings (e.g., `## [Task XX.Y] Description` or `### [Task XX.Y]`) in `NOTES.md`. Task completion details live in `git log` and `.agent/ARCHIVE.md`. Architectural decisions live in `docs/adr/decisions.md`. In `NOTES.md`, maintain and update ONLY the live tables/lists of active contracts, interfaces, and topology.
 
 ---
 

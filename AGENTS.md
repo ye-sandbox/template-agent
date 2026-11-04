@@ -66,7 +66,7 @@ FORBIDDEN ACTIONS:
 
 The agent MUST optimize context loading using the following progressive disclosure triggers:
 - **Default Context (Loaded on start):** `AGENTS.md`, `.agent/TASK.md`, `.agent/NOTES.md`.
-- **Architectural Decisions (`docs/adr/decisions.md`):** MUST load when reviewing historical trade-offs, service boundary rationales, or adding foundational architectural decisions.
+- **Architectural Decisions (`docs/adr/decisions.md`):** Canonical progressive disclosure diary; MUST load when reviewing historical trade-offs, service boundary rationales, or adding foundational architectural decisions. Separate `.agent/adr/` directories or individual ADR files are strictly prohibited to prevent dual-source drift.
 - **Services Topology (`.agent/SERVICES.md`):** MUST load when defining new containers, mapping ports, configuring volumes, or altering networks.
 - **Multi-Repo Ecosystem (`.agent/ECOSYSTEM.md`):** MUST load when mapping external upstream/downstream services, sibling repositories, shared schemas, or cross-repo contract boundaries.
 - **Compose Service Skill (`.agent/skills/compose-service/SKILL.md`):** MUST load when scaffolding or configuring services.
@@ -94,7 +94,7 @@ The agent MUST optimize context loading using the following progressive disclosu
    - [ ] Documentation Frontmatter: All docs under `docs/` MUST include YAML frontmatter (`author_type`, `author`, `reviewed_by`, `date`, `status`, `type`).
    - [ ] Git Cleanliness: `git diff --check` exits with code 0.
    - [ ] Documentation Perimeter: If exposed ports, `.env.example` variables, or service topology changed, synchronize `README.md` and `README.pt-br.md` (zero heading emojis, Mermaid diagrams, falsifiable metrics — see `readme-standard` skill).
-   - [ ] Knowledge Preservation: Document obscure platform/runtime gotchas or workarounds as an atomic card in `.agent/knowledge/` (if applicable).
+   - [ ] Knowledge Preservation: Document obscure platform/runtime gotchas or workarounds as an atomic card in `.agent/knowledge/` ONLY if it describes an unexpected external tool/OS/runtime failure with reproducible symptoms. Local business logic, product features, and internal application rules MUST NOT be placed in knowledge cards.
    - [ ] Atomic Commit: Conventional Commits in English (`feat(service): ...`).
    - [ ] Task Log: Active task logged in `TASK.md`; edge cases recorded in `NOTES.md`.
 
@@ -161,6 +161,7 @@ Not restricted to phase `99.x`. When releasing `vX.Y.Z`:
 - **MUST NOT** change bind mounts without verifying existing data and host UID:GID permissions.
 - **MUST NOT** expose administrative or database ports to `0.0.0.0` without strong auth or network isolation.
 - **MUST NOT** add services to Compose without updating `.agent/SERVICES.md`.
+- **MUST NOT** create task-specific headings (e.g., `## [Task XX.Y] Description` or `### [Task XX.Y]`) in `.agent/NOTES.md`. Task completion details live in `git log` and `.agent/ARCHIVE.md`. Architectural decisions live in `docs/adr/decisions.md`. In `NOTES.md`, maintain and update ONLY the live tables/lists of active contracts, interfaces, and topology.
 - **Circuit breaker:** 2 consecutive failures with the same root cause $\rightarrow$ stop and ask the user.
 - **MUST** document non-obvious orchestration constraints, dependency order requirements, kernel capabilities (`cap_add`), and network quirks as in-file comments using explicit invariant prefixes (e.g., `# INVARIANT: <rationale>`), explaining the architectural *why* rather than restating the YAML syntax.
 - **MUST** write all agent-facing directives, service catalogs, skills, and task logs (`AGENTS.md`, `.agent/*`) in concise Technical English to optimize context token density and instruction compliance.
