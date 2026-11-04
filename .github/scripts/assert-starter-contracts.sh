@@ -89,8 +89,10 @@ assert_greenfield_base() {
   need_grep AGENTS.md 'docs/adr/decisions.md' -qF
   need_grep AGENTS.md '.agent/knowledge/' -qF
   need_grep AGENTS.md 'Knowledge [Pp]reservation' -qiE
+  need_grep AGENTS.md 'unexpected external tool' -qiF
   need_grep .agent/NOTES.md 'docs/adr/decisions.md' -qF
   need_grep .agent/NOTES.md 'Active Contracts' -qF
+  need_grep .agent/NOTES.md 'Task XX.Y' -qiF
   need_grep AGENTS.md 'npm test' -qF
   need_clean_smoke_test
   need_grep AGENTS.md 'Technical English' -qiF
@@ -152,6 +154,9 @@ assert_brownfield() {
   need_grep AGENTS.md '.agent/ECOSYSTEM.md' -qF
   need_grep AGENTS.md '.agent/knowledge/' -qF
   need_grep AGENTS.md 'Knowledge [Pp]reservation' -qiE
+  need_grep AGENTS.md 'unexpected external tool' -qiF
+  need_grep .agent/NOTES.md 'docs/adr/decisions.md' -qF
+  need_grep .agent/NOTES.md 'Task XX.Y' -qiF
   need_grep .agent/knowledge/k-001-characterization-test-state-leakage.md 'characterization' -qiE
   need_grep .agent/knowledge/k-001-characterization-test-state-leakage.md 'detectOpenHandles' -qF
   need_grep .agent/ECOSYSTEM.md 'Repository Topology Matrix' -qF
@@ -211,6 +216,9 @@ assert_blackbox() {
   need_grep AGENTS.md 'INVARIANT:' -qF
   need_grep AGENTS.md '.agent/knowledge/' -qF
   need_grep AGENTS.md 'Knowledge [Pp]reservation' -qiE
+  need_grep AGENTS.md 'unexpected external tool' -qiF
+  need_grep .agent/NOTES.md 'docs/adr/decisions.md' -qF
+  need_grep .agent/NOTES.md 'Task XX.Y' -qiF
   need_grep .agent/knowledge/k-001-soft-200-session-expiry-detection.md 'SessionExpiredError' -qF
   need_grep .agent/knowledge/k-001-soft-200-session-expiry-detection.md 'Soft 200' -qF
   need_grep AGENTS.md 'fixture' -qiE
@@ -278,6 +286,9 @@ assert_infra() {
   need_grep AGENTS.md '.agent/ECOSYSTEM.md' -qF
   need_grep AGENTS.md '.agent/knowledge/' -qF
   need_grep AGENTS.md 'Knowledge [Pp]reservation' -qiE
+  need_grep AGENTS.md 'unexpected external tool' -qiF
+  need_grep .agent/NOTES.md 'docs/adr/decisions.md' -qF
+  need_grep .agent/NOTES.md 'Task XX.Y' -qiF
   need_grep .agent/knowledge/k-001-docker-bind-mount-permissions.md 'Permission denied' -qF
   need_grep .agent/knowledge/k-002-healthcheck-logging-contract.md 'healthz' -qF
   need_grep .agent/skills/compose-service/SKILL.md 'healthz' -qF
@@ -348,6 +359,9 @@ assert_baremetal() {
   need_grep .agent/NOTES.md 'docs/adr/decisions.md' -qF
   need_grep AGENTS.md '.agent/knowledge/' -qF
   need_grep AGENTS.md 'Knowledge [Pp]reservation' -qiE
+  need_grep AGENTS.md 'unexpected external tool' -qiF
+  need_grep .agent/NOTES.md 'docs/adr/decisions.md' -qF
+  need_grep .agent/NOTES.md 'Task XX.Y' -qiF
   need_grep .agent/knowledge/k-001-bash-parameter-expansion-braces.md 'parameter expansion' -qiF
   need_grep .agent/knowledge/k-002-sysctl-persistence-systemd.md 'sysctl' -qF
   need_grep AGENTS.md 'sudo' -qiF

@@ -10,10 +10,10 @@
 
 ## Active Task
 
-- **Task:** `[01.5]` Next Hub Evolution / Maintenance Task
-- **Status:** READY FOR PLANNING
-- **Scope:** Awaiting user direction for the next hub milestone or template enhancement.
-- **Target Branches:** TBD
+- **Task:** `[01.5]` Governance Hardening: ADR Diary Canonicalization, NOTES.md Task Heading Ban & Knowledge DoD Guardrails
+- **Status:** RUNNING
+- **Scope:** Propagate 3 critical governance improvements across `main` and starter branches (`greenfield`, `brownfield`, `blackbox`, `infra`, `baremetal`): (1) Canonical single ADR diary in `docs/adr/decisions.md` (ban separate `.agent/adr/`), (2) Strict prohibition of `## [Task XX.Y]` sections in `NOTES.md`, (3) Falsifiable DoD gate restricting `.agent/knowledge/` to unexpected external runtime/platform quirks.
+- **Target Branches:** `main`, `greenfield`, `brownfield`, `blackbox`, `infra`, `baremetal`
 
 ---
 

@@ -11,6 +11,7 @@
 2. Record: trade-offs, contracts, gotchas, new skills, deliberate technical debt.
 3. Do not record: file lists, changelogs, passing tests.
 4. Architectural decisions $\rightarrow$ record in [`docs/adr/decisions.md`](../docs/adr/decisions.md) (Progressive Disclosure). Keep only active runtime contracts here.
+5. **CRITICAL INVARIANT:** NEVER create task-specific headings (e.g., `## [Task XX.Y] Description` or `### [Task XX.Y]`) in `NOTES.md`. Task completion details live in `git log` and `.agent/ARCHIVE.md`. Architectural decisions live in `docs/adr/decisions.md`. In `NOTES.md`, maintain and update ONLY the live tables/lists of active contracts, interfaces, and topology.
 
 ---
 

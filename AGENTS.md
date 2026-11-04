@@ -34,7 +34,7 @@ When a conflict cannot be resolved using this hierarchy, the agent MUST halt exe
 
 The agent MUST optimize context loading using the following progressive disclosure triggers:
 - **Default Context (Loaded on start):** `AGENTS.md`, `.agent/TASK.md`, `.agent/NOTES.md` (Active Contracts only).
-- **On-Demand Context (Progressive Disclosure):** `docs/adr/decisions.md` (historical architectural decisions diary), `.agent/ECOSYSTEM.md` (multi-repo topology), `.agent/knowledge/` (runtime gotchas & platform cards).
+- **On-Demand Context (Progressive Disclosure):** `docs/adr/decisions.md` (canonical architectural decisions diary; separate `.agent/adr/` directories or individual ADR files are strictly prohibited to prevent dual-source drift), `.agent/ECOSYSTEM.md` (multi-repo topology), `.agent/knowledge/` (runtime gotchas & platform cards).
 - **Branch-Specific Context:** Checkout target branch BEFORE inspecting its root files.
 - **Transversal Skills:** Reference external organizational playbooks (`agent-skills`) ONLY when tasks require UI porting, QA audit, sequential subagent queue execution (`task-queue`), or host-level orchestration.
 
@@ -66,7 +66,7 @@ The agent MUST optimize context loading using the following progressive disclosu
    - [ ] Automated git check passes: `git diff --check` exits with code 0.
    - [ ] Markdown relative links and branch targets validated.
    - [ ] Conventional Commits in English (`feat(hub): ...`, `docs(task): ...`).
-   - [ ] Knowledge preservation: Document obscure platform/runtime gotchas or workarounds as an atomic card in `.agent/knowledge/` (if applicable).
+   - [ ] Knowledge preservation: Document obscure platform/runtime gotchas or workarounds as an atomic card in `.agent/knowledge/` ONLY if it describes an unexpected external tool/OS/runtime failure with reproducible symptoms. Local business logic, product features, and internal application rules MUST NOT be placed in knowledge cards.
    - [ ] Active task logged in `.agent/TASK.md` completed log and next task promoted.
 
 ---
@@ -187,5 +187,6 @@ git commit -m "fix(installer): resolve remote execution flag parsing"
 - **MUST NOT** mix specific template files into `main`. Each starter MUST remain strictly isolated at the root of its own branch.
 - **MUST NOT** force-push (`git push --force`) to primary branches without explicit user permission.
 - **MUST NOT** break backward compatibility of `install.sh` and `init.sh`.
+- **MUST NOT** create task-specific headings (e.g., `## [Task XX.Y] Description` or `### [Task XX.Y]`) in `.agent/NOTES.md`. Task completion details live in `git log` and `.agent/ARCHIVE.md`. Architectural decisions live in `docs/adr/decisions.md`. In `NOTES.md`, maintain and update ONLY the live tables/lists of active contracts, interfaces, and topology.
 - **MUST** preserve lean context in `.agent/TASK.md` and `.agent/NOTES.md`.
 - **MUST** author all agent-facing directives, contracts, skills, and lifecycle logs (`AGENTS.md`, `.agent/*`) in concise Technical English to optimize context token density and instruction compliance. Human-facing documentation (e.g., `README.pt-br.md`) may be localized.
