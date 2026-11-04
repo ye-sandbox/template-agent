@@ -24,7 +24,7 @@ When a conflict cannot be resolved using this hierarchy, the agent MUST halt exe
 The agent MUST optimize context loading using the following progressive disclosure triggers:
 - **Default Context (Loaded on start):** `AGENTS.md`, `.agent/TASK.md`, `.agent/NOTES.md` (Active Contracts & Invariants only).
 - **Endpoint Registry (`.agent/ENDPOINTS.md`):** MUST load when documenting or implementing reverse-engineered routes.
-- **Architectural Decisions (`docs/adr/decisions.md`):** Consult on demand when researching historical rationales.
+- **Architectural Decisions (`docs/adr/decisions.md`):** Canonical progressive disclosure diary; consult on demand when researching historical rationales. Separate `.agent/adr/` directories or individual ADR files are strictly prohibited to prevent dual-source drift.
 - **Reverse Engineering Playbook (`.agent/skills/reverse-engineering/SKILL.md`):** MUST load when capturing flows or constructing fixtures.
 - **Knowledge Base (`.agent/knowledge/`):** Consult on demand when encountering undocumented API behaviors, platform quirks, or platform gotchas.
 
@@ -44,7 +44,7 @@ The agent MUST optimize context loading using the following progressive disclosu
    - [ ] Strict Typing: Client schemas strictly typed with 0 errors.
    - [ ] Git Cleanliness: `git diff --check` exits with code 0.
    - [ ] Documentation Perimeter: If CLI flags, `.env.example` variables, cataloged routes, or validation commands changed, synchronize `README.md` and `README.pt-br.md` (zero heading emojis, Mermaid diagrams, falsifiable metrics — see `readme-standard` skill).
-   - [ ] Knowledge Preservation: Document obscure platform/runtime gotchas or workarounds as an atomic card in `.agent/knowledge/` (if applicable).
+   - [ ] Knowledge Preservation: Document obscure platform/runtime gotchas or workarounds as an atomic card in `.agent/knowledge/` ONLY if it describes an unexpected external tool/OS/runtime failure with reproducible symptoms. Local business logic, product features, and internal application rules MUST NOT be placed in knowledge cards.
    - [ ] Atomic Commit: Conventional Commits in English (`feat(endpoint): ...`).
    - [ ] Task Log: Active task logged in `TASK.md`; edge cases recorded in `NOTES.md`.
 
@@ -125,6 +125,7 @@ During **Phase 00.1 (Discovery & Session)**, the agent MUST configure the offici
 7. **Canonical Test Runner:** **MUST NOT** invent ad-hoc test compilation loops or dynamic eval hacks. Tests MUST run via the project's canonical test command (e.g., `pytest`, `npm test`, `cargo test`, `go test`) against sanitized fixtures.
 8. **Agent Documentation Language:** MUST write all agent-facing directives, skills, endpoint maps, and task logs (`AGENTS.md`, `.agent/*`) in concise Technical English to optimize token density and instruction fidelity.
 9. **In-Code Invariants:** MUST document non-obvious protocol quirks, scraper throttling rationale, signature calculation quirks, and anti-detection delays as in-code comments using explicit invariant prefixes (e.g., `# INVARIANT: <rationale>` or `// INVARIANT: <rationale>`), explaining the technical *why* rather than restating the syntax.
+10. **NOTES.md Task Headings Ban:** MUST NOT create task-specific headings (e.g., `## [Task XX.Y] Description` or `### [Task XX.Y]`) in `.agent/NOTES.md`. Task completion details live in `git log` and `.agent/ARCHIVE.md`. Architectural decisions live in `docs/adr/decisions.md`. In `NOTES.md`, maintain and update ONLY the live tables/lists of active contracts, interfaces, and topology.
 
 ---
 
