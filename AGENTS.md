@@ -23,7 +23,7 @@ When a conflict cannot be resolved using this hierarchy, the agent MUST halt exe
 
 The agent MUST optimize context loading using the following progressive disclosure triggers:
 - **Default Context (Loaded on start):** `AGENTS.md`, `.agent/TASK.md`, `.agent/NOTES.md`.
-- **Architectural Decisions (`docs/adr/decisions.md`):** MUST load when reviewing historical host trade-offs or recording substantive OS design decisions.
+- **Architectural Decisions (`docs/adr/decisions.md`):** Canonical progressive disclosure diary; MUST load when reviewing historical host trade-offs or recording substantive OS design decisions. Separate `.agent/adr/` directories or individual ADR files are strictly prohibited to prevent dual-source drift.
 - **System Baseline (`.agent/BASELINE.md`):** MUST load when diagnosing performance, benchmarking, inspecting hardware, or checking kernel/OS specifications.
 - **Host Invariants (`.agent/INVARIANTS.md`):** MUST load before proposing any modifications to system configurations, kernel flags, or systemd services.
 - **Tunings Registry (`.agent/TUNINGS.md`):** MUST load when reviewing past optimizations, auditing system state, or executing a rollback.
@@ -59,7 +59,7 @@ The agent MUST optimize context loading using the following progressive disclosu
    - [ ] Verification command passes: `./tests/smoke.sh` runs smoke tests.
    - [ ] Git cleanliness: `git diff --check` exits with code 0.
    - [ ] Documentation Perimeter: If `.env.example` variables, benchmark scripts, or baseline tunings changed, synchronize `README.md` and `README.pt-br.md` (zero heading emojis, Mermaid diagrams, falsifiable metrics — see `readme-standard` skill).
-   - [ ] Knowledge Preservation: Document obscure platform/runtime gotchas or workarounds as an atomic card in `.agent/knowledge/` (if applicable).
+   - [ ] Knowledge Preservation: Document obscure platform/runtime gotchas or workarounds as an atomic card in `.agent/knowledge/` ONLY if it describes an unexpected external tool/OS/runtime failure with reproducible symptoms. Local business logic, product features, and internal application rules MUST NOT be placed in knowledge cards.
    - [ ] Atomic Commit: Conventional Commits in English (`feat(tuning): ...`).
    - [ ] Task Log: Active task logged in `TASK.md`; edge cases recorded in `NOTES.md`.
 
@@ -122,6 +122,7 @@ Not restricted to phase `99.x`. When releasing `vX.Y.Z`:
 - **MUST NOT** purge packages (`apt purge`, `pacman -Rns`, `dnf remove`) without explicit human confirmation.
 - **MUST NOT** edit bootloader configurations (`/boot/grub/grub.cfg`, `/etc/default/grub`) without prior syntax validation (`grub-mkconfig` dry-run).
 - **MUST NOT** commit system passwords, private SSH/GPG keys, or hardware dumps into git.
+- **MUST NOT** create task-specific headings (e.g., `## [Task XX.Y] Description` or `### [Task XX.Y]`) in `.agent/NOTES.md`. Task completion details live in `git log` and `.agent/ARCHIVE.md`. Architectural decisions live in `docs/adr/decisions.md`. In `NOTES.md`, maintain and update ONLY the live tables/lists of active contracts, interfaces, and topology.
 - **Circuit breaker:** 2 consecutive failures with the same root cause $\rightarrow$ stop and ask the user.
 - **MUST** document non-obvious kernel quirks, hardware timing constraints, sysfs side-effects, and safety thresholds as in-script comments using explicit invariant prefixes (e.g., `# INVARIANT: <rationale>`), explaining the system *why* rather than restating the command syntax.
 - **MUST** write all agent-facing directives, registries, skills, and task logs (`AGENTS.md`, `.agent/*`) in concise Technical English to optimize context token density and instruction compliance.

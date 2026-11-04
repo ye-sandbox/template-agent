@@ -12,6 +12,7 @@
 1. **Read before planning any task:** Active contracts prevent destructive commands and unintended system downtime.
 2. **Keep this file lean:** Only record active operational contracts, gotchas, and assumed technical debt.
 3. **Decisions & Rationale:** Record in [`docs/adr/decisions.md`](../docs/adr/decisions.md) WHY optimizations were configured or why certain parameters were avoided.
+4. **CRITICAL INVARIANT:** NEVER create task-specific headings (e.g., `## [Task XX.Y] Description` or `### [Task XX.Y]`) in `NOTES.md`. Task completion details live in `git log` and `.agent/ARCHIVE.md`. Architectural decisions live in `docs/adr/decisions.md`. In `NOTES.md`, maintain and update ONLY the live tables/lists of active contracts, interfaces, and topology.
 
 ---
 
