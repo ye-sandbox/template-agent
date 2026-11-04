@@ -25,7 +25,7 @@ The agent MUST optimize context loading using the following progressive disclosu
 - **Default Context (Loaded on start):** `AGENTS.md`, `.agent/TASK.md`, `.agent/NOTES.md` (Active Contracts only).
 - **Invariants (`.agent/INVARIANTS.md`):** MUST load BEFORE modifying database schemas, shared payloads, or third-party integrations.
 - **Multi-Repo Ecosystem (`.agent/ECOSYSTEM.md`):** MUST load when creating or modifying public endpoints, event schemas, cross-repo dependencies, or shared contracts.
-- **Architectural Decisions (`docs/adr/decisions.md`):** Consult on demand when researching historical rationales or trade-offs.
+- **Architectural Decisions (`docs/adr/decisions.md`):** Canonical progressive disclosure diary; consult on demand when researching historical rationales or trade-offs. Separate `.agent/adr/` directories or individual ADR files are strictly prohibited to prevent dual-source drift.
 - **Knowledge Base (`.agent/knowledge/`):** Consult on demand when diagnosing obscure runtime errors, platform gotchas, or adding workarounds.
 - **Legacy Discovery:** Inspect configuration files (`package.json`, `pyproject.toml`, `Makefile`) ONLY during Discovery or when dependency/tool changes are explicitly tasked.
 
@@ -44,7 +44,7 @@ The agent MUST optimize context loading using the following progressive disclosu
    - [ ] Linters: Project validation commands exit with code 0.
    - [ ] Git Cleanliness: `git diff --check` exits with code 0.
    - [ ] Documentation Perimeter: If CLI flags, `.env.example` variables, public ports, or validation commands changed, synchronize `README.md` and `README.pt-br.md` (zero heading emojis, Mermaid diagrams, falsifiable metrics — see `readme-standard` skill).
-   - [ ] Knowledge Preservation: Document obscure platform/runtime gotchas or workarounds as an atomic card in `.agent/knowledge/` (if applicable).
+   - [ ] Knowledge Preservation: Document obscure platform/runtime gotchas or workarounds as an atomic card in `.agent/knowledge/` ONLY if it describes an unexpected external tool/OS/runtime failure with reproducible symptoms. Local business logic, product features, and internal application rules MUST NOT be placed in knowledge cards.
    - [ ] Atomic Commit: Conventional Commits in English (`fix(legacy): ...`).
    - [ ] Task Log: Active task logged in `TASK.md`; discoveries recorded in `INVARIANTS.md` or `NOTES.md`.
 
@@ -122,6 +122,7 @@ OS/shell, architecture, language, package manager **already present in repo**, f
 8. **Consultative Dependencies:** When addressing missing capabilities, do NOT silently write complex in-house logic from scratch or install packages autonomously. Recommend battle-tested libraries alongside zero-dependency/stdlib alternatives, detailing maintenance and compatibility trade-offs for user approval.
 9. **Stable & LTS Versioning:** Default to the newest stable release (favoring LTS) grounded on current date, strictly avoiding unapproved pre-releases (`alpha`/`beta`/`rc`/`canary`). Existing peer dependencies, runtime constraints, and `.agent/INVARIANTS.md` take strict precedence over latest major versions.
 10. **In-Code Invariants:** MUST document non-obvious legacy constraints, ordering quirks, and defensive workarounds as in-code comments using explicit invariant prefixes (e.g., `# INVARIANT: <rationale>` or `// INVARIANT: <rationale>`), explaining the architectural or domain *why* rather than restating the syntax.
+11. **NOTES.md Task Headings Ban:** MUST NOT create task-specific headings (e.g., `## [Task XX.Y] Description` or `### [Task XX.Y]`) in `.agent/NOTES.md`. Task completion details live in `git log` and `.agent/ARCHIVE.md`. Architectural decisions live in `docs/adr/decisions.md`. In `NOTES.md`, maintain and update ONLY the live tables/lists of active contracts, interfaces, and topology.
 
 ---
 
