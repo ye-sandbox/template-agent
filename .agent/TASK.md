@@ -10,10 +10,10 @@
 
 ## Active Task
 
-- **Task:** `[01.5]` Governance Hardening: ADR Diary Canonicalization, NOTES.md Task Heading Ban & Knowledge DoD Guardrails
-- **Status:** RUNNING
-- **Scope:** Propagate 3 critical governance improvements across `main` and starter branches (`greenfield`, `brownfield`, `blackbox`, `infra`, `baremetal`): (1) Canonical single ADR diary in `docs/adr/decisions.md` (ban separate `.agent/adr/`), (2) Strict prohibition of `## [Task XX.Y]` sections in `NOTES.md`, (3) Falsifiable DoD gate restricting `.agent/knowledge/` to unexpected external runtime/platform quirks.
-- **Target Branches:** `main`, `greenfield`, `brownfield`, `blackbox`, `infra`, `baremetal`
+- **Task:** `[01.6]` Next Hub Evolution / Maintenance Task
+- **Status:** READY FOR PLANNING
+- **Scope:** Awaiting user direction for the next hub milestone or template enhancement.
+- **Target Branches:** TBD
 
 ---
 
@@ -27,6 +27,7 @@
 | `[01.2]` | Pre-Approved Task Fast-Track (`APPROVED`) & `task-queue` Skill Integration | `cdbec44` (main), `7fddee8` (greenfield), `7e5fc61` (brownfield), `9c520f5` (blackbox), `c4a92b7` (infra), `03f8e0e` (baremetal) | 2026-10-31 |
 | `[01.3]` | Parallel Task Waves (`[PARALLEL: Wx]`) & Multi-Account Quota Routing in `task-queue` | `e8d74b4` (main), `a62c937` (greenfield), `5428136` (brownfield), `135cbd5` (blackbox), `c253b20` (infra), `6512f5b` (baremetal) | 2026-10-31 |
 | `[01.4]` | Token-Efficient Wave Runner (`run-wave.sh`), `Read:/Paths:/Verify:` Micro-Contract, `gemini-3.8-flash-medium` Default & `.multigravity/` Ignore Invariant | `c18de50` (main), `046fec3` (greenfield), `c0b1139` (brownfield), `00328ea` (blackbox), `2737eb8` (infra), `5c093f2` (baremetal) | 2026-11-01 |
+| `[01.5]` | Governance Hardening: ADR Canonicalization, NOTES.md Task Heading Ban & Knowledge DoD Guardrail | `88eddd8` (main), `68a968d` (greenfield), `e3890ac` (brownfield), `1c92cf3` (blackbox), `99c9de6` (infra), `e123f4a` (baremetal) | 2026-11-03 |
 
 ---
 
