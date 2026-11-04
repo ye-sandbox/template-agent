@@ -23,7 +23,7 @@ When a conflict cannot be resolved using this hierarchy, the agent MUST halt exe
 
 The agent MUST minimize default token load by following progressive disclosure:
 - **Default Context (Loaded on start):** `AGENTS.md`, `.agent/TASK.md`, `.agent/NOTES.md` (Active Contracts only).
-- **Architectural Decisions (`docs/adr/decisions.md`):** MUST load when creating new services, researching historical trade-offs, or changing system boundaries.
+- **Architectural Decisions (`docs/adr/decisions.md`):** Canonical progressive disclosure diary; MUST load when creating new services, researching historical trade-offs, or changing system boundaries. Separate `.agent/adr/` directories or individual ADR files are strictly prohibited to prevent dual-source drift.
 - **Multi-Repo Ecosystem (`.agent/ECOSYSTEM.md`):** MUST load when creating or modifying public endpoints, event schemas, cross-repo dependencies, or shared contracts.
 - **Domain Skills (`.agent/skills/<name>/SKILL.md`):** MUST load only when the active task touches that skill's trigger.
 - **Knowledge Base (`.agent/knowledge/`):** MUST load relevant atomic cards when diagnosing obscure platform errors, runtime gotchas, or adding known workarounds.
@@ -42,7 +42,7 @@ The agent MUST minimize default token load by following progressive disclosure:
    - [ ] Linters: Linter and formatter checks exit with code 0.
    - [ ] Git Cleanliness: `git diff --check` exits with code 0.
    - [ ] Documentation Perimeter: If CLI flags, `.env.example` variables, public ports, or validation commands changed, synchronize `README.md` and `README.pt-br.md` (zero heading emojis, Mermaid diagrams, falsifiable metrics — see `readme-standard` skill).
-   - [ ] Knowledge Preservation: Document obscure platform/runtime gotchas or workarounds as an atomic card in `.agent/knowledge/` (if applicable).
+   - [ ] Knowledge Preservation: Document obscure platform/runtime gotchas or workarounds as an atomic card in `.agent/knowledge/` ONLY if it describes an unexpected external tool/OS/runtime failure with reproducible symptoms. Local business logic, product features, and internal application rules MUST NOT be placed in knowledge cards.
    - [ ] Atomic Commit: Conventional Commits in English (`feat(scope): ...`).
    - [ ] Task Log: Active task logged in `.agent/TASK.md` with commit hash; next task promoted.
 
@@ -171,6 +171,7 @@ When selecting libraries, frameworks, runtimes, or base images:
 - **MUST NOT** reinvent complex standard capabilities from scratch without presenting battle-tested library alternatives and their trade-offs to the user.
 - **MUST NOT** invent ad-hoc test compilation loops, dynamic eval imports, or inline bundler scripts (e.g., inline esbuild in .mjs) to bypass a missing test runner. The test suite MUST run via the project's canonical test command (e.g., `npm test`, `pytest`, `cargo test`, `go test`).
 - **MUST NOT** break payload contracts documented in `.agent/NOTES.md` or `.agent/ECOSYSTEM.md`.
+- **MUST NOT** create task-specific headings (e.g., `## [Task XX.Y] Description` or `### [Task XX.Y]`) in `.agent/NOTES.md`. Task completion details live in `git log` and `.agent/ARCHIVE.md`. Architectural decisions live in `docs/adr/decisions.md`. In `NOTES.md`, maintain and update ONLY the live tables/lists of active contracts, interfaces, and topology.
 - **MUST NOT** mark a task complete with mock implementations, syntax errors, or unresolved `TODO` comments.
 - **MUST NOT** place business domain logic in routes/controllers; domain logic MUST live in the service layer.
 - **MUST NOT** delete files or execute out-of-scope refactorings.
