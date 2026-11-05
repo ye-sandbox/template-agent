@@ -1,192 +1,192 @@
-# Agent Guidelines and Rules (Template Hub Repository)
+# Agent Guidelines and Rules — Template Hub Repository
 
-You are the lead engineer governing, maintaining, and evolving this repository: **Agent-Driven Development (ADD) Template Hub**.
+Central governance specification for maintaining and evolving the Agent-Driven Development (ADD) Template Hub.
 
-> 💡 **Repository Context:** This repository is NOT a business application. It is the **Central Template Hub** providing foundational templates for new projects and legacy adoption via a **Specialized Branches as Templates** architecture. Cross-cutting playbooks (UI, QA, host infrastructure) are maintained in the organization playbook catalog (`agent-skills`).
+## 1. Scope & Blast Radius
 
----
+- **MUTABLE PATHS:**
+  - `AGENTS.md`
+  - `.agent/TASK.md`, `.agent/NOTES.md`, `.agent/ARCHIVE.md`
+  - `docs/**`, `README.md`, `README.pt-br.md`, `CHANGELOG.md`
+  - `.github/workflows/**`, `.github/scripts/**`
+- **IMMUTABLE PATHS:**
+  - Specialized starter files on `main` (starter filetrees belong exclusively to their respective branches: `greenfield`, `brownfield`, `blackbox`, `infra`, `baremetal`).
+  - `.env` files, credentials, private tokens.
+- **FORBIDDEN ACTIONS:**
+  - `[P0]` MUST NOT execute `git merge` between specialized branches (`main`, `greenfield`, `brownfield`, `blackbox`, `infra`, `baremetal`).
+  - `[P0]` MUST NOT execute destructive Git operations (`git push --force`, `git reset --hard`, `git clean -fd`) without explicit human instruction.
+  - `[P0]` MUST NOT commit unscrubbed credentials, API keys, or private tokens.
+  - `[P1]` MUST NOT create task-specific headings (`## [Task XX.Y]`) in `.agent/NOTES.md`. Task completion history belongs in `git log` and `.agent/ARCHIVE.md`. Architectural decisions belong in `docs/adr/decisions.md`.
+  - `[P1]` MUST NOT create separate `.agent/adr/` directories or individual ADR files. All decisions MUST append to `docs/adr/decisions.md`.
+  - `[P1]` MUST NOT break backward compatibility of `install.sh` or `init.sh`.
+- **EXCEPTIONS:**
+  - Cross-branch synchronization permitted exclusively via atomic cherry-picking or selective file checkout (`git checkout <source-branch> -- <file>`).
 
-## ⚖️ Rule Precedence Hierarchy
+## 2. Priority Ranking & Precedence
 
-When directives conflict, the agent MUST resolve them using the following strict priority:
-1. **Branch Isolation & Root Cleanliness:** NEVER merge across specialized branches.
-2. **Blast Radius & Git Safety:** NEVER perform destructive or force operations (`--force`, `reset --hard`, credential exposure).
-3. **Plan-First Protocol:** Required for substantive architectural, feature, or multi-file repository changes. Simple one-off commands and ad-hoc operations use the Direct Execution Fast-Path.
-4. **Task Lifecycle & Commit Standards:** Strictly follow task numbering and atomic Conventional Commits for tracked roadmap tasks.
-5. **Documentation Formatting:** Follow Markdown and link standards.
+Resolve directive conflicts using the strict canonical precedence hierarchy:
 
-When a conflict cannot be resolved using this hierarchy, the agent MUST halt execution and request explicit human clarification.
+| Priority | Tier | Rules & Invariants |
+| :---: | :--- | :--- |
+| **`[P0]`** | **Security & Blast Radius** | Branch isolation (zero cross-branch merges), destructive git command ban, credential scrubbing. |
+| **`[P1]`** | **Invariants & Automated Contracts** | Single ADR diary (`docs/adr/decisions.md`), `NOTES.md` heading ban, automated CI checks, falsifiable DoD assertions. |
+| **`[P2]`** | **Execution & Task Lifecycle** | Plan-First protocol, task numbering format (`[XX.Y]`), Conventional Commits, single active task in `RUNNING`. |
+| **`[P3]`** | **Style & Documentation** | Markdown link validity, Technical English for agent contracts, localized human READMEs. |
 
----
+When a conflict cannot be resolved using this hierarchy, halt execution and request human clarification.
 
-## 🌿 Repository Branch Map
+## 3. Repository Branch Map
 
-- **`main` (This Branch):** Central documentation hub, decision matrix, governance guidelines, and ecosystem evolution history.
-- **`greenfield`:** Clean starter kit for projects built from scratch (`docs/adr/decisions.md`, `.agent/skills/`, etc. at root).
-- **`brownfield`:** Injection template for existing/legacy codebases (`install.sh`, `.agent/INVARIANTS.md`, `.agent/ECOSYSTEM.md`, Task 00 Discovery).
-- **`blackbox`:** Template for reverse engineering, scrapers, automations, and undocumented closed APIs (`.agent/ENDPOINTS.md`, `.agent/skills/reverse-engineering/`, `init.sh`).
-- **`infra`:** Infrastructure-as-Code (IaC), Docker Compose, service orchestration, and Homelab (`.agent/SERVICES.md`, `.agent/ECOSYSTEM.md`, `.agent/skills/compose-service/`, `compose.yaml.example`, `init.sh`).
-- **`baremetal`:** Template for PC/workstation tuning, host OS administration, kernel/sysctl tweaks, and dotfiles (`.agent/BASELINE.md`, `.agent/INVARIANTS.md`, `.agent/TUNINGS.md`, `.agent/skills/baremetal-tuning/`, `init.sh`).
+Starters exist as isolated roots on specialized branches. NEVER merge across branches.
 
----
+| Branch | Role | Root Contents / Purpose |
+| :--- | :--- | :--- |
+| **`main`** | Hub Governance | Documentation hub, decision matrix, governance rules, and inter-branch CI scripts. |
+| **`greenfield`** | Scratch Starter | Clean starter kit (`docs/adr/decisions.md`, `.agent/skills/`). |
+| **`brownfield`** | Legacy Adoption | Injection kit (`install.sh`, `.agent/INVARIANTS.md`, `.agent/ECOSYSTEM.md`, Task 00 Discovery). |
+| **`blackbox`** | Reverse Engineering | Automations, scrapers, closed APIs (`.agent/ENDPOINTS.md`, `.agent/skills/reverse-engineering/`, `init.sh`). |
+| **`infra`** | Service Orchestration | Docker Compose, homelab (`.agent/SERVICES.md`, `.agent/skills/compose-service/`, `compose.yaml.example`, `init.sh`). |
+| **`baremetal`** | Workstation & OS Tuning | Host tuning, kernel/sysctl tweaks, dotfiles (`.agent/BASELINE.md`, `.agent/INVARIANTS.md`, `.agent/TUNINGS.md`, `init.sh`). |
 
-## Modular Context Triggers
+## 4. Modular Context Triggers
 
-The agent MUST optimize context loading using the following progressive disclosure triggers:
-- **Default Context (Loaded on start):** `AGENTS.md`, `.agent/TASK.md`, `.agent/NOTES.md` (Active Contracts only).
-- **On-Demand Context (Progressive Disclosure):** `docs/adr/decisions.md` (canonical architectural decisions diary; separate `.agent/adr/` directories or individual ADR files are strictly prohibited to prevent dual-source drift), `.agent/ECOSYSTEM.md` (multi-repo topology), `.agent/knowledge/` (runtime gotchas & platform cards).
-- **Branch-Specific Context:** Checkout target branch BEFORE inspecting its root files.
-- **Transversal Skills:** Reference external organizational playbooks (`agent-skills`) ONLY when tasks require UI porting, QA audit, sequential subagent queue execution (`task-queue`), or host-level orchestration.
+Optimize context consumption via progressive disclosure:
 
----
+- **Default Context (Loaded on start):** Read `AGENTS.md`, `.agent/TASK.md`, and `.agent/NOTES.md` (Active Contracts only).
+- **On-Demand Context (Progressive Disclosure):**
+  - Architectural decisions: Read `docs/adr/decisions.md`. Prohibit separate `.agent/adr/` trees to prevent dual-source drift.
+  - Multi-repo topology: Read `.agent/ECOSYSTEM.md`.
+  - Platform/runtime gotchas: Read `.agent/knowledge/<card>.md`.
+- **Branch-Specific Context:** Checkout the target branch BEFORE inspecting its root files.
+- **Transversal Skills:** Reference external organizational playbooks (`agent-skills`) ONLY when tasks require UI porting, QA audit, task-queue wave execution, or host-level orchestration.
 
-## Mandatory Execution Protocol
+## 5. Mandatory Execution Protocol
 
-1. **Inspect Context:** Read `AGENTS.md`, `.agent/TASK.md`, and `.agent/NOTES.md` before editing files on `main`.
-2. **Enforce Branch Isolation:**
-   - For greenfield project workflows: checkout and test on `greenfield`.
-   - For legacy injection or brownfield workflows: checkout and test on `brownfield`.
-   - For reverse engineering, scrapers, or closed APIs: checkout and test on `blackbox`.
-   - For infrastructure, Docker Compose, or services: checkout and test on `infra`.
-   - For baremetal, host OS tuning, or workstation ops: checkout and test on `baremetal`.
-   - For hub docs, governance, or new template branches: work directly on `main`.
-3. **Execution Modes:**
-   - **Fast-Path (Ad-Hoc & Operational Requests):**
-     Do NOT create, number, or log a task in `.agent/TASK.md`, and do NOT create an `implementation_plan.md` when the request:
-     - Is an ad-hoc or operational utility command (e.g., copying/moving files between repos, running quick CLI one-liners).
-     - Is trivially simple or a minor localized adjustment (e.g., fixing a typo, formatting, renaming a variable).
-     - Is investigatory, conversational, or read-only (e.g., questions, diff inspection, log checks).
-     Execute these requests **immediately and directly** without interrupting the user.
-   - **Plan-First Workflow (Tracked Roadmap Tasks):**
-     Applies ONLY to substantive repository changes, architectural updates, multi-file features, or template modifications:
-     - **Standard (`READY FOR PLANNING`):** Update `Status` in `.agent/TASK.md` to `PLANNING`, present a detailed action plan listing affected branches and files, await explicit user approval, then update `Status` to `RUNNING`.
-     - **Pre-Approved (`APPROVED`):** When task scope and acceptance criteria were already decided during an interactive planning session (`Status: APPROVED`) and zero ambiguities or blockers exist, transition directly to `RUNNING` on `proceed` (or orchestrate sequential/parallel subagents and multi-account quota routing via the `task-queue` skill on `proceed queue`; tag tasks that have strictly disjoint file scopes with `[PARALLEL: Wx]` and `Paths:`). Halt and set `Status` to `PLANNING` if any pending human decision arises.
-4. **Falsifiable Definition of Done (DoD) for Roadmap Tasks:**
-   Tracked roadmap tasks MUST NOT be declared complete until ALL checks pass:
-   - [ ] Automated git check passes: `git diff --check` exits with code 0.
-   - [ ] Markdown relative links and branch targets validated.
-   - [ ] Conventional Commits in English (`feat(hub): ...`, `docs(task): ...`).
-   - [ ] Knowledge preservation: Document obscure platform/runtime gotchas or workarounds as an atomic card in `.agent/knowledge/` ONLY if it describes an unexpected external tool/OS/runtime failure with reproducible symptoms. Local business logic, product features, and internal application rules MUST NOT be placed in knowledge cards.
-   - [ ] Active task logged in `.agent/TASK.md` completed log and next task promoted.
+### Step 1: Context Inspection
+Read `AGENTS.md`, `.agent/TASK.md`, and `.agent/NOTES.md` before editing files on `main`. Checkout the corresponding branch for starter-specific workflows.
 
----
+### Step 2: Select Execution Mode
+- **Fast-Path (Ad-Hoc & Operational Requests):**
+  Execute immediately without creating a task in `.agent/TASK.md` or writing an implementation plan when the request:
+  - Is an ad-hoc operational utility command (e.g., copying files, quick CLI inspection).
+  - Is a trivial adjustment (e.g., fixing a typo, formatting, renaming a variable).
+  - Is investigatory, conversational, or read-only (e.g., questions, diff review, log checks).
+- **Plan-First Workflow (Tracked Roadmap Tasks):**
+  Required for substantive architectural, feature, multi-file, or template changes:
+  - **Standard (`READY FOR PLANNING`):** Update `Status` in `.agent/TASK.md` to `PLANNING`, present an action plan detailing affected branches and files, await explicit user approval, then transition `Status` to `RUNNING`.
+  - **Pre-Approved (`APPROVED`):** When scope and acceptance criteria were approved in interactive planning (`Status: APPROVED`), transition directly to `RUNNING` on `proceed` (or invoke sequential/parallel subagents via `task-queue` skill and `run-wave.sh` on `proceed queue`). Halt and revert to `PLANNING` if pending human decisions or blockers arise.
 
-## Fail-Stop Protocol & Escalation Hierarchy
+### Step 3: Falsifiable Definition of Done (DoD)
+Tasks MUST NOT be marked complete until all checks pass:
+- [ ] Automated git check passes: `git diff --check` exits with code 0.
+- [ ] Markdown relative links and branch targets validate without broken references.
+- [ ] Atomic Conventional Commits in English (`feat(hub): ...`, `docs(task): ...`).
+- [ ] Knowledge preservation: Document obscure platform/runtime gotchas in `.agent/knowledge/` ONLY if describing an unexpected external tool/OS/runtime failure with reproducible symptoms. MUST NOT record application business logic or features in knowledge cards.
+- [ ] Completed task logged as a single line in `.agent/TASK.md` and next task promoted.
+
+## 6. Fail-Stop Protocol & Escalation Hierarchy
 
 If an automated command or build step fails **3 consecutive times** with the same root cause:
-1. The agent MUST STOP execution immediately.
-2. The agent MUST NOT attempt unapproved workarounds.
-3. The agent MUST escalate to the user with a structured diagnostic block:
-   ```yaml
-   failure_stage: "command or step name"
-   error_signature: "exact error string"
-   consecutive_failures: 3
-   root_cause_analysis: "technical description"
-   attempted_fixes:
-     - "attempt 1 summary"
-     - "attempt 2 summary"
-     - "attempt 3 summary"
-   pending_decision: "question or proposed options for the user"
-   ```
+1. Halt execution immediately.
+2. MUST NOT attempt unapproved workarounds.
+3. Escalate to the user with a structured diagnostic payload:
+```yaml
+failure_stage: "<command or step name>"
+error_signature: "<exact error string>"
+consecutive_failures: 3
+root_cause_analysis: "<technical root cause>"
+attempted_fixes:
+  - "<attempt 1>"
+  - "<attempt 2>"
+  - "<attempt 3>"
+pending_decision: "<clarification or choice required from human>"
+```
 
----
+## 7. Task Lifecycle & Numbering (`[XX.Y]`)
 
-## Task Numbering (`[XX.Y]`)
-
-Format: `[Epic].[Sequence]` with two-digit epics. Subtasks: `[XX.Y.Z]`. Exactly **one** task active in `RUNNING` status. IDs are immutable within a release cycle. After Git tag: archive to `ARCHIVE.md`, restart at `[00.1]`/`[01.1]`, and update the active task ID.
-
-**Next ID:** Derived solely from Active Task + Log of current cycle. Ignore Future Backlog and closing sections. Same epic → `Y+1` (`[04.4]` → `[04.5]`). New epic → `[XX+1.1]`. Never jump to `90.x`/`99.x` unless performing refactoring/release explicitly requested by the user.
-
-**Release:** `[99.1]` is not a queue item. It becomes active only with explicit human instruction. Never trigger release tags autonomously; never treat `99.x` as an artificial ceiling.
+Format: `[Epic].[Sequence]` with two-digit epics. Subtasks: `[XX.Y.Z]`. Exactly **one** task active in `RUNNING` status. Derive next ID exclusively from active task + completed log.
 
 | Prefix | Phase | Hub Scope |
 | :---: | :--- | :--- |
-| **`00.x`** | Bootstrap & Discovery | Setup, linters, initial audit |
-| **`01.x`** | Foundation & Guardrails | Critical fixes, CI, canonical contracts |
-| **`02.x`–`89.x`** | Epics | New templates, hub features (each decade = one epic) |
-| **`90.x`** | Refactoring | Technical debt without contract modifications |
-| **`99.x`** | Hardening & Release | Final audit and release tagging — human approval required |
+| **`00.x`** | Bootstrap & Discovery | Initial setup, linters, baseline audit. |
+| **`01.x`** | Foundation & Guardrails | Critical fixes, CI, canonical contracts, governance. |
+| **`02.x`–`89.x`** | Epics | New templates, hub features (each decade = one epic). |
+| **`90.x`** | Refactoring | Technical debt and performance optimization without contract changes. |
+| **`99.x`** | Hardening & Release | Final audit and release tagging — human instruction REQUIRED. |
 
----
-
-## Post-Release Hygiene (Trigger: Git tag on any phase)
-
-Not restricted to phase `99.x`. When releasing `vX.Y.Z`:
-
-1. **Archive:** Move completed log from `TASK.md` to `ARCHIVE.md` under `## [vX.Y.Z] - YYYY-MM-DD`.
-2. **Consolidate:** Promote definitive architectural decisions to `docs/adr/decisions.md`; prune ephemeral scratch notes in `.agent/NOTES.md` preserving only active contracts.
+### Post-Release Hygiene (`vX.Y.Z`)
+Triggered exclusively by human instruction to tag a release:
+1. **Archive:** Move completed task log from `TASK.md` to `ARCHIVE.md` under `## [vX.Y.Z] - YYYY-MM-DD`.
+2. **Consolidate:** Promote definitive architectural decisions to `docs/adr/decisions.md`; prune scratch notes from `.agent/NOTES.md`.
 3. **Perimeter:** Sync `.env.example` and `README.md` to the release tag.
-4. **Reset:** Reset task numbering; correct active task ID; promote next milestone to `READY FOR PLANNING`; restore closing checklist in `TASK.md`.
+4. **Reset:** Reset task numbering; promote next milestone to `READY FOR PLANNING`; restore closing checklist.
 
----
+## 8. Inter-Branch Synchronization Protocol
 
-## 🔄 Inter-Branch Synchronization Protocol
-
-Because branches `greenfield`, `brownfield`, `blackbox`, `infra`, `baremetal`, and `main` have intentionally distinct root directories, **`git merge` between them is strictly prohibited**. Merging pollutes clean template roots.
-
-To propagate governance or shared tooling improvements across branches:
+Branch root trees are intentionally disjoint. NEVER run `git merge` between specialized branches.
 
 ### 1. Atomic Commit Cherry-Picking
-When creating generic improvements applicable across templates:
+Propagate generic improvements across template branches:
 ```bash
-# On target branch (e.g., greenfield, brownfield, blackbox, infra, baremetal):
+git checkout <target-branch>
 git cherry-pick <commit-hash>
 ```
 
 ### 2. Selective File Checkout
-To sync shared canonical files (e.g., `.gitignore`, `.env.example`):
+Propagate shared canonical files (e.g., `.gitignore`, `.env.example`):
 ```bash
-# On target branch:
+git checkout <target-branch>
 git checkout <source-branch> -- path/to/file
 git commit -m "chore(sync): sync <file> from <source-branch>"
 ```
 
 ### 3. Responsibility Matrix
-- `.github/workflows/ci.yml`: Centrally maintained and versioned on `main`.
-- `.gitignore` and `.env.example`: Kept synchronized across all branches.
-- `.agent/TASK.md` and `.agent/NOTES.md`:
-  - On `main`: Tracks ecosystem and Template Hub tasks/decisions.
-  - On `greenfield`, `brownfield`, `blackbox`, `infra`, `baremetal`: Kept as clean canonical templates for end users.
+- `.github/workflows/ci.yml`: Centrally maintained on `main`.
+- `.gitignore` and `.env.example`: Synchronized across all branches.
+- `.agent/TASK.md` and `.agent/NOTES.md`: Maintained as live state on `main`; kept as clean canonical starter templates on other branches.
 
----
+## 9. Git & Commit Standards
 
-## 📦 Git & Commit Standards (Conventional Commits & Atomicity)
-
-### 1. Atomic Commits
-1. **Single Responsibility:** Each commit MUST represent a single, cohesive, verifiable change. NEVER combine governance, documentation, and script updates into one commit.
-2. **Step-by-Step Cycle:** Commit and validate atomically before moving to the next phase.
-3. **Surgical Diffs:** Avoid unintended files, accidental whitespace changes, or temporary files.
-
-### 2. Conventional Commits Syntax
-All commit messages MUST follow `<type>(<scope>): <imperative summary>` in English:
+- **Atomic Commits:** Each commit MUST represent a single, verifiable change. NEVER mix governance, documentation, and script edits.
+- **Conventional Commits:** All commit messages MUST follow `<type>(<scope>): <imperative summary>` in Technical English.
+- **Language Invariant:** Author all agent-facing directives, contracts, skills, and logs (`AGENTS.md`, `.agent/*`) in Technical English. Human-facing documentation (`README.pt-br.md`) MAY be localized.
 
 | Type | Purpose | Hub Scope Example |
 | :---: | :--- | :--- |
 | **`feat`** | New capability or starter branch | `feat(hub): add infra template branch to matrix` |
 | **`fix`** | Bug fix in scripts or workflows | `fix(installer): resolve remote execution flag parsing` |
-| **`docs`** | Documentation or task log updates | `docs(task): log task 07.1 completion` |
-| **`refactor`** | Code/structure cleanup without behavior change | `refactor(ci): streamline multi-branch matrix testing` |
+| **`docs`** | Documentation or task log updates | `docs(task): log task 01.6 completion` |
+| **`refactor`** | Code or structure cleanup without behavior change | `refactor(ci): streamline multi-branch matrix testing` |
 | **`test`** | Automated tests or contract assertions | `test(infra): add scaffolding verification step` |
 | **`chore`** | Maintenance, inter-branch sync, or configs | `chore(sync): sync .gitignore from greenfield` |
 
-### 3. Contrast Pairs
+## 10. Contrast Pairs
 
+### Commit Messages
 ```markdown
-# BAD: Combining multiple concerns, vague or past-tense message
+// BAD: Combining multiple concerns, vague or past-tense message
 git commit -m "fixed stuff, updated docs and updated init.sh"
 
-# GOOD: Single atomic change with RFC-compliant imperative verb
+// GOOD: Single atomic change with RFC-compliant imperative verb
 git commit -m "fix(installer): resolve remote execution flag parsing"
 ```
 
----
+### Inter-Branch Synchronization
+```bash
+# BAD: Merging branches pollutes clean template root
+git checkout greenfield
+git merge main
 
-## Golden Rules of this Hub
+# GOOD: Selectively cherry-pick or checkout individual files
+git checkout greenfield
+git cherry-pick 88eddd8
+```
 
-- **MUST NOT** run `git merge` between specialized branches (`main`, `greenfield`, `brownfield`, `blackbox`, `infra`, `baremetal`). Propagate changes exclusively via `git cherry-pick` or selective file checkout.
-- **MUST NOT** mix specific template files into `main`. Each starter MUST remain strictly isolated at the root of its own branch.
-- **MUST NOT** force-push (`git push --force`) to primary branches without explicit user permission.
-- **MUST NOT** break backward compatibility of `install.sh` and `init.sh`.
-- **MUST NOT** create task-specific headings (e.g., `## [Task XX.Y] Description` or `### [Task XX.Y]`) in `.agent/NOTES.md`. Task completion details live in `git log` and `.agent/ARCHIVE.md`. Architectural decisions live in `docs/adr/decisions.md`. In `NOTES.md`, maintain and update ONLY the live tables/lists of active contracts, interfaces, and topology.
-- **MUST** preserve lean context in `.agent/TASK.md` and `.agent/NOTES.md`.
-- **MUST** author all agent-facing directives, contracts, skills, and lifecycle logs (`AGENTS.md`, `.agent/*`) in concise Technical English to optimize context token density and instruction compliance. Human-facing documentation (e.g., `README.pt-br.md`) may be localized.
+### Task Lifecycle Progression
+```markdown
+// BAD: Silently executing substantive architectural changes without plan approval
+[01.6] Status: READY FOR PLANNING -> Directly edited 10 files without plan approval
+
+// GOOD: Standard Plan-First progression
+[01.6] Status: READY FOR PLANNING -> Status: PLANNING (present plan) -> Human Approval -> Status: RUNNING
+```
