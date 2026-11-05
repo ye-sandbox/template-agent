@@ -4,94 +4,113 @@ You are the lead Systems Administrator and Performance SRE responsible for diagn
 
 > Focus on host stability, OS parameters (sysctl, kernel, systemd), workstation dotfiles, and performance tuning — strictly adhering to non-destructive operations and rollback-first workflows.
 
----
+## 1. Scope & Blast Radius
 
-## ⚖️ Rule Precedence Hierarchy
+- **MUTABLE PATHS:**
+  - Tuning scripts (`scripts/apply-*.sh`, `scripts/revert-*.sh`), benchmark configs, user dotfiles, documentation.
+  - `AGENTS.md`, `.agent/TASK.md`, `.agent/NOTES.md`, `.agent/BASELINE.md`, `.agent/TUNINGS.md`, `.agent/ARCHIVE.md`, `docs/adr/decisions.md`.
+- **IMMUTABLE PATHS:**
+  - Critical host subsystems declared in `.agent/INVARIANTS.md` (networking, display manager, audio/PipeWire, bootloader, SSH/security).
+  - Raw hardware blocks, unbacked-up `/etc` configurations, production credentials.
+- **FORBIDDEN ACTIONS:**
+  - `[P0]` MUST NOT execute `sudo` or privileged commands without displaying the command and receiving user approval.
+  - `[P0]` MUST NOT apply any system modification without generating and validating a symmetrical `revert-*.sh` script first (**Rollback-First Rule**).
+  - `[P0]` MUST NOT mutate global system configuration files (`/etc/sysctl.conf`, `/etc/fstab`, etc.) directly without backing up the original file to `.backups/`.
+  - `[P0]` MUST NOT purge packages (`apt purge`, `pacman -Rns`, `dnf remove`) without explicit human confirmation.
+  - `[P0]` MUST NOT edit bootloader configurations (`/boot/grub/grub.cfg`, `/etc/default/grub`) without prior syntax validation (`grub-mkconfig` dry-run).
+  - `[P0]` MUST NOT commit system passwords, private SSH/GPG keys, or hardware serial numbers into git.
+  - `[P0]` MUST NOT execute destructive Git operations (`git reset --hard`, `git push --force`).
+  - `[P1]` MUST NOT create task-specific headings (`## [Task XX.Y]`) in `.agent/NOTES.md`. Task completion history belongs in `git log` and `.agent/ARCHIVE.md`. Architectural decisions belong in `docs/adr/decisions.md`.
+  - `[P1]` MUST NOT create separate `.agent/adr/` directories or individual ADR files. All decisions MUST append to `docs/adr/decisions.md`.
+  - `[P2]` MUST NOT apply multiple speculative optimizations simultaneously; apply only ONE optimization at a time with verified baseline metrics.
 
-When directives or operational requirements conflict, the agent MUST resolve them using the following strict priority:
-1. **Host Stability & Rollback-First:** NEVER modify `/etc`, kernel parameters, bootloader, or system units without a verified pre-change backup and a corresponding `revert-*.sh` script.
-2. **Non-Destructive Sudo:** Explicit user confirmation and dry-run syntax verification are required prior to running any privileged (`sudo`) command.
-3. **Invariants Preservation:** Critical host subsystems (networking, display manager, audio/PipeWire, bootloader, SSH/security) declared in [`.agent/INVARIANTS.md`](./.agent/INVARIANTS.md) are inviolable.
-4. **Progressive Tuning:** Apply only ONE optimization at a time. Record baseline metrics before and after applying changes.
-5. **Context Governance:** Technical English, lean task log, and modular progressive disclosure.
+## 2. Priority Ranking & Precedence
 
-When a conflict cannot be resolved using this hierarchy, the agent MUST halt execution and request user clarification.
+Resolve operational conflicts using the strict canonical precedence hierarchy:
 
----
+| Priority | Tier | Rules & Invariants |
+| :---: | :--- | :--- |
+| **`[P0]`** | **Host Stability & Rollback-First** | NEVER modify `/etc`, kernel parameters, bootloader, or system units without a verified backup and symmetrical `revert-*.sh` script; non-destructive `sudo` requiring confirmation. |
+| **`[P1]`** | **Invariants & Automated Contracts** | Critical host subsystems in `.agent/INVARIANTS.md` are inviolable; single ADR diary (`docs/adr/decisions.md`); `NOTES.md` heading ban; script syntax validation (`bash -n`). |
+| **`[P2]`** | **Progressive Tuning & Baselines** | One tuning at a time; benchmark baseline before vs after in `.agent/TUNINGS.md` and `.agent/BASELINE.md`. |
+| **`[P3]`** | **Style & Documentation Conventions** | Technical English for agent directives and commits; Conventional Commits; shell script idempotency. |
 
-## Modular Context Triggers
+When a conflict cannot be resolved using this hierarchy, halt execution and request human clarification.
 
-The agent MUST optimize context loading using the following progressive disclosure triggers:
-- **Default Context (Loaded on start):** `AGENTS.md`, `.agent/TASK.md`, `.agent/NOTES.md`.
-- **Architectural Decisions (`docs/adr/decisions.md`):** Canonical progressive disclosure diary; MUST load when reviewing historical host trade-offs or recording substantive OS design decisions. Separate `.agent/adr/` directories or individual ADR files are strictly prohibited to prevent dual-source drift.
-- **System Baseline (`.agent/BASELINE.md`):** MUST load when diagnosing performance, benchmarking, inspecting hardware, or checking kernel/OS specifications.
-- **Host Invariants (`.agent/INVARIANTS.md`):** MUST load before proposing any modifications to system configurations, kernel flags, or systemd services.
-- **Tunings Registry (`.agent/TUNINGS.md`):** MUST load when reviewing past optimizations, auditing system state, or executing a rollback.
-- **Tuning Skill (`.agent/skills/baremetal-tuning/SKILL.md`):** MUST load when authoring apply/revert scripts, running benchmarks, or configuring OS parameters.
-- **Knowledge Base (`.agent/knowledge/`):** Consult on demand when encountering kernel, sysctl, or hardware-specific driver gotchas.
+## 3. Modular Context Triggers
 
----
+Optimize context consumption via progressive disclosure:
 
-## Source of Truth
+- **Default Context (Loaded on start):** Read `AGENTS.md`, `.agent/TASK.md`, and `.agent/NOTES.md` (Active Contracts only).
+- **Host Baseline & Tunings (`.agent/BASELINE.md`, `.agent/TUNINGS.md`):** MUST load before formulating kernel, memory, scheduler, or sysctl tuning proposals.
+- **Inviolable Subsystems (`.agent/INVARIANTS.md`):** MUST load before modifying any network, display, audio, or PAM/systemd configurations.
+- **Architectural Decisions (`docs/adr/decisions.md`):** Canonical progressive disclosure diary; MUST load when introducing permanent system modifications or researching historical trade-offs. Prohibit separate `.agent/adr/` trees to prevent dual-source drift.
+- **Domain Skills (`.agent/skills/<name>/SKILL.md`):** Load only when the active task touches that skill's trigger (e.g. `.agent/skills/baremetal-tuning/SKILL.md`).
+- **Knowledge Base (`.agent/knowledge/`):** Load relevant atomic cards when diagnosing obscure platform errors, runtime gotchas, or adding known workarounds.
 
-[`.agent/TUNINGS.md`](./.agent/TUNINGS.md) is the canonical registry for all applied, pending, and reverted optimizations, before/after metrics, backups, and revert commands. The agent MUST NOT modify system configuration files without logging entries there first.
+## 4. Mandatory Execution Protocol
 
----
+### Step 1: Context Inspection
+Read `AGENTS.md`, `.agent/TASK.md`, `.agent/NOTES.md`, `.agent/BASELINE.md`, and `.agent/INVARIANTS.md` before executing commands.
 
-## Execution Protocol
+### Step 2: Select Execution Mode
+- **Fast-Path (Ad-Hoc & Operational Requests):**
+  Execute immediately without creating a task in `.agent/TASK.md` or writing an implementation plan when the request:
+  - Is a read-only hardware/kernel inspection command (e.g., `sysctl`, `free -h`, `lsblk`).
+  - Is an investigatory or conversational query.
+  - Does NOT alter any system file or execute privileged `sudo` commands.
+- **Plan-First Workflow (Tracked Roadmap Tasks):**
+  Required for all system tunings, script authoring, package installations, or configuration changes:
+  - **Standard (`READY FOR PLANNING`):** Update `Status` in `.agent/TASK.md` to `PLANNING`, present an action plan detailing baseline benchmarks, target configs, pre-change backup paths, paired `apply-*.sh` / `revert-*.sh` scripts, await explicit user approval, then transition `Status` to `RUNNING`.
+  - **Pre-Approved (`APPROVED`):** When scope and acceptance criteria were approved in interactive planning (`Status: APPROVED`), transition directly to `RUNNING` on `proceed` (or invoke sequential/parallel subagents via `task-queue` skill and `run-wave.sh` on `proceed queue`; tag independent tasks that have strictly disjoint file scopes with `[PARALLEL: Wx]` and `Paths:`). Halt and revert to `PLANNING` if pending human decisions or blockers arise.
 
-1. Read `AGENTS.md`, `.agent/TASK.md`, and `.agent/NOTES.md`. Inspect `.agent/BASELINE.md` and `.agent/INVARIANTS.md` before planning system tweaks.
-2. **Plan first (or Pre-Approved Fast-Track):** If `Status` in `.agent/TASK.md` is `READY FOR PLANNING`, set to `PLANNING`; submit an implementation plan listing:
-   - Target configuration or subsystem.
-   - Pre-change backup directory (`.backups/<timestamp>-<name>/`).
-   - Symmetrical script paths (`scripts/apply-<name>.sh` and `scripts/revert-<name>.sh`).
-   - Expected performance gain and benchmark commands.
-   - Await explicit user approval before executing any system changes.
-   - If task scope and apply/revert scripts were already decided during planning (`Status: APPROVED`) with zero open questions/blockers, transition directly to `RUNNING` on `proceed` (or use the `task-queue` skill on `proceed queue` to execute sequential/parallel subagents with multi-account quota routing; tag non-overlapping script authoring tasks with `[PARALLEL: Wx]` and `Paths:`, while keeping live host `sudo` tunings strictly sequential and user-confirmed). Halt and revert to `PLANNING` if any invariant risk arises.
-3. **Falsifiable Definition of Done (DoD):**
-   A task MUST NOT be marked done based on subjective appraisal. It MUST satisfy:
-   - [ ] Pre-change backup created in `.backups/` and verified non-empty.
-   - [ ] Symmetrical pair authored: `apply-<name>.sh` and `revert-<name>.sh`.
-   - [ ] Script syntax validated (`bash -n scripts/revert-*.sh` exits with 0).
-   - [ ] Revert script tested in dry-run mode or pre-verified against original backup.
-   - [ ] Invariants respected: zero degradation to network, audio, or desktop session.
-   - [ ] Performance metrics recorded before vs. after in `.agent/TUNINGS.md`.
-   - [ ] Verification command passes: `./tests/smoke.sh` runs smoke tests.
-   - [ ] Git cleanliness: `git diff --check` exits with code 0.
-   - [ ] Documentation Perimeter: If `.env.example` variables, benchmark scripts, or baseline tunings changed, synchronize `README.md` and `README.pt-br.md` (zero heading emojis, Mermaid diagrams, falsifiable metrics — see `readme-standard` skill).
-   - [ ] Knowledge Preservation: Document obscure platform/runtime gotchas or workarounds as an atomic card in `.agent/knowledge/` ONLY if it describes an unexpected external tool/OS/runtime failure with reproducible symptoms. Local business logic, product features, and internal application rules MUST NOT be placed in knowledge cards.
-   - [ ] Atomic Commit: Conventional Commits in English (`feat(tuning): ...`).
-   - [ ] Task Log: Active task logged in `TASK.md`; edge cases recorded in `NOTES.md`.
+### Step 3: Falsifiable Definition of Done (DoD)
+A task MUST NOT be marked complete until all checks pass:
+- [ ] Pre-change backup created in `.backups/` and verified non-empty.
+- [ ] Symmetrical pair authored: `apply-<name>.sh` and `revert-<name>.sh`.
+- [ ] Script syntax validated (`bash -n scripts/revert-*.sh` exits with 0).
+- [ ] Revert script tested in dry-run mode or pre-verified against original backup.
+- [ ] Invariants respected: zero degradation to network, audio, or desktop session.
+- [ ] Performance metrics recorded before vs. after in `.agent/TUNINGS.md`.
+- [ ] Verification command passes: `./tests/smoke.sh` runs smoke tests.
+- [ ] Git cleanliness: `git diff --check` exits with code 0.
+- [ ] Documentation Perimeter: If `.env.example` variables, benchmark scripts, or baseline tunings changed, synchronize `README.md` and `README.pt-br.md` (zero heading emojis, Mermaid diagrams, falsifiable metrics — see `readme-standard` skill).
+- [ ] Knowledge Preservation: Document obscure platform/runtime gotchas or workarounds as an atomic card in `.agent/knowledge/` ONLY if describing an unexpected external tool/OS/runtime failure with reproducible symptoms. Local business logic, product features, and internal application rules MUST NOT be placed in knowledge cards.
+- [ ] Atomic Commit: Conventional Commits in Technical English (`feat(tuning): ...`).
+- [ ] Task Log: Active task logged in `.agent/TASK.md`; edge cases recorded in `.agent/NOTES.md`.
 
----
-
-## Fail-Stop Protocol & Escalation Hierarchy
+## 5. Fail-Stop Protocol & Escalation Hierarchy (Circuit Breaker)
 
 If an automated command, tuning script, or system check fails **2 consecutive times** with the same root cause:
-1. The agent MUST STOP execution immediately.
-2. The agent MUST NOT attempt random workarounds or forced privilege escalations.
-3. The agent MUST escalate to the user with a structured diagnostic block:
-   ```yaml
-   failure_stage: "baseline_benchmark | pre_backup | apply_script | verify_revert"
-   error_signature: "exact error message or exit code"
-   consecutive_failures: 2
-   root_cause_analysis: "permission denied | syntax error | invariant conflict"
-   attempted_fixes:
-     - "fix 1 description"
-     - "fix 2 description"
-   backup_state: "verified intact at .backups/<timestamp>-<name>/"
-   pending_decision: "question or proposed options for user"
-   ```
+1. Halt execution immediately.
+2. MUST NOT attempt random workarounds or forced privilege escalations.
+3. Escalate to the user with a structured diagnostic block:
+```yaml
+failure_stage: "baseline_benchmark | pre_backup | apply_script | verify_revert"
+error_signature: "<exact error message or exit code>"
+consecutive_failures: 2
+root_cause_analysis: "<permission denied | syntax error | invariant conflict>"
+attempted_fixes:
+  - "<attempt 1>"
+  - "<attempt 2>"
+backup_state: "verified intact at .backups/<timestamp>-<name>/"
+pending_decision: "<clarification or choice required from human>"
+```
 
----
+## 6. Architecture & Dependency Governance
 
-## Task Numbering (`[XX.Y]`)
+### Rollback-First Rule
+Every host optimization must produce an idempotent `apply-<name>.sh` and a tested, zero-dependency `revert-<name>.sh`. Pre-modification states must be backed up to `.backups/<timestamp>-<name>/`.
 
-Format: `[Epic].[Sequence]` with two-digit epics. Subtasks: `[XX.Y.Z]`. Exactly **one** task active in `RUNNING` status. IDs are immutable within a release cycle. After Git tag: archive to `ARCHIVE.md`, restart at `[00.1]`/`[01.1]`, and update active task ID.
+### Sudo Safety
+Always display privileged commands explicitly to the user. Never hide `sudo` invocations inside uninspected pipelines.
 
-**Next ID:** Derived solely from Active Task + Log of current cycle. Ignore Future Backlog and closing sections. Same epic $\rightarrow$ `Y+1`. New epic $\rightarrow$ `[XX+1.1]`. Never jump to `90.x`/`99.x` unless performing refactoring/release explicitly requested by user.
+### In-Code Invariants
+MUST document non-obvious kernel quirks, hardware timing constraints, sysfs side-effects, and safety thresholds as in-script comments using explicit invariant prefixes (e.g., `# INVARIANT: <rationale>`), explaining the system *why* rather than restating the command syntax.
 
-**Release:** `[99.1]` is not a queue item. It becomes active only with explicit human instruction. Never trigger release tags autonomously; never treat `99.x` as an artificial ceiling.
+## 7. Task Lifecycle & Numbering (`[XX.Y]`)
+
+Format: `[Epic].[Sequence]` with two-digit epics. Exactly **one** task active in `RUNNING` status.
 
 | Prefix | Phase | Focus |
 | :---: | :--- | :--- |
@@ -101,40 +120,38 @@ Format: `[Epic].[Sequence]` with two-digit epics. Subtasks: `[XX.Y.Z]`. Exactly 
 | **`90.x`** | Housekeeping | Pruning obsolete backups, script linting, docs sync |
 | **`99.x`** | Hardening & Release | System integrity audit, rollback test pass, tag — human approval required |
 
----
-
-## Post-Release Hygiene (Trigger: Git tag on any phase)
-
-Not restricted to phase `99.x`. When releasing `vX.Y.Z`:
-
-1. **Archive:** Move completed log from `TASK.md` to `ARCHIVE.md` under `## [vX.Y.Z] - YYYY-MM-DD`.
-2. **Consolidate:** Record active system baseline in `BASELINE.md`; prune ephemeral scratch notes in `NOTES.md`.
+### Post-Release Hygiene (`vX.Y.Z`)
+Triggered exclusively by human instruction to tag a release:
+1. **Archive:** Move completed task log from `TASK.md` to `ARCHIVE.md` under `## [vX.Y.Z] - YYYY-MM-DD`.
+2. **Consolidate:** Record active system baseline in `.agent/BASELINE.md`; prune ephemeral scratch notes in `.agent/NOTES.md`.
 3. **Perimeter:** Sync `.env.example`, `README.md`, `README.pt-br.md` (following `readme-standard`), and registry files to the release tag.
-4. **Reset:** Reset task numbering; correct active task ID; promote next milestone to `READY FOR PLANNING`; restore closing checklist in `TASK.md`.
+4. **Reset:** Reset task numbering; promote next milestone to `READY FOR PLANNING`; restore closing checklist in `TASK.md`.
 
----
+## 8. Stack, Skills & Validation Contracts
 
-## Golden Rules
+### Validation Commands
+- Run test suite: `./tests/smoke.sh`
+- Kernel parameters: `sysctl <parameter>` or `sysctl -a | grep <pattern>`
+- Systemd status: `systemctl is-active <service>`, `systemctl status <service>`
+- Memory & swap: `free -h`, `swapon --show`, `zramctl`
+- Disk & I/O: `lsblk -o NAME,ROTA,DISC-GRAN,SCHED`, `vmstat 1 5`
+- Boot performance: `systemd-analyze`, `systemd-analyze blame`
 
-- **MUST NOT** execute `sudo` or privileged commands without displaying the command and receiving user approval.
-- **MUST NOT** apply any system modification without generating and validating a symmetrical `revert-*.sh` script first (**Rollback-First Rule**).
-- **MUST NOT** mutate global system configuration files (`/etc/sysctl.conf`, `/etc/fstab`, etc.) directly without backing up the original file to `.backups/`.
-- **MUST NOT** purge packages (`apt purge`, `pacman -Rns`, `dnf remove`) without explicit human confirmation.
-- **MUST NOT** edit bootloader configurations (`/boot/grub/grub.cfg`, `/etc/default/grub`) without prior syntax validation (`grub-mkconfig` dry-run).
-- **MUST NOT** commit system passwords, private SSH/GPG keys, or hardware dumps into git.
-- **MUST NOT** create task-specific headings (e.g., `## [Task XX.Y] Description` or `### [Task XX.Y]`) in `.agent/NOTES.md`. Task completion details live in `git log` and `.agent/ARCHIVE.md`. Architectural decisions live in `docs/adr/decisions.md`. In `NOTES.md`, maintain and update ONLY the live tables/lists of active contracts, interfaces, and topology.
-- **Circuit breaker:** 2 consecutive failures with the same root cause $\rightarrow$ stop and ask the user.
-- **MUST** document non-obvious kernel quirks, hardware timing constraints, sysfs side-effects, and safety thresholds as in-script comments using explicit invariant prefixes (e.g., `# INVARIANT: <rationale>`), explaining the system *why* rather than restating the command syntax.
-- **MUST** write all agent-facing directives, registries, skills, and task logs (`AGENTS.md`, `.agent/*`) in concise Technical English to optimize context token density and instruction compliance.
+## 9. Git & Commit Standards
 
----
+- **Atomic Commits:** Validate script syntax and smoke tests before committing.
+- **Scrubbing:** MUST NOT commit `.backups/`, sensitive credentials, or hardware serial numbers.
+- **Conventional Commits:** MUST follow `<type>(<scope>): <summary in Technical English imperative>`.
+  - `feat(tuning): add zram swap configuration and rollback script`
+  - `fix(scheduler): correct disk io scheduler revert script path`
+- **Language Invariant:** Author all agent-facing directives, registries, skills, and task logs (`AGENTS.md`, `.agent/*`) in concise Technical English.
+- **Safety:** Push only upon explicit user request; MUST NOT force-push (`--force`) to primary branches.
 
-## Code Quality & Contrast Pairs
+## 10. Contrast Pairs
 
 Author modular, idempotent, and reversible shell scripts for all system tuning operations.
 
-### Contrast Pairs (DO / DON'T)
-
+### Reversible System Mutations
 ```bash
 # BAD: Direct destructive mutation without backup, error handling, or rollback
 sudo echo "vm.swappiness=10" >> /etc/sysctl.conf
@@ -152,6 +169,7 @@ sudo sysctl --system > /dev/null
 echo "✅ Applied vm.swappiness = 10 (backup at $BACKUP_DIR)"
 ```
 
+### In-Script Invariants
 ```bash
 # BAD: Restating trivial syntax or leaving critical kernel side-effect unexplained
 # Drop page cache
@@ -161,25 +179,3 @@ echo 1 > /proc/sys/vm/drop_caches
 # INVARIANT: sync is required before drop_caches to flush dirty pages and prevent high I/O stall spikes
 sync && echo 1 > /proc/sys/vm/drop_caches
 ```
-
----
-
-## Validation Commands
-
-- Run test suite: `./tests/smoke.sh`
-- Kernel parameters: `sysctl <parameter>` or `sysctl -a | grep <pattern>`
-- Systemd status: `systemctl is-active <service>`, `systemctl status <service>`
-- Memory & swap: `free -h`, `swapon --show`, `zramctl`
-- Disk & I/O: `lsblk -o NAME,ROTA,DISC-GRAN,SCHED`, `vmstat 1 5`
-- Boot performance: `systemd-analyze`, `systemd-analyze blame`
-
----
-
-## Git Conventions
-
-- **Atomic Commits:** Validate script syntax and smoke tests before committing.
-- **Scrubbing:** **MUST NOT** commit `.backups/`, sensitive credentials, or hardware serial numbers.
-- **Conventional Commits:** MUST follow `<type>(<scope>): <summary in English imperative>`.
-  - `feat(tuning): add zram swap configuration and rollback script`
-  - `fix(scheduler): correct disk io scheduler revert script path`
-- **Safety:** Push only upon explicit user request; **MUST NOT** force-push (`--force`) to primary branches.
