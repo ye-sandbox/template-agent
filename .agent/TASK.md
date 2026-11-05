@@ -10,7 +10,7 @@
 
 ## Active Task
 
-- **Task:** `[01.6]` Next Hub Evolution / Maintenance Task
+- **Task:** `[01.7]` Next Hub Evolution / Maintenance Task
 - **Status:** READY FOR PLANNING
 - **Scope:** Awaiting user direction for the next hub milestone or template enhancement.
 - **Target Branches:** TBD
@@ -28,6 +28,7 @@
 | `[01.3]` | Parallel Task Waves (`[PARALLEL: Wx]`) & Multi-Account Quota Routing in `task-queue` | `e8d74b4` (main), `a62c937` (greenfield), `5428136` (brownfield), `135cbd5` (blackbox), `c253b20` (infra), `6512f5b` (baremetal) | 2026-10-31 |
 | `[01.4]` | Token-Efficient Wave Runner (`run-wave.sh`), `Read:/Paths:/Verify:` Micro-Contract, `gemini-3.8-flash-medium` Default & `.multigravity/` Ignore Invariant | `c18de50` (main), `046fec3` (greenfield), `c0b1139` (brownfield), `00328ea` (blackbox), `2737eb8` (infra), `5c093f2` (baremetal) | 2026-11-01 |
 | `[01.5]` | Governance Hardening: ADR Canonicalization, NOTES.md Task Heading Ban & Knowledge DoD Guardrail | `88eddd8` (main), `68a968d` (greenfield), `e3890ac` (brownfield), `1c92cf3` (blackbox), `99c9de6` (infra), `e123f4a` (baremetal) | 2026-11-03 |
+| `[01.6]` | Audit & Refactor Hub AGENTS.md via `agent-doc-refactor` | `79b6f47` (main) | 2026-11-05 |
 
 ---
 
