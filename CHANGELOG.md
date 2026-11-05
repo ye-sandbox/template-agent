@@ -7,6 +7,28 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.2.0] - 2026-11-05
+
+### Added
+- **Pre-Approved Task Fast-Track (`Status: APPROVED`)**:
+  - Direct transition from planning to `RUNNING` on `proceed` for pre-approved scopes without redundant interactive approval pauses.
+- **Parallel Task Waves & Multi-Account Quota Routing**:
+  - Support for parallel wave execution tags (`[PARALLEL: Wx]`) and multi-account quota balancing via the `task-queue` skill.
+- **Token-Efficient Wave Runner (`run-wave.sh`)**:
+  - Micro-contract standard (`Read:`, `Paths:`, `Verify:`) and CLI wave runner defaulting to `gemini-3.8-flash-medium` for subagent execution.
+
+### Changed
+- **Circuit Breaker Threshold Calibration**:
+  - Calibrated fail-stop threshold to 3 consecutive identical failures on general starters (`main`, `greenfield`, `brownfield`) and 2 consecutive failures on sensitive environments (`blackbox`, `infra`, `baremetal`).
+- **High-Density `AGENTS.md` Specification**:
+  - Full audit and refactoring of `AGENTS.md` across the Hub and all 5 starter branches (`greenfield`, `brownfield`, `blackbox`, `infra`, `baremetal`) using the `agent-doc-refactor` framework.
+  - Introduced strict priority hierarchy (`[P0]` Security to `[P3]` Style), modular progressive disclosure triggers, fail-stop escalation payloads, and positive/negative contrast pairs.
+- **ADR Architecture Consolidation**:
+  - Single Source of Truth for architectural decisions codified strictly in `docs/adr/decisions.md`.
+  - Enforced ban on task-specific headings (`## [Task XX.Y]`) in `NOTES.md` to prevent dual-source drift.
+- **Knowledge Base Definition of Done (DoD) Guardrail**:
+  - Enforced invariant that `.agent/knowledge/` cards capture strictly reproducible platform/runtime gotchas, explicitly prohibiting application features or business logic.
+
 ## [1.1.0] - 2026-10-28
 
 ### Added

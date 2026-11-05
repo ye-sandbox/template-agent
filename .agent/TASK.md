@@ -10,26 +10,20 @@
 
 ## Active Task
 
-- **Task:** `[01.8]` Next Hub Evolution / Maintenance Task
+- **Task:** `[02.1]` Next Milestone / Epic Planning
 - **Status:** READY FOR PLANNING
-- **Scope:** Awaiting user direction for the next hub milestone or template enhancement.
+- **Scope:** Define objectives and candidate epics for the post-v1.2.0 milestone.
 - **Target Branches:** TBD
 
 ---
 
 ## Completed Tasks Log
 
-> Cycles 00–09 archived in `.agent/ARCHIVE.md` (up to `[v1.1.0]`). Detail: `git log`.
+> Cycles 00–01 archived in `.agent/ARCHIVE.md` (up to `[v1.2.0]`). Detail: `git log`.
 
 | Task | Title | Commit(s) | Date |
 |---|---|---|---|
-| `[01.1]` | Adjust circuit breaker threshold to 3 consecutive failures on general starters | `b7731e8` (main), `2b5128c` (greenfield), `e3f681c` (brownfield) | 2026-10-31 |
-| `[01.2]` | Pre-Approved Task Fast-Track (`APPROVED`) & `task-queue` Skill Integration | `cdbec44` (main), `7fddee8` (greenfield), `7e5fc61` (brownfield), `9c520f5` (blackbox), `c4a92b7` (infra), `03f8e0e` (baremetal) | 2026-10-31 |
-| `[01.3]` | Parallel Task Waves (`[PARALLEL: Wx]`) & Multi-Account Quota Routing in `task-queue` | `e8d74b4` (main), `a62c937` (greenfield), `5428136` (brownfield), `135cbd5` (blackbox), `c253b20` (infra), `6512f5b` (baremetal) | 2026-10-31 |
-| `[01.4]` | Token-Efficient Wave Runner (`run-wave.sh`), `Read:/Paths:/Verify:` Micro-Contract, `gemini-3.8-flash-medium` Default & `.multigravity/` Ignore Invariant | `c18de50` (main), `046fec3` (greenfield), `c0b1139` (brownfield), `00328ea` (blackbox), `2737eb8` (infra), `5c093f2` (baremetal) | 2026-11-01 |
-| `[01.5]` | Governance Hardening: ADR Canonicalization, NOTES.md Task Heading Ban & Knowledge DoD Guardrail | `88eddd8` (main), `68a968d` (greenfield), `e3890ac` (brownfield), `1c92cf3` (blackbox), `99c9de6` (infra), `e123f4a` (baremetal) | 2026-11-03 |
-| `[01.6]` | Audit & Refactor Hub AGENTS.md via `agent-doc-refactor` | `79b6f47` (main) | 2026-11-05 |
-| `[01.7]` | Refactor Starter Templates' `AGENTS.md` via `agent-doc-refactor` | `da1f84a` (greenfield), `583baab` (brownfield), `536a594` (blackbox), `d0d0f3c` (infra), `a373b00` (baremetal) | 2026-11-05 |
+
 
 ---
 
