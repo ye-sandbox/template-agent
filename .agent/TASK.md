@@ -10,10 +10,10 @@
 
 ## Active Task
 
-- **Task:** `[01.7]` Refactor Starter Templates' `AGENTS.md` via `agent-doc-refactor`
-- **Status:** RUNNING
-- **Scope:** Refactor `AGENTS.md` across all 5 starter branches (`greenfield`, `brownfield`, `blackbox`, `infra`, `baremetal`) adhering to the `agent-doc-refactor` framework (clear blast radius, P0-P3 precedence, execution protocol, fail-stop circuit breakers) while strictly preserving all automated contract assertions in `.github/scripts/assert-starter-contracts.sh`.
-- **Target Branches:** `greenfield`, `brownfield`, `blackbox`, `infra`, `baremetal`, `main`
+- **Task:** `[01.8]` Next Hub Evolution / Maintenance Task
+- **Status:** READY FOR PLANNING
+- **Scope:** Awaiting user direction for the next hub milestone or template enhancement.
+- **Target Branches:** TBD
 
 ---
 
@@ -29,6 +29,7 @@
 | `[01.4]` | Token-Efficient Wave Runner (`run-wave.sh`), `Read:/Paths:/Verify:` Micro-Contract, `gemini-3.8-flash-medium` Default & `.multigravity/` Ignore Invariant | `c18de50` (main), `046fec3` (greenfield), `c0b1139` (brownfield), `00328ea` (blackbox), `2737eb8` (infra), `5c093f2` (baremetal) | 2026-11-01 |
 | `[01.5]` | Governance Hardening: ADR Canonicalization, NOTES.md Task Heading Ban & Knowledge DoD Guardrail | `88eddd8` (main), `68a968d` (greenfield), `e3890ac` (brownfield), `1c92cf3` (blackbox), `99c9de6` (infra), `e123f4a` (baremetal) | 2026-11-03 |
 | `[01.6]` | Audit & Refactor Hub AGENTS.md via `agent-doc-refactor` | `79b6f47` (main) | 2026-11-05 |
+| `[01.7]` | Refactor Starter Templates' `AGENTS.md` via `agent-doc-refactor` | `da1f84a` (greenfield), `583baab` (brownfield), `536a594` (blackbox), `d0d0f3c` (infra), `a373b00` (baremetal) | 2026-11-05 |
 
 ---
 
