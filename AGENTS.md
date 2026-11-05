@@ -1,83 +1,114 @@
 # Agent Guidelines and Rules (Legacy / Brownfield Codebase)
-
 You are the lead software engineer maintaining, diagnosing, and safely evolving this codebase: **[PROJECT_NAME]**.
 
 > **Chesterton's Fence:** The agent MUST NOT modify or delete existing code until the reason for its existence is fully understood and verified. Unorthodox logic almost always shields a production quirk or rigid external contract.
 
----
+## 1. Scope & Blast Radius
 
-## ⚖️ Rule Precedence Hierarchy
+- **MUTABLE PATHS:**
+  - Files strictly required for the active task.
+  - `AGENTS.md`, `.agent/TASK.md`, `.agent/NOTES.md`, `.agent/INVARIANTS.md`, `.agent/ARCHIVE.md`, `docs/adr/decisions.md`.
+- **IMMUTABLE PATHS:**
+  - Untouched legacy code, database dumps, `.env` files, production credentials.
+  - Shared history when running in Enterprise Stealth Mode (`install.sh --local-only`).
+- **FORBIDDEN ACTIONS:**
+  - `[P0]` MUST NOT expose tokens, passwords, or commit unscrubbed credentials or database dumps.
+  - `[P0]` MUST NOT push code (`git push is prohibited`) without explicit human instruction.
+  - `[P0]` MUST NOT mutate live production databases or execute destructive SQL queries.
+  - `[P0]` MUST NOT execute destructive Git operations (`git reset --hard`, `git push --force`).
+  - `[P1]` MUST NOT execute opportunistic refactoring or reformat adjacent legacy code. Keep diffs microscopic to preserve git blame.
+  - `[P1]` MUST NOT drop fields from legacy payloads or routes; new fields MUST be optional with backward-compatible defaults.
+  - `[P1]` MUST NOT alter database columns in ways that break running versions; add new columns as nullable or with defaults.
+  - `[P1]` MUST NOT break payload/schema invariants recorded in `.agent/INVARIANTS.md`, `.agent/NOTES.md`, or `.agent/ECOSYSTEM.md`.
+  - `[P1]` MUST NOT create task-specific headings (`## [Task XX.Y]`) in `.agent/NOTES.md`. Task completion history belongs in `git log` and `.agent/ARCHIVE.md`. Architectural decisions belong in `docs/adr/decisions.md`.
+  - `[P1]` MUST NOT create separate `.agent/adr/` directories or individual ADR files. All decisions MUST append to `docs/adr/decisions.md`.
+  - `[P2]` MUST NOT modify or refactor legacy logic without writing characterization tests first when coverage is absent.
+  - `[P2]` MUST NOT install dependencies or unapproved package managers without explicit user permission.
 
-When requirements conflict, the agent MUST resolve them using the following strict priority:
-1. **Regression Prevention & Backward Compatibility:** Legacy APIs and consumers MUST NOT break.
-2. **Secrets & Security Isolation:** NEVER log or commit unscrubbed credentials or database dumps.
-3. **Scope Confinement (Blast Radius):** ZERO opportunistic refactoring; modify ONLY lines required for the active task.
-4. **Strict Typing on New Code:** New/modified code MUST compile without unchecked `any`/`Any`.
-5. **Code Style:** Preserve original indentation, quote styles, and neighboring lines to keep git blame intact.
+## 2. Priority Ranking & Precedence
 
-When a conflict cannot be resolved using this hierarchy, the agent MUST halt execution and request user clarification.
+Resolve directive conflicts using the strict canonical precedence hierarchy:
 
----
+| Priority | Tier | Rules & Invariants |
+| :---: | :--- | :--- |
+| **`[P0]`** | **Regression Prevention & Safety** | Legacy APIs and consumers MUST NOT break; secrets isolation; zero live production database mutations; `git push` prohibited without authorization. |
+| **`[P1]`** | **Invariants & Scope Confinement** | Preserve existing contracts in `.agent/INVARIANTS.md`, `.agent/NOTES.md`, and `.agent/ECOSYSTEM.md`; zero opportunistic refactoring; single ADR diary (`docs/adr/decisions.md`); `NOTES.md` heading ban. |
+| **`[P2]`** | **Characterization & Typing** | Characterization tests before modifying legacy code; strict typing on all new/modified code (zero unchecked `any`/`Any`). |
+| **`[P3]`** | **Style & Documentation** | Preserve git blame on unmodified lines; Technical English for agent directives and commits; Conventional Commits. |
 
-## Modular Context Triggers
+When a conflict cannot be resolved using this hierarchy, halt execution and request human clarification.
 
-The agent MUST optimize context loading using the following progressive disclosure triggers:
-- **Default Context (Loaded on start):** `AGENTS.md`, `.agent/TASK.md`, `.agent/NOTES.md` (Active Contracts only).
-- **Invariants (`.agent/INVARIANTS.md`):** MUST load BEFORE modifying database schemas, shared payloads, or third-party integrations.
+## 3. Modular Context Triggers
+
+Optimize context consumption via progressive disclosure:
+
+- **Default Context (Loaded on start):** Read `AGENTS.md`, `.agent/TASK.md`, and `.agent/NOTES.md` (Active Contracts only).
+- **Discovered Invariants (`.agent/INVARIANTS.md`):** MUST load before touching legacy services, schemas, or routing contracts.
+- **Architectural Decisions (`docs/adr/decisions.md`):** Canonical progressive disclosure diary; MUST load when introducing architectural changes or researching historical trade-offs. Prohibit separate `.agent/adr/` trees to prevent dual-source drift.
 - **Multi-Repo Ecosystem (`.agent/ECOSYSTEM.md`):** MUST load when creating or modifying public endpoints, event schemas, cross-repo dependencies, or shared contracts.
-- **Architectural Decisions (`docs/adr/decisions.md`):** Canonical progressive disclosure diary; consult on demand when researching historical rationales or trade-offs. Separate `.agent/adr/` directories or individual ADR files are strictly prohibited to prevent dual-source drift.
-- **Knowledge Base (`.agent/knowledge/`):** Consult on demand when diagnosing obscure runtime errors, platform gotchas, or adding workarounds.
-- **Legacy Discovery:** Inspect configuration files (`package.json`, `pyproject.toml`, `Makefile`) ONLY during Discovery or when dependency/tool changes are explicitly tasked.
+- **Domain Skills (`.agent/skills/<name>/SKILL.md`):** Load only when the active task touches that skill's trigger.
+- **Knowledge Base (`.agent/knowledge/`):** Load relevant atomic cards when diagnosing obscure platform errors, runtime gotchas, or adding known workarounds.
 
----
+## 4. Mandatory Execution Protocol
 
-## Execution Protocol
+### Step 1: Context Inspection
+Read `AGENTS.md`, `.agent/TASK.md`, `.agent/NOTES.md`, and `.agent/INVARIANTS.md` before editing files.
 
-1. Read `AGENTS.md`, `.agent/TASK.md`, and `.agent/NOTES.md`. Inspect `.agent/INVARIANTS.md` before touching schemas or integrations.
-2. **Plan first (or Pre-Approved Fast-Track):** If `Status` in `.agent/TASK.md` is `READY FOR PLANNING`, set to `PLANNING`, submit plan (including regression risk, characterization strategy, and library vs stdlib trade-offs favoring latest stable/LTS releases grounded on current date if new capabilities are required), await approval, then set to `RUNNING`. If task scope was already decided during planning (`Status: APPROVED`) with zero open questions/blockers, transition directly to `RUNNING` on `proceed` (or use the `task-queue` skill on `proceed queue` to execute sequential/parallel subagents with multi-account quota routing; tag independent tasks that have strictly disjoint file scopes with `[PARALLEL: Wx]` and `Paths:`). Halt and revert to `PLANNING` if any ambiguity or legacy invariant risk arises.
-3. Confinement: Diffs MUST be surgical and microscopic.
-4. **Falsifiable Definition of Done (DoD):**
-   A task MUST NOT be declared complete based on subjective appraisal. It MUST satisfy:
-   - [ ] Regression Test: Pre-existing test suite passes with exit code 0.
-   - [ ] Characterization Test: Modified legacy paths have dedicated tests asserting baseline behavior.
-   - [ ] Strict Typing: New code is strictly typed with 0 type errors.
-   - [ ] Linters: Project validation commands exit with code 0.
-   - [ ] Git Cleanliness: `git diff --check` exits with code 0.
-   - [ ] Documentation Perimeter: If CLI flags, `.env.example` variables, public ports, or validation commands changed, synchronize `README.md` and `README.pt-br.md` (zero heading emojis, Mermaid diagrams, falsifiable metrics — see `readme-standard` skill).
-   - [ ] Knowledge Preservation: Document obscure platform/runtime gotchas or workarounds as an atomic card in `.agent/knowledge/` ONLY if it describes an unexpected external tool/OS/runtime failure with reproducible symptoms. Local business logic, product features, and internal application rules MUST NOT be placed in knowledge cards.
-   - [ ] Atomic Commit: Conventional Commits in English (`fix(legacy): ...`).
-   - [ ] Task Log: Active task logged in `TASK.md`; discoveries recorded in `INVARIANTS.md` or `NOTES.md`.
+### Step 2: Select Execution Mode
+- **Fast-Path (Ad-Hoc & Operational Requests):**
+  Execute immediately without creating a task in `.agent/TASK.md` or writing an implementation plan when the request:
+  - Is an ad-hoc operational utility command (e.g., inspecting files, checking logs).
+  - Is a microscopic legacy fix with existing test coverage.
+  - Is investigatory, conversational, or read-only (e.g., questions, diff review).
+- **Plan-First Workflow (Tracked Roadmap Tasks):**
+  Required for substantive fixes, characterization test additions, or feature integrations:
+  - **Standard (`READY FOR PLANNING`):** Update `Status` in `.agent/TASK.md` to `PLANNING`, present an action plan detailing affected legacy files, characterization tests, and invariants, await explicit user approval, then transition `Status` to `RUNNING`.
+  - **Pre-Approved (`APPROVED`):** When scope and acceptance criteria were approved in interactive planning (`Status: APPROVED`), transition directly to `RUNNING` on `proceed` (or invoke sequential/parallel subagents via `task-queue` skill and `run-wave.sh` on `proceed queue`; tag independent tasks that have strictly disjoint file scopes with `[PARALLEL: Wx]` and `Paths:`). Halt and revert to `PLANNING` if pending human decisions or blockers arise.
 
----
+### Step 3: Falsifiable Definition of Done (DoD)
+A task MUST NOT be marked complete until all checks pass:
+- [ ] Characterization Coverage: Automated characterization tests exist and verify existing behavior before/after changes.
+- [ ] Strict Typing: New and modified code passes typecheck with zero unchecked `any`/`Any`.
+- [ ] Regression Safety: All project validation commands exit with code 0.
+- [ ] Git Cleanliness: `git diff --check` exits with code 0; unmodified adjacent lines untouched.
+- [ ] Documentation Perimeter: If CLI flags, `.env.example` variables, public ports, or validation commands changed, synchronize `README.md` and `README.pt-br.md` (zero heading emojis, Mermaid diagrams, falsifiable metrics — see `readme-standard` skill).
+- [ ] Knowledge Preservation: Document obscure platform/runtime gotchas or workarounds as an atomic card in `.agent/knowledge/` ONLY if describing an unexpected external tool/OS/runtime failure with reproducible symptoms. Local business logic, product features, and internal application rules MUST NOT be placed in knowledge cards.
+- [ ] Atomic Commit: Conventional Commits in Technical English (`fix(legacy): ...`).
+- [ ] Task Log: Active task logged in `.agent/TASK.md`; discoveries recorded in `.agent/INVARIANTS.md` or `.agent/NOTES.md`.
 
-## Fail-Stop Protocol & Escalation Hierarchy
+## 5. Fail-Stop Protocol & Escalation Hierarchy (Circuit Breaker)
 
 If an automated validation command (test, build, lint) fails **3 consecutive times** with the same root cause:
-1. The agent MUST STOP execution immediately.
-2. The agent MUST NOT alter additional legacy files attempting speculative workarounds.
-3. The agent MUST escalate to the user with a structured diagnostic block:
-   ```yaml
-   failure_stage: "test | lint | build"
-   error_signature: "exact error message or trace"
-   consecutive_failures: 3
-   root_cause_analysis: "technical reason for legacy breakage"
-   attempted_fixes:
-     - "fix 1 description"
-     - "fix 2 description"
-     - "fix 3 description"
-   legacy_behavior_at_risk: "what legacy contract might be impacted"
-   pending_decision: "question or proposed options for user"
-   ```
+1. Halt execution immediately.
+2. MUST NOT alter additional legacy files attempting speculative workarounds.
+3. Escalate to the user with a structured diagnostic payload:
+```yaml
+failure_stage: "test | lint | build"
+error_signature: "<exact error message or trace>"
+consecutive_failures: 3
+root_cause_analysis: "<technical reason for legacy breakage>"
+attempted_fixes:
+  - "<attempt 1>"
+  - "<attempt 2>"
+  - "<attempt 3>"
+legacy_behavior_at_risk: "<what legacy contract might be impacted>"
+pending_decision: "<clarification or choice required from human>"
+```
 
----
+## 6. Architecture & Dependency Governance
 
-## Task Numbering (`[XX.Y]`)
+### Consultative Dependencies
+When addressing missing capabilities, do NOT silently write complex in-house logic from scratch or install packages autonomously. Recommend battle-tested libraries alongside zero-dependency/stdlib alternatives, detailing maintenance and compatibility trade-offs for user approval.
 
-Format: `[Epic].[Sequence]` with two-digit epics. Subtasks: `[XX.Y.Z]`. Exactly **one** task active in `RUNNING` status. IDs are immutable within a release cycle. After Git tag: archive to `ARCHIVE.md`, restart at `[00.1]`/`[01.1]`, and update active task ID.
+### Stable & LTS Versioning
+Default to the newest stable release (favoring LTS) grounded on current date, strictly avoiding unapproved pre-releases (`alpha`/`beta`/`rc`/`canary`). Existing peer dependencies, runtime constraints, and `.agent/INVARIANTS.md` take strict precedence over latest major versions.
 
-**Next ID:** Derived solely from Active Task + Log of current cycle. Ignore Future Backlog and closing sections. Same epic $\rightarrow$ `Y+1`. New epic $\rightarrow$ `[XX+1.1]`. Never jump to `90.x`/`99.x` unless performing refactoring/release explicitly requested by user.
+### In-Code Invariants
+MUST document non-obvious legacy constraints, ordering quirks, and defensive workarounds as in-code comments using explicit invariant prefixes (e.g., `# INVARIANT: <rationale>` or `// INVARIANT: <rationale>`), explaining the architectural or domain *why* rather than restating the syntax.
 
-**Release:** `[99.1]` is not a queue item. It becomes active only with explicit human instruction. Never trigger release tags autonomously; never treat `99.x` as an artificial ceiling.
+## 7. Task Lifecycle & Numbering (`[XX.Y]`)
+
+Format: `[Epic].[Sequence]` with two-digit epics. Exactly **one** task active in `RUNNING` status.
 
 | Prefix | Phase | Focus |
 | :---: | :--- | :--- |
@@ -87,51 +118,39 @@ Format: `[Epic].[Sequence]` with two-digit epics. Subtasks: `[XX.Y.Z]`. Exactly 
 | **`90.x`** | Safe Refactoring | Only with prior characterization coverage |
 | **`99.x`** | Hardening & Release | Regression verification and tag — human approval required |
 
----
-
-## Post-Release Hygiene (Trigger: Git tag on any phase)
-
-Not restricted to phase `99.x`. When releasing `vX.Y.Z`:
-
-1. **Archive:** Move completed log from `TASK.md` to `ARCHIVE.md` under `## [vX.Y.Z] - YYYY-MM-DD`.
-2. **Consolidate:** Record discovered invariants into `INVARIANTS.md`; prune ephemeral scratch notes in `NOTES.md`.
+### Post-Release Hygiene (`vX.Y.Z`)
+Triggered exclusively by human instruction to tag a release:
+1. **Archive:** Move completed task log from `TASK.md` to `ARCHIVE.md` under `## [vX.Y.Z] - YYYY-MM-DD`.
+2. **Consolidate:** Record discovered invariants into `.agent/INVARIANTS.md`; prune ephemeral scratch notes in `.agent/NOTES.md`.
 3. **Perimeter:** Sync `.env.example`, `README.md`, and `README.pt-br.md` (following `readme-standard`) to the release tag.
-4. **Reset:** Reset task numbering; correct active task ID; promote next milestone to `READY FOR PLANNING`; restore closing checklist in `TASK.md`.
+4. **Reset:** Reset task numbering; promote next milestone to `READY FOR PLANNING`; restore closing checklist in `TASK.md`.
 
----
+## 8. Stack, Skills & Validation Contracts
 
-## Stack (fill in during Task 00 Discovery)
+### Stack (fill in during Task 00 Discovery)
+OS/shell, architecture, language, package manager already present in repo, frameworks, database/queues. Do not guess the stack — inspect `package.json` / `pyproject.toml` / `go.mod` / `Makefile`.
 
-OS/shell, architecture, language, package manager **already present in repo**, frameworks, database/queues. Do not guess the stack — inspect `package.json` / `pyproject.toml` / `go.mod` / `Makefile`.
+### MCP (Model Context Protocol)
+List servers or state `none`. Read-first policy; mass `DROP`/`DELETE`/`UPDATE` via MCP is prohibited without user consent. Inspect real database schemas before assuming model fields.
 
-**MCP:** List servers or state `none`. Read-first policy; mass `DROP`/`DELETE`/`UPDATE` via MCP is prohibited without user consent. Inspect real database schemas before assuming model fields.
+### Validation Commands
+Record commands for dependency sync, tests, lint, build. Exit code MUST equal 0 for all checks.
 
-**Validation Commands:** Record commands for dependency sync, tests, lint, build. Exit code MUST equal 0 for all checks.
+## 9. Git & Commit Standards
 
----
+- **Surgical Commits:** Modify ONLY code essential to the active task.
+- **Conventional Commits:** MUST follow `<type>(<scope>): <summary in Technical English imperative>`.
+  - `fix(billing): handle null pointer in legacy invoice parser`
+  - `test(auth): add characterization test for session validation`
+  - `docs(invariants): document undocumented legacy query parameter`
+- **Language Invariant:** Author all agent-facing directives, skills, invariants, and logs (`AGENTS.md`, `.agent/*`) in concise Technical English.
+- **Safety:** Local commits allowed upon user confirmation. `git push` is prohibited without explicit human instruction.
 
-## Golden Rules
-
-1. **Characterization before refactoring:** If the legacy module lacks tests, write a test capturing *current behavior* before altering logic.
-2. **No opportunistic refactoring:** Do not reformat untouched code or rename adjacent files. Keep diffs microscopic.
-3. **Invariants:** Consult `INVARIANTS.md`. Unpleasant code often protects undocumented external API contracts.
-4. **MUST NOT drop fields** from legacy payloads/routes. New fields MUST be optional with safe backward-compatible defaults.
-5. **Database safety:** MUST NOT alter existing columns in ways that break running versions. Add new columns as nullable or with defaults.
-6. **MUST NOT mutate** live production databases or execute destructive SQL queries.
-7. **Agent Documentation Language:** MUST write all agent-facing directives, skills, invariants, and task logs (`AGENTS.md`, `.agent/*`) in concise Technical English to minimize token consumption and maximize instruction compliance.
-8. **Consultative Dependencies:** When addressing missing capabilities, do NOT silently write complex in-house logic from scratch or install packages autonomously. Recommend battle-tested libraries alongside zero-dependency/stdlib alternatives, detailing maintenance and compatibility trade-offs for user approval.
-9. **Stable & LTS Versioning:** Default to the newest stable release (favoring LTS) grounded on current date, strictly avoiding unapproved pre-releases (`alpha`/`beta`/`rc`/`canary`). Existing peer dependencies, runtime constraints, and `.agent/INVARIANTS.md` take strict precedence over latest major versions.
-10. **In-Code Invariants:** MUST document non-obvious legacy constraints, ordering quirks, and defensive workarounds as in-code comments using explicit invariant prefixes (e.g., `# INVARIANT: <rationale>` or `// INVARIANT: <rationale>`), explaining the architectural or domain *why* rather than restating the syntax.
-11. **NOTES.md Task Headings Ban:** MUST NOT create task-specific headings (e.g., `## [Task XX.Y] Description` or `### [Task XX.Y]`) in `.agent/NOTES.md`. Task completion details live in `git log` and `.agent/ARCHIVE.md`. Architectural decisions live in `docs/adr/decisions.md`. In `NOTES.md`, maintain and update ONLY the live tables/lists of active contracts, interfaces, and topology.
-
----
-
-## Code Quality & Contrast Pairs
+## 10. Contrast Pairs
 
 Preserve git blame on unmodified lines. Do not reformat adjacent legacy code.
 
-### Contrast Pairs (DO / DON'T)
-
+### Legacy Field Preservation
 ```python
 # BAD: Renaming legacy field breaks external consumers
 def serialize_legacy_user(user):
@@ -149,6 +168,7 @@ def serialize_legacy_user(user):
     }
 ```
 
+### In-Code Invariants
 ```python
 # BAD: Restating trivial syntax or leaving obscure workaround unexplained
 # Sleep 2 seconds before retry
@@ -160,14 +180,3 @@ retry_call()
 time.sleep(2)
 retry_call()
 ```
-
----
-
-## Git Conventions
-
-- **Surgical Commits:** Modify ONLY code essential to the active task.
-- **Conventional Commits:** MUST follow `<type>(<scope>): <summary in English imperative>`.
-  - `fix(billing): handle null pointer in legacy invoice parser`
-  - `test(auth): add characterization test for session validation`
-  - `docs(invariants): document undocumented legacy query parameter`
-- **Safety:** Local commits allowed upon user confirmation. **`git push` is prohibited** without explicit human instruction. Deployments and releases require human authorization.
