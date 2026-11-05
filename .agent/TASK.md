@@ -10,10 +10,10 @@
 
 ## Active Task
 
-- **Task:** `[01.7]` Next Hub Evolution / Maintenance Task
-- **Status:** READY FOR PLANNING
-- **Scope:** Awaiting user direction for the next hub milestone or template enhancement.
-- **Target Branches:** TBD
+- **Task:** `[01.7]` Refactor Starter Templates' `AGENTS.md` via `agent-doc-refactor`
+- **Status:** RUNNING
+- **Scope:** Refactor `AGENTS.md` across all 5 starter branches (`greenfield`, `brownfield`, `blackbox`, `infra`, `baremetal`) adhering to the `agent-doc-refactor` framework (clear blast radius, P0-P3 precedence, execution protocol, fail-stop circuit breakers) while strictly preserving all automated contract assertions in `.github/scripts/assert-starter-contracts.sh`.
+- **Target Branches:** `greenfield`, `brownfield`, `blackbox`, `infra`, `baremetal`, `main`
 
 ---
 
