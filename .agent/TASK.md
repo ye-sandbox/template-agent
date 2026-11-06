@@ -11,7 +11,7 @@
 ## Active Task
 
 - **Task:** `[03.5]` Epic 03 Milestone Consolidation & Audit
-- **Status:** READY FOR PLANNING
+- **Status:** RUNNING
 - **Scope:** Consolidate Epic 03 deliverables, perform end-to-end multi-starter CI audit, verify zero drift, and prepare release wrap-up.
 - **Target Branches:** `main`
 
