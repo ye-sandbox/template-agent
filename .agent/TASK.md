@@ -10,9 +10,9 @@
 
 ## Active Task
 
-- **Task:** `[04.1]` Next Milestone / Epic Planning (Epic 04: Dynamic Agent Sandbox & Security Hardening)
-- **Status:** RUNNING
-- **Scope:** Decompose Epic 04 objectives, specify containerized / sandbox execution runners, security audit boundaries, and multi-starter integration.
+- **Task:** `[04.2]` Hermetic Ephemeral Container & Bubblewrap Sandbox Specification
+- **Status:** READY FOR PLANNING
+- **Scope:** Author `docs/agent-sandbox.md` specifying rootless container and Bubblewrap (`bwrap`) isolation profiles, network namespacing, read-only root mounts, and tmpfs workspace isolation for worker agents.
 - **Target Branches:** `main`
 
 ---
@@ -33,12 +33,15 @@
 | `[03.3]` | Automated Scaffolding & CLI Contract E2E Validation in CI | `e6ac4d6` (main) | 2026-11-06 |
 | `[03.4]` | Subagent Execution & Micro-Contract Validation Runner | `b89c49c`, `07eaaf7` (main) | 2026-11-06 |
 | `[03.5]` | Epic 03 Milestone Consolidation & Audit | `71b3eab`, `6c5104d` (main) | 2026-11-06 |
+| `[04.1]` | Next Milestone / Epic Planning (Epic 04: Dynamic Agent Sandbox & Security Hardening) | `cbe426d` (main) | 2026-11-06 |
 
 ---
 
 ## Backlog (Upcoming, in priority order)
 
-*(empty)*
+- `[04.3]` Pre-Execution Security Scanner & Command Blast-Radius Audit Runner (`.github/scripts/audit-command-security.sh`)
+- `[04.4]` Multi-Starter Parity: Propagate Sandbox & Security Isolation Contracts
+- `[04.5]` Epic 04 Milestone Consolidation & End-to-End Security Validation
 
 
 
