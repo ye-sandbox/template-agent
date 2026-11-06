@@ -23,13 +23,34 @@
 - **HTML/DOM Parser:** [e.g. selectolax / BeautifulSoup for mixed encoding HTML]
 - **Session Lifecycle:** [e.g. automatic refresh via interceptor on 302 login redirect]
 
-### 2. Multi-Agent Collaboration Roles (Optional)
+### 2. Multi-Agent Collaboration Contracts (Optional)
 
-> For reverse engineering or scraper operations utilizing multiple AI agents. If single-agent, leave as default.
+> Canonical 3-tier subagent topology, delegation micro-contracts, and worktree isolation. If operating single-agent, leave as default.
 
-- **Planner:** Manages target priorities in `.agent/TASK.md` and defines extraction scope.
-- **Investigator (Developer):** Implements client probes, parsers, and replay scripts strictly within task scope.
-- **Auditor:** Verifies mock isolation, rate limiting guardrails, and zero hardcoded credentials against DoD.
+| Role | Interface / Channel | Responsibilities | Boundary & Invariants |
+|---|---|---|---|
+| **`Lead / Orchestrator`** | `.agent/TASK.md` / Interactive Prompt | Decomposes initiatives into wave-compatible tasks, manages task lifecycle, routes to model/quota tiers, interacts with human. | Sole manager of `TASK.md` and commit log. Does not run parallel worker tasks directly. |
+| **`Worker / Implementer`** | Worktree / Target Workspace | Executes atomic code/doc changes strictly adhering to delegated micro-contract (`Read:`, `Paths:`, `Verify:`). | Restricted exclusively to `Paths:`. Adheres to DoD in `AGENTS.md`. |
+| **`Reviewer / Sentinel`** | Diffs / Test Harness (`Verify:`) | Read-only inspection of diffs against task DoD, regression tests, and security blast radius. | Read-only; reports structured Pass/Fail diagnostic payload. |
+
+#### Worktree Isolation & Dependency Bootstrap Contract
+
+| Element | Protocol / Mechanism | Invariant / Boundary |
+|---|---|---|
+| **Workspace Provisioning** | `git worktree add -b task-<id> <path> HEAD` | Default ephemeral path (`${TMPDIR:-/tmp}/worktrees/task-<id>`) or `.worktrees/task-<id>` (`.worktrees/` in `.gitignore`). |
+| **Dependency Bootstrap** | Fast-Link vs. Isolated-Install | Fast-Link (symlink `node_modules/` or `.venv/`) when `Paths:` has no manifest changes (<50ms, zero-copy). Isolated-Install when manifests change. |
+| **Environment Injection** | Copy `.env` / `.env.example` to worktree | Ensures test harness execution without leaking uncommitted tokens or mutating root config. |
+| **Teardown & GC** | `git worktree remove --force` + `branch -D` + `prune` | Immediate cleanup post-integration; trap declared in runners to prevent dangling worktree locks. |
+
+#### Multi-Account Quota Routing & Failover Contract
+
+| Element | Protocol / Mechanism | Invariant / Boundary |
+|---|---|---|
+| **Profile Routing Priority** | `select-profile.sh --exclude-current` | Autonomous workers route to secondary accounts with highest quota; active IDE profile reserved for Lead Orchestrator. |
+| **Quota Floor Circuit Breaker** | `remaining_fraction <= 0.05` | Immediate disqualification of profiles with <=5% quota; halts execution if all candidate profiles are below floor. |
+| **Model Tier Selection** | `gemini-3.8-flash-medium` | Low token footprint default; escalation to `gemini-4-argon-medium` permitted only for complex architecture or max 1 retry after verification failure. |
+| **Cooldown Tracking** | `<profile>/.multigravity/quota-history.jsonl` | 429 rate limit backoff and cooldown persistence to prevent immediate re-dispatch. |
+| **Worktree Recovery** | Worktree verify on timeout | Runs `Verify:` inside worktree on timeout; if code 0 and matches `Paths:`, recovers diff cleanly. |
 
 ---
 
