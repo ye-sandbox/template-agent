@@ -11,7 +11,7 @@
 ## Active Task
 
 - **Task:** `[03.3]` Automated Scaffolding & CLI Contract E2E Validation in CI
-- **Status:** READY FOR PLANNING
+- **Status:** RUNNING
 - **Scope:** Enhance `.github/workflows/ci.yml` and `.github/scripts/test-all-starters.sh` to execute end-to-end scaffolding, parameter parsing, and smoke testing across all starters in CI matrix.
 - **Target Branches:** `main`
 
