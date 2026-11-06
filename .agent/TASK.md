@@ -11,7 +11,7 @@
 ## Active Task
 
 - **Task:** `[02.2]` Subagent Role Taxonomy & Delegation Specifications
-- **Status:** READY FOR PLANNING
+- **Status:** RUNNING
 - **Scope:** Define canonical subagent topology (lead, worker, reviewer), delegation contracts, and progressive context handoffs in template hub and starters.
 - **Target Branches:** `main`, `greenfield`, `brownfield`
 
