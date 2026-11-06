@@ -242,6 +242,37 @@ for branch in "${STARTER_BRANCHES[@]}"; do
   fi
 done
 
+# 7. Audit Multi-Agent & Quota Routing Contracts in .agent/NOTES.md Across All Branches
+echo "🔍 Verifying multi-agent topology and quota routing contracts in .agent/NOTES.md across all branches..."
+for branch in "${ALL_BRANCHES[@]}"; do
+  ref="$(resolve_ref "$branch")"
+  notes_content="$(git show "$ref:.agent/NOTES.md" 2>/dev/null || true)"
+  if [ -z "$notes_content" ]; then
+    fail "Branch '$branch' ($ref) is missing .agent/NOTES.md."
+    continue
+  fi
+
+  if ! echo "$notes_content" | grep -q 'Multi-Account Quota Routing & Failover Contract'; then
+    fail "Branch '$branch' ($ref) .agent/NOTES.md missing 'Multi-Account Quota Routing & Failover Contract' table."
+  fi
+
+  if ! echo "$notes_content" | grep -q 'Worktree Isolation & Dependency Bootstrap Contract'; then
+    fail "Branch '$branch' ($ref) .agent/NOTES.md missing 'Worktree Isolation & Dependency Bootstrap Contract' table."
+  fi
+
+  if ! echo "$notes_content" | grep -q 'Lead / Orchestrator'; then
+    fail "Branch '$branch' ($ref) .agent/NOTES.md missing canonical 'Lead / Orchestrator' role."
+  fi
+
+  if ! echo "$notes_content" | grep -q 'Worker / Implementer'; then
+    fail "Branch '$branch' ($ref) .agent/NOTES.md missing canonical 'Worker / Implementer' role."
+  fi
+
+  if ! echo "$notes_content" | grep -q 'Reviewer / Sentinel'; then
+    fail "Branch '$branch' ($ref) .agent/NOTES.md missing canonical 'Reviewer / Sentinel' role."
+  fi
+done
+
 echo "======================================================="
 if [ $ERRORS -gt 0 ]; then
   echo "❌ Drift audit failed with $ERRORS error(s)." >&2
