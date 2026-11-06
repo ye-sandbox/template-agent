@@ -256,7 +256,9 @@ git checkout baremetal && git merge upstream/baremetal
 │   ├── workflows/ci.yml      # Workflow de CI para matriz multibranch
 │   └── scripts/              # Validação de drift e contratos de starters
 ├── docs/
-│   └── adr/decisions.md      # Registros consolidados de decisão arquitetural
+│   ├── adr/decisions.md      # Registros consolidados de decisão arquitetural
+│   ├── subagent-topology.md  # Papéis de subagentes em 3 tiers e contratos de delegação
+│   └── worktree-isolation.md # Ciclo de vida de worktree e bootstrap de dependências
 ├── .env.example              # Esquema canônico de variáveis de ambiente
 ├── AGENTS.md                 # Constituição do repositório e regras de engenharia
 ├── CHANGELOG.md              # Notas de versão e histórico do ecossistema
@@ -269,6 +271,9 @@ git checkout baremetal && git merge upstream/baremetal
 ```bash
 # Validar contratos de governança e deriva de arquivos entre as branches
 .github/scripts/check-branch-drift.sh
+
+# Validar definições de micro-contrato e guardrails de isolamento por worktree
+.github/scripts/verify-microcontract.sh
 
 # Executar suíte de testes de ponta a ponta dos starters
 .github/scripts/test-all-starters.sh

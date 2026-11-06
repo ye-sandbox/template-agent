@@ -7,6 +7,27 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- **Multi-Agent Subagent Topology & Micro-Contracts**:
+  - Formal 3-tier subagent hierarchy (`Lead / Orchestrator`, `Worker / Implementer`, `Reviewer / Sentinel`) with isolated responsibility boundaries in `docs/subagent-topology.md`.
+  - Micro-contract standard (`Role:`, `Task:`, `Isolation:`, `Read:`, `Paths:`, `Verify:`) for strict blast radius containment.
+- **Git Worktree Isolation & Dependency Lifecycle**:
+  - Deterministic 6-stage worktree lifecycle protocol in `docs/worktree-isolation.md`.
+  - Heuristic dependency bootstrap strategy: Fast-Link (<50ms symlink for static manifests) vs. Isolated-Install (clean worktree install for manifest diffs), plus safe `.env` injection and guaranteed garbage collection.
+- **Deterministic Micro-Contract & Worktree Linter (`verify-microcontract.sh`)**:
+  - Dedicated CLI tool `.github/scripts/verify-microcontract.sh` to validate micro-contracts, detect disjoint-file conflicts in parallel execution waves (`[PARALLEL: Wx]`), and verify git worktree blast boundaries and whitespace hygiene.
+  - Integrated into GitHub Actions CI pipeline and starter validation suites.
+- **Automated CLI Flag & Scaffolding Test Suite**:
+  - Automated parameter validation matrix in `.github/scripts/test-all-starters.sh` asserting `-h`, `--help`, `-f`, `--force`, `--yes`, `--standalone`, and `--local-only` flags across all 5 starter templates.
+  - Cross-platform CI verification matrix across Ubuntu (`ubuntu-latest`) and macOS (`macos-latest`).
+
+### Changed
+- **5-Starter Multi-Agent Contract Parity**:
+  - Synchronized `.agent/NOTES.md` across all 5 specialized starter branches (`greenfield`, `brownfield`, `blackbox`, `infra`, `baremetal`) with full subagent topology, worktree lifecycle, and multi-account quota routing contracts.
+  - Resolved all inter-branch contract drift in `.github/scripts/check-branch-drift.sh`.
+- **Multi-Account Quota Failover Guidance**:
+  - Standardized quota floor circuit breaker (disqualification at <=5% remaining), secondary account priority via `select-profile.sh --exclude-current`, default `gemini-3.8-flash-medium` tier, 429 cooldown tracking, and clean worktree diff recovery on timeout.
+
 ## [1.2.0] - 2026-11-05
 
 ### Added
