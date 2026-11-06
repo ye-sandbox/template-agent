@@ -11,7 +11,7 @@
 ## Active Task
 
 - **Task:** `[03.4]` Subagent Execution & Micro-Contract Validation Runner
-- **Status:** READY FOR PLANNING
+- **Status:** RUNNING
 - **Scope:** Author a deterministic validation runner script (`.github/scripts/verify-microcontract.sh`) to assert micro-contract keys (`Read:`, `Paths:`, `Verify:`), parallel wave tags, and git worktree blast boundaries before integration.
 - **Target Branches:** `main`
 
