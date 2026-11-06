@@ -70,14 +70,43 @@ extract_branch_archive() {
   git -C "$REPO_ROOT" archive "$ref" | tar -x -C "$dest"
 }
 
+assert_cli_flags() {
+  local script_name="$1"
+  local script_path="$2"
+  log_info "Verifying CLI flags for $script_name..."
+
+  local help_short help_long
+  help_short="$("$script_path" -h)"
+  if ! echo "$help_short" | grep -qi "Usage:"; then
+    echo "❌ $script_name -h did not output usage string" >&2
+    return 1
+  fi
+
+  help_long="$("$script_path" --help)"
+  if ! echo "$help_long" | grep -qi "Usage:"; then
+    echo "❌ $script_name --help did not output usage string" >&2
+    return 1
+  fi
+
+  log_success "$script_name CLI flags (-h, --help) validated"
+}
+
 test_greenfield() {
   log_info "Testing Greenfield starter scaffolding & contracts..."
   local target_dir="$TMP_BASE/greenfield"
+  local force_dir="$TMP_BASE/greenfield-force"
   local standalone_dir="$TMP_BASE/greenfield-standalone"
   local init_script="$TMP_BASE/init-greenfield.sh"
 
   extract_branch_file greenfield init.sh "$init_script"
   chmod +x "$init_script"
+  assert_cli_flags "greenfield init.sh" "$init_script"
+
+  log_info "Testing Greenfield starter with force flag (-f)..."
+  TEMPLATE_REPO_URL="$TEMPLATE_REPO_URL" "$init_script" -f "$force_dir"
+  "$ASSERT_SCRIPT" greenfield "$force_dir"
+  log_success "Greenfield force flag (-f) passed all assertions"
+
   TEMPLATE_REPO_URL="$TEMPLATE_REPO_URL" "$init_script" -y "$target_dir"
   "$ASSERT_SCRIPT" greenfield "$target_dir"
   log_success "Greenfield standard starter passed all assertions"
@@ -94,10 +123,17 @@ test_brownfield() {
   log_info "Testing Brownfield starter (standard injection & idempotency)..."
   local src_dir="$TMP_BASE/brownfield-src"
   local target_dir="$TMP_BASE/brownfield-standard"
+  local force_dir="$TMP_BASE/brownfield-force"
   local stealth_dir="$TMP_BASE/brownfield-stealth"
 
   extract_branch_archive brownfield "$src_dir"
   chmod +x "$src_dir/install.sh"
+  assert_cli_flags "brownfield install.sh" "$src_dir/install.sh"
+
+  log_info "Testing Brownfield starter with force flag (-f)..."
+  "$src_dir/install.sh" -f "$force_dir"
+  "$ASSERT_SCRIPT" brownfield "$force_dir"
+  log_success "Brownfield force flag (-f) passed all assertions"
 
   # Initial injection
   "$src_dir/install.sh" -y "$target_dir"
@@ -121,10 +157,18 @@ test_brownfield() {
 test_blackbox() {
   log_info "Testing Blackbox starter scaffolding & contracts..."
   local target_dir="$TMP_BASE/blackbox"
+  local force_dir="$TMP_BASE/blackbox-force"
   local init_script="$TMP_BASE/init-blackbox.sh"
 
   extract_branch_file blackbox init.sh "$init_script"
   chmod +x "$init_script"
+  assert_cli_flags "blackbox init.sh" "$init_script"
+
+  log_info "Testing Blackbox starter with force flag (-f)..."
+  TEMPLATE_REPO_URL="$TEMPLATE_REPO_URL" "$init_script" -f "$force_dir"
+  "$ASSERT_SCRIPT" blackbox "$force_dir"
+  log_success "Blackbox force flag (-f) passed all assertions"
+
   TEMPLATE_REPO_URL="$TEMPLATE_REPO_URL" "$init_script" -y "$target_dir"
   rm -f "$init_script"
 
@@ -135,10 +179,18 @@ test_blackbox() {
 test_infra() {
   log_info "Testing Infra starter scaffolding & contracts..."
   local target_dir="$TMP_BASE/infra"
+  local force_dir="$TMP_BASE/infra-force"
   local init_script="$TMP_BASE/init-infra.sh"
 
   extract_branch_file infra init.sh "$init_script"
   chmod +x "$init_script"
+  assert_cli_flags "infra init.sh" "$init_script"
+
+  log_info "Testing Infra starter with force flag (-f)..."
+  TEMPLATE_REPO_URL="$TEMPLATE_REPO_URL" "$init_script" -f "$force_dir"
+  "$ASSERT_SCRIPT" infra "$force_dir"
+  log_success "Infra force flag (-f) passed all assertions"
+
   TEMPLATE_REPO_URL="$TEMPLATE_REPO_URL" "$init_script" -y "$target_dir"
   rm -f "$init_script"
 
@@ -149,10 +201,18 @@ test_infra() {
 test_baremetal() {
   log_info "Testing Baremetal starter scaffolding & contracts..."
   local target_dir="$TMP_BASE/baremetal"
+  local force_dir="$TMP_BASE/baremetal-force"
   local init_script="$TMP_BASE/init-baremetal.sh"
 
   extract_branch_file baremetal init.sh "$init_script"
   chmod +x "$init_script"
+  assert_cli_flags "baremetal init.sh" "$init_script"
+
+  log_info "Testing Baremetal starter with force flag (-f)..."
+  TEMPLATE_REPO_URL="$TEMPLATE_REPO_URL" "$init_script" -f "$force_dir"
+  "$ASSERT_SCRIPT" baremetal "$force_dir"
+  log_success "Baremetal force flag (-f) passed all assertions"
+
   TEMPLATE_REPO_URL="$TEMPLATE_REPO_URL" "$init_script" -y "$target_dir"
   rm -f "$init_script"
 

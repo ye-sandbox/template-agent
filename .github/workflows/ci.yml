@@ -29,6 +29,10 @@ jobs:
             git branch --track "$branch" "origin/$branch" 2>/dev/null || true
           done
 
+      - name: Verify Git Whitespace Hygiene
+        run: |
+          git diff --check
+
       - name: Audit Inter-Branch Governance & Drift
         run: |
           chmod +x .github/scripts/check-branch-drift.sh
@@ -38,6 +42,10 @@ jobs:
         run: |
           chmod +x .github/scripts/test-all-starters.sh
           .github/scripts/test-all-starters.sh
+          if [ -n "${GITHUB_STEP_SUMMARY:-}" ]; then
+            echo "### 🚀 Starter Validation Suite Passed" >> "$GITHUB_STEP_SUMMARY"
+            echo "All 5 starters (greenfield, brownfield, blackbox, infra, baremetal) passed scaffolding, drift, and E2E smoke tests on \`${{ matrix.os }}\`." >> "$GITHUB_STEP_SUMMARY"
+          fi
 
   lint-markdown:
     name: Validate Markdown Structure
