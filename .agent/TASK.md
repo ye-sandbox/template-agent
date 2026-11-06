@@ -10,9 +10,9 @@
 
 ## Active Task
 
-- **Task:** `[03.5]` Epic 03 Milestone Consolidation & Audit
-- **Status:** RUNNING
-- **Scope:** Consolidate Epic 03 deliverables, perform end-to-end multi-starter CI audit, verify zero drift, and prepare release wrap-up.
+- **Task:** `[04.1]` Next Milestone / Epic Planning (Epic 04: Dynamic Agent Sandbox & Security Hardening)
+- **Status:** READY FOR PLANNING
+- **Scope:** Decompose Epic 04 objectives, specify containerized / sandbox execution runners, security audit boundaries, and multi-starter integration.
 - **Target Branches:** `main`
 
 ---
@@ -32,6 +32,7 @@
 | `[03.2]` | Starter Branch Parity: Synchronize Multi-Agent & Quota Contracts | `3e06e6e` (greenfield), `7ac084a` (brownfield), `ed98cb8` (blackbox), `365af38` (infra), `9248fe8` (baremetal) | 2026-11-06 |
 | `[03.3]` | Automated Scaffolding & CLI Contract E2E Validation in CI | `e6ac4d6` (main) | 2026-11-06 |
 | `[03.4]` | Subagent Execution & Micro-Contract Validation Runner | `b89c49c`, `07eaaf7` (main) | 2026-11-06 |
+| `[03.5]` | Epic 03 Milestone Consolidation & Audit | `71b3eab`, `6c5104d` (main) | 2026-11-06 |
 
 ---
 
