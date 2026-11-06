@@ -10,10 +10,10 @@
 
 ## Active Task
 
-- **Task:** `[02.5]` Multi-Account Quota Failover Guidance & Starter Parity
-- **Status:** RUNNING
-- **Scope:** Propagate and document multi-account quota routing conventions across starters.
-- **Target Branches:** `main`, `greenfield`, `brownfield`, `blackbox`, `infra`, `baremetal`
+- **Task:** `[03.1]` Next Milestone / Epic Planning
+- **Status:** READY FOR PLANNING
+- **Scope:** Define roadmap items and backlog for Epic 03.
+- **Target Branches:** `main`
 
 ---
 
@@ -27,6 +27,7 @@
 | `[02.2]` | Subagent Role Taxonomy & Delegation Specifications | `4b29226` (main), `00938fa` (greenfield), `a2f8753` (brownfield) | 2026-11-06 |
 | `[02.3]` | Isolated Worktree & Sandbox Runner Integration | `d1753a6` (main), `2b55129` (greenfield), `6bf2819` (brownfield) | 2026-11-06 |
 | `[02.4]` | Micro-Contract & Parallel Wave Validation in CI | `8a0d4b9` (main) | 2026-11-06 |
+| `[02.5]` | Multi-Account Quota Failover Guidance & Starter Parity | `fad418d` (main), `0be4bb8` (greenfield), `674cabc` (brownfield), `6a1b9be` (blackbox), `f4b17b4` (infra), `2aa114e` (baremetal) | 2026-11-06 |
 
 ---
 
