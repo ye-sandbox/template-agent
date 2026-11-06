@@ -11,7 +11,7 @@
 ## Active Task
 
 - **Task:** `[04.1]` Next Milestone / Epic Planning (Epic 04: Dynamic Agent Sandbox & Security Hardening)
-- **Status:** READY FOR PLANNING
+- **Status:** RUNNING
 - **Scope:** Decompose Epic 04 objectives, specify containerized / sandbox execution runners, security audit boundaries, and multi-starter integration.
 - **Target Branches:** `main`
 
