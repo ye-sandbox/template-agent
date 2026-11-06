@@ -138,3 +138,31 @@ If a worker or reviewer encounters consecutive failures matching the circuit bre
    pending_decision: "<clarification requested from lead or human>"
    ```
 3. Control returns to `Lead / Orchestrator` to request human intervention or revise planning.
+
+---
+
+## 8. Multi-Account Quota Routing & Failover Protocol
+
+When orchestrating parallel waves (`[PARALLEL: Wx]`) and autonomous worker subagents across multiple Antigravity profiles, runners adhere to a deterministic quota preservation and failover protocol:
+
+### 1. Profile Routing Priority
+- **Secondary Account Priority:** Autonomous worker tasks MUST prioritize secondary accounts (`select-profile.sh --exclude-current` or `multigravity dispatch`), preserving the primary profile's quota for the Lead Orchestrator's interactive planning turns.
+- **Interactive Fallback:** Runners fall back to the active/current IDE profile ONLY when no secondary profile possesses sufficient quota.
+
+### 2. 5% Quota Floor & Circuit Breaker
+- Any profile with `remaining_fraction <= 0.05` (5% remaining quota) is disqualified from dispatch and automated priming.
+- If all candidate profiles are below the 5% quota floor or rate-limited (`429`), the runner halts and escalates to the Lead Orchestrator with the standard diagnostic payload.
+
+### 3. Model Tier Selection & Escalation Hierarchy
+- **Default Tier:** Autonomous workers default to `gemini-3.8-flash-medium` for low token consumption, zero unnecessary overhead, and high-throughput wave execution.
+- **Escalation Tier:** Escalation to `gemini-4-argon-medium` is permitted ONLY for:
+  1. Substantive architectural synthesis explicitly designated in planning.
+  2. At most **1 retry** following a verification failure (`verify_failed`).
+- **Hard Stop:** If verification fails a second time under the escalated model, the runner halts immediately.
+
+### 4. Rate-Limit Persistence & Cooldowns
+- 429 rate limit responses and quota state changes are persisted in `<profile>/.multigravity/quota-history.jsonl` to prevent immediate re-dispatch to rate-limited accounts.
+
+### 5. Worktree Verification & Recovery
+- If a worker process lingers or reaches timeout after authoring code, the harness executes the task's `Verify:` command inside the isolated worktree.
+- If `Verify:` exits with code 0 and staged files adhere to `Paths:`, the harness recovers the worktree diff, creates an atomic commit, and cleans up the worktree without loss of work.
