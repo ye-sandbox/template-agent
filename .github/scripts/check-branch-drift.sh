@@ -211,6 +211,37 @@ else
   fi
 fi
 
+# 6. Audit Multi-Agent Micro-Contract & Parallel Wave Invariants in .agent/TASK.md
+echo "🔍 Verifying multi-agent micro-contract and wave invariants in .agent/TASK.md across all branches..."
+for branch in "${STARTER_BRANCHES[@]}"; do
+  ref="$(resolve_ref "$branch")"
+  task_content="$(git show "$ref:.agent/TASK.md" 2>/dev/null || true)"
+  if [ -z "$task_content" ]; then
+    fail "Branch '$branch' ($ref) is missing .agent/TASK.md."
+    continue
+  fi
+
+  if ! echo "$task_content" | grep -qE '\[PARALLEL: W[0-9]+\]'; then
+    fail "Branch '$branch' ($ref) .agent/TASK.md missing standardized parallel wave tag pattern '[PARALLEL: Wx]'."
+  fi
+
+  if ! echo "$task_content" | grep -qF 'Read:'; then
+    fail "Branch '$branch' ($ref) .agent/TASK.md missing micro-contract 'Read:' field."
+  fi
+
+  if ! echo "$task_content" | grep -qF 'Paths:'; then
+    fail "Branch '$branch' ($ref) .agent/TASK.md missing micro-contract 'Paths:' field."
+  fi
+
+  if ! echo "$task_content" | grep -qF 'Verify:'; then
+    fail "Branch '$branch' ($ref) .agent/TASK.md missing micro-contract 'Verify:' field."
+  fi
+
+  if ! echo "$task_content" | grep -qF '[APPROVED]'; then
+    fail "Branch '$branch' ($ref) .agent/TASK.md missing '[APPROVED]' pre-approval tag guidance."
+  fi
+done
+
 echo "======================================================="
 if [ $ERRORS -gt 0 ]; then
   echo "❌ Drift audit failed with $ERRORS error(s)." >&2
