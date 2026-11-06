@@ -10,9 +10,9 @@
 
 ## Active Task
 
-- **Task:** `[03.4]` Subagent Execution & Micro-Contract Validation Runner
-- **Status:** RUNNING
-- **Scope:** Author a deterministic validation runner script (`.github/scripts/verify-microcontract.sh`) to assert micro-contract keys (`Read:`, `Paths:`, `Verify:`), parallel wave tags, and git worktree blast boundaries before integration.
+- **Task:** `[03.5]` Epic 03 Milestone Consolidation & Audit
+- **Status:** READY FOR PLANNING
+- **Scope:** Consolidate Epic 03 deliverables, perform end-to-end multi-starter CI audit, verify zero drift, and prepare release wrap-up.
 - **Target Branches:** `main`
 
 ---
@@ -31,12 +31,13 @@
 | `[03.1]` | Milestone 03 Roadmap: Starter Parity & End-to-End Test Harness | `6f84831` (main) | 2026-11-06 |
 | `[03.2]` | Starter Branch Parity: Synchronize Multi-Agent & Quota Contracts | `3e06e6e` (greenfield), `7ac084a` (brownfield), `ed98cb8` (blackbox), `365af38` (infra), `9248fe8` (baremetal) | 2026-11-06 |
 | `[03.3]` | Automated Scaffolding & CLI Contract E2E Validation in CI | `e6ac4d6` (main) | 2026-11-06 |
+| `[03.4]` | Subagent Execution & Micro-Contract Validation Runner | `b89c49c`, `07eaaf7` (main) | 2026-11-06 |
 
 ---
 
 ## Backlog (Upcoming, in priority order)
 
-- `[03.5]` Epic 03 Milestone Consolidation & Audit
+*(empty)*
 
 
 
