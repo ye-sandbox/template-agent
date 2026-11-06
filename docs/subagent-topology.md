@@ -89,13 +89,18 @@ For tasks marked `[PARALLEL: Wx]`:
 
 1. **File Disjointness Invariant:**
    - Multiple workers executing in the same wave MUST have mutually disjoint `Paths:` sets. Overlapping mutable paths in the same wave are strictly prohibited.
-2. **Worktree Isolation:**
+2. **Worktree Isolation & Dependency Bootstrapping:**
+   - Detailed specification and lifecycle recipes: [`docs/worktree-isolation.md`](worktree-isolation.md).
    - When executing parallel worker subagents, each worker operates in an isolated `git worktree`:
      ```bash
      git worktree add -b task-xx-y /tmp/worktrees/task-xx-y HEAD
      ```
+   - **Dependency Bootstrapping (Fast-Link vs. Isolated-Install):**
+     - If delegated `Paths:` does not alter dependency manifests (`package.json`, `pyproject.toml`, etc.), the runner uses **Fast-Link** (<50ms, zero-copy symlink of `node_modules/` or `.venv/` to root).
+     - If delegated `Paths:` includes dependency manifests, the runner executes **Isolated-Install** inside the worktree using global caches.
+     - Untracked `.env` configuration is safely copied from root to the worktree for test suite execution.
    - Upon successful verification (`Verify:` exits 0), the worker commits atomically and the lead fast-forwards or cherry-picks the commit.
-   - Clean up worktrees promptly: `git worktree remove /tmp/worktrees/task-xx-y`.
+   - Clean up worktrees promptly: `git worktree remove --force /tmp/worktrees/task-xx-y && git branch -D task-xx-y && git worktree prune`.
 
 ---
 
