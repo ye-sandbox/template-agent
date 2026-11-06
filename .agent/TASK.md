@@ -10,10 +10,10 @@
 
 ## Active Task
 
-- **Task:** `[03.1]` Next Milestone / Epic Planning
+- **Task:** `[03.2]` Starter Branch Parity: Synchronize Multi-Agent & Quota Contracts
 - **Status:** READY FOR PLANNING
-- **Scope:** Define roadmap items and backlog for Epic 03.
-- **Target Branches:** `main`
+- **Scope:** Propagate multi-agent collaboration contracts and quota failover tables into `.agent/NOTES.md` across `greenfield`, `brownfield`, `blackbox`, `infra`, and `baremetal` to resolve drift errors and pass CI test suite.
+- **Target Branches:** `greenfield`, `brownfield`, `blackbox`, `infra`, `baremetal`
 
 ---
 
@@ -28,12 +28,15 @@
 | `[02.3]` | Isolated Worktree & Sandbox Runner Integration | `d1753a6` (main), `2b55129` (greenfield), `6bf2819` (brownfield) | 2026-11-06 |
 | `[02.4]` | Micro-Contract & Parallel Wave Validation in CI | `8a0d4b9` (main) | 2026-11-06 |
 | `[02.5]` | Multi-Account Quota Failover Guidance & Starter Parity | `fad418d` (main), `0be4bb8` (greenfield), `674cabc` (brownfield), `6a1b9be` (blackbox), `f4b17b4` (infra), `2aa114e` (baremetal) | 2026-11-06 |
+| `[03.1]` | Milestone 03 Roadmap: Starter Parity & End-to-End Test Harness | `6f84831` (main) | 2026-11-06 |
 
 ---
 
 ## Backlog (Upcoming, in priority order)
 
-*(empty)*
+- `[03.3]` Automated Scaffolding & CLI Contract E2E Validation in CI
+- `[03.4]` Subagent Execution & Micro-Contract Validation Runner (`scripts/verify-microcontract.sh`)
+- `[03.5]` Epic 03 Milestone Consolidation & Audit
 
 
 
