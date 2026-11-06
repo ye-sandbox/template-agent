@@ -11,7 +11,7 @@
 ## Active Task
 
 - **Task:** `[02.4]` Micro-Contract & Parallel Wave Validation in CI
-- **Status:** READY FOR PLANNING
+- **Status:** RUNNING
 - **Scope:** Add contract assertions for `run-wave.sh` micro-contracts (`Read:`, `Paths:`, `Verify:`) and parallel tags (`[PARALLEL: Wx]`) in starter contract checks.
 - **Target Branches:** `main`, `greenfield`, `brownfield`
 
