@@ -22,6 +22,20 @@ Active contracts and live gotchas stay below.
 
 ---
 
+## Active Contracts
+
+### Multi-Agent Collaboration Contracts
+
+Canonical 3-tier subagent topology and boundaries (detailed specification: [`docs/subagent-topology.md`](../docs/subagent-topology.md)):
+
+| Role | Interface / Channel | Responsibilities | Boundary & Invariants |
+|---|---|---|---|
+| **`Lead / Orchestrator`** | `.agent/TASK.md` / Interactive Prompt | Decomposes initiatives into wave-compatible tasks, manages task lifecycle, routes to model/quota tiers, interacts with human. | Sole manager of `TASK.md` and commit log. Does not run parallel worker tasks directly. |
+| **`Worker / Implementer`** | Worktree / Target Workspace | Executes atomic code/doc changes strictly adhering to delegated micro-contract (`Read:`, `Paths:`, `Verify:`). | Restricted exclusively to `Paths:`. Adheres to DoD in `AGENTS.md`. |
+| **`Reviewer / Sentinel`** | Diffs / Test Harness (`Verify:`) | Read-only inspection of diffs against task DoD, regression tests, and security blast radius. | Read-only; reports structured Pass/Fail diagnostic payload. |
+
+---
+
 ## Pitfalls & Gotchas
 
 - **`curl | bash` in `install.sh`:** Do not read confirmation from stdin; use `/dev/tty` or `-y`.
