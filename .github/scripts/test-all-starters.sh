@@ -16,6 +16,12 @@ REPO_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
 # Support local workspace fallback or CI GITHUB_WORKSPACE
 export TEMPLATE_REPO_URL="${TEMPLATE_REPO_URL:-${GITHUB_WORKSPACE:-$REPO_ROOT}}"
 
+# Hermetic Git author identity for scaffolding test commits
+export GIT_AUTHOR_NAME="${GIT_AUTHOR_NAME:-Antigravity Lead}"
+export GIT_AUTHOR_EMAIL="${GIT_AUTHOR_EMAIL:-lead@template-hub.internal}"
+export GIT_COMMITTER_NAME="${GIT_COMMITTER_NAME:-Antigravity Lead}"
+export GIT_COMMITTER_EMAIL="${GIT_COMMITTER_EMAIL:-lead@template-hub.internal}"
+
 ASSERT_SCRIPT="$SCRIPT_DIR/assert-starter-contracts.sh"
 if [ ! -x "$ASSERT_SCRIPT" ]; then
   chmod +x "$ASSERT_SCRIPT"
