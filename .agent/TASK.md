@@ -10,10 +10,10 @@
 
 ## Active Task
 
-- **Task:** `[02.1]` Next Milestone / Epic Planning
-- **Status:** RUNNING
-- **Scope:** Define objectives and candidate epics for the post-v1.2.0 milestone.
-- **Target Branches:** `main`
+- **Task:** `[02.2]` Subagent Role Taxonomy & Delegation Specifications
+- **Status:** READY FOR PLANNING
+- **Scope:** Define canonical subagent topology (lead, worker, reviewer), delegation contracts, and progressive context handoffs in template hub and starters.
+- **Target Branches:** `main`, `greenfield`, `brownfield`
 
 ---
 
@@ -23,13 +23,16 @@
 
 | Task | Title | Commit(s) | Date |
 |---|---|---|---|
-
+| `[02.1]` | Next Milestone / Epic Planning (Epic 02: Multi-Agent Orchestration) | `f948d2b` (main) | 2026-11-06 |
 
 ---
 
 ## Backlog (Upcoming, in priority order)
 
-*(empty)*
+- `[02.3]` Isolated Worktree & Sandbox Runner Integration: Implement lightweight worktree isolation recipes (`git worktree`) for parallel task wave execution.
+- `[02.4]` Micro-Contract & Parallel Wave Validation in CI: Add contract assertions for `run-wave.sh` micro-contracts (`Read:`, `Paths:`, `Verify:`) and parallel tags (`[PARALLEL: Wx]`) in starter contract checks.
+- `[02.5]` Multi-Account Quota Failover Guidance & Starter Parity: Propagate and document multi-account quota routing conventions across starters.
+
 
 
 ---
