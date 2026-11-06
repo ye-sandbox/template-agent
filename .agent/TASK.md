@@ -11,9 +11,9 @@
 ## Active Task
 
 - **Task:** `[02.1]` Next Milestone / Epic Planning
-- **Status:** READY FOR PLANNING
+- **Status:** RUNNING
 - **Scope:** Define objectives and candidate epics for the post-v1.2.0 milestone.
-- **Target Branches:** TBD
+- **Target Branches:** `main`
 
 ---
 
