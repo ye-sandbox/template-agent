@@ -26,7 +26,7 @@ Active contracts and live gotchas stay below.
 
 ### Multi-Agent Collaboration Contracts
 
-Canonical 3-tier subagent topology, delegation micro-contracts, and worktree isolation (specifications: [`docs/subagent-topology.md`](../docs/subagent-topology.md) and [`docs/worktree-isolation.md`](../docs/worktree-isolation.md)):
+Canonical 3-tier subagent topology, delegation micro-contracts, worktree isolation, and hermetic sandboxes (specifications: [`docs/subagent-topology.md`](../docs/subagent-topology.md), [`docs/worktree-isolation.md`](../docs/worktree-isolation.md), and [`docs/agent-sandbox.md`](../docs/agent-sandbox.md)):
 
 | Role | Interface / Channel | Responsibilities | Boundary & Invariants |
 |---|---|---|---|
@@ -52,6 +52,15 @@ Canonical 3-tier subagent topology, delegation micro-contracts, and worktree iso
 | **Model Tier Selection** | `gemini-3.8-flash-medium` | Low token footprint default; escalation to `gemini-4-argon-medium` permitted only for complex architecture or max 1 retry after verification failure. |
 | **Cooldown Tracking** | `<profile>/.multigravity/quota-history.jsonl` | 429 rate limit backoff and cooldown persistence to prevent immediate re-dispatch. |
 | **Worktree Recovery** | Worktree verify on timeout | Runs `Verify:` inside worktree on timeout; if code 0 and matches `Paths:`, recovers diff cleanly. |
+
+#### Hermetic Agent Sandbox & Container Isolation Contract
+
+| Element | Protocol / Mechanism | Invariant / Boundary |
+|---|---|---|
+| **Tier 1 (Bubblewrap)** | `bwrap --unshare-all --ro-bind /usr ...` | Rootless user namespace, read-only system binaries, ephemeral tmpfs `/tmp`, worktree read-write bind, `--die-with-parent`. |
+| **Tier 2 (Rootless Container)** | `podman run --read-only --cap-drop=ALL` | Rootless OCI container, read-only rootfs, `no-new-privileges`, memory (2G) and CPU (2.0) limits, tmpfs `/tmp` with `noexec`. |
+| **Network Namespacing** | `--unshare-net` / `--network none` | Hermetic air-gap by default; egress permitted exclusively for explicit external API or dependency fetching tasks. |
+| **Fallback & Escalation** | `audit-command-security.sh` | Static pre-execution audit for hazardous commands (`sudo`, `/etc` writes, curl pipes) when namespaces unavailable. |
 
 ---
 

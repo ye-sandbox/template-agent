@@ -107,6 +107,10 @@ Untracked local configurations and secrets necessary for test suites:
 - If `${ROOT_DIR}/.env` exists, **copy** (do NOT symlink) to `${WORKTREE_PATH}/.env`.
 - Copying ensures workers can safely inject mock credentials or temporary test variables without mutating the root developer environment.
 
+### Sandboxing & Process Confinement
+Worker execution within `${WORKTREE_PATH}` is bound to hermetic execution sandboxes (Bubblewrap `bwrap` or rootless OCI containers) to enforce read-only system mounts, ephemeral `tmpfs /tmp`, and network air-gapping.
+Detailed specification and execution wrappers: [`docs/agent-sandbox.md`](agent-sandbox.md).
+
 ---
 
 ## 4. Canonical Bootstrap Implementation

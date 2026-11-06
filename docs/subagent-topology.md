@@ -101,6 +101,9 @@ For tasks marked `[PARALLEL: Wx]`:
      - Untracked `.env` configuration is safely copied from root to the worktree for test suite execution.
    - Upon successful verification (`Verify:` exits 0), the worker commits atomically and the lead fast-forwards or cherry-picks the commit.
    - Clean up worktrees promptly: `git worktree remove --force /tmp/worktrees/task-xx-y && git branch -D task-xx-y && git worktree prune`.
+3. **Hermetic Sandboxing & Blast Radius Containment:**
+   - Detailed specification and container/Bubblewrap profiles: [`docs/agent-sandbox.md`](agent-sandbox.md).
+   - Worker subagents execute inside unprivileged sandboxes with read-only system binaries, ephemeral `tmpfs /tmp`, and air-gapped network namespaces to prevent host pollution and credential exfiltration.
 
 ---
 
