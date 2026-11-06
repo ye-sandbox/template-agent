@@ -11,8 +11,8 @@
 ## Active Task
 
 - **Task:** `[02.3]` Isolated Worktree & Sandbox Runner Integration
-- **Status:** READY FOR PLANNING
-- **Scope:** Implement lightweight worktree isolation recipes (`git worktree`) and sandbox runner integration for parallel task wave execution.
+- **Status:** RUNNING
+- **Scope:** Implement lightweight worktree isolation recipes (`git worktree`), dependency bootstrap strategy (Fast-Link vs Isolated-Install), and sandbox runner integration for parallel task wave execution.
 - **Target Branches:** `main`, `greenfield`, `brownfield`
 
 ---
