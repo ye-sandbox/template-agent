@@ -11,7 +11,7 @@
 ## Active Task
 
 - **Task:** `[03.2]` Starter Branch Parity: Synchronize Multi-Agent & Quota Contracts
-- **Status:** READY FOR PLANNING
+- **Status:** RUNNING
 - **Scope:** Propagate multi-agent collaboration contracts and quota failover tables into `.agent/NOTES.md` across `greenfield`, `brownfield`, `blackbox`, `infra`, and `baremetal` to resolve drift errors and pass CI test suite.
 - **Target Branches:** `greenfield`, `brownfield`, `blackbox`, `infra`, `baremetal`
 
