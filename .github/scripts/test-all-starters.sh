@@ -230,18 +230,33 @@ check_drift() {
   fi
 }
 
+test_microcontract_runner() {
+  local runner_script="$SCRIPT_DIR/verify-microcontract.sh"
+  if [ -f "$runner_script" ]; then
+    log_info "Verifying Micro-Contract & Worktree Validation Runner..."
+    chmod +x "$runner_script"
+    assert_cli_flags "verify-microcontract.sh" "$runner_script"
+    "$runner_script"
+    log_success "Micro-Contract runner validated successfully"
+  fi
+}
+
 case "$TARGET" in
   all)
     check_drift
+    test_microcontract_runner
     test_greenfield
     test_brownfield
     test_blackbox
     test_infra
     test_baremetal
-    log_info "All 5 starter templates validated successfully!"
+    log_info "All 5 starter templates and micro-contract guardrails validated successfully!"
     ;;
   drift)
     check_drift
+    ;;
+  microcontract)
+    test_microcontract_runner
     ;;
   greenfield)
     test_greenfield
@@ -260,7 +275,7 @@ case "$TARGET" in
     ;;
   *)
     echo "❌ Unknown starter target: $TARGET" >&2
-    echo "Usage: $0 [all|greenfield|brownfield|blackbox|infra|baremetal]" >&2
+    echo "Usage: $0 [all|drift|microcontract|greenfield|brownfield|blackbox|infra|baremetal]" >&2
     exit 2
     ;;
 esac

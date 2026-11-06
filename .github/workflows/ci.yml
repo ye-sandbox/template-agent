@@ -38,6 +38,11 @@ jobs:
           chmod +x .github/scripts/check-branch-drift.sh
           .github/scripts/check-branch-drift.sh
 
+      - name: Verify Micro-Contracts and Worktree Isolation Guardrails
+        run: |
+          chmod +x .github/scripts/verify-microcontract.sh
+          .github/scripts/verify-microcontract.sh
+
       - name: Run Unified Starter Test Suite
         run: |
           chmod +x .github/scripts/test-all-starters.sh
