@@ -11,7 +11,7 @@
 ## Active Task
 
 - **Task:** `[04.2]` Hermetic Ephemeral Container & Bubblewrap Sandbox Specification
-- **Status:** READY FOR PLANNING
+- **Status:** RUNNING
 - **Scope:** Author `docs/agent-sandbox.md` specifying rootless container and Bubblewrap (`bwrap`) isolation profiles, network namespacing, read-only root mounts, and tmpfs workspace isolation for worker agents.
 - **Target Branches:** `main`
 
