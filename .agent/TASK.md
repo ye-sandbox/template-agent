@@ -11,7 +11,7 @@
 ## Active Task
 
 - **Task:** `[02.5]` Multi-Account Quota Failover Guidance & Starter Parity
-- **Status:** READY FOR PLANNING
+- **Status:** RUNNING
 - **Scope:** Propagate and document multi-account quota routing conventions across starters.
 - **Target Branches:** `main`, `greenfield`, `brownfield`, `blackbox`, `infra`, `baremetal`
 
