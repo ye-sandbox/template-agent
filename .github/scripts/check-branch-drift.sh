@@ -273,6 +273,33 @@ for branch in "${ALL_BRANCHES[@]}"; do
   fi
 done
 
+# 8. Audit Hermetic Agent Sandbox & Container Isolation Contracts in .agent/NOTES.md Across All Branches
+echo "🔍 Verifying hermetic sandbox and container isolation contracts in .agent/NOTES.md across all branches..."
+for branch in "${ALL_BRANCHES[@]}"; do
+  ref="$(resolve_ref "$branch")"
+  notes_content="$(git show "$ref:.agent/NOTES.md" 2>/dev/null || true)"
+  if [ -z "$notes_content" ]; then
+    fail "Branch '$branch' ($ref) is missing .agent/NOTES.md."
+    continue
+  fi
+
+  if ! echo "$notes_content" | grep -q 'Hermetic Agent Sandbox & Container Isolation Contract'; then
+    fail "Branch '$branch' ($ref) .agent/NOTES.md missing 'Hermetic Agent Sandbox & Container Isolation Contract' table."
+  fi
+
+  if ! echo "$notes_content" | grep -q 'Tier 1 (Bubblewrap)'; then
+    fail "Branch '$branch' ($ref) .agent/NOTES.md missing 'Tier 1 (Bubblewrap)' entry."
+  fi
+
+  if ! echo "$notes_content" | grep -q 'Tier 2 (Rootless Container)'; then
+    fail "Branch '$branch' ($ref) .agent/NOTES.md missing 'Tier 2 (Rootless Container)' entry."
+  fi
+
+  if ! echo "$notes_content" | grep -q 'audit-command-security.sh'; then
+    fail "Branch '$branch' ($ref) .agent/NOTES.md missing 'audit-command-security.sh' fallback entry."
+  fi
+done
+
 echo "======================================================="
 if [ $ERRORS -gt 0 ]; then
   echo "❌ Drift audit failed with $ERRORS error(s)." >&2

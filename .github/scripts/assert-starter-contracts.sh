@@ -85,6 +85,10 @@ assert_multiagent_contracts() {
   need_grep .agent/NOTES.md 'Multi-Account Quota Routing & Failover Contract' -qF
   need_grep .agent/NOTES.md 'select-profile.sh' -qF
   need_grep .agent/NOTES.md 'remaining_fraction' -qF
+  need_grep .agent/NOTES.md 'Hermetic Agent Sandbox & Container Isolation Contract' -qF
+  need_grep .agent/NOTES.md 'Tier 1 (Bubblewrap)' -qF
+  need_grep .agent/NOTES.md 'Tier 2 (Rootless Container)' -qF
+  need_grep .agent/NOTES.md 'audit-command-security.sh' -qF
 }
 
 assert_greenfield_base() {
