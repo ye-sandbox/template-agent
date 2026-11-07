@@ -53,6 +53,11 @@ jobs:
           chmod +x .github/scripts/bootstrap-worktree.sh
           .github/scripts/bootstrap-worktree.sh --self-test
 
+      - name: Verify LLM Gateway Contracts & Virtual Model Guardrails
+        run: |
+          chmod +x .github/scripts/verify-llm-contract.sh
+          .github/scripts/verify-llm-contract.sh self-test
+
       - name: Run Unified Starter Test Suite
         run: |
           chmod +x .github/scripts/test-all-starters.sh
