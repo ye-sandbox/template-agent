@@ -10,9 +10,9 @@
 
 ## Active Task
 
-- **Task:** `[05.2]` LLM Gateway & Virtual Model Specification
-- **Status:** RUNNING
-- **Scope:** Author `docs/llm-gateway.md` specifying OpenAI v1 compatible gateway integration, virtual model routing (`free-fast`, `free-deep`), client timeout/reasoning budget invariants, Docker sibling networks (`hydra_shared_net`), and token tier taxonomy.
+- **Task:** `[05.3]` Deterministic LLM Gateway Contract Linter & Pre-Flight Probe Runner (`.github/scripts/verify-llm-contract.sh`)
+- **Status:** READY FOR PLANNING
+- **Scope:** Author `.github/scripts/verify-llm-contract.sh` implementing deterministic linting of consumer codebases: assert absence of hardcoded upstream model strings/endpoints, validate canonical `.env.example` keys, ensure `compose.yaml` attaches strictly to `hydra_shared_net` (prohibiting `hydra_ai_net`), and provide offline/online smoke probe modes.
 - **Target Branches:** `main`
 
 ---
@@ -40,12 +40,12 @@
 | `[04.5]` | Epic 04 Milestone Consolidation & End-to-End Security Validation | `a4d2ddd`, `2dd4c15` (main) | 2026-11-07 |
 | `[04.6]` | T3 Code Worktree Fast-Link Bootstrap & Project Lifecycle Hook Parity | `ff0e3ff`, `7069689`, `4d45aa2`, `010f689`, `b77cfd1`, `5758919` (main), `a4b56cf` (greenfield), `0c3996a` (brownfield), `788ea43` (blackbox), `b7909ed` (infra), `2ebb795` (baremetal) | 2026-11-07 |
 | `[05.1]` | Next Milestone / Epic Planning (Epic 05: LLM Gateway & Virtual Model Routing) | `cd7f3c8` (main) | 2026-11-07 |
+| `[05.2]` | LLM Gateway & Virtual Model Specification | `3197f9f` (main) | 2026-11-07 |
 
 ---
 
 ## Backlog (Upcoming, in priority order)
 
-- `[05.3]` Deterministic LLM Gateway Contract Linter & Pre-Flight Probe Runner (`.github/scripts/verify-llm-contract.sh`)
 - `[05.4]` Starter Template Parity: Propagate LLM Gateway Contracts & `.env.example`
 - `[05.5]` Epic 05 Milestone Consolidation, Documentation & Multi-Branch CI Audit
 
