@@ -10,10 +10,10 @@
 
 ## Active Task
 
-- **Task:** `[05.4]` Starter Template Parity: Propagate LLM Gateway Contracts & `.env.example`
-- **Status:** RUNNING
-- **Scope:** Synchronize canonical `.env.example` schema and LLM gateway specification across all starter branches (`greenfield`, `brownfield`, `blackbox`, `infra`, `baremetal`), updating starter drift verification tests.
-- **Target Branches:** `main`, `greenfield`, `brownfield`, `blackbox`, `infra`, `baremetal`
+- **Task:** `[05.5]` Epic 05 Milestone Consolidation, Documentation & Multi-Branch CI Audit
+- **Status:** READY FOR PLANNING
+- **Scope:** Consolidate Epic 05 milestones into README documentation and CHANGELOG.md, execute full multi-branch test harness verification, and record architectural decisions.
+- **Target Branches:** `main`
 
 ---
 
@@ -42,12 +42,13 @@
 | `[05.1]` | Next Milestone / Epic Planning (Epic 05: LLM Gateway & Virtual Model Routing) | `cd7f3c8` (main) | 2026-11-07 |
 | `[05.2]` | LLM Gateway & Virtual Model Specification | `3197f9f` (main) | 2026-11-07 |
 | `[05.3]` | Deterministic LLM Gateway Contract Linter & Pre-Flight Probe Runner | `ed9a166`, `3ab211c` (main) | 2026-11-07 |
+| `[05.4]` | Starter Template Parity: Propagate LLM Gateway Contracts & `.env.example` | `cf6bbb9`, `b6470aa` (main), `06093c6` (greenfield), `688c59e` (brownfield), `dc6e47f` (blackbox), `e454f8b` (infra), `558e6d2` (baremetal) | 2026-11-07 |
 
 ---
 
 ## Backlog (Upcoming, in priority order)
 
-- `[05.5]` Epic 05 Milestone Consolidation, Documentation & Multi-Branch CI Audit
+*(empty)*
 
 
 
