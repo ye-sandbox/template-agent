@@ -11,7 +11,7 @@
 ## Active Task
 
 - **Task:** `[05.2]` LLM Gateway & Virtual Model Specification
-- **Status:** READY FOR PLANNING
+- **Status:** RUNNING
 - **Scope:** Author `docs/llm-gateway.md` specifying OpenAI v1 compatible gateway integration, virtual model routing (`free-fast`, `free-deep`), client timeout/reasoning budget invariants, Docker sibling networks (`hydra_shared_net`), and token tier taxonomy.
 - **Target Branches:** `main`
 
