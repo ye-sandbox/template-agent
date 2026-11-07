@@ -11,7 +11,7 @@
 ## Active Task
 
 - **Task:** `[05.4]` Starter Template Parity: Propagate LLM Gateway Contracts & `.env.example`
-- **Status:** READY FOR PLANNING
+- **Status:** RUNNING
 - **Scope:** Synchronize canonical `.env.example` schema and LLM gateway specification across all starter branches (`greenfield`, `brownfield`, `blackbox`, `infra`, `baremetal`), updating starter drift verification tests.
 - **Target Branches:** `main`, `greenfield`, `brownfield`, `blackbox`, `infra`, `baremetal`
 
