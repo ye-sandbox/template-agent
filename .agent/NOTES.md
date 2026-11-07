@@ -71,6 +71,18 @@ Canonical 3-tier subagent topology, delegation micro-contracts, worktree isolati
 | **Network Namespacing** | `--unshare-net` / `--network none` | Hermetic air-gap by default; egress permitted exclusively for explicit external API or dependency fetching tasks. |
 | **Fallback & Escalation** | `audit-command-security.sh` | Static pre-execution audit for hazardous commands (`sudo`, `/etc` writes, curl pipes) when namespaces unavailable. |
 
+#### LLM Gateway & Virtual Model Routing Contract
+
+Canonical OpenAI v1 compatible gateway integration, virtual model aliases, network boundaries, and timeout invariants (specification: [`docs/llm-gateway.md`](../docs/llm-gateway.md)):
+
+| Element | Protocol / Mechanism | Invariant / Boundary |
+|---|---|---|
+| **API Protocol** | OpenAI v1 (`/v1/chat/completions`, `/v1/models`) | Standard JSON schema, streaming SSE, tool calling; zero provider-specific SDK lock-in. |
+| **Virtual Model Routing** | `free-fast` vs. `free-deep` | `free-fast` for low-latency (<1.5s) intent/extractions; `free-deep` for complex reasoning/synthesis (up to 1M tokens). Upstream provider drift handled dynamically at gateway. |
+| **Network Isolation** | `hydra_shared_net` (`external: true`) | Consumer containers join `hydra_shared_net` for direct DNS `http://hydra-ai-gateway:3000/v1`. Joining `hydra_ai_net` is strictly forbidden (protects Redis/DB). |
+| **Client Timeout & Budget** | `LLM_TIMEOUT_SECONDS >= 180` | Minimum 180s timeout for deep reasoning calls; minimum `max_tokens >= 60` on test probes to prevent empty completions caused by reasoning token consumption. |
+| **Token Tiers** | Tier 1 (5M), Tier 2 (1M), Tier 3 (unlimited) | Tier 1 for production pipelines, Tier 2 for interactive/dev, Tier 3 for smoke/health checks. |
+
 ---
 
 ## Pitfalls & Gotchas
@@ -83,3 +95,4 @@ Canonical 3-tier subagent topology, delegation micro-contracts, worktree isolati
 - **Git History Purge & Identity Neutralization:** Complete purge executed across all branches using `git-filter-repo` with canonical generic identity `Antigravity Lead <lead@template-hub.internal>`. All historical commit hashes across branches have been rewritten; upstream publication requires `git push --force-with-lease --all --tags`.
 - **Circuit Breaker Threshold:** General development starters (`main`, `greenfield`, `brownfield`) use 3 consecutive failures with identical root cause to allow hypothesis exploration. Sensitive starters (`blackbox`, `infra`, `baremetal`) enforce 2 consecutive failures to prevent IP bans or host/daemon disruption.
 - **Pre-Approved Tasks (`APPROVED`), Parallel Waves (`[PARALLEL: Wx]`) & `task-queue` Skill:** Tasks finalized during interactive planning use `Status: APPROVED` in `.agent/TASK.md` (with independent disjoint-file tasks tagged `[PARALLEL: Wx]` and structured with the `Read: / Paths: / Verify:` micro-contract), allowing fresh sessions (`proceed`) or isolated worker subagents and multi-account quota failover (`task-queue` skill via `run-wave.sh` on `proceed queue`, defaulting to `gemini-3.8-flash-medium`) to transition directly to `RUNNING` without a redundant `PLANNING` pause, halting only when ambiguities, unapproved dependencies, or blockers require human intervention.
+- **LLM Gateway Reasoning Tokens & Timeouts:** When calling thinking-enabled models via `free-deep`, always set client HTTP timeouts $\ge 180$ seconds. Test assertions and smoke probes must allocate `max_tokens >= 60`; very low caps (e.g. 5 tokens) cause reasoning tokens to consume the entire budget, returning an empty response body. Consumer containers must never attach to `hydra_ai_net` (use `hydra_shared_net`).
