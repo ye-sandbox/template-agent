@@ -11,7 +11,7 @@
 ## Active Task
 
 - **Task:** `[05.5]` Epic 05 Milestone Consolidation, Documentation & Multi-Branch CI Audit
-- **Status:** READY FOR PLANNING
+- **Status:** RUNNING
 - **Scope:** Consolidate Epic 05 milestones into README documentation and CHANGELOG.md, execute full multi-branch test harness verification, and record architectural decisions.
 - **Target Branches:** `main`
 
