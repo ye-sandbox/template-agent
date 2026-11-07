@@ -11,7 +11,7 @@
 ## Active Task
 
 - **Task:** `[05.1]` Next Milestone / Epic Planning (Epic 05: LLM Gateway & Virtual Model Routing)
-- **Status:** READY FOR PLANNING
+- **Status:** RUNNING
 - **Scope:** Define roadmap, architecture, and micro-contracts for Epic 05 focusing on Hydra AI / OpenAI-compatible virtual model routing (`free-fast`, `free-deep`), telemetry streaming, and gateway integration across templates.
 - **Target Branches:** `main`
 
