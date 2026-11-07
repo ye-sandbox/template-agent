@@ -10,9 +10,9 @@
 
 ## Active Task
 
-- **Task:** `[05.1]` Next Milestone / Epic Planning (Epic 05: LLM Gateway & Virtual Model Routing)
-- **Status:** RUNNING
-- **Scope:** Define roadmap, architecture, and micro-contracts for Epic 05 focusing on Hydra AI / OpenAI-compatible virtual model routing (`free-fast`, `free-deep`), telemetry streaming, and gateway integration across templates.
+- **Task:** `[05.2]` LLM Gateway & Virtual Model Specification
+- **Status:** READY FOR PLANNING
+- **Scope:** Author `docs/llm-gateway.md` specifying OpenAI v1 compatible gateway integration, virtual model routing (`free-fast`, `free-deep`), client timeout/reasoning budget invariants, Docker sibling networks (`hydra_shared_net`), and token tier taxonomy.
 - **Target Branches:** `main`
 
 ---
@@ -39,12 +39,15 @@
 | `[04.4]` | Multi-Starter Parity: Propagate Sandbox & Security Isolation Contracts | `cd54c82` (greenfield), `d7e696b` (brownfield), `934ecd6` (blackbox), `55a625f` (infra), `2abaab2` (baremetal), `0e34b0c` (main) | 2026-11-07 |
 | `[04.5]` | Epic 04 Milestone Consolidation & End-to-End Security Validation | `a4d2ddd`, `2dd4c15` (main) | 2026-11-07 |
 | `[04.6]` | T3 Code Worktree Fast-Link Bootstrap & Project Lifecycle Hook Parity | `ff0e3ff`, `7069689`, `4d45aa2`, `010f689`, `b77cfd1`, `5758919` (main), `a4b56cf` (greenfield), `0c3996a` (brownfield), `788ea43` (blackbox), `b7909ed` (infra), `2ebb795` (baremetal) | 2026-11-07 |
+| `[05.1]` | Next Milestone / Epic Planning (Epic 05: LLM Gateway & Virtual Model Routing) | `cd7f3c8` (main) | 2026-11-07 |
 
 ---
 
 ## Backlog (Upcoming, in priority order)
 
-*(empty)*
+- `[05.3]` Deterministic LLM Gateway Contract Linter & Pre-Flight Probe Runner (`.github/scripts/verify-llm-contract.sh`)
+- `[05.4]` Starter Template Parity: Propagate LLM Gateway Contracts & `.env.example`
+- `[05.5]` Epic 05 Milestone Consolidation, Documentation & Multi-Branch CI Audit
 
 
 
