@@ -29,6 +29,7 @@ Thumbs.db
 *~
 .agent/scratch/
 .agent/.cache/
+.worktrees/
 .maestri/
 .multigravity/
 *.tsbuildinfo
