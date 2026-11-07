@@ -29,8 +29,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Automated CLI Flag & Scaffolding Test Suite**:
   - Automated parameter validation matrix in `.github/scripts/test-all-starters.sh` asserting `-h`, `--help`, `-f`, `--force`, `--yes`, `--standalone`, and `--local-only` flags across all 5 starter templates.
   - Cross-platform CI verification matrix across Ubuntu (`ubuntu-latest`) and macOS (`macos-latest`).
+- **LLM Gateway & Virtual Model Routing Specifications (`docs/llm-gateway.md`)**:
+  - Canonical OpenAI v1 compatible gateway integration architecture (`/v1/chat/completions`, `/v1/models`) eliminating upstream provider lock-in.
+  - Virtual model routing taxonomy: `free-fast` for low-latency (<1.5s) intent extraction/routing and `free-deep` for high-capacity reasoning/synthesis (up to 1M token context).
+  - Docker network boundary rules: mandatory integration via external shared network `hydra_shared_net` and strict prohibition of consumer attachment to internal `hydra_ai_net`.
+  - Client timeout standards (minimum 180s for deep reasoning) and minimum test token allocation (`max_tokens >= 60`) preventing reasoning token budget starvation.
+- **Deterministic LLM Gateway Contract Linter & Pre-Flight Probe Runner (`verify-llm-contract.sh`)**:
+  - Dedicated CLI tool `.github/scripts/verify-llm-contract.sh` to statically audit consumer repositories for upstream provider string coupling, validate canonical `.env.example` schema, enforce Docker Compose network boundaries (`hydra_shared_net` with `external: true`), and execute HTTP pre-flight gateway health probes with graceful offline fallback.
+  - Integrated into GitHub Actions CI pipeline on Ubuntu and macOS runners.
 
 ### Changed
+- **5-Starter LLM Gateway Contract & Environment Parity**:
+  - Synchronized canonical LLM Gateway schema variables (`LLM_BASE_URL`, `LLM_API_KEY`, `LLM_MODEL_FAST`, `LLM_MODEL_DEEP`, `LLM_TIMEOUT_SECONDS`) into `.env.example` across all 5 specialized starter branches (`greenfield`, `brownfield`, `blackbox`, `infra`, `baremetal`).
+  - Synchronized active LLM Gateway and virtual model contracts into `.agent/NOTES.md` across all starters with automated byte-for-byte and contract parity checks in `.github/scripts/check-branch-drift.sh` and `assert-starter-contracts.sh`.
 - **5-Starter Multi-Agent & Security Contract Parity**:
   - Synchronized `.agent/NOTES.md` across all 5 specialized starter branches (`greenfield`, `brownfield`, `blackbox`, `infra`, `baremetal`) with full subagent topology, worktree lifecycle, multi-account quota routing, and hermetic container sandbox contracts.
   - Enforced automated verification in `.github/scripts/check-branch-drift.sh` and `.github/scripts/assert-starter-contracts.sh` ensuring zero contract drift across all branches.
