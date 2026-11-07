@@ -10,9 +10,9 @@
 
 ## Active Task
 
-- **Task:** `[05.5]` Epic 05 Milestone Consolidation, Documentation & Multi-Branch CI Audit
-- **Status:** RUNNING
-- **Scope:** Consolidate Epic 05 milestones into README documentation and CHANGELOG.md, execute full multi-branch test harness verification, and record architectural decisions.
+- **Task:** `[06.1]` Next Milestone / Epic Planning (Epic 06)
+- **Status:** READY FOR PLANNING
+- **Scope:** Define roadmap, architectural boundaries, and starter template deliverables for Epic 06.
 - **Target Branches:** `main`
 
 ---
@@ -43,6 +43,7 @@
 | `[05.2]` | LLM Gateway & Virtual Model Specification | `3197f9f` (main) | 2026-11-07 |
 | `[05.3]` | Deterministic LLM Gateway Contract Linter & Pre-Flight Probe Runner | `ed9a166`, `3ab211c` (main) | 2026-11-07 |
 | `[05.4]` | Starter Template Parity: Propagate LLM Gateway Contracts & `.env.example` | `cf6bbb9`, `b6470aa` (main), `06093c6` (greenfield), `688c59e` (brownfield), `dc6e47f` (blackbox), `e454f8b` (infra), `558e6d2` (baremetal) | 2026-11-07 |
+| `[05.5]` | Epic 05 Milestone Consolidation, Documentation & Multi-Branch CI Audit | `0f63c18`, `0f036b0`, `dda3d0e` (main) | 2026-11-07 |
 
 ---
 
