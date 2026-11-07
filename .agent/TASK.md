@@ -11,7 +11,7 @@
 ## Active Task
 
 - **Task:** `[04.4]` Multi-Starter Parity: Propagate Sandbox & Security Isolation Contracts
-- **Status:** READY FOR PLANNING
+- **Status:** RUNNING
 - **Scope:** Propagate sandbox specifications, command audit runner integration, and isolation contracts across specialized starter branches (`greenfield`, `brownfield`, `blackbox`, `infra`, `baremetal`), eliminating contract drift in CI.
 - **Target Branches:** `greenfield`, `brownfield`, `blackbox`, `infra`, `baremetal`
 
