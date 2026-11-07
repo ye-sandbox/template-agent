@@ -10,10 +10,10 @@
 
 ## Active Task
 
-- **Task:** `[04.4]` Multi-Starter Parity: Propagate Sandbox & Security Isolation Contracts
-- **Status:** RUNNING
-- **Scope:** Propagate sandbox specifications, command audit runner integration, and isolation contracts across specialized starter branches (`greenfield`, `brownfield`, `blackbox`, `infra`, `baremetal`), eliminating contract drift in CI.
-- **Target Branches:** `greenfield`, `brownfield`, `blackbox`, `infra`, `baremetal`
+- **Task:** `[04.5]` Epic 04 Milestone Consolidation & End-to-End Security Validation
+- **Status:** PLANNING
+- **Scope:** Consolidate Epic 04 deliverables across documentation (`README.md`, `README.pt-br.md`, `CHANGELOG.md`), record ADR decision for Epic 04 consolidation in `docs/adr/decisions.md`, and execute full-spectrum CI and local validation across all starters and security runners.
+- **Target Branches:** `main`
 
 ---
 
@@ -36,12 +36,12 @@
 | `[04.1]` | Next Milestone / Epic Planning (Epic 04: Dynamic Agent Sandbox & Security Hardening) | `cbe426d` (main) | 2026-11-06 |
 | `[04.2]` | Hermetic Ephemeral Container & Bubblewrap Sandbox Specification | `35816cf` (main) | 2026-11-06 |
 | `[04.3]` | Pre-Execution Security Scanner & Command Blast-Radius Audit Runner | `bade493`, `1a9c7e1` (main) | 2026-11-07 |
+| `[04.4]` | Multi-Starter Parity: Propagate Sandbox & Security Isolation Contracts | `cd54c82` (greenfield), `d7e696b` (brownfield), `934ecd6` (blackbox), `55a625f` (infra), `2abaab2` (baremetal), `0e34b0c` (main) | 2026-11-07 |
 
 ---
 
 ## Backlog (Upcoming, in priority order)
 
-- `[04.5]` Epic 04 Milestone Consolidation & End-to-End Security Validation
 - `[04.6]` T3 Code Worktree Fast-Link Bootstrap & Project Lifecycle Hook Parity
 
 
