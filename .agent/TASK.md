@@ -10,10 +10,10 @@
 
 ## Active Task
 
-- **Task:** `[04.6]` T3 Code Worktree Fast-Link Bootstrap & Project Lifecycle Hook Parity
-- **Status:** RUNNING
-- **Scope:** Specify and implement worktree fast-link symlinking (`node_modules`, `.venv`) and project lifecycle hook standards across starter templates, eliminating setup latency and isolating subagent scratch environments.
-- **Target Branches:** `main`, `greenfield`, `brownfield`, `blackbox`, `infra`, `baremetal`
+- **Task:** `[05.1]` Next Milestone / Epic Planning (Epic 05: LLM Gateway & Virtual Model Routing)
+- **Status:** READY FOR PLANNING
+- **Scope:** Define roadmap, architecture, and micro-contracts for Epic 05 focusing on Hydra AI / OpenAI-compatible virtual model routing (`free-fast`, `free-deep`), telemetry streaming, and gateway integration across templates.
+- **Target Branches:** `main`
 
 ---
 
@@ -38,6 +38,7 @@
 | `[04.3]` | Pre-Execution Security Scanner & Command Blast-Radius Audit Runner | `bade493`, `1a9c7e1` (main) | 2026-11-07 |
 | `[04.4]` | Multi-Starter Parity: Propagate Sandbox & Security Isolation Contracts | `cd54c82` (greenfield), `d7e696b` (brownfield), `934ecd6` (blackbox), `55a625f` (infra), `2abaab2` (baremetal), `0e34b0c` (main) | 2026-11-07 |
 | `[04.5]` | Epic 04 Milestone Consolidation & End-to-End Security Validation | `a4d2ddd`, `2dd4c15` (main) | 2026-11-07 |
+| `[04.6]` | T3 Code Worktree Fast-Link Bootstrap & Project Lifecycle Hook Parity | `ff0e3ff`, `7069689`, `4d45aa2`, `010f689`, `b77cfd1`, `5758919` (main), `a4b56cf` (greenfield), `0c3996a` (brownfield), `788ea43` (blackbox), `b7909ed` (infra), `2ebb795` (baremetal) | 2026-11-07 |
 
 ---
 
