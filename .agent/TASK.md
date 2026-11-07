@@ -11,7 +11,7 @@
 ## Active Task
 
 - **Task:** `[05.3]` Deterministic LLM Gateway Contract Linter & Pre-Flight Probe Runner (`.github/scripts/verify-llm-contract.sh`)
-- **Status:** READY FOR PLANNING
+- **Status:** RUNNING
 - **Scope:** Author `.github/scripts/verify-llm-contract.sh` implementing deterministic linting of consumer codebases: assert absence of hardcoded upstream model strings/endpoints, validate canonical `.env.example` keys, ensure `compose.yaml` attaches strictly to `hydra_shared_net` (prohibiting `hydra_ai_net`), and provide offline/online smoke probe modes.
 - **Target Branches:** `main`
 
