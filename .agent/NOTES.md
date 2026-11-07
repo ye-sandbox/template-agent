@@ -46,6 +46,15 @@ Contract changes require updating schemas on both sides within the same task.
 | **Environment Injection** | Copy `.env` / `.env.example` to worktree | Ensures test harness execution without leaking uncommitted tokens or mutating root config. |
 | **Teardown & GC** | `git worktree remove --force` + `branch -D` + `prune` | Immediate cleanup post-integration; trap declared in runners to prevent dangling worktree locks. |
 
+#### Project Lifecycle Hooks & Fast-Link Bootstrap Contract
+
+| Hook / Phase | Script Target | Invocation & Contract |
+|---|---|---|
+| **Fast-Link Bootstrap** | `bootstrap-worktree.sh` | Zero-copy symlinking of `node_modules/` and `.venv/`, `.env` isolation copy, `.agent/scratch/` provisioning. |
+| **Post-Provisioning** | `.agent/hooks/post-worktree-create` | Executed post-bootstrap for test DB seeding, port binding, and ephemeral fixtures. Halts on non-zero exit. |
+| **Pre-Verification** | `.agent/hooks/pre-verify` | Executed before `Verify:` command execution to ensure clean test state and fixture validation. |
+| **Post-Teardown** | `.agent/hooks/post-worktree-teardown` | Executed prior to worktree removal (`git worktree remove`) for graceful daemon/resource teardown. |
+
 #### Multi-Account Quota Routing & Failover Contract
 
 | Element | Protocol / Mechanism | Invariant / Boundary |
