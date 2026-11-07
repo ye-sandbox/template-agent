@@ -11,7 +11,7 @@
 ## Active Task
 
 - **Task:** `[04.6]` T3 Code Worktree Fast-Link Bootstrap & Project Lifecycle Hook Parity
-- **Status:** READY FOR PLANNING
+- **Status:** RUNNING
 - **Scope:** Specify and implement worktree fast-link symlinking (`node_modules`, `.venv`) and project lifecycle hook standards across starter templates, eliminating setup latency and isolating subagent scratch environments.
 - **Target Branches:** `main`, `greenfield`, `brownfield`, `blackbox`, `infra`, `baremetal`
 
