@@ -61,5 +61,6 @@ Thumbs.db
 *.swo
 .agent/scratch/
 .agent/.cache/
+.worktrees/
 .maestri/
 .multigravity/
