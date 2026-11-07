@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.3.0] - 2026-11-07
+
 ### Added
 - **Multi-Agent Subagent Topology & Micro-Contracts**:
   - Formal 3-tier subagent hierarchy (`Lead / Orchestrator`, `Worker / Implementer`, `Reviewer / Sentinel`) with isolated responsibility boundaries in `docs/subagent-topology.md`.
