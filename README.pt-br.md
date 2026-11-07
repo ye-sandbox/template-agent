@@ -257,6 +257,7 @@ git checkout baremetal && git merge upstream/baremetal
 │   └── scripts/              # Validação de drift e contratos de starters
 ├── docs/
 │   ├── adr/decisions.md      # Registros consolidados de decisão arquitetural
+│   ├── agent-sandbox.md      # Especificações de sandbox hermético via Bubblewrap e contêineres
 │   ├── subagent-topology.md  # Papéis de subagentes em 3 tiers e contratos de delegação
 │   └── worktree-isolation.md # Ciclo de vida de worktree e bootstrap de dependências
 ├── .env.example              # Esquema canônico de variáveis de ambiente

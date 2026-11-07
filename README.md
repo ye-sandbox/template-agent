@@ -257,6 +257,7 @@ git checkout baremetal && git merge upstream/baremetal
 │   └── scripts/              # Branch drift and starter contract assertions
 ├── docs/
 │   ├── adr/decisions.md      # Consolidated architectural decision records
+│   ├── agent-sandbox.md      # Dual-tier hermetic sandbox & container isolation
 │   ├── subagent-topology.md  # 3-tier subagent roles and delegation contracts
 │   └── worktree-isolation.md # Worktree lifecycle and dependency bootstrap
 ├── .env.example              # Canonical environment configuration schema

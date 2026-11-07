@@ -17,6 +17,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Deterministic Micro-Contract & Worktree Linter (`verify-microcontract.sh`)**:
   - Dedicated CLI tool `.github/scripts/verify-microcontract.sh` to validate micro-contracts, detect disjoint-file conflicts in parallel execution waves (`[PARALLEL: Wx]`), and verify git worktree blast boundaries and whitespace hygiene.
   - Integrated into GitHub Actions CI pipeline and starter validation suites.
+- **Hermetic Ephemeral Container & Bubblewrap Sandbox Specifications**:
+  - Dual-tier sandbox architecture specifications (`Tier 1: Bubblewrap` with user/PID/IPC/net unsharing and read-only system mounts; `Tier 2: Rootless Container` with `cap-drop=ALL` and air-gapped network isolation) in `docs/agent-sandbox.md`.
 - **Pre-Execution Security Scanner & Command Blast-Radius Audit Runner (`audit-command-security.sh`)**:
   - Dedicated CLI tool `.github/scripts/audit-command-security.sh` providing deterministic static command analysis for hazardous tokens (`sudo`, root mutations, unapproved network exfiltration, destructive Git operations, reverse shells, and fork bombs).
   - Integrated into `verify-microcontract.sh` to audit subagent `Verify:` commands prior to worktree execution, and into GitHub Actions CI pipeline.
@@ -25,9 +27,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Cross-platform CI verification matrix across Ubuntu (`ubuntu-latest`) and macOS (`macos-latest`).
 
 ### Changed
-- **5-Starter Multi-Agent Contract Parity**:
-  - Synchronized `.agent/NOTES.md` across all 5 specialized starter branches (`greenfield`, `brownfield`, `blackbox`, `infra`, `baremetal`) with full subagent topology, worktree lifecycle, and multi-account quota routing contracts.
-  - Resolved all inter-branch contract drift in `.github/scripts/check-branch-drift.sh`.
+- **5-Starter Multi-Agent & Security Contract Parity**:
+  - Synchronized `.agent/NOTES.md` across all 5 specialized starter branches (`greenfield`, `brownfield`, `blackbox`, `infra`, `baremetal`) with full subagent topology, worktree lifecycle, multi-account quota routing, and hermetic container sandbox contracts.
+  - Enforced automated verification in `.github/scripts/check-branch-drift.sh` and `.github/scripts/assert-starter-contracts.sh` ensuring zero contract drift across all branches.
 - **Multi-Account Quota Failover Guidance**:
   - Standardized quota floor circuit breaker (disqualification at <=5% remaining), secondary account priority via `select-profile.sh --exclude-current`, default `gemini-3.8-flash-medium` tier, 429 cooldown tracking, and clean worktree diff recovery on timeout.
 
