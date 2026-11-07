@@ -42,6 +42,7 @@
 
 - `[04.4]` Multi-Starter Parity: Propagate Sandbox & Security Isolation Contracts
 - `[04.5]` Epic 04 Milestone Consolidation & End-to-End Security Validation
+- `[04.6]` T3 Code Worktree Fast-Link Bootstrap & Project Lifecycle Hook Parity
 
 
 
