@@ -92,6 +92,10 @@ assert_multiagent_contracts() {
   need_grep .agent/NOTES.md 'Tier 1 (Bubblewrap)' -qF
   need_grep .agent/NOTES.md 'Tier 2 (Rootless Container)' -qF
   need_grep .agent/NOTES.md 'audit-command-security.sh' -qF
+  need_grep .agent/NOTES.md 'LLM Gateway & Virtual Model Routing Contract' -qF
+  need_grep .agent/NOTES.md 'free-fast' -qF
+  need_grep .agent/NOTES.md 'free-deep' -qF
+  need_grep .agent/NOTES.md 'hydra_shared_net' -qF
 }
 
 assert_greenfield_base() {
@@ -138,6 +142,11 @@ assert_greenfield_base() {
   assert_task_microcontracts
   assert_multiagent_contracts
   assert_product_readme
+  need_file .env.example
+  need_grep .env.example 'LLM_BASE_URL' -qF
+  need_grep .env.example 'LLM_MODEL_FAST' -qF
+  need_grep .env.example 'LLM_MODEL_DEEP' -qF
+  need_grep .env.example 'LLM_TIMEOUT_SECONDS' -qF
   need_grep .gitignore '.env' -qF
   need_grep .gitignore '!.env.example' -qF
   need_grep .gitignore '.maestri/' -qF
@@ -235,6 +244,10 @@ assert_blackbox() {
   need_file tests/smoke.sh
   [ -x "$ROOT/tests/smoke.sh" ] || fail "tests/smoke.sh is not executable"
   need_file .env.example
+  need_grep .env.example 'LLM_BASE_URL' -qF
+  need_grep .env.example 'LLM_MODEL_FAST' -qF
+  need_grep .env.example 'LLM_MODEL_DEEP' -qF
+  need_grep .env.example 'LLM_TIMEOUT_SECONDS' -qF
   need_file .gitignore
   need_dir .git
   need_absent init.sh
@@ -289,6 +302,10 @@ assert_infra() {
   need_file .agent/ARCHIVE.md
   need_grep .agent/TASK.md 'Task \[00\.1\]: Map Topology and Provision Baseline Services' -qE
   need_file .env.example
+  need_grep .env.example 'LLM_BASE_URL' -qF
+  need_grep .env.example 'LLM_MODEL_FAST' -qF
+  need_grep .env.example 'LLM_MODEL_DEEP' -qF
+  need_grep .env.example 'LLM_TIMEOUT_SECONDS' -qF
   need_file .gitignore
   need_grep .gitignore '!.env.example' -qF
   need_grep .gitignore '.maestri/' -qF
@@ -376,6 +393,10 @@ assert_baremetal() {
   need_file benchmarks/scripts/stream-telemetry.sh
   [ -x "$ROOT/benchmarks/scripts/stream-telemetry.sh" ] || fail "benchmarks/scripts/stream-telemetry.sh is not executable"
   need_file .env.example
+  need_grep .env.example 'LLM_BASE_URL' -qF
+  need_grep .env.example 'LLM_MODEL_FAST' -qF
+  need_grep .env.example 'LLM_MODEL_DEEP' -qF
+  need_grep .env.example 'LLM_TIMEOUT_SECONDS' -qF
   need_file .gitignore
   need_dir .git
   need_absent init.sh

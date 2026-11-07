@@ -127,13 +127,21 @@ for branch in "${ALL_BRANCHES[@]}"; do
   done
 done
 
-# 4. Audit Presence of .env.example Across All Branches
-echo "🔍 Verifying presence of .env.example across all branches..."
+# 4. Audit Presence and LLM Gateway Hygiene of .env.example Across All Branches
+echo "🔍 Verifying presence and LLM gateway hygiene of .env.example across all branches..."
 for branch in "${ALL_BRANCHES[@]}"; do
   ref="$(resolve_ref "$branch")"
-  if ! git show "$ref:.env.example" >/dev/null 2>&1; then
+  env_content="$(git show "$ref:.env.example" 2>/dev/null || true)"
+  if [ -z "$env_content" ]; then
     fail "Branch '$branch' ($ref) is missing .env.example."
+    continue
   fi
+
+  for req_var in "LLM_BASE_URL" "LLM_API_KEY" "LLM_MODEL_FAST" "LLM_MODEL_DEEP" "LLM_TIMEOUT_SECONDS"; do
+    if ! echo "$env_content" | grep -qE "^[[:space:]]*${req_var}="; then
+      fail "Branch '$branch' ($ref) .env.example missing required variable: '$req_var'."
+    fi
+  done
 done
 
 # 5. Audit CLI Installer Standardization
@@ -322,6 +330,33 @@ for branch in "${ALL_BRANCHES[@]}"; do
 
   if ! echo "$notes_content" | grep -q 'audit-command-security.sh'; then
     fail "Branch '$branch' ($ref) .agent/NOTES.md missing 'audit-command-security.sh' fallback entry."
+  fi
+done
+
+# 9. Audit LLM Gateway & Virtual Model Routing Contracts in .agent/NOTES.md Across All Branches
+echo "🔍 Verifying LLM gateway and virtual model routing contracts in .agent/NOTES.md across all branches..."
+for branch in "${ALL_BRANCHES[@]}"; do
+  ref="$(resolve_ref "$branch")"
+  notes_content="$(git show "$ref:.agent/NOTES.md" 2>/dev/null || true)"
+  if [ -z "$notes_content" ]; then
+    fail "Branch '$branch' ($ref) is missing .agent/NOTES.md."
+    continue
+  fi
+
+  if ! echo "$notes_content" | grep -q 'LLM Gateway & Virtual Model Routing Contract'; then
+    fail "Branch '$branch' ($ref) .agent/NOTES.md missing 'LLM Gateway & Virtual Model Routing Contract' table."
+  fi
+
+  if ! echo "$notes_content" | grep -q 'free-fast'; then
+    fail "Branch '$branch' ($ref) .agent/NOTES.md missing 'free-fast' virtual model routing entry."
+  fi
+
+  if ! echo "$notes_content" | grep -q 'free-deep'; then
+    fail "Branch '$branch' ($ref) .agent/NOTES.md missing 'free-deep' virtual model routing entry."
+  fi
+
+  if ! echo "$notes_content" | grep -q 'hydra_shared_net'; then
+    fail "Branch '$branch' ($ref) .agent/NOTES.md missing 'hydra_shared_net' network boundary entry."
   fi
 done
 
