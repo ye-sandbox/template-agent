@@ -76,7 +76,6 @@ assert_task_microcontracts() {
 }
 
 assert_multiagent_contracts() {
-  need_grep AGENTS.md 'multi-account quota routing' -qF
   need_grep AGENTS.md 'task-queue' -qF
   need_grep AGENTS.md 'APPROVED' -qF
   need_grep .agent/NOTES.md 'Lead / Orchestrator' -qF

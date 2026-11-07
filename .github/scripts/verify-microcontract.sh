@@ -673,6 +673,20 @@ verify_worktree() {
       log_error "Contract specifies no 'Verify:' command to execute"
       return 1
     fi
+
+    # Pre-execution security blast-radius audit
+    local script_dir
+    script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd -P)"
+    local auditor="${script_dir}/audit-command-security.sh"
+    if [ -x "$auditor" ]; then
+      log_info "Auditing verification command security blast radius: $verify_cmd"
+      if ! "$auditor" scan-command "$verify_cmd"; then
+        log_error "Verification command rejected by security audit: $verify_cmd"
+        return 1
+      fi
+      log_success "Verification command approved by security audit"
+    fi
+
     log_info "Executing contract verification command: $verify_cmd"
     if ! ( cd "$worktree_dir" && eval "$verify_cmd" ); then
       log_error "Verification command failed with non-zero exit code: $verify_cmd"
@@ -894,7 +908,21 @@ EOF
   run_test_case "Worktree execution with failing Verify: command fails" 1 \
     verify_worktree "$wt_dir" "$test_tmp/failing_verify_contract.md" --base-ref HEAD --run-verify
 
-  # 13. Worktree git whitespace hygiene failure
+  # 13. Worktree execution with hazardous Verify: command is blocked by security audit
+  cat << 'EOF' > "$test_tmp/hazardous_verify_contract.md"
+Role: Worker
+Task: [04.1]
+Isolation: worktree
+Read:
+  - init.txt
+Paths:
+  - src/a.ts
+Verify: sudo rm -rf /
+EOF
+  run_test_case "Worktree with hazardous Verify: command rejected by security audit" 1 \
+    verify_worktree "$wt_dir" "$test_tmp/hazardous_verify_contract.md" --base-ref HEAD --run-verify
+
+  # 14. Worktree git whitespace hygiene failure
   echo "export const a = 3;   " > "$wt_dir/src/a.ts"
   run_test_case "Worktree with trailing whitespace fails git diff --check" 1 \
     verify_worktree "$wt_dir" "$test_tmp/wt_contract.md" --base-ref HEAD
@@ -902,7 +930,7 @@ EOF
   # Cleanup worktree
   git -C "$repo_dir" worktree remove --force "$wt_dir" 2>/dev/null || true
 
-  # 14. Audit actual project .agent/TASK.md if present
+  # 15. Audit actual project .agent/TASK.md if present
   local script_dir
   script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
   local hub_root

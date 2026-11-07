@@ -43,6 +43,11 @@ jobs:
           chmod +x .github/scripts/verify-microcontract.sh
           .github/scripts/verify-microcontract.sh
 
+      - name: Audit Command Security & Blast-Radius Guardrails
+        run: |
+          chmod +x .github/scripts/audit-command-security.sh
+          .github/scripts/audit-command-security.sh
+
       - name: Run Unified Starter Test Suite
         run: |
           chmod +x .github/scripts/test-all-starters.sh
