@@ -251,15 +251,16 @@ git checkout baremetal && git merge upstream/baremetal
 │   ├── TASK.md               # Active task, execution status, and roadmap log
 │   ├── NOTES.md              # Architectural contracts and runtime gotchas
 │   ├── ARCHIVE.md            # Archived completed tasks from past releases
+│   ├── hooks/                # Standardized project lifecycle hooks (post-worktree-create, pre-verify)
 │   └── knowledge/            # Modular runtime cards and platform gotchas
 ├── .github/
 │   ├── workflows/ci.yml      # CI workflow for multi-branch matrix validation
-│   └── scripts/              # Branch drift and starter contract assertions
+│   └── scripts/              # Branch drift, fast-link bootstrap, and contract assertions
 ├── docs/
 │   ├── adr/decisions.md      # Consolidated architectural decision records
 │   ├── agent-sandbox.md      # Dual-tier hermetic sandbox & container isolation
 │   ├── subagent-topology.md  # 3-tier subagent roles and delegation contracts
-│   └── worktree-isolation.md # Worktree lifecycle and dependency bootstrap
+│   └── worktree-isolation.md # Worktree lifecycle, fast-link CLI, and lifecycle hooks
 ├── .env.example              # Canonical environment configuration schema
 ├── AGENTS.md                 # Repository constitution and engineering rules
 ├── CHANGELOG.md              # Versioned release notes and ecosystem history
@@ -278,6 +279,9 @@ git checkout baremetal && git merge upstream/baremetal
 
 # Audit command security and blast-radius guardrails
 .github/scripts/audit-command-security.sh
+
+# Bootstrap worktree fast-link symlinks (.venv, node_modules) and run lifecycle hooks
+.github/scripts/bootstrap-worktree.sh --self-test
 
 # Run end-to-end scaffolding tests across all starter branches
 .github/scripts/test-all-starters.sh

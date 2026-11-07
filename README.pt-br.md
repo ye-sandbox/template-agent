@@ -251,15 +251,16 @@ git checkout baremetal && git merge upstream/baremetal
 │   ├── TASK.md               # Tarefa ativa, status de execução e log de roadmap
 │   ├── NOTES.md              # Contratos arquiteturais e gotchas de runtime
 │   ├── ARCHIVE.md            # Tarefas arquivadas de ciclos anteriores
+│   ├── hooks/                # Hooks padronizados de ciclo de vida (post-worktree-create, pre-verify)
 │   └── knowledge/            # Cards modulares de runtime e plataforma
 ├── .github/
 │   ├── workflows/ci.yml      # Workflow de CI para matriz multibranch
-│   └── scripts/              # Validação de drift e contratos de starters
+│   └── scripts/              # Validação de drift, bootstrap fast-link e contratos
 ├── docs/
 │   ├── adr/decisions.md      # Registros consolidados de decisão arquitetural
 │   ├── agent-sandbox.md      # Especificações de sandbox hermético via Bubblewrap e contêineres
 │   ├── subagent-topology.md  # Papéis de subagentes em 3 tiers e contratos de delegação
-│   └── worktree-isolation.md # Ciclo de vida de worktree e bootstrap de dependências
+│   └── worktree-isolation.md # Ciclo de vida de worktree, CLI fast-link e hooks de ciclo de vida
 ├── .env.example              # Esquema canônico de variáveis de ambiente
 ├── AGENTS.md                 # Constituição do repositório e regras de engenharia
 ├── CHANGELOG.md              # Notas de versão e histórico do ecossistema
@@ -278,6 +279,9 @@ git checkout baremetal && git merge upstream/baremetal
 
 # Auditar segurança de comandos e guardrails de raio de explosão
 .github/scripts/audit-command-security.sh
+
+# Bootstrap fast-link de dependências (.venv, node_modules) e hooks de ciclo de vida
+.github/scripts/bootstrap-worktree.sh --self-test
 
 # Executar suíte de testes de ponta a ponta dos starters
 .github/scripts/test-all-starters.sh

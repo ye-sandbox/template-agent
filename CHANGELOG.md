@@ -22,6 +22,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Pre-Execution Security Scanner & Command Blast-Radius Audit Runner (`audit-command-security.sh`)**:
   - Dedicated CLI tool `.github/scripts/audit-command-security.sh` providing deterministic static command analysis for hazardous tokens (`sudo`, root mutations, unapproved network exfiltration, destructive Git operations, reverse shells, and fork bombs).
   - Integrated into `verify-microcontract.sh` to audit subagent `Verify:` commands prior to worktree execution, and into GitHub Actions CI pipeline.
+- **Worktree Fast-Link Bootstrap & Lifecycle Hook Runner (`bootstrap-worktree.sh`)**:
+  - Dedicated CLI tool `.github/scripts/bootstrap-worktree.sh` automating zero-copy dependency symlinking (`node_modules/`, `.venv/`), isolated `.env` injection, private scratch space provisioning (`.agent/scratch/`), and project lifecycle hook execution with hermetic self-tests.
+- **Project Lifecycle Hook Standards (`.agent/hooks/`)**:
+  - Standardized agent lifecycle hooks across starter templates (`post-worktree-create`, `pre-verify`, `post-worktree-teardown`) with exported environment variables, fail-safe halting, and integration into `verify-microcontract.sh`.
 - **Automated CLI Flag & Scaffolding Test Suite**:
   - Automated parameter validation matrix in `.github/scripts/test-all-starters.sh` asserting `-h`, `--help`, `-f`, `--force`, `--yes`, `--standalone`, and `--local-only` flags across all 5 starter templates.
   - Cross-platform CI verification matrix across Ubuntu (`ubuntu-latest`) and macOS (`macos-latest`).
@@ -30,6 +34,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **5-Starter Multi-Agent & Security Contract Parity**:
   - Synchronized `.agent/NOTES.md` across all 5 specialized starter branches (`greenfield`, `brownfield`, `blackbox`, `infra`, `baremetal`) with full subagent topology, worktree lifecycle, multi-account quota routing, and hermetic container sandbox contracts.
   - Enforced automated verification in `.github/scripts/check-branch-drift.sh` and `.github/scripts/assert-starter-contracts.sh` ensuring zero contract drift across all branches.
+- **Worktree & Lifecycle Hook Parity Across Starters**:
+  - Synchronized `.worktrees/` in `.gitignore` and `.agent/hooks/` across all 5 starter branches (`greenfield`, `brownfield`, `blackbox`, `infra`, `baremetal`) with automated anti-drift validation in `.github/scripts/check-branch-drift.sh` and `assert-starter-contracts.sh`.
 - **Multi-Account Quota Failover Guidance**:
   - Standardized quota floor circuit breaker (disqualification at <=5% remaining), secondary account priority via `select-profile.sh --exclude-current`, default `gemini-3.8-flash-medium` tier, 429 cooldown tracking, and clean worktree diff recovery on timeout.
 
