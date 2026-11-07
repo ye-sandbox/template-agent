@@ -166,6 +166,11 @@ Configuration variables defined in `.env.example` along with hub-level environme
 | `APP_SECRET_KEY` | Cryptographic secret key for session encryption and signing | `change-me-in-production` | Yes (in production) |
 | `DATABASE_URL` | PostgreSQL connection string for primary persistent datastore | `postgresql://user:password@localhost:5432/dbname` | No |
 | `REDIS_URL` | Redis connection string for broker, cache, and queue storage | `redis://localhost:6379/0` | No |
+| `LLM_BASE_URL` | OpenAI v1-compatible LLM Gateway endpoint URL (Hydra AI) | `http://hydra-ai-gateway:3000/v1` | No |
+| `LLM_API_KEY` | Gateway authentication token corresponding to provisioned tier | `sk-replace-with-hydra-tier-token` | Yes (when LLM enabled) |
+| `LLM_MODEL_FAST` | Low-latency virtual model alias for intent classification and parsing | `free-fast` | No |
+| `LLM_MODEL_DEEP` | Reasoning virtual model alias with extended reasoning token budget | `free-deep` | No |
+| `LLM_TIMEOUT_SECONDS` | HTTP client timeout budget in seconds for reasoning completions | `180` | No |
 | `TEMPLATE_REPO_URL` | Upstream repository URL override for enterprise mirrors and forks | `https://github.com/ye-sandbox/template-agent.git` | No |
 
 ## Governance & Decision Matrix
@@ -255,10 +260,11 @@ git checkout baremetal && git merge upstream/baremetal
 │   └── knowledge/            # Modular runtime cards and platform gotchas
 ├── .github/
 │   ├── workflows/ci.yml      # CI workflow for multi-branch matrix validation
-│   └── scripts/              # Branch drift, fast-link bootstrap, and contract assertions
+│   └── scripts/              # Branch drift, fast-link bootstrap, contract assertions & LLM linter
 ├── docs/
 │   ├── adr/decisions.md      # Consolidated architectural decision records
 │   ├── agent-sandbox.md      # Dual-tier hermetic sandbox & container isolation
+│   ├── llm-gateway.md        # OpenAI v1 gateway integration, virtual models & network isolation
 │   ├── subagent-topology.md  # 3-tier subagent roles and delegation contracts
 │   └── worktree-isolation.md # Worktree lifecycle, fast-link CLI, and lifecycle hooks
 ├── .env.example              # Canonical environment configuration schema
@@ -282,6 +288,9 @@ git checkout baremetal && git merge upstream/baremetal
 
 # Bootstrap worktree fast-link symlinks (.venv, node_modules) and run lifecycle hooks
 .github/scripts/bootstrap-worktree.sh --self-test
+
+# Validate LLM gateway contracts, network isolation, and virtual model routing
+.github/scripts/verify-llm-contract.sh self-test
 
 # Run end-to-end scaffolding tests across all starter branches
 .github/scripts/test-all-starters.sh

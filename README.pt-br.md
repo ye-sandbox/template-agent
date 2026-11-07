@@ -166,6 +166,11 @@ Variáveis de configuração definidas no `.env.example` e variáveis em nível 
 | `APP_SECRET_KEY` | Chave criptográfica para assinatura e cifragem de sessões | `change-me-in-production` | Sim (em produção) |
 | `DATABASE_URL` | String de conexão PostgreSQL do banco de dados persistente principal | `postgresql://user:password@localhost:5432/dbname` | Não |
 | `REDIS_URL` | String de conexão Redis para broker de fila, cache e mensageria | `redis://localhost:6379/0` | Não |
+| `LLM_BASE_URL` | URL base do gateway LLM compatível com OpenAI v1 (Hydra AI) | `http://hydra-ai-gateway:3000/v1` | Não |
+| `LLM_API_KEY` | Token de autenticação do gateway correspondente ao tier alocado | `sk-replace-with-hydra-tier-token` | Sim (ao usar LLM) |
+| `LLM_MODEL_FAST` | Alias do modelo virtual de baixa latência para classificação e parsing | `free-fast` | Não |
+| `LLM_MODEL_DEEP` | Alias do modelo virtual para raciocínio profundo com orçamento de reasoning | `free-deep` | Não |
+| `LLM_TIMEOUT_SECONDS` | Timeout do cliente HTTP em segundos para chamadas de reasoning | `180` | Não |
 | `TEMPLATE_REPO_URL` | Sobrescrita de URL do repositório upstream para mirrors corporativos e forks | `https://github.com/ye-sandbox/template-agent.git` | Não |
 
 ## Matriz de Governança e Decisão
@@ -255,10 +260,11 @@ git checkout baremetal && git merge upstream/baremetal
 │   └── knowledge/            # Cards modulares de runtime e plataforma
 ├── .github/
 │   ├── workflows/ci.yml      # Workflow de CI para matriz multibranch
-│   └── scripts/              # Validação de drift, bootstrap fast-link e contratos
+│   └── scripts/              # Validação de drift, bootstrap fast-link, contratos e linter de LLM
 ├── docs/
 │   ├── adr/decisions.md      # Registros consolidados de decisão arquitetural
 │   ├── agent-sandbox.md      # Especificações de sandbox hermético via Bubblewrap e contêineres
+│   ├── llm-gateway.md        # Integração com gateway OpenAI v1, modelos virtuais e isolamento de rede
 │   ├── subagent-topology.md  # Papéis de subagentes em 3 tiers e contratos de delegação
 │   └── worktree-isolation.md # Ciclo de vida de worktree, CLI fast-link e hooks de ciclo de vida
 ├── .env.example              # Esquema canônico de variáveis de ambiente
@@ -282,6 +288,9 @@ git checkout baremetal && git merge upstream/baremetal
 
 # Bootstrap fast-link de dependências (.venv, node_modules) e hooks de ciclo de vida
 .github/scripts/bootstrap-worktree.sh --self-test
+
+# Validar contratos do LLM gateway, isolamento de rede e roteamento de modelos virtuais
+.github/scripts/verify-llm-contract.sh self-test
 
 # Executar suíte de testes de ponta a ponta dos starters
 .github/scripts/test-all-starters.sh
