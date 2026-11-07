@@ -270,3 +270,41 @@ select_sandbox_runner() {
 When operating in `restricted-subshell` mode (environments where neither namespaces nor containers can be provisioned):
 - The orchestrator falls back to running the pre-execution security scanner (`audit-command-security.sh`) to statically audit commands for dangerous tokens (`sudo`, `rm -rf /`, curl-piping, `/etc` modifications) prior to execution.
 - Any attempt to execute dangerous system commands triggers the **Fail-Stop Escalation Protocol** defined in `AGENTS.md`.
+
+---
+
+## 8. Pre-Execution Security Scanner & Command Blast-Radius Audit Runner
+
+To guarantee zero-blast-radius execution even when full containerization is unavailable (and as a defensive pre-check prior to executing subagent `Verify:` commands in worktrees), `.github/scripts/audit-command-security.sh` provides deterministic static shell analysis.
+
+### Command Invariant & Threat Matrix
+
+| Invariant Class | Rule Target | Threat Mitigated |
+| :--- | :--- | :--- |
+| **`P0-PRIVILEGE-ESCALATION`** | `sudo`, `doas`, `su`, `pkexec`, `chroot`, `/etc/sudoers` modifications | Root privilege escalation and host policy override. |
+| **`P0-SYSTEM-MUTATION`** | Recursive `rm` of `/`, `/*`, `/etc`, `/boot`, `/sys`, `/proc`, `/usr`, `/bin`, `/sbin`, `/root`; partition tools (`mkfs`, `fdisk`, `parted`); raw `dd` block device writes (`/dev/sd*`, `/dev/nvme*`); system path redirection. | Irreversible host filesystem destruction or operating system corruption. |
+| **`P0-GIT-HYGIENE`** | `git push --force` (`-f`, `--force-with-lease`); `git reset --hard`; `git clean -f` / `-fd`; `git merge` targeting template branches. | Upstream history destruction, uncommitted worktree loss, and cross-branch template pollution. |
+| **`P1-REMOTE-EXEC-PIPES`** | `curl ... \| bash`, `wget ... \| sh`, `fetch ... \| python` | Remote code execution via unverified downloaded payloads. |
+| **`P1-CREDENTIAL-EXFILTRATION`** | `/dev/tcp/*`, `/dev/udp/*`, `nc -e`; piping `.env` or SSH/AWS keys into network clients. | Secret leakage, credential exfiltration, and interactive reverse shells. |
+| **`P2-RESOURCE-DENIAL`** | Bash fork bombs (`:(){ :|:& };:`) | Host CPU/PID exhaustion and orchestrator denial of service. |
+
+### CLI Interface & Integration
+
+```bash
+# 1. Run hermetic self-test suite (default)
+.github/scripts/audit-command-security.sh self-test
+
+# 2. Audit a raw shell command string (exits 0 if clean, 1 if hazardous)
+.github/scripts/audit-command-security.sh scan-command "npm test && pytest"
+.github/scripts/audit-command-security.sh scan-command "sudo rm -rf /" --json
+
+# 3. Audit a task script or file of shell commands
+.github/scripts/audit-command-security.sh scan-file ./run-steps.sh
+
+# 4. Audit Verify: command in a micro-contract specification
+.github/scripts/audit-command-security.sh scan-contract ./task-contract.md
+```
+
+### Micro-Contract Runner & CI Integration
+
+The micro-contract runner (`verify-microcontract.sh`) automatically invokes `audit-command-security.sh scan-command "$verify_cmd"` before executing any verification command in `--run-verify` mode. The CI workflow (`.github/workflows/ci.yml`) validates both runners on every push and pull request across Linux and macOS.

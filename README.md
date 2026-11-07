@@ -275,6 +275,9 @@ git checkout baremetal && git merge upstream/baremetal
 # Validate micro-contract definitions and git worktree isolation guardrails
 .github/scripts/verify-microcontract.sh
 
+# Audit command security and blast-radius guardrails
+.github/scripts/audit-command-security.sh
+
 # Run end-to-end scaffolding tests across all starter branches
 .github/scripts/test-all-starters.sh
 

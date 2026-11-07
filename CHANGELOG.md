@@ -17,6 +17,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Deterministic Micro-Contract & Worktree Linter (`verify-microcontract.sh`)**:
   - Dedicated CLI tool `.github/scripts/verify-microcontract.sh` to validate micro-contracts, detect disjoint-file conflicts in parallel execution waves (`[PARALLEL: Wx]`), and verify git worktree blast boundaries and whitespace hygiene.
   - Integrated into GitHub Actions CI pipeline and starter validation suites.
+- **Pre-Execution Security Scanner & Command Blast-Radius Audit Runner (`audit-command-security.sh`)**:
+  - Dedicated CLI tool `.github/scripts/audit-command-security.sh` providing deterministic static command analysis for hazardous tokens (`sudo`, root mutations, unapproved network exfiltration, destructive Git operations, reverse shells, and fork bombs).
+  - Integrated into `verify-microcontract.sh` to audit subagent `Verify:` commands prior to worktree execution, and into GitHub Actions CI pipeline.
 - **Automated CLI Flag & Scaffolding Test Suite**:
   - Automated parameter validation matrix in `.github/scripts/test-all-starters.sh` asserting `-h`, `--help`, `-f`, `--force`, `--yes`, `--standalone`, and `--local-only` flags across all 5 starter templates.
   - Cross-platform CI verification matrix across Ubuntu (`ubuntu-latest`) and macOS (`macos-latest`).
