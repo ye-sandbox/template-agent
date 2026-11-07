@@ -687,6 +687,16 @@ verify_worktree() {
       log_success "Verification command approved by security audit"
     fi
 
+    # Execute pre-verify lifecycle hook if present
+    local hook_runner="${script_dir}/bootstrap-worktree.sh"
+    if [ -x "$hook_runner" ]; then
+      log_info "Executing pre-verify lifecycle hook if configured..."
+      "$hook_runner" --worktree "$worktree_dir" --run-hook "pre-verify"
+    elif [ -f "${worktree_dir}/.agent/hooks/pre-verify" ]; then
+      log_info "Executing pre-verify lifecycle hook..."
+      ( cd "$worktree_dir" && bash .agent/hooks/pre-verify )
+    fi
+
     log_info "Executing contract verification command: $verify_cmd"
     if ! ( cd "$worktree_dir" && eval "$verify_cmd" ); then
       log_error "Verification command failed with non-zero exit code: $verify_cmd"
