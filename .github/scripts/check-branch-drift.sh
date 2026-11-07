@@ -75,12 +75,37 @@ for file in "${CANONICAL_KNOWLEDGE_FILES[@]}"; do
   done
 done
 
+# 2b. Audit Shared Canonical Lifecycle Hooks Specification (Byte-for-byte Parity)
+CANONICAL_HOOK_FILES=(
+  ".agent/hooks/README.md"
+)
+
+echo "🔍 Verifying byte-for-byte parity of shared canonical lifecycle hook specification..."
+for file in "${CANONICAL_HOOK_FILES[@]}"; do
+  main_content="$(git show "$MAIN_REF:$file" 2>/dev/null || true)"
+  if [ -z "$main_content" ]; then
+    fail "Canonical hook file '$file' missing on main branch ($MAIN_REF)."
+    continue
+  fi
+
+  for branch in "${STARTER_BRANCHES[@]}"; do
+    ref="$(resolve_ref "$branch")"
+    branch_content="$(git show "$ref:$file" 2>/dev/null || true)"
+    if [ -z "$branch_content" ]; then
+      fail "Branch '$branch' ($ref) is missing canonical hook file '$file'."
+    elif [ "$main_content" != "$branch_content" ]; then
+      fail "Drift detected in '$file' between main and branch '$branch' ($ref)."
+    fi
+  done
+done
+
 # 3. Audit Mandatory Invariants in .gitignore Across All Branches
 MANDATORY_GITIGNORE_RULES=(
   ".env"
   "!.env.example"
   ".agent/scratch/"
   ".agent/.cache/"
+  ".worktrees/"
   ".maestri/"
   ".multigravity/"
   "*.tsbuildinfo"

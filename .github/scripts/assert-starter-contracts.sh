@@ -82,6 +82,9 @@ assert_multiagent_contracts() {
   need_grep .agent/NOTES.md 'Worker / Implementer' -qF
   need_grep .agent/NOTES.md 'Reviewer / Sentinel' -qF
   need_grep .agent/NOTES.md 'Worktree Isolation & Dependency Bootstrap Contract' -qF
+  need_grep .agent/NOTES.md 'Project Lifecycle Hooks & Fast-Link Bootstrap Contract' -qF
+  need_grep .agent/NOTES.md 'bootstrap-worktree.sh' -qF
+  need_grep .agent/NOTES.md 'post-worktree-create' -qF
   need_grep .agent/NOTES.md 'Multi-Account Quota Routing & Failover Contract' -qF
   need_grep .agent/NOTES.md 'select-profile.sh' -qF
   need_grep .agent/NOTES.md 'remaining_fraction' -qF
@@ -100,6 +103,7 @@ assert_greenfield_base() {
   need_absent .agent/skills/api-endpoint
   need_file .agent/knowledge/000-schema.md
   need_file .agent/knowledge/k-000-template.md
+  need_file .agent/hooks/README.md
   need_file docs/adr/decisions.md
   need_file .agent/TASK.md
   need_grep .agent/TASK.md 'Task \[00\.1\]: Project Bootstrap & Stack Setup' -qE
@@ -140,6 +144,7 @@ assert_greenfield_base() {
   need_grep .gitignore '.multigravity/' -qF
   need_grep .gitignore 'tsbuildinfo' -qF
   need_grep .gitignore '.agent/.cache/' -qF
+  need_grep .gitignore '.worktrees/' -qF
   if grep -qiE 'Checklist de adaptação|Adaptation checklist' "$ROOT/AGENTS.md"; then
     fail "adaptation checklist leaked into generated AGENTS.md"
   fi
@@ -168,6 +173,7 @@ assert_brownfield() {
   need_file .agent/knowledge/000-schema.md
   need_file .agent/knowledge/k-000-template.md
   need_file .agent/knowledge/k-001-characterization-test-state-leakage.md
+  need_file .agent/hooks/README.md
   need_file docs/adr/decisions.md
   need_file .agent/TASK.md
   need_file .agent/NOTES.md
@@ -218,6 +224,7 @@ assert_blackbox() {
   need_file .agent/knowledge/k-000-template.md
   need_file .agent/knowledge/k-001-soft-200-session-expiry-detection.md
   need_file .agent/skills/reverse-engineering/SKILL.md
+  need_file .agent/hooks/README.md
   need_file docs/adr/decisions.md
   need_file .agent/TASK.md
   need_file .agent/NOTES.md
@@ -259,6 +266,7 @@ assert_blackbox() {
   need_grep .gitignore '.multigravity/' -qF
   need_grep .gitignore '*.tsbuildinfo' -qF
   need_grep .gitignore '.agent/.cache/' -qF
+  need_grep .gitignore '.worktrees/' -qF
   need_grep .agent/ENDPOINTS.md '$TARGET_SESSION_COOKIE' -qF
   if grep -RIE --exclude-dir=.git 'eyJ[A-Za-z0-9_-]{20,}\.[A-Za-z0-9_-]+\.' "$ROOT"; then
     fail "JWT-like token found in scaffold"
@@ -275,6 +283,7 @@ assert_infra() {
   need_file .agent/knowledge/k-001-docker-bind-mount-permissions.md
   need_file .agent/knowledge/k-002-healthcheck-logging-contract.md
   need_file .agent/skills/compose-service/SKILL.md
+  need_file .agent/hooks/README.md
   need_file .agent/TASK.md
   need_file .agent/NOTES.md
   need_file .agent/ARCHIVE.md
@@ -285,6 +294,7 @@ assert_infra() {
   need_grep .gitignore '.maestri/' -qF
   need_grep .gitignore '.multigravity/' -qF
   need_grep .gitignore '.agent/.cache/' -qF
+  need_grep .gitignore '.worktrees/' -qF
   need_file compose.yaml.example
   need_dir docs
   need_file docs/README.md
@@ -356,6 +366,7 @@ assert_baremetal() {
   [ -x "$ROOT/tests/smoke.sh" ] || fail "tests/smoke.sh is not executable"
   need_dir docs
   need_file docs/adr/decisions.md
+  need_file .agent/hooks/README.md
   need_file benchmarks/README.md
   need_dir benchmarks/scripts
   need_file benchmarks/scripts/bench-cpu.sh
@@ -401,6 +412,7 @@ assert_baremetal() {
   need_grep .gitignore 'benchmarks/runs/' -qF
   need_grep .gitignore '*.raw' -qF
   need_grep .gitignore '.agent/.cache/' -qF
+  need_grep .gitignore '.worktrees/' -qF
   need_grep .agent/TUNINGS.md 'Registry' -qiE
   need_grep .agent/BASELINE.md 'Baseline' -qiE
   need_grep .agent/INVARIANTS.md 'Chesterton' -qF
