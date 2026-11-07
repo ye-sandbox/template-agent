@@ -180,6 +180,27 @@ for file in "${KNOWLEDGE_FILES[@]}"; do
     fi
 done
 
+# 4b. Install canonical lifecycle hooks specification into .agent/hooks
+mkdir -p "$RESOLVED_TARGET/.agent/hooks"
+HOOK_FILES=("README.md" "post-worktree-create.example")
+
+for file in "${HOOK_FILES[@]}"; do
+    dest="$RESOLVED_TARGET/.agent/hooks/$file"
+    if [ -f "$dest" ]; then
+        if [ "$FORCE_YES" = true ]; then
+            fetch_file ".agent/hooks/$file" "$dest"
+            [ "$file" = "post-worktree-create.example" ] && chmod +x "$dest" 2>/dev/null || true
+            echo "✅ .agent/hooks/$file updated (--force)."
+        else
+            echo "ℹ️  $file already exists in .agent/hooks/. Retaining existing file."
+        fi
+    else
+        fetch_file ".agent/hooks/$file" "$dest"
+        [ "$file" = "post-worktree-create.example" ] && chmod +x "$dest" 2>/dev/null || true
+        echo "✅ .agent/hooks/$file installed."
+    fi
+done
+
 # 5. Apply Local-Only / Stealth Mode configurations if requested
 if [ "$LOCAL_ONLY" = true ]; then
     # 4.1 Exclude files in .git/info/exclude

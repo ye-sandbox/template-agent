@@ -19,6 +19,7 @@ Thumbs.db
 .vscode/
 .agent/scratch/
 .agent/.cache/
+.worktrees/
 .gemini/
 .claude/
 .maestri/
