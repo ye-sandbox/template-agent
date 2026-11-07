@@ -218,3 +218,32 @@ In the event of consecutive failures (3 for general starters, 2 for sensitive st
    root_cause_analysis: "Verify command failed with code 1 in isolated worktree"
    pending_decision: "Inspect failure logs and provide approved fix"
    ```
+
+---
+
+## 7. Canonical Fast-Link CLI & Project Lifecycle Hooks Standard
+
+### CLI Automation (`.github/scripts/bootstrap-worktree.sh`)
+
+The canonical CLI utility automates zero-copy dependency fast-linking (`node_modules`, `.venv`), `.env` isolation, scratch directory provisioning (`.agent/scratch/`), and lifecycle hook execution:
+
+```bash
+# Fast-link dependencies and execute post-worktree-create hook
+.github/scripts/bootstrap-worktree.sh --worktree ".worktrees/task-04-6"
+
+# Run with forced isolated install when dependency manifests are modified
+.github/scripts/bootstrap-worktree.sh --worktree ".worktrees/task-04-6" --touches-manifests
+
+# Explicitly trigger a lifecycle hook
+.github/scripts/bootstrap-worktree.sh --worktree ".worktrees/task-04-6" --run-hook "pre-verify"
+```
+
+### Standardized Project Lifecycle Hooks (`.agent/hooks/`)
+
+| Hook | Phase | Invocation & Contract |
+|---|---|---|
+| **`post-worktree-create`** | Post-Provisioning | Executed immediately after worktree provisioning and fast-linking. Ideal for seeding test fixtures, copying SQLite databases, or initializing mock servers. |
+| **`pre-verify`** | Pre-Verification | Executed immediately prior to the micro-contract `Verify:` command. Validates pre-conditions and clears stale test caches. |
+| **`post-worktree-teardown`** | Pre-Teardown | Executed prior to `git worktree remove` for graceful shutdown of background services or cleaning external resources. |
+
+All hooks execute with exported environment variables (`ROOT_DIR`, `WORKTREE_DIR`, `HOOK_NAME`) and fail-stop immediately on non-zero exit codes.
