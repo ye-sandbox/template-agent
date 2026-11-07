@@ -11,7 +11,7 @@
 ## Active Task
 
 - **Task:** `[04.5]` Epic 04 Milestone Consolidation & End-to-End Security Validation
-- **Status:** PLANNING
+- **Status:** RUNNING
 - **Scope:** Consolidate Epic 04 deliverables across documentation (`README.md`, `README.pt-br.md`, `CHANGELOG.md`), record ADR decision for Epic 04 consolidation in `docs/adr/decisions.md`, and execute full-spectrum CI and local validation across all starters and security runners.
 - **Target Branches:** `main`
 
