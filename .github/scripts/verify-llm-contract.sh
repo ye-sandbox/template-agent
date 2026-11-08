@@ -89,8 +89,8 @@ Commands:
 
   check-env <file-path> [--json]
       Validate environment file against canonical schema:
-      LLM_BASE_URL, LLM_API_KEY, LLM_MODEL_FAST=free-fast,
-      LLM_MODEL_DEEP=free-deep, LLM_TIMEOUT_SECONDS >= 180.
+      LLM_BASE_URL, LLM_API_KEY, LLM_MODEL_FAST=fast,
+      LLM_MODEL_DEEP=deep, LLM_TIMEOUT_SECONDS >= 180.
       Enforces [P1-LLM-ENV-HYGIENE].
 
   check-compose <file-path> [--json]
@@ -100,7 +100,7 @@ Commands:
 
   probe [gateway-base-url] [--api-key <key>] [--json] [--allow-offline] [--timeout <secs>]
       Execute pre-flight HTTP probe against /v1/models and verify virtual models
-      (free-fast, free-deep) are exposed.
+      (fast, deep) are exposed.
 
 Options:
   --json             Output results formatted as JSON.
@@ -118,7 +118,7 @@ Invariants & Rules Checked:
   • [P1-LLM-UPSTREAM-COUPLING]:
       Source code MUST NOT hardcode upstream provider endpoints (generativelanguage.googleapis,
       api.openai.com, api.groq.com) or proprietary model names (gemini-*, gpt-4*, claude-*).
-      Must route strictly through virtual model aliases (free-fast, free-deep).
+      Must route strictly through virtual model aliases (fast, deep).
   • [P1-LLM-ENV-HYGIENE]:
       Environment manifests MUST declare canonical keys with valid defaults and
       LLM_TIMEOUT_SECONDS >= 180.
@@ -233,7 +233,7 @@ check_code_coupling() {
         local matched_model="${BASH_REMATCH[1]}"
         VIOLATION_COUNT=$((VIOLATION_COUNT + 1))
         local rel_path="${file#"$TARGET_DIR"/}"
-        VIOLATIONS+=("{\"rule\":\"P1-LLM-UPSTREAM-COUPLING\",\"file\":\"${rel_path}\",\"line\":${line_no},\"token\":\"${matched_model}\",\"message\":\"Hardcoded upstream proprietary model identifier detected. Consumer applications must use virtual model aliases (free-fast, free-deep).\"}")
+        VIOLATIONS+=("{\"rule\":\"P1-LLM-UPSTREAM-COUPLING\",\"file\":\"${rel_path}\",\"line\":${line_no},\"token\":\"${matched_model}\",\"message\":\"Hardcoded upstream proprietary model identifier detected. Consumer applications must use virtual model aliases (fast, deep).\"}")
         if [ "$JSON_MODE" != "true" ]; then
           log_error "[P1-LLM-UPSTREAM-COUPLING] ${rel_path}:${line_no} -> Hardcoded proprietary model '${matched_model}'"
         fi
@@ -369,18 +369,18 @@ check_env_hygiene() {
   fi
 
   if [ "$HAS_MODEL_FAST" = "true" ]; then
-    if [ "$MODEL_FAST_VAL" != "free-fast" ]; then
+    if [ "$MODEL_FAST_VAL" != "fast" ]; then
       VIOLATION_COUNT=$((VIOLATION_COUNT + 1))
-      VIOLATIONS+=("{\"rule\":\"P1-LLM-ENV-HYGIENE\",\"file\":\"${ENV_FILE}\",\"key\":\"LLM_MODEL_FAST\",\"message\":\"LLM_MODEL_FAST must be set to canonical virtual alias 'free-fast', got '${MODEL_FAST_VAL}'\"}")
-      [ "$JSON_MODE" != "true" ] && log_error "[P1-LLM-ENV-HYGIENE] ${ENV_FILE}: LLM_MODEL_FAST must be 'free-fast', got '${MODEL_FAST_VAL}'"
+      VIOLATIONS+=("{\"rule\":\"P1-LLM-ENV-HYGIENE\",\"file\":\"${ENV_FILE}\",\"key\":\"LLM_MODEL_FAST\",\"message\":\"LLM_MODEL_FAST must be set to canonical virtual alias 'fast', got '${MODEL_FAST_VAL}'\"}")
+      [ "$JSON_MODE" != "true" ] && log_error "[P1-LLM-ENV-HYGIENE] ${ENV_FILE}: LLM_MODEL_FAST must be 'fast', got '${MODEL_FAST_VAL}'"
     fi
   fi
 
   if [ "$HAS_MODEL_DEEP" = "true" ]; then
-    if [ "$MODEL_DEEP_VAL" != "free-deep" ]; then
+    if [ "$MODEL_DEEP_VAL" != "deep" ]; then
       VIOLATION_COUNT=$((VIOLATION_COUNT + 1))
-      VIOLATIONS+=("{\"rule\":\"P1-LLM-ENV-HYGIENE\",\"file\":\"${ENV_FILE}\",\"key\":\"LLM_MODEL_DEEP\",\"message\":\"LLM_MODEL_DEEP must be set to canonical virtual alias 'free-deep', got '${MODEL_DEEP_VAL}'\"}")
-      [ "$JSON_MODE" != "true" ] && log_error "[P1-LLM-ENV-HYGIENE] ${ENV_FILE}: LLM_MODEL_DEEP must be 'free-deep', got '${MODEL_DEEP_VAL}'"
+      VIOLATIONS+=("{\"rule\":\"P1-LLM-ENV-HYGIENE\",\"file\":\"${ENV_FILE}\",\"key\":\"LLM_MODEL_DEEP\",\"message\":\"LLM_MODEL_DEEP must be set to canonical virtual alias 'deep', got '${MODEL_DEEP_VAL}'\"}")
+      [ "$JSON_MODE" != "true" ] && log_error "[P1-LLM-ENV-HYGIENE] ${ENV_FILE}: LLM_MODEL_DEEP must be 'deep', got '${MODEL_DEEP_VAL}'"
     fi
   fi
 
@@ -574,15 +574,15 @@ EOF
   # Verify virtual model aliases are present in the response
   local HAS_FAST="false"
   local HAS_DEEP="false"
-  if echo "$HTTP_RESP" | grep -q "free-fast"; then
+  if echo "$HTTP_RESP" | grep -q "fast"; then
     HAS_FAST="true"
   fi
-  if echo "$HTTP_RESP" | grep -q "free-deep"; then
+  if echo "$HTTP_RESP" | grep -q "deep"; then
     HAS_DEEP="true"
   fi
 
   if [ "$HAS_FAST" = "true" ] && [ "$HAS_DEEP" = "true" ]; then
-    [ "$JSON_MODE" != "true" ] && log_success "Gateway probe verified: virtual models 'free-fast' and 'free-deep' are active."
+    [ "$JSON_MODE" != "true" ] && log_success "Gateway probe verified: virtual models 'fast' and 'deep' are active."
     if [ "$JSON_MODE" = "true" ]; then
       cat << EOF
 {
@@ -591,14 +591,14 @@ EOF
   "probe": {
     "target_url": "${MODELS_URL}",
     "status": "PASS",
-    "models": ["free-fast", "free-deep"]
+    "models": ["fast", "deep"]
   }
 }
 EOF
     fi
     return 0
   else
-    [ "$JSON_MODE" != "true" ] && log_error "Gateway probe missing required virtual models. free-fast: ${HAS_FAST}, free-deep: ${HAS_DEEP}"
+    [ "$JSON_MODE" != "true" ] && log_error "Gateway probe missing required virtual models. fast: ${HAS_FAST}, deep: ${HAS_DEEP}"
     if [ "$JSON_MODE" = "true" ]; then
       cat << EOF
 {
@@ -698,10 +698,10 @@ run_self_tests() {
   mkdir -p "${DIR_CLEAN}/src"
 
   cat << 'EOF' > "${DIR_CLEAN}/.env.example"
-LLM_BASE_URL=http://hydra-ai-gateway:3000/v1
+LLM_BASE_URL=http://hydra-llm-router:3000/v1
 LLM_API_KEY=sk-test-token
-LLM_MODEL_FAST=free-fast
-LLM_MODEL_DEEP=free-deep
+LLM_MODEL_FAST=fast
+LLM_MODEL_DEEP=deep
 LLM_TIMEOUT_SECONDS=180
 EOF
 
@@ -710,7 +710,7 @@ import os
 from openai import AsyncOpenAI
 
 client = AsyncOpenAI(
-    base_url=os.getenv("LLM_BASE_URL", "http://hydra-ai-gateway:3000/v1"),
+    base_url=os.getenv("LLM_BASE_URL", "http://hydra-llm-router:3000/v1"),
     api_key=os.environ["LLM_API_KEY"],
     timeout=float(os.getenv("LLM_TIMEOUT_SECONDS", "180.0")),
 )
@@ -812,27 +812,27 @@ EOF
 
   # Bad 4a: Missing LLM_MODEL_FAST
   cat << 'EOF' > "${DIR_BAD_ENV}/env_missing.env"
-LLM_BASE_URL=http://hydra-ai-gateway:3000/v1
+LLM_BASE_URL=http://hydra-llm-router:3000/v1
 LLM_API_KEY=test
-LLM_MODEL_DEEP=free-deep
+LLM_MODEL_DEEP=deep
 LLM_TIMEOUT_SECONDS=180
 EOF
 
   # Bad 4b: Invalid virtual model value
   cat << 'EOF' > "${DIR_BAD_ENV}/env_bad_model.env"
-LLM_BASE_URL=http://hydra-ai-gateway:3000/v1
+LLM_BASE_URL=http://hydra-llm-router:3000/v1
 LLM_API_KEY=test
 LLM_MODEL_FAST=gpt-4o
-LLM_MODEL_DEEP=free-deep
+LLM_MODEL_DEEP=deep
 LLM_TIMEOUT_SECONDS=180
 EOF
 
   # Bad 4c: Insufficient timeout (< 180)
   cat << 'EOF' > "${DIR_BAD_ENV}/env_bad_timeout.env"
-LLM_BASE_URL=http://hydra-ai-gateway:3000/v1
+LLM_BASE_URL=http://hydra-llm-router:3000/v1
 LLM_API_KEY=test
-LLM_MODEL_FAST=free-fast
-LLM_MODEL_DEEP=free-deep
+LLM_MODEL_FAST=fast
+LLM_MODEL_DEEP=deep
 LLM_TIMEOUT_SECONDS=30
 EOF
 
@@ -914,8 +914,8 @@ class Handler(http.server.BaseHTTPRequestHandler):
             payload = {
                 'object': 'list',
                 'data': [
-                    {'id': 'free-fast', 'object': 'model'},
-                    {'id': 'free-deep', 'object': 'model'}
+                    {'id': 'fast', 'object': 'model'},
+                    {'id': 'deep', 'object': 'model'}
                 ]
             }
             self.wfile.write(json.dumps(payload).encode('utf-8'))

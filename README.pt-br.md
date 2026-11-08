@@ -166,10 +166,10 @@ Variáveis de configuração definidas no `.env.example` e variáveis em nível 
 | `APP_SECRET_KEY` | Chave criptográfica para assinatura e cifragem de sessões | `change-me-in-production` | Sim (em produção) |
 | `DATABASE_URL` | String de conexão PostgreSQL do banco de dados persistente principal | `postgresql://user:password@localhost:5432/dbname` | Não |
 | `REDIS_URL` | String de conexão Redis para broker de fila, cache e mensageria | `redis://localhost:6379/0` | Não |
-| `LLM_BASE_URL` | URL base do gateway LLM compatível com OpenAI v1 (Hydra AI) | `http://hydra-ai-gateway:3000/v1` | Não |
+| `LLM_BASE_URL` | URL base do gateway LLM compatível com OpenAI v1 (Hydra LLM Router) | `http://hydra-llm-router:3000/v1` | Não |
 | `LLM_API_KEY` | Token de autenticação do gateway correspondente ao tier alocado | `sk-replace-with-hydra-tier-token` | Sim (ao usar LLM) |
-| `LLM_MODEL_FAST` | Alias do modelo virtual de baixa latência para classificação e parsing | `free-fast` | Não |
-| `LLM_MODEL_DEEP` | Alias do modelo virtual para raciocínio profundo com orçamento de reasoning | `free-deep` | Não |
+| `LLM_MODEL_FAST` | Alias do modelo virtual de baixa latência para classificação e parsing | `fast` | Não |
+| `LLM_MODEL_DEEP` | Alias do modelo virtual para raciocínio profundo com orçamento de reasoning | `deep` | Não |
 | `LLM_TIMEOUT_SECONDS` | Timeout do cliente HTTP em segundos para chamadas de reasoning | `180` | Não |
 | `TEMPLATE_REPO_URL` | Sobrescrita de URL do repositório upstream para mirrors corporativos e forks | `https://github.com/ye-sandbox/template-agent.git` | Não |
 

@@ -93,8 +93,8 @@ assert_multiagent_contracts() {
   need_grep .agent/NOTES.md 'Tier 2 (Rootless Container)' -qF
   need_grep .agent/NOTES.md 'audit-command-security.sh' -qF
   need_grep .agent/NOTES.md 'LLM Gateway & Virtual Model Routing Contract' -qF
-  need_grep .agent/NOTES.md 'free-fast' -qF
-  need_grep .agent/NOTES.md 'free-deep' -qF
+  need_grep .agent/NOTES.md 'fast' -qF
+  need_grep .agent/NOTES.md 'deep' -qF
   need_grep .agent/NOTES.md 'hydra_shared_net' -qF
 }
 
