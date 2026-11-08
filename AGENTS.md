@@ -149,6 +149,8 @@ git commit -m "chore(sync): sync <file> from <source-branch>"
 
 - **Atomic Commits:** Each commit MUST represent a single, verifiable change. NEVER mix governance, documentation, and script edits.
 - **Conventional Commits:** All commit messages MUST follow `<type>(<scope>): <imperative summary>` in Technical English.
+- **Subject Artifact Focus:** The subject line MUST describe the concrete change to repository files/artifacts. NEVER leak agent orchestration metadata or queue scheduling jargon into the subject (e.g., do NOT write `docs(task): queue wave W13 tasks [10.11]-[10.15] for execution`; DO write `docs(task): add micro-contracts for tasks [10.11]-[10.15]`).
+- **Commit Body Requirement:** Commits introducing batches of tasks (`docs(task)`), architectural decisions, or non-trivial multi-file changes MUST include an explanatory body (separated by an empty line) summarizing the affected tasks, scope, or rationale. Never rely exclusively on a one-line subject for complex multi-task operations.
 - **Language Invariant:** Author all agent-facing directives, contracts, skills, and logs (`AGENTS.md`, `.agent/*`) in Technical English. Human-facing documentation (`README.pt-br.md`) MAY be localized.
 
 | Type | Purpose | Hub Scope Example |
@@ -167,8 +169,19 @@ git commit -m "chore(sync): sync <file> from <source-branch>"
 // BAD: Combining multiple concerns, vague or past-tense message
 git commit -m "fixed stuff, updated docs and updated init.sh"
 
+// BAD: Leaking agent queue orchestration jargon into subject with no body
+git commit -m "docs(task): queue wave W13 tasks [10.11]-[10.15] for execution"
+
 // GOOD: Single atomic change with RFC-compliant imperative verb
 git commit -m "fix(installer): resolve remote execution flag parsing"
+
+// GOOD: Artifact-focused subject with structured body detailing batched tasks
+git commit -m "docs(task): add micro-contracts for tasks [10.11]-[10.15]" -m "Queue parallel wave W13 in .agent/TASK.md:
+- [10.11]: Bootstrap SQLite schema & cooldown monotonicity
+- [10.12]: Update default API_PROXY_TARGET fallback
+- [10.13]: Synchronize .env.example with gatekeeper-ts variables
+- [10.14]: Align NOTES.md and migration blueprint
+- [10.15]: Synchronize README perimeter for cycle v0.5.0"
 ```
 
 ### Inter-Branch Synchronization
