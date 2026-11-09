@@ -10,34 +10,29 @@
 
 ## Active Task
 
-- **Task:** `[07.1]` Next Milestone / Epic Planning
-- **Status:** RUNNING
-- **Scope:** Review the completed Epic 06 contracts and validation coverage, identify the next milestone's priorities, and propose an ordered roadmap with bounded paths and falsifiable acceptance criteria for human approval.
-- **Target Branches:** `main` (roadmap planning only).
-- **Approved Milestone:** Epic 07 — Safe Ecosystem Adoption & Interface Compliance.
-- **Planning Evidence:** The ecosystem auditor does not yet check the shared interface skill, Invariant 7, or UI context/DoD coverage. The migration runner selects Markdown ADR files and then removes the entire legacy ADR directory, without explicit preservation checks for non-Markdown assets or same-title/different-content decisions. Existing dry-run/idempotency tests cover only a small legacy fixture.
-- **Approved Plan:**
-  1. Finalize the ordered roadmap below in an isolated worktree of `main`, append its rationale in Technical English to `docs/adr/decisions.md`, and validate micro-contracts, links, and whitespace.
-  2. Commit the roadmap/decision artifacts atomically with explanatory bodies, log `[07.1]` as one completion row, promote `[07.2]` to `READY FOR PLANNING`, and retain later task titles in the backlog. Approval of this planning task does not start implementation of the following tasks.
-- **Approved Roadmap (scope and acceptance criteria):**
-  - `[07.2]` Lossless Governance Migration: Preserve ADR Assets & Decision Content. Branch: `main`. Paths: `.github/scripts/apply-governance-standards.py`, related hermetic fixtures/tests under `.github/scripts/`, and `.agent/TASK.md`. DoD: fixtures cover non-Markdown assets, nested files, same-title/different-content decisions, dry-run byte preservation, and second-run idempotency; no source tree is deleted while unpreserved content remains; existing CLI flags and self-tests remain compatible.
-  - `[07.3]` Ecosystem Auditor: Verify Adaptive Interface Contracts. Branch: `main`. Paths: `.github/scripts/audit-ecosystem-standards.py`, related hermetic fixtures/tests under `.github/scripts/`, and `.agent/TASK.md`. DoD: reports explicit checks for installed skill, all four Invariant 7 guardrails, and runtime-aware context/DoD directives; missing/drifted fixtures fail the relevant checks; conforming fixtures pass; retain existing CLI flags/report fields and document any score changes.
-  - `[07.4]` Opt-In Interface Contract Migration. Depends on `[07.2]` and `[07.3]`. Branch: `main`. Paths: `.github/scripts/apply-governance-standards.py`, related hermetic fixtures/tests under `.github/scripts/`, and `.agent/TASK.md`. DoD: a documented opt-in mode installs the canonical skill and adds interface contracts while preserving project-specific invariants, failure thresholds, and unrelated files; dry-run writes nothing; second application has no diff; conflicting custom contracts produce an actionable diagnostic rather than silent overwrite; existing default migration behavior stays compatible.
-  - `[07.5]` Epic 07 Consolidation, Documentation & CI Audit. Branch: `main`. Paths: `.github/scripts/`, `.github/workflows/ci.yml` only for required test wiring, `README.md`, `README.pt-br.md`, `CHANGELOG.md`, `docs/adr/decisions.md`, and `.agent/TASK.md`. DoD: new safety/compliance fixtures run in the existing CI matrix; combined starter suite and all self-tests pass locally where supported; bilingual CLI documentation matches actual behavior; specialized branch heads remain unchanged.
-- **Execution Boundary:** This task changes only `.agent/TASK.md` and `docs/adr/decisions.md`. Future runner changes require their own task planning/approval. Validation uses disposable fixtures; no external project migrations, pushes, releases, or specialized-branch changes are included.
+- **Task:** `[07.2]` Lossless Governance Migration: Preserve ADR Assets & Decision Content
+- **Status:** READY FOR PLANNING
+- **Scope:** Make ADR consolidation preserve non-Markdown assets, nested files, and distinct decisions sharing a title. Define source cleanup only after content preservation is verified; retain the current CLI and unrelated migration behavior.
+- **Target Branches:** `main` only; validate against disposable fixtures, without migrating external projects.
 - **Role:** Worker
 - **Isolation:** worktree
+- **Acceptance Criteria:**
+  - Fixtures cover non-Markdown assets, nested files, and same-title/different-content decisions without data loss.
+  - No legacy source tree is removed while any unpreserved content remains.
+  - Dry-run leaves all fixture file bytes unchanged; a second application produces no diff.
+  - Existing CLI flags and migration self-tests remain compatible and pass.
 - Read:
   - AGENTS.md
   - .agent/TASK.md
   - .agent/NOTES.md
   - .agent/INVARIANTS.md
   - docs/adr/decisions.md
-  - CHANGELOG.md
+  - .github/scripts/apply-governance-standards.py
 - Paths:
+  - .github/scripts/apply-governance-standards.py
+  - .github/scripts/tests/
   - .agent/TASK.md
-  - docs/adr/decisions.md
-- Verify: ./.github/scripts/verify-microcontract.sh verify-file .agent/TASK.md && git diff --check
+- Verify: python3 .github/scripts/apply-governance-standards.py --self-test && ./.github/scripts/verify-microcontract.sh verify-file .agent/TASK.md && git diff --check
 
 ---
 
@@ -73,12 +68,15 @@
 | `[06.3]` | Ecosystem Governance Audit & Migration Tooling | `389b739` (main) | 2026-11-08 |
 | `[06.4]` | Starter Template Parity: Propagate Interface Verification & Invariants | `2284fd2`, `400af02` (greenfield); `41bd28f`, `6dd7837`, `358db7e` (brownfield); `cc3c3b7`, `2ee9d2f` (blackbox); `8c4d19f`, `7d05bb3` (infra); `a707839`, `9e700a0` (baremetal); `84c47a5` (main) | 2026-11-08 |
 | `[06.5]` | Epic 06 Milestone Consolidation, Documentation & Multi-Branch CI Audit | `ce88799`, `ed72284` (main) | 2026-11-08 |
+| `[07.1]` | Next Milestone / Epic Planning: Safe Ecosystem Adoption & Interface Compliance | `7175590`, `9083747` (main) | 2026-11-08 |
 
 ---
 
 ## Backlog (Upcoming, in priority order)
 
-*(empty)*
+- `[07.3]` Ecosystem Auditor: Verify Adaptive Interface Contracts
+- `[07.4]` Opt-In Interface Contract Migration
+- `[07.5]` Epic 07 Consolidation, Documentation & CI Audit
 
 
 
