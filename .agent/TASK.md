@@ -10,23 +10,19 @@
 
 ## Active Task
 
-- **Task:** `[07.3]` Ecosystem Auditor: Verify Adaptive Interface Contracts
-- **Status:** RUNNING
-- **Scope:** Extend ecosystem compliance reports with explicit checks for the installed interface-testing skill, all four Invariant 7 guardrails, and runtime-aware UI context/DoD directives. Preserve existing CLI flags and report fields; document any scoring changes during planning.
-- **Target Branches:** `main` only; validate using disposable fixtures.
-- **Approved Plan:**
-  1. Implement within an isolated checkout of `main`, changing only the auditor, its hermetic tests, and task bookkeeping. Read canonical interface references from this hub's `.agent/skills/interface-testing/SKILL.md` and `.agent/INVARIANTS.md`, not from the audited repository. Missing/unreadable references must produce explicit failed checks/diagnostics rather than silently passing.
-  2. Add eight Boolean checks: installed skill (weight 2), byte-for-byte canonical skill parity (4), each of Invariants 7.1-7.4 (2 each), an on-demand skill reference in the active AGENTS context section (3), and a UI verification DoD containing both T3 Code and headless paths (3). Compare each invariant's actual guardrail block with the corresponding canonical block, allowing unrelated project invariants outside those blocks; labels or fenced examples alone must not satisfy checks.
-  3. Preserve all existing CLI flags, top-level report fields, existing check keys, tier thresholds, and `--fail-under` semantics. Retain existing weights and add 20 interface points, increasing the maximum from 100 to 120; score remains the rounded percentage. A previously 100% fixture missing every interface contract becomes 83%, while a fully conforming fixture remains 100%. New failed checks add actionable violations visible in existing report/verbose paths. Record this scoring change in code and tests; bilingual user documentation follows in `[07.5]`.
-  4. Extend the existing `--self-test` suite with conforming fixtures, each missing/drifted contract, altered skill bytes, duplicate or fake/fenced invariant labels, irrelevant AGENTS references, unavailable canonical references, and unreadable/malformed inputs. Verify read-only behavior, score calculations, JSON/report field compatibility, and CLI threshold exit codes using disposable fixtures only.
-  5. Run auditor self-tests, Python syntax compilation, the hub audit with the existing CI threshold of 90, micro-contract validation, changed-link/branch-target checks, and `git diff --check`. Commit code/tests separately from lifecycle bookkeeping, log `[07.3]` completion, promote `[07.4]` to `READY FOR PLANNING`, and remove the temporary worktree.
+- **Task:** `[07.4]` Opt-In Interface Contract Migration
+- **Status:** READY FOR PLANNING
+- **Scope:** Add an explicit opt-in migration mode that installs the canonical interface-testing skill and adds interface verification contracts while preserving project-specific rules and existing default migration behavior.
+- **Dependencies:** `[07.2]` migration preservation and `[07.3]` interface auditing are complete.
+- **Target Branches:** `main` only; validate against disposable fixtures without migrating external projects.
 - **Role:** Worker
 - **Isolation:** worktree
 - **Acceptance Criteria:**
-  - Reports identify missing or drifted interface skills, invariant guardrails, and context/DoD directives through explicit checks.
-  - Conforming fixtures pass; each missing/drifted fixture fails its relevant checks.
-  - Existing CLI flags and report fields remain compatible; any scoring changes are specified and tested.
-  - Existing auditor self-tests and micro-contract validation pass; specialized branches remain unchanged.
+  - A documented opt-in mode installs the canonical skill and adds the shared interface invariants and runtime-aware AGENTS context/DoD directives.
+  - Project-specific invariants, failure thresholds, and unrelated files remain unchanged.
+  - Dry-run writes nothing, and a second application produces no diff.
+  - Conflicting custom contracts produce actionable diagnostics rather than silent overwrites.
+  - Existing CLI options and default migration behavior remain compatible; migration and interface audit fixtures pass.
 - Read:
   - AGENTS.md
   - .agent/TASK.md
@@ -34,12 +30,13 @@
   - .agent/INVARIANTS.md
   - .agent/skills/interface-testing/SKILL.md
   - docs/adr/decisions.md
+  - .github/scripts/apply-governance-standards.py
   - .github/scripts/audit-ecosystem-standards.py
 - Paths:
-  - .github/scripts/audit-ecosystem-standards.py
+  - .github/scripts/apply-governance-standards.py
   - .github/scripts/tests/
   - .agent/TASK.md
-- Verify: python3 .github/scripts/audit-ecosystem-standards.py --self-test && ./.github/scripts/verify-microcontract.sh verify-file .agent/TASK.md && git diff --check
+- Verify: python3 .github/scripts/apply-governance-standards.py --self-test && ./.github/scripts/verify-microcontract.sh verify-file .agent/TASK.md && git diff --check
 
 ---
 
@@ -77,12 +74,12 @@
 | `[06.5]` | Epic 06 Milestone Consolidation, Documentation & Multi-Branch CI Audit | `ce88799`, `ed72284` (main) | 2026-11-08 |
 | `[07.1]` | Next Milestone / Epic Planning: Safe Ecosystem Adoption & Interface Compliance | `7175590`, `9083747` (main) | 2026-11-08 |
 | `[07.2]` | Lossless Governance Migration: Preserve ADR Assets & Decision Content | `d3c3623` (main) | 2026-11-08 |
+| `[07.3]` | Ecosystem Auditor: Verify Adaptive Interface Contracts | `090ecc9` (main) | 2026-11-08 |
 
 ---
 
 ## Backlog (Upcoming, in priority order)
 
-- `[07.4]` Opt-In Interface Contract Migration
 - `[07.5]` Epic 07 Consolidation, Documentation & CI Audit
 
 
