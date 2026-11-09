@@ -6,8 +6,8 @@ Technical governance hub and branch-isolated starters for collaborative software
 
 [![CI](https://github.com/ye-sandbox/template-agent/actions/workflows/ci.yml/badge.svg)](https://github.com/ye-sandbox/template-agent/actions)
 [![Release](https://img.shields.io/github/v/release/ye-sandbox/template-agent?color=blue)](https://github.com/ye-sandbox/template-agent/releases)
-[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
-[![Architecture: Branch-Isolated Starters](https://img.shields.io/badge/Architecture-Branch--Isolated_Starters-purple.svg)]()
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/license/mit)
+[![Architecture: Branch-Isolated Starters](https://img.shields.io/badge/Architecture-Branch--Isolated_Starters-purple.svg)](#architecture)
 
 ---
 
@@ -166,12 +166,14 @@ Configuration variables defined in `.env.example` along with hub-level environme
 | `APP_SECRET_KEY` | Cryptographic secret key for session encryption and signing | `change-me-in-production` | Yes (in production) |
 | `DATABASE_URL` | PostgreSQL connection string for primary persistent datastore | `postgresql://user:password@localhost:5432/dbname` | No |
 | `REDIS_URL` | Redis connection string for broker, cache, and queue storage | `redis://localhost:6379/0` | No |
-| `LLM_BASE_URL` | OpenAI v1-compatible LLM Gateway endpoint URL (Hydra AI) | `http://hydra-ai-gateway:3000/v1` | No |
+| `LLM_BASE_URL` | OpenAI v1-compatible LLM Gateway endpoint URL (Hydra LLM Router) | `http://hydra-llm-router:3000/v1` | No |
 | `LLM_API_KEY` | Gateway authentication token corresponding to provisioned tier | `sk-replace-with-hydra-tier-token` | Yes (when LLM enabled) |
-| `LLM_MODEL_FAST` | Low-latency virtual model alias for intent classification and parsing | `free-fast` | No |
-| `LLM_MODEL_DEEP` | Reasoning virtual model alias with extended reasoning token budget | `free-deep` | No |
+| `LLM_MODEL_FAST` | Low-latency virtual model alias for intent classification and parsing | `fast` | No |
+| `LLM_MODEL_DEEP` | Reasoning virtual model alias with extended reasoning token budget | `deep` | No |
 | `LLM_TIMEOUT_SECONDS` | HTTP client timeout budget in seconds for reasoning completions | `180` | No |
 | `TEMPLATE_REPO_URL` | Upstream repository URL override for enterprise mirrors and forks | `https://github.com/ye-sandbox/template-agent.git` | No |
+
+The table lists defaults on `main`. Each starter retains its own `.env.example`; the drift audit checks model aliases against that branch's routing contract. `TEMPLATE_REPO_URL` is an installer override, not an entry in the hub's `.env.example`.
 
 ## Governance & Decision Matrix
 
@@ -274,11 +276,31 @@ git checkout baremetal && git merge upstream/baremetal
 └── README.pt-br.md           # Portuguese (Brasil) documentation
 ```
 
+### Adaptive Interface Verification
+
+All five starters include the [interface-testing skill](.agent/skills/interface-testing/SKILL.md) and the shared [Invariant 7](.agent/INVARIANTS.md#7-adaptive-interface-verification--ui-protocol). Brownfield injection installs the skill in both standard and stealth modes, preserving existing files unless an overwrite flag is supplied.
+
+Load the skill only for UI, preview, or frontend component work. In T3 Code, the contract covers preview/device checks, snapshot locators, and session cleanup. In headless CLI/CI, use non-blocking build, component, and headless E2E checks. Static documentation research uses HTTP/search tools.
+
+The drift audit compares the skill byte for byte and compares only Invariant 7, preserving each starter's other fences. Generated-project assertions verify that the skill, all four guardrails, and the UI context/DoD directives reach installed projects.
+
+### Ecosystem Governance Tools
+
+Python 3 is required for the hub audit and migration tools. The auditor reports heuristic compliance scores; it does not certify application behavior. The migration tool handles ADR consolidation, NOTES cleanup, collaboration contracts, and governance directives. Preview its proposed changes before applying them.
+
+```bash
+python3 .github/scripts/audit-ecosystem-standards.py ~/github --format markdown --output /tmp/governance-audit.md
+python3 .github/scripts/apply-governance-standards.py ~/github --dry-run
+```
+
 ### Validation Commands
 
 ```bash
 # Verify branch governance contracts and file drift across specialized branches
 .github/scripts/check-branch-drift.sh
+
+# Exercise drift detection against disposable local Git refs
+bash .github/scripts/test-branch-drift.sh
 
 # Validate micro-contract definitions and git worktree isolation guardrails
 .github/scripts/verify-microcontract.sh
@@ -292,6 +314,11 @@ git checkout baremetal && git merge upstream/baremetal
 # Validate LLM gateway contracts, network isolation, and virtual model routing
 .github/scripts/verify-llm-contract.sh self-test
 
+# Validate ecosystem auditing and migration with hermetic fixtures
+python3 .github/scripts/audit-ecosystem-standards.py --self-test
+python3 .github/scripts/apply-governance-standards.py --self-test
+python3 .github/scripts/audit-ecosystem-standards.py . --no-exclude --fail-under 90
+
 # Run end-to-end scaffolding tests across all starter branches
 .github/scripts/test-all-starters.sh
 
@@ -301,4 +328,4 @@ git diff --check
 
 ## License
 
-Released under the [MIT License](LICENSE).
+Released under the [MIT License](https://opensource.org/license/mit).

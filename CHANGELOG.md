@@ -7,6 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Adaptive interface verification contracts and the on-demand `interface-testing` skill on all five starters, including Brownfield injection in standard and stealth modes.
+- Ecosystem governance auditing and migration tools with heuristic compliance reports, dry-run previews, and hermetic self-tests.
+- Automated interface skill and Invariant 7 drift detection, generated-project assertions, and disposable-ref regression tests integrated into the combined starter suite.
+
+### Fixed
+
+- Gateway alias validation now compares each branch's declared `.env.example` aliases against its NOTES routing row, accepting current hub defaults without requiring starter migrations.
+- English README gateway defaults now match `main` and the Portuguese configuration table (`hydra-llm-router`, `fast`, `deep`).
+
 ## [1.3.0] - 2026-11-07
 
 ### Added

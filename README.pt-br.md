@@ -6,8 +6,8 @@ Hub de governança técnica e starters isolados por branch para engenharia de so
 
 [![CI](https://github.com/ye-sandbox/template-agent/actions/workflows/ci.yml/badge.svg)](https://github.com/ye-sandbox/template-agent/actions)
 [![Release](https://img.shields.io/github/v/release/ye-sandbox/template-agent?color=blue)](https://github.com/ye-sandbox/template-agent/releases)
-[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
-[![Arquitetura: Starters Isolados](https://img.shields.io/badge/Arquitetura-Starters_Isolados-purple.svg)]()
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/license/mit)
+[![Arquitetura: Starters Isolados](https://img.shields.io/badge/Arquitetura-Starters_Isolados-purple.svg)](#arquitetura)
 
 ---
 
@@ -173,6 +173,8 @@ Variáveis de configuração definidas no `.env.example` e variáveis em nível 
 | `LLM_TIMEOUT_SECONDS` | Timeout do cliente HTTP em segundos para chamadas de reasoning | `180` | Não |
 | `TEMPLATE_REPO_URL` | Sobrescrita de URL do repositório upstream para mirrors corporativos e forks | `https://github.com/ye-sandbox/template-agent.git` | Não |
 
+A tabela apresenta os valores padrão de `main`. Cada starter mantém seu próprio `.env.example`; a auditoria de deriva compara os aliases com o contrato de roteamento da respectiva branch. `TEMPLATE_REPO_URL` é uma opção dos instaladores, não uma entrada no `.env.example` do hub.
+
 ## Matriz de Governança e Decisão
 
 ```mermaid
@@ -274,11 +276,31 @@ git checkout baremetal && git merge upstream/baremetal
 └── README.pt-br.md           # Documentação em português (Brasil)
 ```
 
+### Verificação Adaptativa de Interfaces
+
+Os cinco starters incluem a [skill interface-testing](.agent/skills/interface-testing/SKILL.md) e o [Invariante 7](.agent/INVARIANTS.md#7-adaptive-interface-verification--ui-protocol) compartilhado. A injeção Brownfield instala a skill nos modos padrão e stealth, preservando arquivos existentes quando nenhuma opção de sobrescrita é fornecida.
+
+Carregue a skill apenas para tarefas de UI, preview ou componentes frontend. No T3 Code, o contrato cobre verificações de preview/device, localizadores de snapshots e encerramento das sessões. Em CLI/CI headless, use builds não bloqueantes, testes de componentes e E2E headless. Pesquisas de documentação estática usam ferramentas HTTP/busca.
+
+A auditoria de deriva compara a skill byte a byte e compara somente o Invariante 7, preservando as demais restrições de cada starter. As asserções dos projetos gerados verificam a instalação da skill, das quatro restrições e das diretrizes de contexto/DoD para UI.
+
+### Ferramentas de Governança do Ecossistema
+
+As ferramentas de auditoria e migração do hub exigem Python 3. O auditor apresenta pontuações heurísticas de conformidade; ele não certifica o comportamento da aplicação. A migração trata da consolidação de ADRs, limpeza de NOTES, contratos de colaboração e diretrizes de governança. Examine as alterações propostas antes de aplicá-las.
+
+```bash
+python3 .github/scripts/audit-ecosystem-standards.py ~/github --format markdown --output /tmp/governance-audit.md
+python3 .github/scripts/apply-governance-standards.py ~/github --dry-run
+```
+
 ### Comandos de Validação
 
 ```bash
 # Validar contratos de governança e deriva de arquivos entre as branches
 .github/scripts/check-branch-drift.sh
+
+# Testar a detecção de deriva em refs Git locais descartáveis
+bash .github/scripts/test-branch-drift.sh
 
 # Validar definições de micro-contrato e guardrails de isolamento por worktree
 .github/scripts/verify-microcontract.sh
@@ -292,6 +314,11 @@ git checkout baremetal && git merge upstream/baremetal
 # Validar contratos do LLM gateway, isolamento de rede e roteamento de modelos virtuais
 .github/scripts/verify-llm-contract.sh self-test
 
+# Validar auditoria e migração do ecossistema com fixtures herméticas
+python3 .github/scripts/audit-ecosystem-standards.py --self-test
+python3 .github/scripts/apply-governance-standards.py --self-test
+python3 .github/scripts/audit-ecosystem-standards.py . --no-exclude --fail-under 90
+
 # Executar suíte de testes de ponta a ponta dos starters
 .github/scripts/test-all-starters.sh
 
@@ -301,4 +328,4 @@ git diff --check
 
 ## Licença
 
-Distribuído sob a licença [MIT](LICENSE).
+Distribuído sob a licença [MIT](https://opensource.org/license/mit).
