@@ -129,7 +129,8 @@ else
 fi
 
 # 2. Install files into .agent directory
-AGENT_FILES=("INVARIANTS.md" "ECOSYSTEM.md" "TASK.md" "NOTES.md" "ARCHIVE.md")
+mkdir -p "$RESOLVED_TARGET/.agent/skills/interface-testing"
+AGENT_FILES=("INVARIANTS.md" "ECOSYSTEM.md" "TASK.md" "NOTES.md" "ARCHIVE.md" "skills/interface-testing/SKILL.md")
 
 for file in "${AGENT_FILES[@]}"; do
     dest="$RESOLVED_TARGET/.agent/$file"
