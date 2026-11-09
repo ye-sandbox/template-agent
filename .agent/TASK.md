@@ -11,9 +11,15 @@
 ## Active Task
 
 - **Task:** `[07.3]` Ecosystem Auditor: Verify Adaptive Interface Contracts
-- **Status:** READY FOR PLANNING
+- **Status:** RUNNING
 - **Scope:** Extend ecosystem compliance reports with explicit checks for the installed interface-testing skill, all four Invariant 7 guardrails, and runtime-aware UI context/DoD directives. Preserve existing CLI flags and report fields; document any scoring changes during planning.
 - **Target Branches:** `main` only; validate using disposable fixtures.
+- **Approved Plan:**
+  1. Implement within an isolated checkout of `main`, changing only the auditor, its hermetic tests, and task bookkeeping. Read canonical interface references from this hub's `.agent/skills/interface-testing/SKILL.md` and `.agent/INVARIANTS.md`, not from the audited repository. Missing/unreadable references must produce explicit failed checks/diagnostics rather than silently passing.
+  2. Add eight Boolean checks: installed skill (weight 2), byte-for-byte canonical skill parity (4), each of Invariants 7.1-7.4 (2 each), an on-demand skill reference in the active AGENTS context section (3), and a UI verification DoD containing both T3 Code and headless paths (3). Compare each invariant's actual guardrail block with the corresponding canonical block, allowing unrelated project invariants outside those blocks; labels or fenced examples alone must not satisfy checks.
+  3. Preserve all existing CLI flags, top-level report fields, existing check keys, tier thresholds, and `--fail-under` semantics. Retain existing weights and add 20 interface points, increasing the maximum from 100 to 120; score remains the rounded percentage. A previously 100% fixture missing every interface contract becomes 83%, while a fully conforming fixture remains 100%. New failed checks add actionable violations visible in existing report/verbose paths. Record this scoring change in code and tests; bilingual user documentation follows in `[07.5]`.
+  4. Extend the existing `--self-test` suite with conforming fixtures, each missing/drifted contract, altered skill bytes, duplicate or fake/fenced invariant labels, irrelevant AGENTS references, unavailable canonical references, and unreadable/malformed inputs. Verify read-only behavior, score calculations, JSON/report field compatibility, and CLI threshold exit codes using disposable fixtures only.
+  5. Run auditor self-tests, Python syntax compilation, the hub audit with the existing CI threshold of 90, micro-contract validation, changed-link/branch-target checks, and `git diff --check`. Commit code/tests separately from lifecycle bookkeeping, log `[07.3]` completion, promote `[07.4]` to `READY FOR PLANNING`, and remove the temporary worktree.
 - **Role:** Worker
 - **Isolation:** worktree
 - **Acceptance Criteria:**
