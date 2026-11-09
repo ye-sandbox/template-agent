@@ -226,6 +226,7 @@ check_drift() {
     log_info "Auditing inter-branch governance & drift..."
     chmod +x "$drift_script"
     "$drift_script"
+    bash "$SCRIPT_DIR/test-branch-drift.sh"
     log_success "Inter-branch governance audit passed"
   fi
 }

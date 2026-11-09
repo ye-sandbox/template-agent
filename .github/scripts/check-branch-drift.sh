@@ -69,22 +69,23 @@ for file in "${CANONICAL_KNOWLEDGE_FILES[@]}"; do
     branch_content="$(git show "$ref:$file" 2>/dev/null || true)"
     if [ -z "$branch_content" ]; then
       fail "Branch '$branch' ($ref) is missing canonical file '$file'."
-    elif [ "$main_content" != "$branch_content" ]; then
+    elif [ "$(git rev-parse "$MAIN_REF:$file")" != "$(git rev-parse "$ref:$file")" ]; then
       fail "Drift detected in '$file' between main and branch '$branch' ($ref)."
     fi
   done
 done
 
-# 2b. Audit Shared Canonical Lifecycle Hooks Specification (Byte-for-byte Parity)
-CANONICAL_HOOK_FILES=(
+# 2b. Audit Shared Canonical Lifecycle Hooks and Interface Skill (Byte-for-byte Parity)
+CANONICAL_PROTOCOL_FILES=(
   ".agent/hooks/README.md"
+  ".agent/skills/interface-testing/SKILL.md"
 )
 
-echo "🔍 Verifying byte-for-byte parity of shared canonical lifecycle hook specification..."
-for file in "${CANONICAL_HOOK_FILES[@]}"; do
+echo "🔍 Verifying byte-for-byte parity of shared canonical lifecycle hooks and interface skill..."
+for file in "${CANONICAL_PROTOCOL_FILES[@]}"; do
   main_content="$(git show "$MAIN_REF:$file" 2>/dev/null || true)"
   if [ -z "$main_content" ]; then
-    fail "Canonical hook file '$file' missing on main branch ($MAIN_REF)."
+    fail "Canonical protocol file '$file' missing on main branch ($MAIN_REF)."
     continue
   fi
 
@@ -92,8 +93,8 @@ for file in "${CANONICAL_HOOK_FILES[@]}"; do
     ref="$(resolve_ref "$branch")"
     branch_content="$(git show "$ref:$file" 2>/dev/null || true)"
     if [ -z "$branch_content" ]; then
-      fail "Branch '$branch' ($ref) is missing canonical hook file '$file'."
-    elif [ "$main_content" != "$branch_content" ]; then
+      fail "Branch '$branch' ($ref) is missing canonical protocol file '$file'."
+    elif [ "$(git rev-parse "$MAIN_REF:$file")" != "$(git rev-parse "$ref:$file")" ]; then
       fail "Drift detected in '$file' between main and branch '$branch' ($ref)."
     fi
   done
@@ -347,17 +348,67 @@ for branch in "${ALL_BRANCHES[@]}"; do
     fail "Branch '$branch' ($ref) .agent/NOTES.md missing 'LLM Gateway & Virtual Model Routing Contract' table."
   fi
 
-  if ! echo "$notes_content" | grep -q 'free-fast'; then
-    fail "Branch '$branch' ($ref) .agent/NOTES.md missing 'free-fast' virtual model routing entry."
-  fi
-
-  if ! echo "$notes_content" | grep -q 'free-deep'; then
-    fail "Branch '$branch' ($ref) .agent/NOTES.md missing 'free-deep' virtual model routing entry."
-  fi
+  routing_row="$(printf '%s\n' "$notes_content" | grep -F '| **Virtual Model Routing** |' || true)"
+  env_content="$(git show "$ref:.env.example" 2>/dev/null || true)"
+  for variable in LLM_MODEL_FAST LLM_MODEL_DEEP; do
+    # Parse literal aliases only; never source configuration as shell code.
+    alias_value="$(printf '%s\n' "$env_content" | sed -nE "s/^[[:space:]]*${variable}[[:space:]]*=[[:space:]]*(.*)/\\1/p")"
+    alias_value="$(printf '%s\n' "$alias_value" | sed -E "s/[[:space:]]+#.*$//; s/^[[:space:]]+//; s/[[:space:]]+$//; s/^[\"']//; s/[\"']$//")"
+    if [[ ! "$alias_value" =~ ^[A-Za-z0-9][A-Za-z0-9._/-]*$ ]]; then
+      fail "Branch '$branch' ($ref) .env.example requires one literal $variable alias."
+    elif ! printf '%s\n' "$routing_row" | grep -Fq "\`$alias_value\`"; then
+      fail "Branch '$branch' ($ref) .agent/NOTES.md missing declared $variable alias '$alias_value'."
+    fi
+  done
 
   if ! echo "$notes_content" | grep -q 'hydra_shared_net'; then
     fail "Branch '$branch' ($ref) .agent/NOTES.md missing 'hydra_shared_net' network boundary entry."
   fi
+done
+
+# 10. Compare only the shared interface section; retain branch-specific fences.
+interface_section() {
+  awk '
+    /^## 7[.] Adaptive Interface Verification & UI Protocol$/ { active = 1 }
+    active && (/^---$/ || (/^## / && $0 !~ /^## 7[.] /)) { exit }
+    active { print }
+  '
+}
+
+canonical_invariants="$(git show "$MAIN_REF:.agent/INVARIANTS.md" 2>/dev/null || true)"
+canonical_interface="$(printf '%s\n' "$canonical_invariants" | interface_section)"
+if [ -z "$canonical_interface" ]; then
+  fail "Canonical Invariant 7 missing on main ($MAIN_REF)."
+fi
+for invariant in 7.1 7.2 7.3 7.4; do
+  if ! printf '%s\n' "$canonical_interface" | grep -Fq "Invariant $invariant"; then
+    fail "Canonical Invariant $invariant missing on main ($MAIN_REF)."
+  fi
+done
+
+echo "🔍 Verifying adaptive interface invariants, context triggers, and DoD..."
+for branch in "${ALL_BRANCHES[@]}"; do
+  ref="$(resolve_ref "$branch")"
+  invariants="$(git show "$ref:.agent/INVARIANTS.md" 2>/dev/null || true)"
+  section="$(printf '%s\n' "$invariants" | interface_section)"
+  heading_count="$(printf '%s\n' "$invariants" | grep -c '^## 7[.] Adaptive Interface Verification & UI Protocol$' || true)"
+  if [ -z "$section" ] || [ "$heading_count" -ne 1 ] || [ "$section" != "$canonical_interface" ]; then
+    fail "Branch '$branch' ($ref) Invariant 7 missing, duplicated, or drifted from main."
+  fi
+  agents="$(git show "$ref:AGENTS.md" 2>/dev/null || true)"
+  context="$(printf '%s\n' "$agents" | sed -n '/^## .*Modular Context Triggers/,/^## /p')"
+  dod="$(printf '%s\n' "$agents" | sed -n '/^### Step 3: Falsifiable Definition of Done/,/^## /p')"
+  if ! printf '%s\n' "$context" | grep -Fq '.agent/skills/interface-testing/SKILL.md'; then
+    fail "Branch '$branch' ($ref) AGENTS.md missing on-demand interface skill trigger."
+  fi
+  if ! printf '%s\n' "$dod" | grep -Eq '^-[[:space:]]+\[ \].*Interface.*UI.*[Vv]erification'; then
+    fail "Branch '$branch' ($ref) AGENTS.md missing interface verification DoD."
+  fi
+  for runtime in 'T3 Code' 'headless'; do
+    if ! printf '%s\n' "$dod" | grep -Fq "$runtime"; then
+      fail "Branch '$branch' ($ref) interface DoD missing '$runtime' verification path."
+    fi
+  done
 done
 
 echo "======================================================="
