@@ -11,11 +11,16 @@
 ## Active Task
 
 - **Task:** `[06.4]` Starter Template Parity: Propagate Interface Verification & Invariants
-- **Status:** READY FOR PLANNING
+- **Status:** RUNNING
 - **Scope:** Propagate interface verification contracts, runtime-aware Invariant 7 guardrails, and on-demand skill to specialized template branches (`greenfield`, `brownfield`, etc.) ensuring zero drift and starter parity.
 - **Target Branches:** `greenfield`, `brownfield`, `blackbox`, `infra`, `baremetal`
 - **Role:** Worker
 - **Isolation:** worktree
+- **Approved Plan:**
+  1. Inspect each target branch in an isolated worktree before reading its starter contracts; preserve branch-specific scope, failure thresholds, and clean task templates.
+  2. Update only each starter's `AGENTS.md` interface context trigger and verification DoD, propagate the canonical Invariant 7 section while preserving existing invariants, and selectively check out `.agent/skills/interface-testing/SKILL.md` from `main`.
+  3. Verify skill parity, invariant coverage, relative links and branch targets, allowed-path boundaries, and whitespace on all five branches; run the hub micro-contract validation.
+  4. Create atomic Conventional Commits per concern on each target branch, then record one completion row on `main` and promote `[06.5]` to `READY FOR PLANNING`; remove temporary worktrees.
 - Read:
   - AGENTS.md
   - .agent/TASK.md
