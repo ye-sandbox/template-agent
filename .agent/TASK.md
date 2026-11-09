@@ -10,10 +10,22 @@
 
 ## Active Task
 
-- **Task:** `[06.1]` Next Milestone / Epic Planning (Epic 06)
-- **Status:** RUNNING
-- **Scope:** Define roadmap, architectural boundaries, and starter template deliverables for Epic 06.
-- **Target Branches:** `main`
+- **Task:** `[06.2]` Standardize Adaptive Interface Verification & On-Demand Skill
+- **Status:** READY FOR PLANNING
+- **Scope:** Define dual-runtime adaptive UI verification protocol in `AGENTS.md` and `.agent/INVARIANTS.md`, and author canonical on-demand skill `.agent/skills/interface-testing/SKILL.md`.
+- **Target Branches:** `main`, `greenfield`, `brownfield`
+- **Role:** Worker
+- **Isolation:** worktree
+- Read:
+  - AGENTS.md
+  - .agent/TASK.md
+  - .agent/INVARIANTS.md
+  - .agent/skills/README.md
+- Paths:
+  - AGENTS.md
+  - .agent/INVARIANTS.md
+  - .agent/skills/interface-testing/SKILL.md
+- Verify: ./.github/scripts/verify-microcontract.sh verify-file .agent/TASK.md && git diff --check
 
 ---
 
@@ -44,39 +56,15 @@
 | `[05.3]` | Deterministic LLM Gateway Contract Linter & Pre-Flight Probe Runner | `ed9a166`, `3ab211c` (main) | 2026-11-07 |
 | `[05.4]` | Starter Template Parity: Propagate LLM Gateway Contracts & `.env.example` | `cf6bbb9`, `b6470aa` (main), `06093c6` (greenfield), `688c59e` (brownfield), `dc6e47f` (blackbox), `e454f8b` (infra), `558e6d2` (baremetal) | 2026-11-07 |
 | `[05.5]` | Epic 05 Milestone Consolidation, Documentation & Multi-Branch CI Audit | `0f63c18`, `0f036b0`, `dda3d0e` (main) | 2026-11-07 |
+| `[06.1]` | Next Milestone / Epic Planning (Epic 06: Adaptive Interface Verification & Governance Automation) | `9ba6bb1` (main) | 2026-11-08 |
 
 ---
 
 ## Backlog (Upcoming, in priority order)
 
-### `[06.2]` [Gov] Standardize Adaptive Interface Verification & On-Demand Skill
-
-- **Objective:** Standardize recommended interface testing guidelines across `template-agent` for `ye-sandbox` organization agents.
-- **Scope / Deliverables:**
-  1. `AGENTS.md`:
-     - Add interface verification recommendations for UI tasks under `[P2]` Architecture & Test Harness.
-     - Define dual-runtime adaptive protocol:
-       - Inside T3 Code: leverage preview/device MCPs (`preview_open`, `preview_snapshot`, `preview_act`, `device_open`).
-       - Outside T3 Code: run headless build/component tests (`npm run build`, `vitest`, `playwright`) without blocking agent execution.
-     - Add DoD checklist item and contrast pair illustrating both environments.
-     - Add on-demand context trigger for `.agent/skills/interface-testing/SKILL.md` (loaded exclusively when required).
-  2. `.agent/INVARIANTS.md`:
-     - Update Invariant 7 establishing recommended adaptive UI verification and prohibiting blind preview tabs for static web research.
-  3. `.agent/skills/interface-testing/SKILL.md`:
-     - Author canonical on-demand skill detailing comprehensive step-by-step interface testing procedures inside and outside T3 Code.
-- **Target Branches:** `main`, `greenfield`, `brownfield`
-- **Role:** Worker
-- **Isolation:** worktree
-- Read:
-  - AGENTS.md
-  - .agent/TASK.md
-  - .agent/INVARIANTS.md
-  - .agent/skills/README.md
-- Paths:
-  - AGENTS.md
-  - .agent/INVARIANTS.md
-  - .agent/skills/interface-testing/SKILL.md
-- Verify: ./.github/scripts/verify-microcontract.sh verify-file .agent/TASK.md && git diff --check
+- `[06.3]` Ecosystem Governance Audit & Migration Tooling (`.github/scripts/audit-ecosystem-standards.py`, `apply-governance-standards.py`)
+- `[06.4]` Starter Template Parity: Propagate Interface Verification & Invariants
+- `[06.5]` Epic 06 Milestone Consolidation, Documentation & Multi-Branch CI Audit
 
 
 
