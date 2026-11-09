@@ -9,12 +9,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Opt-in `--include-interface-contracts` migration installs the canonical interface skill, shared Invariants 7.1–7.4, and runtime-aware AGENTS context/DoD directives after conflict and path preflight.
+- Disposable migration fixtures cover preservation, dry-run, repeat application, custom-contract conflicts, unsafe paths, and interface audit compliance through the existing self-test entry point on the Ubuntu/macOS CI matrix.
 - Adaptive interface verification contracts and the on-demand `interface-testing` skill on all five starters, including Brownfield injection in standard and stealth modes.
 - Ecosystem governance auditing and migration tools with heuristic compliance reports, dry-run previews, and hermetic self-tests.
 - Automated interface skill and Invariant 7 drift detection, generated-project assertions, and disposable-ref regression tests integrated into the combined starter suite.
 
+### Changed
+
+- Ecosystem audit reports now check canonical interface skill bytes, shared invariants, and active context/DoD directives; the existing 100-point rubric plus 20 interface points is normalized to 0–100 (83 for a legacy-perfect project without interface contracts).
+- English and Portuguese tooling documentation now describes repository selection, audit outputs and thresholds, default versus opt-in migration, preservation, and conflict recovery.
+
 ### Fixed
 
+- Legacy ADR consolidation now preserves nested Markdown decisions and distinct content sharing a title, verifies diary writes before cleanup, and retains source trees containing unsupported assets or unsafe/unreadable entries with diagnostics.
+- Opt-in interface conflicts leave the affected repository unchanged and return CLI status `1`, preserving custom invariants and failure thresholds without changing default migration behavior.
 - Gateway alias validation now compares each branch's declared `.env.example` aliases against its NOTES routing row, accepting current hub defaults without requiring starter migrations.
 - English README gateway defaults now match `main` and the Portuguese configuration table (`hydra-llm-router`, `fast`, `deep`).
 

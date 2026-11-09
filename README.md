@@ -286,12 +286,32 @@ The drift audit compares the skill byte for byte and compares only Invariant 7, 
 
 ### Ecosystem Governance Tools
 
-Python 3 is required for the hub audit and migration tools. The auditor reports heuristic compliance scores; it does not certify application behavior. The migration tool handles ADR consolidation, NOTES cleanup, collaboration contracts, and governance directives. Preview its proposed changes before applying them.
+Python 3 is required. Run these tools from a checkout of the hub's `main` branch: interface auditing and opt-in migration read the canonical skill and invariants from that checkout. The auditor reads project files without changing them; its heuristic score does not certify application behavior.
 
 ```bash
-python3 .github/scripts/audit-ecosystem-standards.py ~/github --format markdown --output /tmp/governance-audit.md
-python3 .github/scripts/apply-governance-standards.py ~/github --dry-run
+python3 .github/scripts/audit-ecosystem-standards.py /path/to/project --format markdown --output /tmp/governance-audit.md
+python3 .github/scripts/audit-ecosystem-standards.py /path/to/project --format json --fail-under 90
+python3 .github/scripts/apply-governance-standards.py /path/to/project --dry-run
 ```
+
+Both tools accept a repository path or a directory of repositories, with `--dir`/`-d` as an alternative to the positional path. Omitting the path scans `~/github`. Directory scans exclude repository names containing `template-agent`, `agent-skills`, `.github`, `yegear1`, or `org-ye-sandbox`; `--exclude NAME ...` replaces that list, and `--no-exclude` disables it. A direct repository target bypasses name exclusions. Only migration supports `--repo NAME`, an exact repository-name filter; only the auditor supports `--max-depth` (default `4`), `--format table|markdown|json`, `--output`, and `--verbose`.
+
+The audit retains its existing report fields and adds interface checks for canonical skill bytes, all four Invariant 7 blocks, the on-demand context reference, and the dual-runtime UI DoD. Scores are rounded from `(legacy points + interface points) / 120 * 100`: the legacy rubric contributes 100 points and interface checks contribute 20. A project passing every legacy check but no interface checks scores 83. `--fail-under N` exits `1` when the average score of the discovered, included repositories is below `N`; an empty result does not trigger that failure.
+
+Default migration behavior remains ADR consolidation, NOTES cleanup, collaboration contracts, and governance directives. Supported legacy Markdown ADRs are consolidated without discarding distinct decisions that share a title; unsupported assets, unsafe paths, or unreadable content block ADR cleanup and retain the source tree with diagnostics. This is separate from the interface opt-in below.
+
+To add interface contracts, preview and then apply the same explicit flag:
+
+```bash
+python3 .github/scripts/apply-governance-standards.py /path/to/project --include-interface-contracts --dry-run
+python3 .github/scripts/apply-governance-standards.py /path/to/project --include-interface-contracts
+```
+
+The opt-in installs the canonical [interface-testing skill](.agent/skills/interface-testing/SKILL.md), adds missing shared Invariants 7.1–7.4, and adds the runtime-aware AGENTS context/DoD directives. It preserves project-specific invariants and failure thresholds. Dry-run writes nothing; reapplying unchanged, complete contracts produces no diff. This flag also runs the default governance transformations; review their proposed changes too.
+
+Custom skill bytes, divergent or duplicate shared invariants, custom interface directives, ambiguous sections, and unreadable or symlinked interface paths require manual reconciliation. A failed interface preflight leaves that repository unchanged and reports the path or contract to review; resolve the diagnostic and rerun dry-run. The CLI exits `1` if any interface migration is blocked, while other repositories in the same scan may still be processed.
+
+CI runs the audit and migration self-tests on Ubuntu and macOS. The migration self-test includes the disposable fixtures in [test_interface_migration.py](.github/scripts/tests/test_interface_migration.py), covering preservation, conflicts, dry-run, repeat application, and interface audit compliance.
 
 ### Validation Commands
 

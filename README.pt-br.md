@@ -286,12 +286,32 @@ A auditoria de deriva compara a skill byte a byte e compara somente o Invariante
 
 ### Ferramentas de Governança do Ecossistema
 
-As ferramentas de auditoria e migração do hub exigem Python 3. O auditor apresenta pontuações heurísticas de conformidade; ele não certifica o comportamento da aplicação. A migração trata da consolidação de ADRs, limpeza de NOTES, contratos de colaboração e diretrizes de governança. Examine as alterações propostas antes de aplicá-las.
+As ferramentas exigem Python 3. Execute-as a partir de um checkout da branch `main` do hub: a auditoria de interfaces e a migração opt-in leem a skill e os invariantes canônicos desse checkout. O auditor lê os arquivos dos projetos sem alterá-los; sua pontuação heurística não certifica o comportamento da aplicação.
 
 ```bash
-python3 .github/scripts/audit-ecosystem-standards.py ~/github --format markdown --output /tmp/governance-audit.md
-python3 .github/scripts/apply-governance-standards.py ~/github --dry-run
+python3 .github/scripts/audit-ecosystem-standards.py /path/to/project --format markdown --output /tmp/governance-audit.md
+python3 .github/scripts/audit-ecosystem-standards.py /path/to/project --format json --fail-under 90
+python3 .github/scripts/apply-governance-standards.py /path/to/project --dry-run
 ```
+
+Ambas as ferramentas aceitam o caminho de um repositório ou de um diretório de repositórios, com `--dir`/`-d` como alternativa ao argumento posicional. Sem caminho, a busca começa em `~/github`. Buscas em diretórios excluem nomes de repositórios que contenham `template-agent`, `agent-skills`, `.github`, `yegear1` ou `org-ye-sandbox`; `--exclude NAME ...` substitui essa lista e `--no-exclude` a desativa. Um repositório apontado diretamente ignora as exclusões por nome. Somente a migração aceita `--repo NAME`, um filtro por nome exato; somente o auditor aceita `--max-depth` (padrão `4`), `--format table|markdown|json`, `--output` e `--verbose`.
+
+A auditoria mantém os campos existentes dos relatórios e acrescenta verificações dos bytes canônicos da skill, dos quatro blocos do Invariante 7, da referência de contexto sob demanda e do DoD de UI para os dois runtimes. A pontuação é arredondada a partir de `(pontos legados + pontos de interface) / 120 * 100`: os critérios legados somam 100 pontos e as verificações de interface somam 20. Um projeto que passa em todas as verificações legadas e em nenhuma de interface recebe 83. `--fail-under N` encerra com código `1` quando a média dos repositórios encontrados e incluídos fica abaixo de `N`; um resultado vazio não aciona essa falha.
+
+A migração padrão continua tratando da consolidação de ADRs, limpeza de NOTES, contratos de colaboração e diretrizes de governança. ADRs legados em Markdown suportados são consolidados sem descartar decisões distintas com o mesmo título; arquivos auxiliares não suportados, caminhos inseguros ou conteúdo ilegível bloqueiam a limpeza dos ADRs e preservam a árvore de origem com diagnósticos. Esse comportamento é separado da adesão às interfaces descrita abaixo.
+
+Para adicionar os contratos de interface, simule e depois aplique a mesma flag explícita:
+
+```bash
+python3 .github/scripts/apply-governance-standards.py /path/to/project --include-interface-contracts --dry-run
+python3 .github/scripts/apply-governance-standards.py /path/to/project --include-interface-contracts
+```
+
+O opt-in instala a [skill interface-testing](.agent/skills/interface-testing/SKILL.md) canônica, adiciona os Invariantes 7.1–7.4 compartilhados que estiverem ausentes e acrescenta as diretrizes de contexto/DoD do AGENTS adaptadas ao runtime. Os invariantes específicos do projeto e os limites de falhas são preservados. O dry-run não grava nada; reaplicar contratos completos e inalterados não gera diff. Essa flag também executa as transformações de governança padrão; examine as alterações propostas por elas.
+
+Bytes de skill personalizados, invariantes compartilhados divergentes ou duplicados, diretrizes de interface personalizadas, seções ambíguas e caminhos de interface ilegíveis ou com links simbólicos exigem conciliação manual. Uma falha na pré-validação de interfaces deixa aquele repositório inalterado e informa o caminho ou contrato a revisar; resolva o diagnóstico e repita o dry-run. A CLI encerra com código `1` se alguma migração de interface for bloqueada, mas outros repositórios na mesma busca ainda podem ser processados.
+
+O CI executa os autotestes de auditoria e migração no Ubuntu e no macOS. O autoteste de migração inclui as fixtures descartáveis em [test_interface_migration.py](.github/scripts/tests/test_interface_migration.py), cobrindo preservação, conflitos, dry-run, reaplicação e conformidade com a auditoria de interfaces.
 
 ### Comandos de Validação
 
