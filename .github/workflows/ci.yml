@@ -58,13 +58,19 @@ jobs:
           chmod +x .github/scripts/verify-llm-contract.sh
           .github/scripts/verify-llm-contract.sh self-test
 
-      - name: Verify Ecosystem Governance Auditing & Migration Tooling
+      - name: Compile Ecosystem Governance Tools and Interface Fixtures
         run: |
-          python3 -m py_compile .github/scripts/audit-ecosystem-standards.py .github/scripts/apply-governance-standards.py
-          chmod +x .github/scripts/audit-ecosystem-standards.py .github/scripts/apply-governance-standards.py
+          python3 -m py_compile .github/scripts/audit-ecosystem-standards.py .github/scripts/apply-governance-standards.py .github/scripts/tests/test_interface_migration.py
+
+      - name: Verify Interface Auditing Fixtures and Hub Compliance
+        run: |
           python3 .github/scripts/audit-ecosystem-standards.py --self-test
-          python3 .github/scripts/apply-governance-standards.py --self-test
           python3 .github/scripts/audit-ecosystem-standards.py . --no-exclude --fail-under 90
+
+      - name: Verify Lossless and Opt-In Interface Migration Fixtures
+        run: |
+          # The migration entry point also discovers tests/test_interface_migration.py.
+          python3 .github/scripts/apply-governance-standards.py --self-test
 
       - name: Run Unified Starter Test Suite
         run: |
