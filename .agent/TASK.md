@@ -11,9 +11,16 @@
 ## Active Task
 
 - **Task:** `[06.5]` Epic 06 Milestone Consolidation, Documentation & Multi-Branch CI Audit
-- **Status:** READY FOR PLANNING
+- **Status:** RUNNING
 - **Scope:** Consolidate Epic 06 documentation and audit CI across all starter branches. Resolve the pre-existing gateway-alias drift check requiring `free-fast`/`free-deep` on `main`, whose canonical routing contract uses `fast`/`deep`; verify interface contract coverage and run the combined starter suite.
 - **Target Branches:** `main` (hub documentation and CI); specialized starter branches only if approved during planning.
+- **Approved Plan:**
+  1. Work in an isolated checkout of `main`; audit the five starter refs read-only. Preserve existing branch-specific gateway aliases by checking each NOTES routing contract against that branch's declared `.env.example` aliases rather than hardcoding `free-fast`/`free-deep`.
+  2. Update `.github/scripts/check-branch-drift.sh` to remove the obsolete alias assertion and enforce canonical interface-testing skill parity, Invariant 7 section parity, and interface context/DoD coverage across all starters. Add focused hermetic regression coverage for absent contracts, altered canonical content, and alias mismatches within `.github/scripts/`.
+  3. Update `README.md`, `README.pt-br.md`, and the unreleased section of `CHANGELOG.md` to document adaptive interface verification, ecosystem audit/migration commands, completed starter parity, and current hub gateway defaults. Preserve historical changelog and ADR entries; append a consolidation decision to `docs/adr/decisions.md` only if the audit establishes a new architectural contract.
+  4. Run shell syntax checks, focused regression tests, the combined starter suite, and every existing CI self-test (micro-contracts, security audit, worktree bootstrap, gateway contracts, ecosystem audit/migration). Validate changed Markdown links and branch targets plus `git diff --check`; make only necessary `.github/workflows/ci.yml` wiring changes if coverage is missing. Record local platform limitations explicitly.
+  5. Commit script/tests, documentation, and task lifecycle updates separately. Log `[06.5]` as one completion row, promote `[07.1]` Next Milestone / Epic Planning to `READY FOR PLANNING`, and remove the temporary worktree.
+- **Acceptance Criteria:** The combined starter suite exits 0; interface skill and Invariant 7 drift are detected automatically; all CI-equivalent checks available locally pass; bilingual documentation matches implemented commands/defaults; specialized branch contents remain unchanged.
 - **Role:** Worker
 - **Isolation:** worktree
 - Read:
