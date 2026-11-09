@@ -10,17 +10,10 @@
 
 ## Active Task
 
-- **Task:** `[06.5]` Epic 06 Milestone Consolidation, Documentation & Multi-Branch CI Audit
-- **Status:** RUNNING
-- **Scope:** Consolidate Epic 06 documentation and audit CI across all starter branches. Resolve the pre-existing gateway-alias drift check requiring `free-fast`/`free-deep` on `main`, whose canonical routing contract uses `fast`/`deep`; verify interface contract coverage and run the combined starter suite.
-- **Target Branches:** `main` (hub documentation and CI); specialized starter branches only if approved during planning.
-- **Approved Plan:**
-  1. Work in an isolated checkout of `main`; audit the five starter refs read-only. Preserve existing branch-specific gateway aliases by checking each NOTES routing contract against that branch's declared `.env.example` aliases rather than hardcoding `free-fast`/`free-deep`.
-  2. Update `.github/scripts/check-branch-drift.sh` to remove the obsolete alias assertion and enforce canonical interface-testing skill parity, Invariant 7 section parity, and interface context/DoD coverage across all starters. Add focused hermetic regression coverage for absent contracts, altered canonical content, and alias mismatches within `.github/scripts/`.
-  3. Update `README.md`, `README.pt-br.md`, and the unreleased section of `CHANGELOG.md` to document adaptive interface verification, ecosystem audit/migration commands, completed starter parity, and current hub gateway defaults. Preserve historical changelog and ADR entries; append a consolidation decision to `docs/adr/decisions.md` only if the audit establishes a new architectural contract.
-  4. Run shell syntax checks, focused regression tests, the combined starter suite, and every existing CI self-test (micro-contracts, security audit, worktree bootstrap, gateway contracts, ecosystem audit/migration). Validate changed Markdown links and branch targets plus `git diff --check`; make only necessary `.github/workflows/ci.yml` wiring changes if coverage is missing. Record local platform limitations explicitly.
-  5. Commit script/tests, documentation, and task lifecycle updates separately. Log `[06.5]` as one completion row, promote `[07.1]` Next Milestone / Epic Planning to `READY FOR PLANNING`, and remove the temporary worktree.
-- **Acceptance Criteria:** The combined starter suite exits 0; interface skill and Invariant 7 drift are detected automatically; all CI-equivalent checks available locally pass; bilingual documentation matches implemented commands/defaults; specialized branch contents remain unchanged.
+- **Task:** `[07.1]` Next Milestone / Epic Planning
+- **Status:** READY FOR PLANNING
+- **Scope:** Review the completed Epic 06 contracts and validation coverage, identify the next milestone's priorities, and propose an ordered roadmap with bounded paths and falsifiable acceptance criteria for human approval.
+- **Target Branches:** `main` (roadmap planning only).
 - **Role:** Worker
 - **Isolation:** worktree
 - Read:
@@ -28,18 +21,12 @@
   - .agent/TASK.md
   - .agent/NOTES.md
   - .agent/INVARIANTS.md
-  - .github/workflows/ci.yml
-  - .github/scripts/check-branch-drift.sh
-  - .github/scripts/assert-starter-contracts.sh
+  - docs/adr/decisions.md
+  - CHANGELOG.md
 - Paths:
   - .agent/TASK.md
-  - README.md
-  - README.pt-br.md
-  - CHANGELOG.md
-  - docs/
-  - .github/workflows/
-  - .github/scripts/
-- Verify: ./.github/scripts/verify-microcontract.sh verify-file .agent/TASK.md && ./.github/scripts/test-all-starters.sh && git diff --check
+  - docs/adr/decisions.md
+- Verify: ./.github/scripts/verify-microcontract.sh verify-file .agent/TASK.md && git diff --check
 
 ---
 
@@ -74,6 +61,7 @@
 | `[06.2]` | Standardize Adaptive Interface Verification & On-Demand Skill | `fbc114b` (main) | 2026-11-08 |
 | `[06.3]` | Ecosystem Governance Audit & Migration Tooling | `389b739` (main) | 2026-11-08 |
 | `[06.4]` | Starter Template Parity: Propagate Interface Verification & Invariants | `2284fd2`, `400af02` (greenfield); `41bd28f`, `6dd7837`, `358db7e` (brownfield); `cc3c3b7`, `2ee9d2f` (blackbox); `8c4d19f`, `7d05bb3` (infra); `a707839`, `9e700a0` (baremetal); `84c47a5` (main) | 2026-11-08 |
+| `[06.5]` | Epic 06 Milestone Consolidation, Documentation & Multi-Branch CI Audit | `ce88799`, `ed72284` (main) | 2026-11-08 |
 
 ---
 
