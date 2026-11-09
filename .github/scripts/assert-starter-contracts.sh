@@ -75,7 +75,21 @@ assert_task_microcontracts() {
   need_grep .agent/TASK.md 'Verify:' -qF
 }
 
+assert_interface_contracts() {
+  need_file .agent/INVARIANTS.md
+  need_file .agent/skills/interface-testing/SKILL.md
+  need_grep AGENTS.md '.agent/skills/interface-testing/SKILL.md' -qF
+  need_grep AGENTS.md 'Interface & UI Verification (if UI affected)' -qF
+  for invariant in 7.1 7.2 7.3 7.4; do
+    need_grep .agent/INVARIANTS.md "Invariant $invariant" -qF
+  done
+  need_grep .agent/skills/interface-testing/SKILL.md 'name: interface-testing' -qF
+  need_grep .agent/skills/interface-testing/SKILL.md 'Interactive T3 Code Protocol' -qF
+  need_grep .agent/skills/interface-testing/SKILL.md 'Headless CLI & CI Runner Protocol' -qF
+}
+
 assert_multiagent_contracts() {
+  assert_interface_contracts
   need_grep AGENTS.md 'task-queue' -qF
   need_grep AGENTS.md 'APPROVED' -qF
   need_grep .agent/NOTES.md 'Lead / Orchestrator' -qF
