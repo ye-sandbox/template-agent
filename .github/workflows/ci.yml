@@ -58,6 +58,14 @@ jobs:
           chmod +x .github/scripts/verify-llm-contract.sh
           .github/scripts/verify-llm-contract.sh self-test
 
+      - name: Verify Ecosystem Governance Auditing & Migration Tooling
+        run: |
+          python3 -m py_compile .github/scripts/audit-ecosystem-standards.py .github/scripts/apply-governance-standards.py
+          chmod +x .github/scripts/audit-ecosystem-standards.py .github/scripts/apply-governance-standards.py
+          python3 .github/scripts/audit-ecosystem-standards.py --self-test
+          python3 .github/scripts/apply-governance-standards.py --self-test
+          python3 .github/scripts/audit-ecosystem-standards.py . --no-exclude --fail-under 90
+
       - name: Run Unified Starter Test Suite
         run: |
           chmod +x .github/scripts/test-all-starters.sh
