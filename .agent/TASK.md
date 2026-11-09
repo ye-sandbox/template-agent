@@ -11,7 +11,7 @@
 ## Active Task
 
 - **Task:** `[06.4]` Starter Template Parity: Propagate Interface Verification & Invariants
-- **Status:** RUNNING
+- **Status:** PLANNING
 - **Scope:** Propagate interface verification contracts, runtime-aware Invariant 7 guardrails, and on-demand skill to specialized template branches (`greenfield`, `brownfield`, etc.) ensuring zero drift and starter parity.
 - **Target Branches:** `greenfield`, `brownfield`, `blackbox`, `infra`, `baremetal`
 - **Role:** Worker
@@ -21,6 +21,9 @@
   2. Update only each starter's `AGENTS.md` interface context trigger and verification DoD, propagate the canonical Invariant 7 section while preserving existing invariants, and selectively check out `.agent/skills/interface-testing/SKILL.md` from `main`.
   3. Verify skill parity, invariant coverage, relative links and branch targets, allowed-path boundaries, and whitespace on all five branches; run the hub micro-contract validation.
   4. Create atomic Conventional Commits per concern on each target branch, then record one completion row on `main` and promote `[06.5]` to `READY FOR PLANNING`; remove temporary worktrees.
+- **Pending Scope Approval:** Brownfield injection installs the new `AGENTS.md` and Invariant 7 but omits `.agent/skills/interface-testing/SKILL.md`, leaving a broken on-demand reference in generated projects. Extend the branch-specific mutable paths with `brownfield:install.sh`; create the skill directory and add `skills/interface-testing/SKILL.md` to the existing `AGENT_FILES` installation loop, preserving local/remote download behavior and overwrite semantics. Add generated-project skill/invariant assertions in `main:.github/scripts/assert-starter-contracts.sh` and rerun all per-starter targets plus focused Brownfield install/reinstall checks.
+- **Verification State:** Canonical skill and Invariant 7 parity, branch-specific contract preservation, mutable-path boundaries, relative links, branch targets, whitespace, all five per-starter suites, and 15 micro-contract self-tests passed. The combined suite is blocked by the pre-existing drift check requiring obsolete `free-fast`/`free-deep` aliases on `main`; address that mismatch during `[06.5]`.
+- **Partial Implementation Commits:** greenfield: `2284fd2`, `400af02`; brownfield: `41bd28f`, `6dd7837`; blackbox: `cc3c3b7`, `2ee9d2f`; infra: `8c4d19f`, `7d05bb3`; baremetal: `a707839`, `9e700a0`
 - Read:
   - AGENTS.md
   - .agent/TASK.md
