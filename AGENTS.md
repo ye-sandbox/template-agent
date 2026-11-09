@@ -6,7 +6,8 @@ Central governance specification for maintaining and evolving the Agent-Driven D
 
 - **MUTABLE PATHS:**
   - `AGENTS.md`
-  - `.agent/TASK.md`, `.agent/NOTES.md`, `.agent/ARCHIVE.md`
+  - `.agent/TASK.md`, `.agent/NOTES.md`, `.agent/ARCHIVE.md`, `.agent/INVARIANTS.md`
+  - `.agent/skills/**`
   - `docs/**`, `README.md`, `README.pt-br.md`, `CHANGELOG.md`
   - `.github/workflows/**`, `.github/scripts/**`
 - **IMMUTABLE PATHS:**
@@ -30,7 +31,7 @@ Resolve directive conflicts using the strict canonical precedence hierarchy:
 | :---: | :--- | :--- |
 | **`[P0]`** | **Security & Blast Radius** | Branch isolation (zero cross-branch merges), destructive git command ban, credential scrubbing. |
 | **`[P1]`** | **Invariants & Automated Contracts** | Single ADR diary (`docs/adr/decisions.md`), `NOTES.md` heading ban, automated CI checks, falsifiable DoD assertions. |
-| **`[P2]`** | **Execution & Task Lifecycle** | Plan-First protocol, task numbering format (`[XX.Y]`), Conventional Commits, single active task in `RUNNING`. |
+| **`[P2]`** | **Execution & Test Harness** | Plan-First protocol, task numbering format (`[XX.Y]`), Conventional Commits, single active task in `RUNNING`, adaptive UI verification protocol (T3 preview/device MCPs vs. headless builds/tests). |
 | **`[P3]`** | **Style & Documentation** | Markdown link validity, Technical English for agent contracts, localized human READMEs. |
 
 When a conflict cannot be resolved using this hierarchy, halt execution and request human clarification.
@@ -57,6 +58,8 @@ Optimize context consumption via progressive disclosure:
   - Architectural decisions: Read `docs/adr/decisions.md`. Prohibit separate `.agent/adr/` trees to prevent dual-source drift.
   - Multi-repo topology: Read `.agent/ECOSYSTEM.md`.
   - Platform/runtime gotchas: Read `.agent/knowledge/<card>.md`.
+  - Interface & UI verification: Read `.agent/skills/interface-testing/SKILL.md` (loaded on-demand exclusively for UI, preview, or frontend component tasks).
+  - System invariants & rigid legacy contracts: Read `.agent/INVARIANTS.md`.
 - **Branch-Specific Context:** Checkout the target branch BEFORE inspecting its root files.
 - **Transversal Skills:** Reference external organizational playbooks (`agent-skills`) ONLY when tasks require UI porting, QA audit, task-queue wave execution, or host-level orchestration.
 
@@ -81,6 +84,7 @@ Tasks MUST NOT be marked complete until all checks pass:
 - [ ] Automated git check passes: `git diff --check` exits with code 0.
 - [ ] Markdown relative links and branch targets validate without broken references.
 - [ ] Atomic Conventional Commits in English (`feat(hub): ...`, `docs(task): ...`).
+- [ ] Interface & UI verification (if UI affected): passes adaptive protocol (interactive preview/device MCPs within T3 Code; non-blocking headless component/build validation outside T3 Code).
 - [ ] Knowledge preservation: Document obscure platform/runtime gotchas in `.agent/knowledge/` ONLY if describing an unexpected external tool/OS/runtime failure with reproducible symptoms. MUST NOT record application business logic or features in knowledge cards.
 - [ ] Completed task logged as a single line in `.agent/TASK.md` and next task promoted.
 
@@ -202,4 +206,16 @@ git cherry-pick 88eddd8
 
 // GOOD: Standard Plan-First progression
 [01.6] Status: READY FOR PLANNING -> Status: PLANNING (present plan) -> Human Approval -> Status: RUNNING
+```
+
+### Interface & UI Verification
+```markdown
+// BAD: Blindly attempting to launch preview browser tabs during headless CI or static web research
+preview_open("http://localhost:3000") // when running outside T3 Code, during headless CI, or for static docs search
+
+// GOOD: Adaptive interface testing matching runtime capabilities
+# Inside T3 Code (interactive MCP runtime):
+preview_status -> preview_open -> preview_snapshot -> preview_act -> preview_close
+# Outside T3 Code (headless CLI runtime):
+npm run build && npm test (or headless playwright/vitest without opening graphical display)
 ```
