@@ -10,30 +10,29 @@
 
 ## Active Task
 
-- **Task:** `[06.4]` Starter Template Parity: Propagate Interface Verification & Invariants
-- **Status:** PLANNING
-- **Scope:** Propagate interface verification contracts, runtime-aware Invariant 7 guardrails, and on-demand skill to specialized template branches (`greenfield`, `brownfield`, etc.) ensuring zero drift and starter parity.
-- **Target Branches:** `greenfield`, `brownfield`, `blackbox`, `infra`, `baremetal`
+- **Task:** `[06.5]` Epic 06 Milestone Consolidation, Documentation & Multi-Branch CI Audit
+- **Status:** READY FOR PLANNING
+- **Scope:** Consolidate Epic 06 documentation and audit CI across all starter branches. Resolve the pre-existing gateway-alias drift check requiring `free-fast`/`free-deep` on `main`, whose canonical routing contract uses `fast`/`deep`; verify interface contract coverage and run the combined starter suite.
+- **Target Branches:** `main` (hub documentation and CI); specialized starter branches only if approved during planning.
 - **Role:** Worker
 - **Isolation:** worktree
-- **Approved Plan:**
-  1. Inspect each target branch in an isolated worktree before reading its starter contracts; preserve branch-specific scope, failure thresholds, and clean task templates.
-  2. Update only each starter's `AGENTS.md` interface context trigger and verification DoD, propagate the canonical Invariant 7 section while preserving existing invariants, and selectively check out `.agent/skills/interface-testing/SKILL.md` from `main`.
-  3. Verify skill parity, invariant coverage, relative links and branch targets, allowed-path boundaries, and whitespace on all five branches; run the hub micro-contract validation.
-  4. Create atomic Conventional Commits per concern on each target branch, then record one completion row on `main` and promote `[06.5]` to `READY FOR PLANNING`; remove temporary worktrees.
-- **Pending Scope Approval:** Brownfield injection installs the new `AGENTS.md` and Invariant 7 but omits `.agent/skills/interface-testing/SKILL.md`, leaving a broken on-demand reference in generated projects. Extend the branch-specific mutable paths with `brownfield:install.sh`; create the skill directory and add `skills/interface-testing/SKILL.md` to the existing `AGENT_FILES` installation loop, preserving local/remote download behavior and overwrite semantics. Add generated-project skill/invariant assertions in `main:.github/scripts/assert-starter-contracts.sh` and rerun all per-starter targets plus focused Brownfield install/reinstall checks.
-- **Verification State:** Canonical skill and Invariant 7 parity, branch-specific contract preservation, mutable-path boundaries, relative links, branch targets, whitespace, all five per-starter suites, and 15 micro-contract self-tests passed. The combined suite is blocked by the pre-existing drift check requiring obsolete `free-fast`/`free-deep` aliases on `main`; address that mismatch during `[06.5]`.
-- **Partial Implementation Commits:** greenfield: `2284fd2`, `400af02`; brownfield: `41bd28f`, `6dd7837`; blackbox: `cc3c3b7`, `2ee9d2f`; infra: `8c4d19f`, `7d05bb3`; baremetal: `a707839`, `9e700a0`
 - Read:
   - AGENTS.md
   - .agent/TASK.md
+  - .agent/NOTES.md
   - .agent/INVARIANTS.md
-  - .agent/skills/interface-testing/SKILL.md
+  - .github/workflows/ci.yml
+  - .github/scripts/check-branch-drift.sh
+  - .github/scripts/assert-starter-contracts.sh
 - Paths:
-  - AGENTS.md
-  - .agent/INVARIANTS.md
-  - .agent/skills/interface-testing/SKILL.md
-- Verify: ./.github/scripts/verify-microcontract.sh verify-file .agent/TASK.md && git diff --check
+  - .agent/TASK.md
+  - README.md
+  - README.pt-br.md
+  - CHANGELOG.md
+  - docs/
+  - .github/workflows/
+  - .github/scripts/
+- Verify: ./.github/scripts/verify-microcontract.sh verify-file .agent/TASK.md && ./.github/scripts/test-all-starters.sh && git diff --check
 
 ---
 
@@ -67,12 +66,13 @@
 | `[06.1]` | Next Milestone / Epic Planning (Epic 06: Adaptive Interface Verification & Governance Automation) | `9ba6bb1` (main) | 2026-11-08 |
 | `[06.2]` | Standardize Adaptive Interface Verification & On-Demand Skill | `fbc114b` (main) | 2026-11-08 |
 | `[06.3]` | Ecosystem Governance Audit & Migration Tooling | `389b739` (main) | 2026-11-08 |
+| `[06.4]` | Starter Template Parity: Propagate Interface Verification & Invariants | `2284fd2`, `400af02` (greenfield); `41bd28f`, `6dd7837`, `358db7e` (brownfield); `cc3c3b7`, `2ee9d2f` (blackbox); `8c4d19f`, `7d05bb3` (infra); `a707839`, `9e700a0` (baremetal); `84c47a5` (main) | 2026-11-08 |
 
 ---
 
 ## Backlog (Upcoming, in priority order)
 
-- `[06.5]` Epic 06 Milestone Consolidation, Documentation & Multi-Branch CI Audit
+*(empty)*
 
 
 
