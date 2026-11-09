@@ -4,7 +4,8 @@ audit-ecosystem-standards.py
 
 Heuristic scanner and compliance auditor for Agent-Driven Development (ADD) templates.
 Recursively inspects directories for Git repositories and assesses adherence to
-template-agent standards (v1.0.0 through v1.3.0).
+template-agent standards, including adaptive interface verification.
+The legacy 100-point rubric plus 20 interface points is normalized to 0-100.
 
 Usage:
     python3 audit-ecosystem-standards.py [ROOT_DIR] [OPTIONS]
@@ -22,13 +23,17 @@ Options:
     --verbose, -v         Display detailed checks for each repository
 """
 
+from __future__ import annotations
+
 import argparse
 import json
 import os
 import re
+import subprocess
 import sys
 import tempfile
 import unittest
+from unittest.mock import patch
 from pathlib import Path
 from typing import Any, Dict, List, Set
 
@@ -41,6 +46,116 @@ IGNORED_DIR_NAMES = {
 DEFAULT_EXCLUDED_NAMES = {
     "template-agent", "agent-skills", ".github", "yegear1", "org-ye-sandbox"
 }
+
+
+CANONICAL_ROOT = Path(__file__).resolve().parent.parent.parent
+INTERFACE_SKILL = Path(".agent/skills/interface-testing/SKILL.md")
+INTERFACE_WEIGHTS = {
+    "interface_skill_installed": 2,
+    "interface_skill_canonical": 4,
+    **{f"interface_invariant_7_{number}": 2 for number in range(1, 5)},
+    "interface_context_on_demand": 3,
+    "interface_dod_dual_runtime": 3,
+}
+
+
+def active_markdown(text: str) -> str:
+    """Discard fenced examples and HTML comments before checking directives."""
+    text = re.sub(r"<!--(?:.*?-->|.*\Z)", "", text, flags=re.DOTALL)
+    lines: list[str] = []
+    fence = ""
+    for line in text.splitlines():
+        match = re.match(r"^ {0,3}(`{3,}|~{3,})(.*)$", line)
+        if not fence and match:
+            fence = match[1]
+        elif fence:
+            if match and match[1][0] == fence[0] and len(match[1]) >= len(fence) and not match[2].strip():
+                fence = ""
+        else:
+            lines.append(line)
+    return "\n".join(lines)
+
+
+def contract_section(text: str, title: str) -> str:
+    """Select exactly one active section, stopping at a peer/ancestor heading."""
+    headings = list(re.finditer(r"^(#{1,6})[ \t]+([^\n]+)$", text, re.MULTILINE))
+    matches = [heading for heading in headings if re.search(title, heading[2])]
+    if len(matches) != 1:
+        return ""
+    start = matches[0]
+    end = next((heading.start() for heading in headings
+                if heading.start() > start.start() and len(heading[1]) <= len(start[1])), len(text))
+    return text[start.end():end]
+
+
+def invariant_blocks(text: str) -> dict[str, str]:
+    section = contract_section(active_markdown(text), r"^7\. Adaptive Interface Verification & UI Protocol$")
+    labels = list(re.finditer(r"^- \*\*Invariant (7\.\d+) [^\n]*$", section, re.MULTILINE))
+    blocks: dict[str, str] = {}
+    for index, label in enumerate(labels):
+        end = labels[index + 1].start() if index + 1 < len(labels) else len(section)
+        block = section[label.start():end]
+        block = re.split(r"^(?:---[ \t]*$|- (?!\*\*Invariant ))", block, maxsplit=1, flags=re.MULTILINE)[0]
+        normalized = "\n".join(line.rstrip() for line in block.strip().splitlines())
+        has_body = re.search(r"^ {2,}- \S", normalized, re.MULTILINE) is not None
+        blocks[label[1]] = "" if label[1] in blocks or not has_body else normalized
+    return blocks
+
+
+def read_interface_contract(path: Path, role: str, violations: list[str]) -> bytes | None:
+    try:
+        if path.is_symlink():
+            raise OSError("symlinked contract")
+        content = path.read_bytes()
+        content.decode("utf-8")
+        return content
+    except (OSError, UnicodeError) as error:
+        violations.append(f"Interface contract: cannot read {role} at {path} ({type(error).__name__}).")
+        return None
+
+
+def audit_interface_contracts(repo: Path) -> tuple[dict[str, bool], list[str]]:
+    violations: list[str] = []
+    canonical_skill = read_interface_contract(CANONICAL_ROOT / INTERFACE_SKILL, "canonical skill", violations)
+    canonical_rules = read_interface_contract(CANONICAL_ROOT / ".agent/INVARIANTS.md", "canonical invariants", violations)
+    skill = read_interface_contract(repo / INTERFACE_SKILL, "installed skill", violations)
+    rules = read_interface_contract(repo / ".agent/INVARIANTS.md", "project invariants", violations)
+    agents = read_interface_contract(repo / "AGENTS.md", "project AGENTS.md", violations)
+    expected = invariant_blocks(canonical_rules.decode()) if canonical_rules is not None else {}
+    actual = invariant_blocks(rules.decode()) if rules is not None else {}
+    directives = active_markdown(agents.decode()) if agents is not None else ""
+    context = contract_section(directives, r"Modular Context Triggers")
+    dod = contract_section(directives, r"Falsifiable Definition of Done")
+    checks = {
+        "interface_skill_installed": skill is not None and bool(skill.strip()),
+        "interface_skill_canonical": bool(canonical_skill and canonical_skill.strip()) and skill == canonical_skill,
+    }
+    for number in range(1, 5):
+        key = f"7.{number}"
+        checks[f"interface_invariant_7_{number}"] = bool(expected.get(key)) and actual.get(key) == expected[key]
+        if not expected.get(key):
+            violations.append(f"Interface contract: canonical Invariant {key} is missing or duplicated.")
+    checks["interface_context_on_demand"] = any(
+        re.match(r"^ {0,3}- ", line) is not None
+        and INTERFACE_SKILL.as_posix() in line
+        and re.search(r"on[- ]demand", line, re.IGNORECASE) is not None
+        and "interface" in line.lower()
+        for line in context.splitlines()
+    )
+    checks["interface_dod_dual_runtime"] = any(
+        re.match(r"^- \[ \] ", line) is not None
+        and all(token in line.lower() for token in ["interface", "ui", "verif", "t3 code", "headless"])
+        for line in dod.splitlines()
+    )
+    repairs = {
+        "interface_skill_installed": f"install a readable UTF-8 {INTERFACE_SKILL}",
+        "interface_skill_canonical": "restore the canonical interface-testing skill bytes",
+        **{f"interface_invariant_7_{n}": f"restore the complete canonical Invariant 7.{n} block once" for n in range(1, 5)},
+        "interface_context_on_demand": "add the on-demand skill reference to Modular Context Triggers",
+        "interface_dod_dual_runtime": "add an active UI verification DoD checkbox with both T3 Code and headless paths",
+    }
+    violations.extend(f"Interface contract: {key}: {repairs[key]}." for key, passed in checks.items() if not passed)
+    return checks, violations
 
 
 def find_git_repos(root_dir: Path, max_depth: int = 4) -> List[Path]:
@@ -201,7 +316,13 @@ def audit_repository(repo_path: Path) -> Dict[str, Any]:
     changelog_file = repo_path / "CHANGELOG.md"
     checks["has_changelog"] = changelog_file.is_file()
 
-    # Calculate Weighted Score (0 to 100)
+    interface_checks, interface_violations = audit_interface_contracts(repo_path)
+    checks.update(interface_checks)
+    violations.extend(interface_violations)
+
+    # Keep the legacy 100 points; add 20 interface points and normalize over 120.
+    # A legacy-perfect project missing every interface check now scores 83%.
+
     weights = {
         "has_agents_md": 15,
         "agents_high_density": 10,
@@ -221,6 +342,7 @@ def audit_repository(repo_path: Path) -> Dict[str, Any]:
         "has_changelog": 1,
     }
 
+    weights.update(INTERFACE_WEIGHTS)
     score = 0
     max_score = sum(weights.values())
     for k, w in weights.items():
@@ -280,6 +402,9 @@ def format_table(results: List[Dict[str, Any]]) -> str:
         lines.append(line)
 
     lines.append(divider)
+    for result in results:
+        lines.extend(f"- {result['name']}: {message}" for message in result["violations"]
+                     if message.startswith("Interface contract:"))
     return "\n".join(lines)
 
 
@@ -303,6 +428,10 @@ def format_markdown(results: List[Dict[str, Any]]) -> str:
         md.append(
             f"| `{r['name']}` | {r['tier']} | **{r['score']}%** | {p_ag} | {p_hd} | {p_adr} | {p_no_leg} | {p_cln_nts} | {p_wkt} | {p_llm} | {p_hks} |"
         )
+    diagnostics = [f"- `{result['name']}`: {message}" for result in results for message in result["violations"]
+                   if message.startswith("Interface contract:")]
+    if diagnostics:
+        md.extend(["", *diagnostics])
     return "\n".join(md)
 
 
@@ -380,6 +509,18 @@ class TestAuditEcosystemStandards(unittest.TestCase):
             )
             (repo_dir / "README.pt-br.md").write_text("# Documentação", encoding="utf-8")
             (repo_dir / "CHANGELOG.md").write_text("# Changelog", encoding="utf-8")
+            (agent_dir / "INVARIANTS.md").write_bytes((CANONICAL_ROOT / ".agent/INVARIANTS.md").read_bytes())
+            skill = repo_dir / INTERFACE_SKILL
+            skill.parent.mkdir(parents=True)
+            skill.write_bytes((CANONICAL_ROOT / INTERFACE_SKILL).read_bytes())
+            agents = repo_dir / "AGENTS.md"
+            agents.write_text(agents.read_text(encoding="utf-8") + (
+                "\n## Modular Context Triggers\n"
+                "- Interface & UI Verification: Read `.agent/skills/interface-testing/SKILL.md` on-demand for UI work.\n"
+                "\n## Mandatory Execution Protocol\n"
+                "### Step 3: Falsifiable Definition of Done (DoD)\n"
+                "- [ ] Interface & UI Verification: T3 Code preview/device checks; headless component/build tests.\n"
+            ), encoding="utf-8")
         else:
             # Legacy repo with violations
             (repo_dir / "AGENTS.md").write_text("# Agent Guidelines\nNo P0 here\n", encoding="utf-8")
@@ -445,6 +586,199 @@ class TestAuditEcosystemStandards(unittest.TestCase):
         self.assertIn("Total de Repositórios Analisados: 1", summary_out)
 
 
+    def snapshot(self, repo: Path) -> dict[str, bytes]:
+        return {str(path.relative_to(repo)): path.read_bytes() for path in repo.rglob("*") if path.is_file()}
+
+    def legacy_perfect_fixture(self, name: str = "legacy-perfect") -> Path:
+        repo = self.create_mock_repo(name)
+        (repo / INTERFACE_SKILL).unlink()
+        (repo / ".agent/INVARIANTS.md").write_text("# INVARIANTS.md\n", encoding="utf-8")
+        agents = repo / "AGENTS.md"
+        agents.write_text("\n".join(line for line in agents.read_text(encoding="utf-8").splitlines()
+                                    if "Interface & UI Verification" not in line), encoding="utf-8")
+        return repo
+
+    def test_legacy_perfect_score_is_83_with_new_checks(self) -> None:
+        result = audit_repository(self.legacy_perfect_fixture())
+        self.assertEqual(result["score"], 83)
+        self.assertTrue(all(not result["checks"][key] for key in INTERFACE_WEIGHTS))
+        self.assertEqual(sum(INTERFACE_WEIGHTS.values()), 20)
+        self.assertTrue(all(any(key in message for message in result["violations"]) for key in INTERFACE_WEIGHTS))
+
+    def test_missing_and_altered_skill_have_distinct_checks(self) -> None:
+        repo = self.create_mock_repo("skill-checks")
+        skill = repo / INTERFACE_SKILL
+        canonical = skill.read_bytes()
+        skill.write_bytes(canonical + b"\n")
+        result = audit_repository(repo)
+        self.assertTrue(result["checks"]["interface_skill_installed"])
+        self.assertFalse(result["checks"]["interface_skill_canonical"])
+        self.assertEqual(result["score"], 97)
+        skill.unlink()
+        result = audit_repository(repo)
+        self.assertFalse(result["checks"]["interface_skill_installed"])
+        self.assertFalse(result["checks"]["interface_skill_canonical"])
+        self.assertEqual(result["score"], 95)
+
+    def test_each_guardrail_drift_fails_only_its_check(self) -> None:
+        repo = self.create_mock_repo("guardrail-drift")
+        path = repo / ".agent/INVARIANTS.md"
+        original = path.read_text(encoding="utf-8")
+        for number in range(1, 5):
+            with self.subTest(guardrail=number):
+                path.write_text(original.replace(f"Invariant 7.{number} (", f"Invariant 7.{number} (ALTERED ", 1), encoding="utf-8")
+                result = audit_repository(repo)
+                failed = {key for key in INTERFACE_WEIGHTS if not result["checks"][key]}
+                self.assertEqual(failed, {f"interface_invariant_7_{number}"})
+                self.assertEqual(result["score"], 98)
+
+    def test_missing_duplicate_and_fenced_guardrails_fail(self) -> None:
+        repo = self.create_mock_repo("fake-guardrails")
+        path = repo / ".agent/INVARIANTS.md"
+        original = path.read_text(encoding="utf-8")
+        path.write_text("```markdown\n" + original + "\n```\n", encoding="utf-8")
+        result = audit_repository(repo)
+        self.assertTrue(all(not result["checks"][f"interface_invariant_7_{n}"] for n in range(1, 5)))
+        path.write_text(original + "\n- **Invariant 7.2 (Duplicate):**\n  - Fake duplicate.\n", encoding="utf-8")
+        self.assertFalse(audit_repository(repo)["checks"]["interface_invariant_7_2"])
+        path.write_text(original.replace("- **Invariant 7.3", "- **Removed 7.3"), encoding="utf-8")
+        self.assertFalse(audit_repository(repo)["checks"]["interface_invariant_7_3"])
+        path.write_text("## 7. Adaptive Interface Verification & UI Protocol\n" + "\n".join(
+            f"- **Invariant 7.{n} (Label only):**" for n in range(1, 5)), encoding="utf-8")
+        result = audit_repository(repo)
+        self.assertTrue(all(not result["checks"][f"interface_invariant_7_{n}"] for n in range(1, 5)))
+
+    def test_unrelated_project_invariants_are_allowed(self) -> None:
+        repo = self.create_mock_repo("custom-fences")
+        path = repo / ".agent/INVARIANTS.md"
+        with path.open("a", encoding="utf-8") as handle:
+            handle.write("\n- Project-specific rule: retain production queue ordering.\n\n## 8. Host Rules\nDo not disrupt SSH.\n")
+        self.assertEqual(audit_repository(repo)["score"], 100)
+
+    def test_context_and_dod_must_be_active_and_in_their_sections(self) -> None:
+        repo = self.create_mock_repo("active-directives")
+        path = repo / "AGENTS.md"
+        original = path.read_text(encoding="utf-8")
+        for heading in ["Modular Context Triggers", "Falsifiable Definition of Done"]:
+            with self.subTest(heading=heading):
+                path.write_text(original.replace(heading, "Unrelated Examples"), encoding="utf-8")
+                result = audit_repository(repo)
+                key = "interface_context_on_demand" if heading == "Modular Context Triggers" else "interface_dod_dual_runtime"
+                self.assertFalse(result["checks"][key])
+        for fenced in ["```markdown\n" + original + "\n```", "~~~markdown\n" + original + "\n~~~", "<!--\n" + original + "\n-->"]:
+            path.write_text(fenced, encoding="utf-8")
+            result = audit_repository(repo)
+            self.assertFalse(result["checks"]["interface_context_on_demand"])
+            self.assertFalse(result["checks"]["interface_dod_dual_runtime"])
+        path.write_text(original.replace("headless", "graphical"), encoding="utf-8")
+        self.assertFalse(audit_repository(repo)["checks"]["interface_dod_dual_runtime"])
+        path.write_text(original.replace("on-demand", "always"), encoding="utf-8")
+        self.assertFalse(audit_repository(repo)["checks"]["interface_context_on_demand"])
+
+    def test_missing_canonical_references_are_explicit_failures(self) -> None:
+        repo = self.create_mock_repo("no-references")
+        with patch(__name__ + ".CANONICAL_ROOT", self.root / "unavailable-reference"):
+            result = audit_repository(repo)
+        self.assertTrue(result["checks"]["interface_skill_installed"])
+        self.assertFalse(result["checks"]["interface_skill_canonical"])
+        self.assertTrue(all(not result["checks"][f"interface_invariant_7_{n}"] for n in range(1, 5)))
+        self.assertTrue(any("canonical skill" in message and "FileNotFoundError" in message for message in result["violations"]))
+        self.assertTrue(any("canonical invariants" in message for message in result["violations"]))
+
+    def test_unreadable_and_invalid_utf8_contracts_fail(self) -> None:
+        repo = self.create_mock_repo("unreadable-contracts")
+        skill = repo / INTERFACE_SKILL
+        skill.write_bytes(b"invalid \xff UTF-8")
+        result = audit_repository(repo)
+        self.assertFalse(result["checks"]["interface_skill_installed"])
+        self.assertTrue(any("UnicodeDecodeError" in message for message in result["violations"]))
+        read_bytes = Path.read_bytes
+
+        def denied_read(path: Path) -> bytes:
+            if path == CANONICAL_ROOT / INTERFACE_SKILL:
+                raise PermissionError("fixture denies canonical read")
+            return read_bytes(path)
+
+        with patch.object(Path, "read_bytes", denied_read):
+            result = audit_repository(repo)
+        self.assertFalse(result["checks"]["interface_skill_canonical"])
+        self.assertTrue(any("canonical skill" in message and "PermissionError" in message for message in result["violations"]))
+
+    def test_malformed_agents_and_invariants_fail_their_checks(self) -> None:
+        repo = self.create_mock_repo("malformed-text")
+        for relative, keys in [
+            ("AGENTS.md", ["interface_context_on_demand", "interface_dod_dual_runtime"]),
+            (".agent/INVARIANTS.md", [f"interface_invariant_7_{n}" for n in range(1, 5)]),
+        ]:
+            with self.subTest(path=relative):
+                path = repo / relative
+                original = path.read_bytes()
+                path.write_bytes(original + b"\xff")
+                result = audit_repository(repo)
+                self.assertTrue(all(not result["checks"][key] for key in keys))
+                self.assertTrue(any("UnicodeDecodeError" in message for message in result["violations"]))
+                path.write_bytes(original)
+
+    def test_duplicate_sections_and_incomplete_canonical_blocks_fail(self) -> None:
+        repo = self.create_mock_repo("duplicate-sections")
+        path = repo / ".agent/INVARIANTS.md"
+        with path.open("a", encoding="utf-8") as handle:
+            handle.write("\n## 7. Adaptive Interface Verification & UI Protocol\n")
+        result = audit_repository(repo)
+        self.assertTrue(all(not result["checks"][f"interface_invariant_7_{n}"] for n in range(1, 5)))
+        reference = self.root / "bad-reference"
+        (reference / ".agent").mkdir(parents=True)
+        (reference / ".agent/INVARIANTS.md").write_text(
+            "## 7. Adaptive Interface Verification & UI Protocol\n" + "\n".join(
+                f"- **Invariant 7.{n} (Label only):**" for n in range(1, 5)), encoding="utf-8")
+        with patch(__name__ + ".CANONICAL_ROOT", reference):
+            result = audit_repository(repo)
+        self.assertTrue(any("canonical Invariant 7.1 is missing" in message for message in result["violations"]))
+
+    def test_audit_is_read_only_and_fields_remain_compatible(self) -> None:
+        repo = self.create_mock_repo("readonly-audit")
+        before = self.snapshot(repo)
+        result = audit_repository(repo)
+        self.assertEqual(self.snapshot(repo), before)
+        self.assertEqual(set(result), {"name", "path", "score", "tier", "checks", "violations"})
+        self.assertTrue(all(isinstance(value, bool) for value in result["checks"].values()))
+        self.assertTrue(all(result["checks"][key] for key in INTERFACE_WEIGHTS))
+        expected_legacy = {"has_agents_md", "agents_high_density", "agents_fail_stop", "agents_contrast_pairs",
+                           "has_agent_dir", "has_task_md", "has_notes_md", "has_archive_md", "has_invariants_md",
+                           "notes_no_task_headings", "notes_has_subagent_contract", "has_single_adr", "no_legacy_adr_dir",
+                           "worktrees_in_gitignore", "has_agent_hooks", "llm_gateway_in_env_example",
+                           "has_bilingual_readme", "has_changelog"}
+        self.assertEqual(set(result["checks"]) - set(INTERFACE_WEIGHTS), expected_legacy)
+
+    def test_interface_diagnostics_appear_in_text_reports(self) -> None:
+        result = audit_repository(self.legacy_perfect_fixture("report-details"))
+        for report in [format_table([result]), format_markdown([result])]:
+            self.assertIn("interface_skill_canonical", report)
+            self.assertIn("interface_invariant_7_4", report)
+            self.assertIn("restore", report)
+
+    def test_cli_json_thresholds_output_and_verbose_compatibility(self) -> None:
+        repo = self.legacy_perfect_fixture("cli-audit")
+        before = self.snapshot(repo)
+        base = [sys.executable, str(Path(__file__).resolve()), str(repo), "--no-exclude"]
+        for threshold, expected in [(83, 0), (84, 1), (90, 1)]:
+            result = subprocess.run(base + ["--format", "json", "--verbose", "--fail-under", str(threshold)],
+                                    capture_output=True, text=True, check=False)
+            self.assertEqual(result.returncode, expected, result.stderr)
+            payload = json.loads(result.stdout)
+            self.assertEqual(payload[0]["score"], 83)
+            self.assertIn("interface_skill_canonical", payload[0]["checks"])
+        output = self.root / "audit.json"
+        result = subprocess.run(base + ["--format", "json", "--output", str(output)],
+                                capture_output=True, text=True, check=False)
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertEqual(json.loads(output.read_text(encoding="utf-8"))[0]["score"], 83)
+        result = subprocess.run(base + ["--verbose"], capture_output=True, text=True, check=False)
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertIn("interface_context_on_demand=False", result.stdout)
+        self.assertEqual(self.snapshot(repo), before)
+
+
 def run_self_tests() -> int:
     """Execute hermetic unit and verification test suite."""
     print("==> Executing audit-ecosystem-standards.py hermetic self-test suite...")
@@ -507,6 +841,11 @@ def main():
         output_text = format_markdown(results) + "\n\n" + print_summary(results)
     else:
         output_text = format_table(results) + "\n" + print_summary(results)
+
+    if args.verbose and args.format != "json":
+        details = [f"{r['name']}: {key}={passed}" for r in results
+                   for key, passed in r["checks"].items() if key in INTERFACE_WEIGHTS]
+        output_text += "\n\n" + "\n".join(details)
 
     if args.output:
         Path(args.output).write_text(output_text, encoding="utf-8")
