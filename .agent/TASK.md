@@ -11,7 +11,7 @@
 ## Active Task
 
 - **Task:** `[06.1]` Next Milestone / Epic Planning (Epic 06)
-- **Status:** READY FOR PLANNING
+- **Status:** RUNNING
 - **Scope:** Define roadmap, architectural boundaries, and starter template deliverables for Epic 06.
 - **Target Branches:** `main`
 
@@ -49,7 +49,34 @@
 
 ## Backlog (Upcoming, in priority order)
 
-*(empty)*
+### `[06.2]` [Gov] Standardize Adaptive Interface Verification & On-Demand Skill
+
+- **Objective:** Standardize recommended interface testing guidelines across `template-agent` for `ye-sandbox` organization agents.
+- **Scope / Deliverables:**
+  1. `AGENTS.md`:
+     - Add interface verification recommendations for UI tasks under `[P2]` Architecture & Test Harness.
+     - Define dual-runtime adaptive protocol:
+       - Inside T3 Code: leverage preview/device MCPs (`preview_open`, `preview_snapshot`, `preview_act`, `device_open`).
+       - Outside T3 Code: run headless build/component tests (`npm run build`, `vitest`, `playwright`) without blocking agent execution.
+     - Add DoD checklist item and contrast pair illustrating both environments.
+     - Add on-demand context trigger for `.agent/skills/interface-testing/SKILL.md` (loaded exclusively when required).
+  2. `.agent/INVARIANTS.md`:
+     - Update Invariant 7 establishing recommended adaptive UI verification and prohibiting blind preview tabs for static web research.
+  3. `.agent/skills/interface-testing/SKILL.md`:
+     - Author canonical on-demand skill detailing comprehensive step-by-step interface testing procedures inside and outside T3 Code.
+- **Target Branches:** `main`, `greenfield`, `brownfield`
+- **Role:** Worker
+- **Isolation:** worktree
+- Read:
+  - AGENTS.md
+  - .agent/TASK.md
+  - .agent/INVARIANTS.md
+  - .agent/skills/README.md
+- Paths:
+  - AGENTS.md
+  - .agent/INVARIANTS.md
+  - .agent/skills/interface-testing/SKILL.md
+- Verify: ./.github/scripts/verify-microcontract.sh verify-file .agent/TASK.md && git diff --check
 
 
 
