@@ -11,7 +11,7 @@
 ## Active Task
 
 - **Task:** `[06.3]` Ecosystem Governance Audit & Migration Tooling
-- **Status:** READY FOR PLANNING
+- **Status:** RUNNING
 - **Scope:** Formalize, audit, and integrate ecosystem compliance scanner (`.github/scripts/audit-ecosystem-standards.py`) and automated governance migration runner (`.github/scripts/apply-governance-standards.py`) with unit/verification tests in CI.
 - **Target Branches:** `main`
 - **Role:** Worker
