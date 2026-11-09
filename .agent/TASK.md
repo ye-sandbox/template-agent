@@ -11,9 +11,16 @@
 ## Active Task
 
 - **Task:** `[07.2]` Lossless Governance Migration: Preserve ADR Assets & Decision Content
-- **Status:** READY FOR PLANNING
+- **Status:** RUNNING
 - **Scope:** Make ADR consolidation preserve non-Markdown assets, nested files, and distinct decisions sharing a title. Define source cleanup only after content preservation is verified; retain the current CLI and unrelated migration behavior.
 - **Target Branches:** `main` only; validate against disposable fixtures, without migrating external projects.
+- **Approved Plan:**
+  1. Work in an isolated checkout of `main`. Add regression fixtures to the existing `--self-test` suite for binary/non-Markdown assets, nested decisions, same-title/different-content decisions, exact duplicates, template files, invalid UTF-8, symlinks, dry-run snapshots, and second-run idempotency. Keep tests in the runner unless separate files under `.github/scripts/tests/` materially improve clarity.
+  2. Replace top-level-only discovery and title-substring deduplication in `consolidate_adrs()` with deterministic recursive Markdown discovery and full-content identity checks. Preserve distinct decision bodies sharing a title, preserve existing diary bytes when appending, and do not silently discard template content or undecodable bytes.
+  3. Preflight the complete legacy tree before writing. For non-Markdown assets, symlinks, or unsupported encodings, retain the source tree unchanged and report the specific blocking paths rather than deleting or silently relocating them. A retained tree remains visibly pending migration. For supported Markdown-only trees, verify that every source decision is represented in the resulting diary before deleting source files; remove directories only when empty, without recursive tree deletion.
+  4. Verify failure behavior with injected write/verification errors: original source content remains recoverable; dry-run produces no filesystem changes; retries do not duplicate decisions; existing CLI flags and unrelated transformations remain compatible. Run the expanded migration self-tests, Python syntax compilation, micro-contract validation, changed-link/branch-target checks, and `git diff --check`.
+  5. Commit the runner/tests separately from task bookkeeping, record `[07.2]` completion as one log row, promote `[07.3]` to `READY FOR PLANNING`, and remove the temporary worktree. Do not run the migrator against external projects or alter specialized branches.
+- **Preservation Policy:** Unsupported assets remain at their original paths with a diagnostic and block ADR consolidation for that tree; this task introduces no asset archive, additional ADR files, new CLI flags, or automatic relocation policy. The single canonical decision diary remains `docs/adr/decisions.md`.
 - **Role:** Worker
 - **Isolation:** worktree
 - **Acceptance Criteria:**
