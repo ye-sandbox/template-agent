@@ -10,42 +10,39 @@
 
 ## Active Task
 
-- **Task:** `[07.4]` Opt-In Interface Contract Migration
-- **Status:** PLANNING
-- **Scope:** Add an explicit opt-in migration mode that installs the canonical interface-testing skill and adds interface verification contracts while preserving project-specific rules and existing default migration behavior.
-- **Dependencies:** `[07.2]` migration preservation and `[07.3]` interface auditing are complete.
-- **Target Branches:** `main` only; validate against disposable fixtures without migrating external projects.
+- **Task:** `[07.5]` Epic 07 Consolidation, Documentation & CI Audit
+- **Status:** READY FOR PLANNING
+- **Scope:** Consolidate safe ecosystem adoption tooling, document migration/audit CLI behavior in both READMEs, and validate CI coverage and starter compatibility.
+- **Dependencies:** `[07.2]` lossless migration, `[07.3]` interface auditing, and `[07.4]` opt-in interface migration are complete.
+- **Target Branches:** `main` only; inspect starter compatibility without changing specialized branch heads or migrating external projects.
 - **Role:** Worker
 - **Isolation:** worktree
 - **Acceptance Criteria:**
-  - A documented opt-in mode installs the canonical skill and adds the shared interface invariants and runtime-aware AGENTS context/DoD directives.
-  - Project-specific invariants, failure thresholds, and unrelated files remain unchanged.
-  - Dry-run writes nothing, and a second application produces no diff.
-  - Conflicting custom contracts produce actionable diagnostics rather than silent overwrites.
-  - Existing CLI options and default migration behavior remain compatible; migration and interface audit fixtures pass.
+  - CI runs the migration and auditor fixture suites, including opt-in preservation and conflict handling.
+  - English and Portuguese documentation describe compatible default CLI behavior, opt-in interface adoption, dry-run, conflicts, and audit scoring.
+  - Relevant starter, governance, and self-test suites pass; Markdown links and branch targets validate.
+  - CHANGELOG and the cumulative ADR diary reflect the consolidated Epic 07 behavior without tagging a release.
 - Read:
   - AGENTS.md
   - .agent/TASK.md
   - .agent/NOTES.md
   - .agent/INVARIANTS.md
-  - .agent/skills/interface-testing/SKILL.md
   - docs/adr/decisions.md
+  - README.md
+  - README.pt-br.md
+  - CHANGELOG.md
+  - .github/workflows/ci.yml
   - .github/scripts/apply-governance-standards.py
   - .github/scripts/audit-ecosystem-standards.py
+  - .github/scripts/tests/test_interface_migration.py
 - Paths:
-  - .github/scripts/apply-governance-standards.py
-  - .github/scripts/tests/
+  - .github/workflows/ci.yml
+  - README.md
+  - README.pt-br.md
+  - CHANGELOG.md
+  - docs/adr/decisions.md
   - .agent/TASK.md
 - Verify: python3 .github/scripts/apply-governance-standards.py --self-test && python3 .github/scripts/audit-ecosystem-standards.py --self-test && ./.github/scripts/verify-microcontract.sh verify-file .agent/TASK.md && git diff --check
-
-### Proposed Implementation Plan (Pending Human Approval)
-
-1. On `main`, add a documented `--include-interface-contracts` opt-in flag to `.github/scripts/apply-governance-standards.py`, preserving existing CLI options, callable defaults, and default migration behavior. Use the existing canonical skill and Invariant 7 source files without modifying them.
-2. Preflight interface destinations and existing contracts before applying changes. Install missing canonical skill bytes, append missing shared invariants, and add on-demand context and dual-runtime DoD directives in the relevant AGENTS sections. Preserve project-specific rules and failure thresholds; report conflicting custom skills, duplicate or divergent invariants, ambiguous sections, unreadable files, and unsafe symlink paths with actionable diagnostics rather than overwriting them. A blocked interface preflight must leave interface destinations unchanged.
-3. Add hermetic fixture coverage under `.github/scripts/tests/` and connect it to the migration self-test entry point. Verify opt-in installation against the existing interface auditor, partial and complete adoption, byte-preserving dry-run, second-run idempotency, custom-contract conflicts, project-specific preservation, unsafe paths, and default CLI compatibility. All migration targets must be disposable fixtures.
-4. Run both migration and audit self-tests, the task micro-contract validator, relevant Markdown relative-link and branch-target checks, and `git diff --check`. Commit script/test changes atomically with an explanatory Conventional Commit body, then log completion and promote `[07.5]` in a separate task-state commit.
-
-**Execution boundary:** Implementation is limited to the declared mutable paths and isolated worktree; specialized branch heads and external projects remain unchanged. No implementation is authorized until this plan receives explicit human approval.
 
 ---
 
@@ -84,12 +81,13 @@
 | `[07.1]` | Next Milestone / Epic Planning: Safe Ecosystem Adoption & Interface Compliance | `7175590`, `9083747` (main) | 2026-11-08 |
 | `[07.2]` | Lossless Governance Migration: Preserve ADR Assets & Decision Content | `d3c3623` (main) | 2026-11-08 |
 | `[07.3]` | Ecosystem Auditor: Verify Adaptive Interface Contracts | `090ecc9` (main) | 2026-11-08 |
+| `[07.4]` | Opt-In Interface Contract Migration | `0478087` (main) | 2026-11-08 |
 
 ---
 
 ## Backlog (Upcoming, in priority order)
 
-- `[07.5]` Epic 07 Consolidation, Documentation & CI Audit
+*(empty)*
 
 
 
