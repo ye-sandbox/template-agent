@@ -18,7 +18,20 @@ Options:
     --repo REPO           Apply exclusively to the specified repository name
     --exclude [REPO ...]  Repository directory names to exclude
     --no-exclude          Do not apply default exclusion filters
+    --include-interface-contracts
+                          Opt in to canonical skill, Invariants 7.1–7.4, and
+                          runtime-aware AGENTS context/DoD directives. Custom
+                          conflicts block this repository without writes (exit 1).
+                          Requires this script to remain in the hub checkout with
+                          the canonical skill and invariants. Omit this flag for legacy behavior.
     --self-test           Run hermetic unit and verification test suite
+
+Opt-in example (preview first):
+    python3 apply-governance-standards.py /path/to/project --include-interface-contracts --dry-run
+    python3 apply-governance-standards.py /path/to/project --include-interface-contracts
+
+Dry-run writes nothing. Reapplying complete contracts produces no changes.
+Conflicts require manual reconciliation at the diagnostic path, then a retry.
 """
 
 from __future__ import annotations
@@ -476,9 +489,194 @@ When a conflict cannot be resolved using this hierarchy, halt execution and requ
     return actions
 
 
-def apply_standards_to_repo(repo: Path, dry_run: bool = False) -> List[str]:
-    """Apply all 4 governance transformations to a single repository."""
+CANONICAL_ROOT = Path(__file__).resolve().parents[2]
+INTERFACE_SKILL = Path('.agent/skills/interface-testing/SKILL.md')
+INTERFACE_HEADING = '7. Adaptive Interface Verification & UI Protocol'
+INTERFACE_CONTEXT = ('- Interface & UI verification: Read `.agent/skills/interface-testing/SKILL.md` '
+                     '(loaded on-demand exclusively for UI, preview, or frontend component tasks).')
+INTERFACE_DOD = ('- [ ] Interface & UI verification (if UI affected): passes adaptive protocol '
+                 '(interactive preview/device MCPs within T3 Code; non-blocking headless component/build validation outside T3 Code).')
+
+
+class InterfaceConflict(ValueError):
+    """A contract needs human reconciliation before any migration writes."""
+
+
+def masked_markdown(text: str) -> str:
+    """Hide examples/comments while preserving offsets into the original document."""
+    def blank(value: str) -> str:
+        return re.sub(r'[^\r\n]', ' ', value)
+
+    masked = re.sub(r'<!--(?:.*?-->|.*\Z)', lambda match: blank(match[0]), text, flags=re.DOTALL)
+    lines = []
+    fence = ''
+    for line in masked.splitlines(keepends=True):
+        match = re.match(r'^ {0,3}(`{3,}|~{3,})(.*)$', line)
+        if not fence and match:
+            fence = match[1]
+            lines.append(blank(line))
+        elif fence:
+            if match and match[1][0] == fence[0] and len(match[1]) >= len(fence) and not match[2].strip():
+                fence = ''
+            lines.append(blank(line))
+        else:
+            lines.append(line)
+    if fence or re.search(r'<!--(?![\s\S]*-->)', text):
+        raise InterfaceConflict('close unterminated Markdown fences/comments before adding active contracts')
+    return ''.join(lines)
+
+
+def interface_section(text: str, pattern: str) -> tuple[int, int] | None:
+    headings = list(re.finditer(r'^(#{1,6})[ \t]+([^\r\n]+)', masked_markdown(text), re.MULTILINE))
+    matches = [heading for heading in headings if re.search(pattern, heading[2])]
+    if len(matches) > 1:
+        raise InterfaceConflict(f'consolidate duplicate sections matching {pattern!r}')
+    if not matches:
+        return None
+    start = matches[0]
+    end = next((heading.start() for heading in headings
+                if heading.start() > start.start() and len(heading[1]) <= len(start[1])), len(text))
+    return start.end(), end
+
+
+def append_interface_section(text: str, title: str, addition: str, span: tuple[int, int] | None) -> str:
+    """Insert without rewriting any existing bytes, including CRLF line endings."""
+    newline = '\r\n' if '\r\n' in text else '\n'
+    addition = addition.replace('\r\n', '\n').replace('\n', newline)
+    if span is None:
+        return text + newline * 2 + '## ' + title + newline * 2 + addition + newline
+    position = span[1]
+    return text[:position] + newline * 2 + addition + newline * 2 + text[position:]
+
+
+def safe_interface_read(repo: Path, relative: Path) -> bytes | None:
+    """Reject symlink ancestors and nonregular contracts, even for missing targets."""
+    target = repo / relative
+    for path in [repo, *(repo / Path(*relative.parts[:i]) for i in range(1, len(relative.parts) + 1))]:
+        if path.is_symlink():
+            raise InterfaceConflict(f'{path}: replace the symlink with a local contract path')
+        if path.exists() and (not path.is_dir() if path != target else not path.is_file()):
+            raise InterfaceConflict(f'{path}: expected a {"file" if path == target else "directory"}')
+    try:
+        payload = target.read_bytes()
+        payload.decode('utf-8')
+        return payload
+    except FileNotFoundError:
+        return None
+    except (OSError, UnicodeError) as error:
+        raise InterfaceConflict(f'{target}: restore a readable UTF-8 contract ({type(error).__name__})') from error
+
+
+def interface_invariants(text: str) -> str:
+    canonical = safe_interface_read(CANONICAL_ROOT, Path('.agent/INVARIANTS.md'))
+    if canonical is None:
+        raise InterfaceConflict('restore canonical .agent/INVARIANTS.md in the hub')
+    canonical_text = canonical.decode('utf-8')
+    canonical_span = interface_section(canonical_text, '^' + re.escape(INTERFACE_HEADING) + '$')
+    if canonical_span is None:
+        raise InterfaceConflict('restore canonical Invariant 7 section in the hub')
+    canonical_body = canonical_text[slice(*canonical_span)].strip()
+    label_pattern = r'^- \*\*Invariant (7\.\d+) [^\r\n]*'
+
+    def blocks(body: str) -> dict[str, str]:
+        labels = list(re.finditer(label_pattern, masked_markdown(body), re.MULTILINE))
+        result = {}
+        for index, label in enumerate(labels):
+            end = labels[index + 1].start() if index + 1 < len(labels) else len(body)
+            block = body[label.start():end]
+            block = re.split(r'^(?:---[ \t]*$|- (?!\*\*Invariant ))', block, maxsplit=1, flags=re.MULTILINE)[0]
+            if label[1] in result:
+                raise InterfaceConflict(f'Invariant {label[1]}: consolidate duplicate blocks')
+            result[label[1]] = '\n'.join(line.rstrip() for line in block.strip().splitlines())
+        return result
+
+    expected = blocks(canonical_body)
+    if any(not expected.get(f'7.{number}') for number in range(1, 5)):
+        raise InterfaceConflict('restore complete canonical Invariants 7.1–7.4 in the hub')
+    span = interface_section(text, '^' + re.escape(INTERFACE_HEADING) + '$')
+    active = masked_markdown(text)
+    # Section 7 is reserved by the shared contract; never repurpose a custom section.
+    for heading in re.finditer(r'^#{1,6}[ \t]+7[.)][ \t]+([^\r\n]+)', active, re.MULTILINE):
+        if heading[1] != 'Adaptive Interface Verification & UI Protocol':
+            raise InterfaceConflict('section 7 is project-specific; reconcile its numbering with shared Invariants 7.1–7.4')
+    outside = active if span is None else active[:span[0]] + ' ' * (span[1] - span[0]) + active[span[1]:]
+    if re.search(r'\bInvariant 7\.\d+', outside):
+        raise InterfaceConflict('move existing Invariant 7 contracts into the single canonical section for review')
+    body = '' if span is None else active[slice(*span)]
+    actual = blocks(body)
+    # Detect malformed labels too, rather than appending a second competing rule.
+    if len(re.findall(r'\bInvariant 7\.\d+', body)) != len(actual):
+        raise InterfaceConflict('reconcile malformed or repeated Invariant 7 labels')
+    for key, block in actual.items():
+        if key in expected and block != expected[key]:
+            raise InterfaceConflict(f'Invariant {key}: reconcile custom text with the canonical block; no overwrite performed')
+    missing = [block for key, block in expected.items() if key not in actual]
+    if missing:
+        return append_interface_section(text, INTERFACE_HEADING, '\n'.join(missing), span)
+    return text
+
+
+def interface_agents(text: str) -> str:
+    for title, pattern, directive, candidate, compliant in [
+        ('Modular Context Triggers', r'Modular Context Triggers', INTERFACE_CONTEXT,
+         lambda line: INTERFACE_SKILL.as_posix() in line or bool(re.search(r'interface.*(?:context|skill)', line, re.I)),
+         lambda line: bool(re.match(r'^ {0,3}- ', line)) and line.strip() == INTERFACE_CONTEXT),
+        ('Falsifiable Definition of Done (DoD)', r'Falsifiable Definition of Done', INTERFACE_DOD,
+         lambda line: bool(re.search(r'(?:interface|\bUI\b|preview).*(?:verif|test)|(?:verif|test).*(?:interface|\bUI\b|preview)', line, re.I)),
+         lambda line: line == INTERFACE_DOD),
+    ]:
+        span = interface_section(text, pattern)
+        if span is None and title.startswith('Falsifiable') and interface_section(text, r'Definition of Done|\bDoD\b') is not None:
+            raise InterfaceConflict('reconcile custom DoD heading with Falsifiable Definition of Done before migration')
+        active = masked_markdown(text)
+        body = '' if span is None else active[slice(*span)]
+        outside = active if span is None else active[:span[0]] + active[span[1]:]
+        if title.startswith('Falsifiable') and any(
+            re.match(r'^- \[.\] ', line) and candidate(line)
+            for line in outside.splitlines()
+        ):
+            raise InterfaceConflict('move custom interface verification checkboxes into the shared DoD for review')
+        candidates = [line for line in body.splitlines() if candidate(line)]
+        if any(not compliant(line) for line in candidates) or len(candidates) > 1:
+            raise InterfaceConflict(f'{title}: reconcile custom or duplicate interface directives before migration')
+        if not candidates:
+            if title == 'Modular Context Triggers' and INTERFACE_SKILL.as_posix() in active:
+                raise InterfaceConflict('move the existing interface skill directive into Modular Context Triggers for review')
+            text = append_interface_section(text, title, directive, span)
+    return text
+
+
+def plan_interface_contracts(repo: Path) -> dict[Path, bytes]:
+    """Preflight the complete opt-in change before touching any project files."""
+    paths = [INTERFACE_SKILL, Path('.agent/INVARIANTS.md'), Path('AGENTS.md')]
+    existing = {path: safe_interface_read(repo, path) for path in paths}
+    skill = safe_interface_read(CANONICAL_ROOT, INTERFACE_SKILL)
+    if not skill or not skill.strip():
+        raise InterfaceConflict('restore the nonempty canonical interface-testing skill in the hub')
+    if existing[INTERFACE_SKILL] is not None and existing[INTERFACE_SKILL] != skill:
+        raise InterfaceConflict(f'{INTERFACE_SKILL}: compare custom skill with the hub canonical version and reconcile manually')
+    if existing[Path('AGENTS.md')] is None:
+        raise InterfaceConflict('AGENTS.md: create project governance before opting into interface contracts')
+    desired = {
+        INTERFACE_SKILL: skill,
+        Path('.agent/INVARIANTS.md'): interface_invariants((existing[Path('.agent/INVARIANTS.md')] or b'').decode()).encode(),
+        Path('AGENTS.md'): interface_agents(existing[Path('AGENTS.md')].decode()).encode(),
+    }
+    return {path: content for path, content in desired.items() if content != existing[path]}
+
+
+def apply_standards_to_repo(repo: Path, dry_run: bool = False, include_interface_contracts: bool = False) -> List[str]:
+    """Apply legacy governance, with optional preflighted interface adoption."""
     actions: List[str] = []
+    if include_interface_contracts:
+        try:
+            changes = plan_interface_contracts(repo)
+        except (InterfaceConflict, OSError) as error:
+            return [f"Blocked interface migration: {error}. Repository unchanged; reconcile and retry."]
+        for path, content in changes.items():
+            if not dry_run:
+                write_adr_diary(repo / path, content)
+            actions.append(f"Install interface contract: {path}")
     actions.extend(consolidate_adrs(repo, dry_run))
     actions.extend(sanitize_notes_md(repo, dry_run))
     actions.extend(inject_multi_agent_contracts(repo, dry_run))
@@ -802,6 +1000,7 @@ def run_self_tests() -> int:
     print("==> Executing apply-governance-standards.py hermetic self-test suite...")
     loader = unittest.TestLoader()
     suite = loader.loadTestsFromTestCase(TestApplyGovernanceStandards)
+    suite.addTests(loader.discover(str(Path(__file__).parent / "tests"), pattern="test_interface_migration.py"))
     runner = unittest.TextTestRunner(verbosity=2)
     result = runner.run(suite)
     return 0 if result.wasSuccessful() else 1
@@ -818,6 +1017,8 @@ def main():
     parser.add_argument("--exclude", nargs="*", default=list(DEFAULT_EXCLUDED_NAMES),
                         help="Nomes de repositórios/diretórios a excluir do cálculo")
     parser.add_argument("--no-exclude", action="store_true", help="Desabilita filtros padrão de exclusão")
+    parser.add_argument("--include-interface-contracts", action="store_true",
+                        help="Opt in to canonical interface contracts; conflicts leave the repository unchanged (exit 1)")
     parser.add_argument("--self-test", action="store_true", help="Executa suíte de testes unitários herméticos")
 
     args = parser.parse_args()
@@ -853,9 +1054,11 @@ def main():
     print(f"Total de repositórios candidatos: {len(repos)}\n")
 
     total_changes = 0
+    blocked = False
     for repo in repos:
         repo_name = f"{repo.parent.name}/{repo.name}" if repo.parent.name else repo.name
-        actions = apply_standards_to_repo(repo, args.dry_run)
+        actions = apply_standards_to_repo(repo, args.dry_run, args.include_interface_contracts)
+        blocked |= any(action.startswith("Blocked interface migration:") for action in actions)
         if actions:
             total_changes += len(actions)
             print(f"📦 {repo_name}:")
@@ -865,7 +1068,11 @@ def main():
 
     print("=" * 60)
     mode_str = "Simulação concluída" if args.dry_run else "Aplicação concluída com sucesso"
+    if blocked:
+        mode_str = "Interface migration blocked in one or more repositories"
     print(f"{mode_str}! Total de ações executadas/planejadas: {total_changes}")
+    if blocked:
+        sys.exit(1)
 
 
 if __name__ == "__main__":
