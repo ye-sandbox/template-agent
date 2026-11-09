@@ -3,7 +3,7 @@
 apply-governance-standards.py
 
 Automated propagator and migration runner for ADD (Agent-Driven Development) governance standards:
-  1. Single ADR Diary (docs/adr/decisions.md) & Purge legacy .agent/adr/
+  1. Single ADR Diary (docs/adr/decisions.md) & verified legacy ADR cleanup
   2. NOTES.md Sanitization (extract task headings to ARCHIVE.md, enforce heading ban)
   3. Multi-Agent Subagent Topology & Worktree/Quota Micro-Contracts in NOTES.md
   4. AGENTS.md High-Density [P0]-[P3] Precedence Matrix & Fail-Stop Protocol
@@ -21,13 +21,16 @@ Options:
     --self-test           Run hermetic unit and verification test suite
 """
 
+from __future__ import annotations
+
 import argparse
+import hashlib
 import os
 import re
-import shutil
 import sys
 import tempfile
 import unittest
+from unittest.mock import patch
 from pathlib import Path
 from typing import List, Set
 
@@ -158,63 +161,135 @@ def find_git_repos(root_dir: Path, max_depth: int = 4) -> List[Path]:
     return sorted(repos)
 
 
-def consolidate_adrs(repo: Path, dry_run: bool) -> List[str]:
-    """Point 1: Consolidate .agent/adr/*.md into docs/adr/decisions.md and remove .agent/adr/"""
-    actions: List[str] = []
-    agent_adr_dir = repo / ".agent" / "adr"
-    if not agent_adr_dir.is_dir():
-        return actions
+ADR_MARKER = re.compile(rb"(?m)^<!-- template-agent:adr sha256=([0-9a-f]{64}) bytes=([0-9]+) -->\n")
+ADR_END = b"\n<!-- /template-agent:adr -->\n"
 
-    docs_adr_dir = repo / "docs" / "adr"
-    decisions_file = docs_adr_dir / "decisions.md"
 
-    adr_files = sorted([f for f in agent_adr_dir.iterdir() if f.is_file() and f.suffix == ".md"])
-    if not adr_files:
-        if not dry_run:
-            shutil.rmtree(agent_adr_dir)
-        actions.append("Removed empty .agent/adr/ directory")
-        return actions
+def preserved_adr_documents(content: bytes) -> set[bytes]:
+    """Recognize complete documents, never title or body substrings."""
+    documents = set(content.split(b"\n---\n\n"))
+    documents.add(content)
+    for match in ADR_MARKER.finditer(content):
+        payload = content[match.end():match.end() + int(match[2])]
+        end = match.end() + len(payload)
+        if (
+            hashlib.sha256(payload).hexdigest().encode() == match[1]
+            and content[end:end + len(ADR_END)] == ADR_END
+        ):
+            documents.add(payload)
+    return documents
 
-    existing_content = ""
-    if decisions_file.is_file():
-        existing_content = decisions_file.read_text(encoding="utf-8", errors="ignore")
 
-    new_adrs_content: List[str] = []
-    for adr_path in adr_files:
-        if adr_path.name == "000-template.md" and len(adr_files) > 1:
+def write_adr_diary(path: Path, content: bytes) -> None:
+    """Replace the diary atomically; a failed write must not truncate history."""
+    path.parent.mkdir(parents=True, exist_ok=True)
+    temporary: Path | None = None
+    try:
+        with tempfile.NamedTemporaryFile(dir=path.parent, prefix=".decisions-", delete=False) as handle:
+            temporary = Path(handle.name)
+            handle.write(content)
+            handle.flush()
+            os.fsync(handle.fileno())
+        mode = path.stat().st_mode & 0o777 if path.exists() else 0o644
+        temporary.chmod(mode)
+        os.replace(temporary, path)
+    finally:
+        if temporary is not None:
+            temporary.unlink(missing_ok=True)
+
+
+def inspect_legacy_adrs(repo: Path) -> tuple[dict[Path, bytes], list[Path], list[str]]:
+    """Inventory without following symlinks or discarding undecodable bytes."""
+    legacy = repo / ".agent" / "adr"
+    documents: dict[Path, bytes] = {}
+    directories: list[Path] = []
+    blockers: list[str] = []
+    if (repo / ".agent").is_symlink() or legacy.is_symlink():
+        return documents, directories, [f"{legacy}: symlinked source path"]
+
+    def visit(directory: Path) -> None:
+        directories.append(directory)
+        for path in sorted(directory.iterdir()):
+            if path.is_symlink():
+                blockers.append(f"{path}: symlink")
+            elif path.is_dir():
+                visit(path)
+            elif not path.is_file() or path.suffix.lower() != ".md":
+                blockers.append(f"{path}: unsupported non-Markdown entry")
+            else:
+                try:
+                    payload = path.read_bytes()
+                    payload.decode("utf-8")
+                    documents[path] = payload
+                except (OSError, UnicodeError) as error:
+                    blockers.append(f"{path}: {type(error).__name__}")
+
+    try:
+        visit(legacy)
+    except OSError as error:
+        blockers.append(f"{legacy}: {type(error).__name__}")
+    return documents, directories, blockers
+
+
+def consolidate_adrs(repo: Path, dry_run: bool) -> list[str]:
+    """Consolidate supported ADR trees; retain blocked trees at their original paths."""
+    legacy = repo / ".agent" / "adr"
+    if not legacy.exists() and not legacy.is_symlink():
+        return []
+    documents, directories, blockers = inspect_legacy_adrs(repo)
+    diary = repo / "docs" / "adr" / "decisions.md"
+    for path in [repo / "docs", diary.parent, diary]:
+        if path.is_symlink():
+            blockers.append(f"{path}: symlinked destination path")
+    if blockers:
+        return ["Blocked ADR consolidation; source retained: " + reason for reason in blockers]
+    try:
+        existing = diary.read_bytes() if diary.exists() else b""
+        existing.decode("utf-8")
+    except (OSError, UnicodeError) as error:
+        blockers.append(f"{diary}: {type(error).__name__}")
+        existing = b""
+    if blockers:
+        return ["Blocked ADR consolidation; source retained: " + reason for reason in blockers]
+
+    result = existing
+    known = preserved_adr_documents(existing) if diary.exists() else set()
+    added = 0
+    for payload in documents.values():
+        if payload in known:
             continue
-        adr_text = adr_path.read_text(encoding="utf-8", errors="ignore").strip()
-        # Check if already present in decisions.md
-        title_match = re.search(r"^#+\s*(.+)$", adr_text, re.MULTILINE)
-        if title_match:
-            title = title_match.group(1).strip()
-            if title in existing_content:
-                continue
-        new_adrs_content.append(f"\n---\n\n{adr_text}\n")
+        if not result:
+            result = (
+                f"# Architecture Decision Records — {repo.name}\n\n"
+                f"Consolidated chronological log of architectural decisions for {repo.name}.\n"
+            ).encode()
+        digest = hashlib.sha256(payload).hexdigest()
+        marker = f"<!-- template-agent:adr sha256={digest} bytes={len(payload)} -->\n".encode()
+        result += b"\n\n---\n\n" + marker + payload + ADR_END
+        known.add(payload)
+        added += 1
+    actions = [f"Consolidated {added} distinct ADR document(s) into docs/adr/decisions.md"] if added else []
+    if dry_run:
+        return actions + ["Planned cleanup of verified legacy ADR files and empty directories"]
 
-    if not decisions_file.is_file():
-        base_header = (
-            f"# Architecture Decision Records — {repo.name}\n\n"
-            f"Consolidated chronological log of architectural decisions for {repo.name}.\n"
-        )
-        full_content = base_header + "".join(new_adrs_content)
-        if not dry_run:
-            docs_adr_dir.mkdir(parents=True, exist_ok=True)
-            decisions_file.write_text(full_content, encoding="utf-8")
-        actions.append(f"Created docs/adr/decisions.md with {len(new_adrs_content)} consolidated ADRs")
-    elif new_adrs_content:
-        full_content = existing_content.rstrip() + "\n" + "".join(new_adrs_content)
-        if not dry_run:
-            decisions_file.write_text(full_content, encoding="utf-8")
-        actions.append(f"Appended {len(new_adrs_content)} missing ADRs to docs/adr/decisions.md")
-    else:
-        actions.append("All ADRs already present in docs/adr/decisions.md")
-
-    if not dry_run:
-        shutil.rmtree(agent_adr_dir)
-    actions.append("Purged legacy .agent/adr/ directory")
-
-    return actions
+    if result != existing:
+        write_adr_diary(diary, result)
+    persisted = diary.read_bytes() if diary.exists() else b""
+    preserved = preserved_adr_documents(persisted)
+    if persisted != result or any(payload not in preserved for payload in documents.values()):
+        raise OSError("ADR diary verification failed; source retained")
+    # INVARIANT: Verify the whole inventory before cleanup; remove only known files.
+    # New or changed content must prevent deletion, including on a retry after failure.
+    current, _, current_blockers = inspect_legacy_adrs(repo)
+    if current_blockers or current != documents:
+        raise OSError("Legacy ADR tree changed during consolidation; source retained")
+    for path, payload in documents.items():
+        if path.is_symlink() or path.read_bytes() != payload:
+            raise OSError(f"Legacy ADR changed before cleanup; source retained: {path}")
+        path.unlink()
+    for directory in reversed(directories):
+        directory.rmdir()
+    return actions + ["Removed verified legacy ADR files and empty directories"]
 
 
 def sanitize_notes_md(repo: Path, dry_run: bool) -> List[str]:
@@ -493,6 +568,233 @@ class TestApplyGovernanceStandards(unittest.TestCase):
         # Re-apply standards
         second_actions = apply_standards_to_repo(repo, dry_run=False)
         self.assertEqual(len(second_actions), 0)
+
+
+    def snapshot(self, repo: Path) -> dict[str, bytes | str | None]:
+        snapshot: dict[str, bytes | str | None] = {}
+        for path in sorted(repo.rglob("*")):
+            key = str(path.relative_to(repo))
+            if path.is_symlink():
+                snapshot[key] = os.readlink(path)
+            elif path.is_dir():
+                snapshot[key] = None
+            else:
+                snapshot[key] = path.read_bytes()
+        return snapshot
+
+    def adr_fixture(self) -> tuple[Path, Path, Path]:
+        repo = self.create_mock_legacy_repo("adr-fixture")
+        return repo, repo / ".agent" / "adr", repo / "docs" / "adr" / "decisions.md"
+
+    def test_unsupported_assets_block_entire_tree(self) -> None:
+        repo, legacy, diary = self.adr_fixture()
+        assets = legacy / "assets"
+        assets.mkdir()
+        (assets / "diagram.png").write_bytes(b"\x89PNG\x00\xff")
+        (legacy / "notes.txt").write_bytes(b"keep notes")
+        before = self.snapshot(repo)
+        actions = consolidate_adrs(repo, dry_run=False)
+        self.assertEqual(self.snapshot(repo), before)
+        self.assertFalse(diary.exists())
+        self.assertTrue(any("diagram.png" in action for action in actions))
+        self.assertTrue(any("notes.txt" in action for action in actions))
+        self.assertTrue(all("Blocked ADR consolidation" in action for action in actions))
+
+    def test_asset_only_tree_is_not_mistaken_for_empty(self) -> None:
+        repo, legacy, _ = self.adr_fixture()
+        (legacy / "001-init.md").unlink()
+        (legacy / "only.bin").write_bytes(b"\x00asset")
+        before = self.snapshot(repo)
+        consolidate_adrs(repo, dry_run=False)
+        self.assertEqual(self.snapshot(repo), before)
+
+    def test_nested_decisions_and_templates_preserve_exact_bytes(self) -> None:
+        repo, legacy, diary = self.adr_fixture()
+        nested = legacy / "nested"
+        nested.mkdir()
+        payloads = [b"# Template\n\nKeep template rationale.\n", b"# Nested\r\n\r\nDecision with CRLF.\r\n"]
+        (legacy / "000-template.md").write_bytes(payloads[0])
+        (nested / "002-decision.MD").write_bytes(payloads[1])
+        consolidate_adrs(repo, dry_run=False)
+        self.assertFalse(legacy.exists())
+        persisted = preserved_adr_documents(diary.read_bytes())
+        self.assertTrue(all(payload in persisted for payload in payloads))
+
+    def test_same_title_different_bodies_and_existing_diary_are_preserved(self) -> None:
+        repo, legacy, diary = self.adr_fixture()
+        diary.parent.mkdir(parents=True)
+        existing = b"# 1. Initial Architecture\r\nPrevious decision body.\r\n"
+        diary.write_bytes(existing)
+        other = b"# 1. Initial Architecture\nA different decision body.\n"
+        (legacy / "002-other.md").write_bytes(other)
+        original = (legacy / "001-init.md").read_bytes()
+        consolidate_adrs(repo, dry_run=False)
+        content = diary.read_bytes()
+        self.assertTrue(content.startswith(existing))
+        self.assertIn(original, preserved_adr_documents(content))
+        self.assertIn(other, preserved_adr_documents(content))
+
+    def test_identical_documents_are_consolidated_once(self) -> None:
+        repo, legacy, diary = self.adr_fixture()
+        original = (legacy / "001-init.md").read_bytes()
+        (legacy / "duplicate.md").write_bytes(original)
+        consolidate_adrs(repo, dry_run=False)
+        self.assertEqual(diary.read_bytes().count(original), 1)
+        self.assertFalse(legacy.exists())
+
+    def test_existing_complete_document_is_not_duplicated(self) -> None:
+        repo, legacy, diary = self.adr_fixture()
+        original = (legacy / "001-init.md").read_bytes() + b"\n"
+        (legacy / "001-init.md").write_bytes(original)
+        diary.parent.mkdir(parents=True)
+        existing = b"# Diary\n\n---\n\n" + original
+        diary.write_bytes(existing)
+        consolidate_adrs(repo, dry_run=False)
+        self.assertEqual(diary.read_bytes(), existing)
+
+    def test_invalid_utf8_blocks_without_silent_byte_loss(self) -> None:
+        repo, legacy, _ = self.adr_fixture()
+        (legacy / "bad.md").write_bytes(b"# ADR\n\xff")
+        before = self.snapshot(repo)
+        actions = consolidate_adrs(repo, dry_run=False)
+        self.assertEqual(self.snapshot(repo), before)
+        self.assertTrue(any("bad.md: UnicodeDecodeError" in action for action in actions))
+
+    def test_invalid_diary_blocks_without_overwriting_history(self) -> None:
+        repo, _, diary = self.adr_fixture()
+        diary.parent.mkdir(parents=True)
+        diary.write_bytes(b"existing \xff history")
+        before = self.snapshot(repo)
+        actions = consolidate_adrs(repo, dry_run=False)
+        self.assertEqual(self.snapshot(repo), before)
+        self.assertTrue(any("decisions.md: UnicodeDecodeError" in action for action in actions))
+
+    def test_symlinked_source_and_destination_are_not_followed(self) -> None:
+        repo, legacy, diary = self.adr_fixture()
+        outside = self.root / "outside.md"
+        outside.write_bytes(b"external content")
+        (legacy / "linked.md").symlink_to(outside)
+        before = self.snapshot(repo)
+        self.assertTrue(consolidate_adrs(repo, dry_run=False))
+        self.assertEqual(self.snapshot(repo), before)
+        (legacy / "linked.md").unlink()
+        diary.parent.mkdir(parents=True)
+        diary.symlink_to(outside)
+        before = self.snapshot(repo)
+        self.assertTrue(consolidate_adrs(repo, dry_run=False))
+        self.assertEqual(self.snapshot(repo), before)
+        self.assertEqual(outside.read_bytes(), b"external content")
+
+    def test_symlinked_legacy_directory_is_retained(self) -> None:
+        repo = self.root / "symlinked-repo"
+        (repo / ".agent").mkdir(parents=True)
+        outside = self.root / "outside-adrs"
+        outside.mkdir()
+        (outside / "decision.md").write_bytes(b"# Outside\nKeep me.")
+        (repo / ".agent" / "adr").symlink_to(outside, target_is_directory=True)
+        before = self.snapshot(repo)
+        self.assertTrue(consolidate_adrs(repo, dry_run=False))
+        self.assertEqual(self.snapshot(repo), before)
+        self.assertEqual((outside / "decision.md").read_bytes(), b"# Outside\nKeep me.")
+
+    def test_dry_run_preserves_all_paths_and_bytes(self) -> None:
+        repo, legacy, _ = self.adr_fixture()
+        (legacy / "nested").mkdir()
+        (legacy / "nested" / "nested.md").write_bytes(b"# Nested\n\nKeep trailing spaces.  \n")
+        before = self.snapshot(repo)
+        apply_standards_to_repo(repo, dry_run=True)
+        self.assertEqual(self.snapshot(repo), before)
+
+    def test_second_application_preserves_all_paths_and_bytes(self) -> None:
+        repo, _, _ = self.adr_fixture()
+        apply_standards_to_repo(repo, dry_run=False)
+        before = self.snapshot(repo)
+        self.assertEqual(apply_standards_to_repo(repo, dry_run=False), [])
+        self.assertEqual(self.snapshot(repo), before)
+
+    def test_empty_tree_cleanup_creates_no_diary(self) -> None:
+        repo, legacy, diary = self.adr_fixture()
+        (legacy / "001-init.md").unlink()
+        (legacy / "empty").mkdir()
+        consolidate_adrs(repo, dry_run=False)
+        self.assertFalse(legacy.exists())
+        self.assertFalse(diary.exists())
+
+    def test_empty_markdown_document_is_preserved(self) -> None:
+        repo, legacy, diary = self.adr_fixture()
+        (legacy / "empty.md").write_bytes(b"")
+        consolidate_adrs(repo, dry_run=False)
+        self.assertFalse(legacy.exists())
+        self.assertIn(b"", preserved_adr_documents(diary.read_bytes()))
+
+    def test_replace_failure_keeps_existing_diary_and_sources(self) -> None:
+        repo, _, diary = self.adr_fixture()
+        diary.parent.mkdir(parents=True)
+        diary.write_bytes(b"# Existing diary\n")
+        before = self.snapshot(repo)
+        with patch("os.replace", side_effect=OSError("injected replace failure")):
+            with self.assertRaisesRegex(OSError, "injected replace failure"):
+                consolidate_adrs(repo, dry_run=False)
+        self.assertEqual(self.snapshot(repo), before)
+        consolidate_adrs(repo, dry_run=False)
+        self.assertTrue(diary.read_bytes().startswith(b"# Existing diary\n"))
+
+    def test_failed_readback_keeps_sources_and_retry_does_not_duplicate(self) -> None:
+        repo, legacy, diary = self.adr_fixture()
+        original = (legacy / "001-init.md").read_bytes()
+        read_bytes = Path.read_bytes
+
+        def read_with_mismatch(path: Path) -> bytes:
+            if path == diary:
+                return b"injected readback mismatch"
+            return read_bytes(path)
+
+        with patch.object(Path, "read_bytes", read_with_mismatch):
+            with self.assertRaisesRegex(OSError, "diary verification failed"):
+                consolidate_adrs(repo, dry_run=False)
+        self.assertEqual((legacy / "001-init.md").read_bytes(), original)
+        consolidate_adrs(repo, dry_run=False)
+        self.assertEqual(diary.read_bytes().count(original), 1)
+
+    def test_partial_cleanup_failure_is_recoverable(self) -> None:
+        repo, legacy, diary = self.adr_fixture()
+        remaining = legacy / "002-other.md"
+        payload = b"# Another decision\nPreserve after interrupted cleanup."
+        remaining.write_bytes(payload)
+        unlink = Path.unlink
+
+        def fail_one_unlink(path: Path, missing_ok: bool = False) -> None:
+            if path == remaining:
+                raise OSError("injected cleanup failure")
+            unlink(path, missing_ok=missing_ok)
+
+        with patch.object(Path, "unlink", fail_one_unlink):
+            with self.assertRaisesRegex(OSError, "injected cleanup failure"):
+                consolidate_adrs(repo, dry_run=False)
+        before = diary.read_bytes()
+        self.assertEqual(remaining.read_bytes(), payload)
+        consolidate_adrs(repo, dry_run=False)
+        self.assertEqual(diary.read_bytes(), before)
+        self.assertFalse(legacy.exists())
+
+    def test_changed_source_blocks_cleanup(self) -> None:
+        repo, legacy, diary = self.adr_fixture()
+        original = legacy / "001-init.md"
+        inspect = inspect_legacy_adrs
+        calls = 0
+
+        def inspect_with_change(path: Path) -> tuple[dict[Path, bytes], list[Path], list[str]]:
+            nonlocal calls
+            calls += 1
+            if calls == 2:
+                original.write_bytes(b"# Changed after inventory\nNew content.")
+            return inspect(path)
+
+        with patch(__name__ + ".inspect_legacy_adrs", side_effect=inspect_with_change):
+            with self.assertRaisesRegex(OSError, "tree changed"):
+                consolidate_adrs(repo, dry_run=False)
+        self.assertEqual(original.read_bytes(), b"# Changed after inventory\nNew content.")
+        self.assertIn(b"Decision details", diary.read_bytes())
 
 
 def run_self_tests() -> int:
