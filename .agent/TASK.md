@@ -11,7 +11,7 @@
 ## Active Task
 
 - **Task:** `[07.5]` Epic 07 Consolidation, Documentation & CI Audit
-- **Status:** READY FOR PLANNING
+- **Status:** PLANNING
 - **Scope:** Consolidate safe ecosystem adoption tooling, document migration/audit CLI behavior in both READMEs, and validate CI coverage and starter compatibility.
 - **Dependencies:** `[07.2]` lossless migration, `[07.3]` interface auditing, and `[07.4]` opt-in interface migration are complete.
 - **Target Branches:** `main` only; inspect starter compatibility without changing specialized branch heads or migrating external projects.
@@ -43,6 +43,17 @@
   - docs/adr/decisions.md
   - .agent/TASK.md
 - Verify: python3 .github/scripts/apply-governance-standards.py --self-test && python3 .github/scripts/audit-ecosystem-standards.py --self-test && ./.github/scripts/verify-microcontract.sh verify-file .agent/TASK.md && git diff --check
+
+
+### Proposed Implementation Plan (Pending Human Approval)
+
+1. Work in an isolated worktree targeting `main`. In `.github/workflows/ci.yml`, make audit and migration fixture coverage explicit in the existing Ubuntu/macOS matrix, including compilation of the external interface fixture module. Retain the existing self-test entry points, audit threshold, starter validation, and full-history checkout; avoid duplicate suite execution.
+2. Update the ecosystem tooling sections of `README.md` and `README.pt-br.md` in parallel translations. Document running from the hub checkout, repository selection and exclusions, compatible default migration behavior, explicit `--include-interface-contracts` adoption, dry-run before application, repeat-run behavior, preservation guarantees, manual conflict reconciliation and exit status, and read-only audit output/threshold options. Explain the legacy 100 plus interface 20 point normalization to 0–100, including the 83-point legacy-perfect case without interface contracts. Check examples against the actual parsers; use placeholders and disposable fixtures rather than external-project migrations.
+3. Update `CHANGELOG.md` under Unreleased for lossless ADR migration, interface audit checks/scoring, opt-in migration, and fixture coverage. Append one Technical English consolidation decision to `docs/adr/decisions.md`, preserving its existing diary and documenting conservative adoption and compatibility boundaries.
+4. Validate the migration and audit self-tests, hub audit threshold, micro-contract validator and isolation self-tests, security scanner, bootstrap lifecycle tests, LLM contract tests, branch-drift fixtures, and unified five-starter suite. Validate changed Markdown relative links and branch targets, workflow syntax and command coverage, and `git diff --check`. Local execution covers the available runtime; macOS execution remains a CI check. Apply the repository fail-stop protocol if a command fails three times with the same cause.
+5. Create separate atomic Conventional Commits for CI, documentation/ADR, and task-state changes, with explanatory bodies where required. Log `[07.5]` completion and promote `[08.1]` Next Milestone / Epic Planning as planning-only work without preselecting feature scope.
+
+**Execution boundary:** Only the declared mutable paths may change. Specialized branch heads and external projects remain unchanged. Release tagging and release-cycle resets require separate human instruction. Implementation awaits explicit approval of this plan.
 
 ---
 
