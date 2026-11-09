@@ -11,7 +11,7 @@
 ## Active Task
 
 - **Task:** `[06.2]` Standardize Adaptive Interface Verification & On-Demand Skill
-- **Status:** READY FOR PLANNING
+- **Status:** RUNNING
 - **Scope:** Define dual-runtime adaptive UI verification protocol in `AGENTS.md` and `.agent/INVARIANTS.md`, and author canonical on-demand skill `.agent/skills/interface-testing/SKILL.md`.
 - **Target Branches:** `main`, `greenfield`, `brownfield`
 - **Role:** Worker
