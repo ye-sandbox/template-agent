@@ -46,6 +46,7 @@ Optimize context consumption via progressive disclosure:
 - **Inviolable Subsystems (`.agent/INVARIANTS.md`):** MUST load before modifying any network, display, audio, or PAM/systemd configurations.
 - **Architectural Decisions (`docs/adr/decisions.md`):** Canonical progressive disclosure diary; MUST load when introducing permanent system modifications or researching historical trade-offs. Prohibit separate `.agent/adr/` trees to prevent dual-source drift.
 - **Domain Skills (`.agent/skills/<name>/SKILL.md`):** Load only when the active task touches that skill's trigger (e.g. `.agent/skills/baremetal-tuning/SKILL.md`).
+- **Interface & UI Verification:** Read `.agent/INVARIANTS.md` (Invariant 7) and `.agent/skills/interface-testing/SKILL.md` on-demand exclusively for UI, preview, or frontend component tasks.
 - **Knowledge Base (`.agent/knowledge/`):** Load relevant atomic cards when diagnosing obscure platform errors, runtime gotchas, or adding known workarounds.
 
 ## 4. Mandatory Execution Protocol
@@ -74,6 +75,7 @@ A task MUST NOT be marked complete until all checks pass:
 - [ ] Performance metrics recorded before vs. after in `.agent/TUNINGS.md`.
 - [ ] Verification command passes: `./tests/smoke.sh` runs smoke tests.
 - [ ] Git cleanliness: `git diff --check` exits with code 0.
+- [ ] Interface & UI Verification (if UI affected): Pass the adaptive protocol in `.agent/skills/interface-testing/SKILL.md` and Invariant 7 — interactive preview/device MCPs within T3 Code; non-blocking headless component/build validation outside T3 Code.
 - [ ] Documentation Perimeter: If `.env.example` variables, benchmark scripts, or baseline tunings changed, synchronize `README.md` and `README.pt-br.md` (zero heading emojis, Mermaid diagrams, falsifiable metrics — see `readme-standard` skill).
 - [ ] Knowledge Preservation: Document obscure platform/runtime gotchas or workarounds as an atomic card in `.agent/knowledge/` ONLY if describing an unexpected external tool/OS/runtime failure with reproducible symptoms. Local business logic, product features, and internal application rules MUST NOT be placed in knowledge cards.
 - [ ] Atomic Commit: Conventional Commits in Technical English (`feat(tuning): ...`).
