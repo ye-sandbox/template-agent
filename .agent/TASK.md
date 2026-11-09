@@ -10,22 +10,22 @@
 
 ## Active Task
 
-- **Task:** `[06.3]` Ecosystem Governance Audit & Migration Tooling
-- **Status:** RUNNING
-- **Scope:** Formalize, audit, and integrate ecosystem compliance scanner (`.github/scripts/audit-ecosystem-standards.py`) and automated governance migration runner (`.github/scripts/apply-governance-standards.py`) with unit/verification tests in CI.
-- **Target Branches:** `main`
+- **Task:** `[06.4]` Starter Template Parity: Propagate Interface Verification & Invariants
+- **Status:** READY FOR PLANNING
+- **Scope:** Propagate interface verification contracts, runtime-aware Invariant 7 guardrails, and on-demand skill to specialized template branches (`greenfield`, `brownfield`, etc.) ensuring zero drift and starter parity.
+- **Target Branches:** `greenfield`, `brownfield`, `blackbox`, `infra`, `baremetal`
 - **Role:** Worker
 - **Isolation:** worktree
 - Read:
   - AGENTS.md
   - .agent/TASK.md
   - .agent/INVARIANTS.md
-  - .agent/NOTES.md
+  - .agent/skills/interface-testing/SKILL.md
 - Paths:
-  - .github/scripts/audit-ecosystem-standards.py
-  - .github/scripts/apply-governance-standards.py
-  - .github/workflows/ci.yml
-- Verify: python3 -m py_compile .github/scripts/audit-ecosystem-standards.py .github/scripts/apply-governance-standards.py && ./.github/scripts/verify-microcontract.sh verify-file .agent/TASK.md && git diff --check
+  - AGENTS.md
+  - .agent/INVARIANTS.md
+  - .agent/skills/interface-testing/SKILL.md
+- Verify: ./.github/scripts/verify-microcontract.sh verify-file .agent/TASK.md && git diff --check
 
 ---
 
@@ -58,12 +58,12 @@
 | `[05.5]` | Epic 05 Milestone Consolidation, Documentation & Multi-Branch CI Audit | `0f63c18`, `0f036b0`, `dda3d0e` (main) | 2026-11-07 |
 | `[06.1]` | Next Milestone / Epic Planning (Epic 06: Adaptive Interface Verification & Governance Automation) | `9ba6bb1` (main) | 2026-11-08 |
 | `[06.2]` | Standardize Adaptive Interface Verification & On-Demand Skill | `fbc114b` (main) | 2026-11-08 |
+| `[06.3]` | Ecosystem Governance Audit & Migration Tooling | `389b739` (main) | 2026-11-08 |
 
 ---
 
 ## Backlog (Upcoming, in priority order)
 
-- `[06.4]` Starter Template Parity: Propagate Interface Verification & Invariants
 - `[06.5]` Epic 06 Milestone Consolidation, Documentation & Multi-Branch CI Audit
 
 
