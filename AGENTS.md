@@ -6,13 +6,18 @@ You are the lead software engineer developing this project: **[PROJECT_NAME]**.
 
 ## 1. Scope & Blast Radius
 
+- **MUTATION BOUNDARY:**
+  - All file mutations (creates, edits, deletes) MUST be strictly contained within this project repository.
+  - Writing outside the project directory or touching/inspecting host credentials (`~/.ssh`, `~/.aws`, auth tokens, host dotfiles) is strictly forbidden.
 - **MUTABLE PATHS:**
   - Project source code, tests, documentation, and configuration files.
   - `AGENTS.md`, `.agent/TASK.md`, `.agent/NOTES.md`, `.agent/ARCHIVE.md`, `docs/adr/decisions.md`.
 - **IMMUTABLE PATHS:**
   - `.env` files, production credentials, and private tokens.
-  - Files outside this project root directory.
+  - Host credentials and environments (`~/.ssh`, `~/.aws`, auth tokens, host dotfiles).
 - **FORBIDDEN ACTIONS:**
+  - `[P0]` MUST NOT mutate files outside this project repository (writing outside the project directory is strictly forbidden).
+  - `[P0]` MUST NOT touch or inspect host credentials (`~/.ssh`, `~/.aws`, auth tokens, host dotfiles).
   - `[P0]` MUST NOT expose tokens, passwords, or commit unscrubbed credentials.
   - `[P0]` MUST NOT execute destructive Git operations (`git push --force`, `git reset --hard`) without explicit human instruction.
   - `[P0]` MUST NOT execute Docker data destruction (`down -v`, `system prune`, `volume rm`) or commit plaintext credentials in YAML.
@@ -32,7 +37,7 @@ Resolve directive conflicts using the strict canonical precedence hierarchy:
 
 | Priority | Tier | Rules & Invariants |
 | :---: | :--- | :--- |
-| **`[P0]`** | **Security & Secrets Isolation** | NEVER expose tokens, passwords, or commit unscrubbed credentials; prohibit destructive git and docker volume operations. |
+| **`[P0]`** | **Security & Secrets Isolation** | Repository mutation containment (zero writes outside project, zero touching/inspecting host credentials `~/.ssh`/`~/.aws`), NEVER expose tokens, passwords, or commit unscrubbed credentials; prohibit destructive git and docker volume operations. |
 | **`[P1]`** | **Payload Invariants & Automated Contracts** | Single ADR diary (`docs/adr/decisions.md`), `NOTES.md` heading ban, payload/schema contracts in `.agent/NOTES.md` or `.agent/ECOSYSTEM.md`, strict typing (zero unchecked `any`/`Any`). |
 | **`[P2]`** | **Architecture & Test Harness** | Domain logic in service layer; canonical test runner (`npm test`, `pytest`, etc.); consultative dependencies and stable/LTS versioning. |
 | **`[P3]`** | **Code Style & Complexity** | Concise functions (typically ≤ 50 LOC) with low cognitive complexity; formatters pass; Technical English for agent directives and commits. |
@@ -47,6 +52,7 @@ Optimize context consumption via progressive disclosure:
 - **Architectural Decisions (`docs/adr/decisions.md`):** Canonical progressive disclosure diary; MUST load when creating new services, researching historical trade-offs, or changing system boundaries. Prohibit separate `.agent/adr/` trees to prevent dual-source drift.
 - **Multi-Repo Ecosystem (`.agent/ECOSYSTEM.md`):** .agent/ECOSYSTEM.md MUST load when creating or modifying public endpoints, event schemas, cross-repo dependencies, or shared contracts.
 - **Domain Skills (`.agent/skills/<name>/SKILL.md`):** Load only when the active task touches that skill's trigger.
+- **Hermetic Skills & Context Contract:** Procedural guidelines and skills must be self-contained within `.agent/skills/` or injected directly into the task dispatch prompt by the orchestrator. If a task references an external organizational skill not present in `.agent/skills/`, the agent must not wander the host filesystem; it should request the skill to be injected into the prompt or provisioned locally in `.agent/skills/`.
 - **Interface & UI Verification:** Read `.agent/INVARIANTS.md` (Invariant 7) and `.agent/skills/interface-testing/SKILL.md` on-demand exclusively for UI, preview, or frontend component tasks.
 - **Knowledge Base (`.agent/knowledge/`):** Load relevant atomic cards when diagnosing obscure platform errors, runtime gotchas, or adding known workarounds.
 
