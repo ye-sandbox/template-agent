@@ -180,9 +180,15 @@ bootstrap_worktree() {
   fi
 
   # 2. Scratch and cache directory isolation
-  # INVARIANT: Subagents must have private scratch directories to prevent inter-agent race conditions
+  # INVARIANT: Subagents must have private scratch directories to prevent inter-agent race conditions,
+  # while shared ephemeral feature specs (.agent/scratch/specs/) are copied from root into the worktree.
   mkdir -p "${WORKTREE_DIR}/.agent/scratch"
   mkdir -p "${WORKTREE_DIR}/.agent/.cache"
+  if [ -d "${ROOT_DIR}/.agent/scratch/specs" ]; then
+    mkdir -p "${WORKTREE_DIR}/.agent/scratch/specs"
+    cp -R "${ROOT_DIR}/.agent/scratch/specs/." "${WORKTREE_DIR}/.agent/scratch/specs/" 2>/dev/null || true
+    log_success "Propagated .agent/scratch/specs/ (isolated copy for batch spec anchors)"
+  fi
   log_success "Initialized isolated scratch environment (.agent/scratch, .agent/.cache)"
 
   # 3. Node.js dependency bootstrap
@@ -278,6 +284,9 @@ GITIGNORE_EOF
     mkdir -p .venv/bin
     touch .venv/bin/python
 
+    mkdir -p .agent/scratch/specs
+    echo "# Feature Spec 08-02" > .agent/scratch/specs/08-02.md
+
     echo "# Test repo" > README.md
     git add README.md package.json requirements.txt .gitignore
     git commit -q -m "chore: initial commit"
@@ -286,16 +295,18 @@ GITIGNORE_EOF
     git worktree add -q -b task-test "$WORKTREE_DIR" HEAD
   )
 
-  # Test 1: Fast-Link Mode (Zero-Copy)
-  log_info "Self-Test 1: Fast-Link Mode..."
+  # Test 1: Fast-Link Mode (Zero-Copy) & Spec Anchor Propagation
+  log_info "Self-Test 1: Fast-Link Mode & Spec Anchor Propagation..."
   bootstrap_worktree "$REPO_DIR" "$WORKTREE_DIR" "false"
 
   [ -f "${WORKTREE_DIR}/.env" ] || { log_error "Test 1 failed: .env not created in worktree"; return 1; }
   [ ! -L "${WORKTREE_DIR}/.env" ] || { log_error "Test 1 failed: .env must be a copy, not symlink"; return 1; }
   [ -d "${WORKTREE_DIR}/.agent/scratch" ] || { log_error "Test 1 failed: .agent/scratch missing"; return 1; }
+  [ -f "${WORKTREE_DIR}/.agent/scratch/specs/08-02.md" ] || { log_error "Test 1 failed: .agent/scratch/specs/08-02.md not propagated"; return 1; }
+  [ ! -L "${WORKTREE_DIR}/.agent/scratch/specs/08-02.md" ] || { log_error "Test 1 failed: spec anchor must be an isolated copy, not symlink"; return 1; }
   [ -L "${WORKTREE_DIR}/node_modules" ] || { log_error "Test 1 failed: node_modules is not a symlink"; return 1; }
   [ -L "${WORKTREE_DIR}/.venv" ] || { log_error "Test 1 failed: .venv is not a symlink"; return 1; }
-  log_success "Self-Test 1 passed: Fast-link symlinks and env copy verified."
+  log_success "Self-Test 1 passed: Fast-link symlinks, env copy, and .agent/scratch/specs/ propagation verified."
 
   # Test 2: Lifecycle Hook Execution
   log_info "Self-Test 2: Lifecycle Hook Execution..."

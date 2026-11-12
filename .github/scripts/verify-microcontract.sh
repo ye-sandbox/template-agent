@@ -9,9 +9,10 @@
 #
 # Commands:
 #   self-test                       Run hermetic end-to-end self-test suite (default if no args)
-#   verify-file <file>              Validate all micro-contracts and parallel waves in a task file
+#   verify-file <file>              Validate all micro-contracts, parallel waves, and sequential batches in a task file
 #   verify-contract <file|->        Validate a single micro-contract specification snippet or file
 #   verify-waves <file>             Validate parallel wave tag disjointness in a task file
+#   verify-batches <file>           Validate sequential batch ([BATCH: Bx]) cardinality (2-4) and layer separation
 #   verify-worktree <worktree> <contract> [--base-ref <ref>] [--run-verify]
 #                                   Assert worktree blast boundaries, diff hygiene, and verification
 #   -h, --help                      Show this help message
@@ -19,7 +20,7 @@
 # ==============================================================================
 set -euo pipefail
 
-VERSION="1.0.0"
+VERSION="1.1.0"
 
 # ANSI color formatting
 if [ -t 1 ] && [ -z "${NO_COLOR:-}" ]; then
@@ -75,13 +76,14 @@ Usage:
 Commands:
   self-test
       Run comprehensive hermetic self-tests for micro-contract parsing,
-      wave disjointness, and worktree blast boundary enforcement.
+      wave disjointness, sequential batching, and worktree blast boundary enforcement.
       (Default action when invoked without arguments).
 
   verify-file <path-to-task-file>
       Parse and validate all micro-contracts in a task file (e.g. .agent/TASK.md).
-      Checks for required keys (Read:, Paths:, Verify:), valid role and isolation
-      values, and ensures parallel waves [PARALLEL: Wx] have disjoint Paths.
+      Checks for required keys (Read:, Paths:, Verify:), valid role, isolation, and type
+      values, ensures parallel waves [PARALLEL: Wx] have disjoint Paths, and validates
+      sequential batches [BATCH: Bx] (2-4 subtasks, zero cross-layer mixing).
 
   verify-contract <contract-file | ->
       Validate a single micro-contract snippet (from file or stdin).
@@ -90,6 +92,11 @@ Commands:
   verify-waves <path-to-task-file>
       Assert that all tasks grouped under identical wave tags ([PARALLEL: Wx])
       in the specified task file possess mutually disjoint mutable Paths.
+
+  verify-batches <path-to-task-file>
+      Assert that all sequential subtask batches ([BATCH: Bx]) in the specified
+      task file contain 2 to 4 subtasks and do not mix incompatible execution layers
+      (e.g., backend code with browser-qa, mobile-qa, or preview-mockup).
 
   verify-worktree <worktree-path> <contract-file> [--base-ref <ref>] [--run-verify]
       Inspect an isolated Git worktree before integration:
@@ -118,9 +125,52 @@ normalize_path() {
   local p="$1"
   p="${p#"${p%%[![:space:]]*}"}" # trim leading whitespace
   p="${p%"${p##*[![:space:]]}"}" # trim trailing whitespace
+  p="${p#\`}"                    # remove leading backtick if formatted inline
+  p="${p%\`}"                    # remove trailing backtick if formatted inline
   p="${p#./}"                    # remove leading ./
   p="${p%/}"                     # remove trailing /
   echo "$p"
+}
+
+# Classify task execution layer for batch boundary enforcement:
+# Returns "ui-qa" for browser-qa, mobile-qa, preview-mockup, or UI component paths
+# Returns "backend-code" for backend/database/API/infrastructure paths
+# Returns "code" if generic code
+classify_task_layer() {
+  local task_type="$1"
+  shift
+  local paths=("$@")
+
+  case "$task_type" in
+    browser-qa|mobile-qa|preview-mockup)
+      echo "ui-qa"
+      return 0
+      ;;
+  esac
+
+  local has_ui_path=false
+  local has_backend_path=false
+
+  for p in "${paths[@]}"; do
+    case "$p" in
+      *.tsx|*.jsx|*.svelte|*.vue|*.css|*.html|*pages/*|*components/*|*views/*|proto/*)
+        has_ui_path=true
+        ;;
+      *prisma/*|*.prisma|*migrations/*|*repos/*|*repositories/*|*controllers/*|*routes/*|*services/*|*.sql)
+        has_backend_path=true
+        ;;
+    esac
+  done
+
+  if [ "$has_ui_path" = "true" ] && [ "$has_backend_path" = "false" ]; then
+    echo "frontend-ui"
+  elif [ "$has_backend_path" = "true" ] && [ "$has_ui_path" = "false" ]; then
+    echo "backend-code"
+  elif [ "$has_ui_path" = "true" ] && [ "$has_backend_path" = "true" ]; then
+    echo "mixed-stack"
+  else
+    echo "code"
+  fi
 }
 
 # Check if path1 collides with or overlaps path2
@@ -235,17 +285,19 @@ validate_single_contract() {
   local verify_cmd=""
   local role=""
   local isolation=""
+  local task_type=""
 
   # Check required keys
-  if echo "$content" | grep -qE '^[[:space:]]*(-[[:space:]]*)?Read:'; then
+  if echo "$content" | tr -d '`' | grep -qE '^[[:space:]]*(-[[:space:]]*)?Read:'; then
     has_read=true
   fi
-  if echo "$content" | grep -qE '^[[:space:]]*(-[[:space:]]*)?Paths:'; then
+  if echo "$content" | tr -d '`' | grep -qE '^[[:space:]]*(-[[:space:]]*)?Paths:'; then
     has_paths=true
   fi
-  if echo "$content" | grep -qE '^[[:space:]]*(-[[:space:]]*)?Verify:'; then
+  if echo "$content" | tr -d '`' | grep -qE '^[[:space:]]*(-[[:space:]]*)?Verify:'; then
     has_verify=true
-    verify_cmd="$(echo "$content" | grep -E '^[[:space:]]*(-[[:space:]]*)?Verify:' | head -n1 | sed -E 's/^[[:space:]]*(-[[:space:]]*)?Verify:[[:space:]]*//')"
+    verify_cmd="$(echo "$content" | tr -d '`' | grep -E '^[[:space:]]*(-[[:space:]]*)?Verify:' | head -n1 | sed -E 's/^[[:space:]]*(-[[:space:]]*)?Verify:[[:space:]]*//')"
+    verify_cmd="$(normalize_path "$verify_cmd")"
   fi
 
   if [ "$has_read" = "false" ]; then
@@ -265,8 +317,8 @@ validate_single_contract() {
   fi
 
   # Optional Role check
-  if echo "$content" | grep -qE '^[[:space:]]*(-[[:space:]]*)?Role:'; then
-    role="$(echo "$content" | grep -E '^[[:space:]]*(-[[:space:]]*)?Role:' | head -n1 | sed -E 's/^[[:space:]]*(-[[:space:]]*)?Role:[[:space:]]*//')"
+  if echo "$content" | tr -d '`' | grep -qE '^[[:space:]]*(-[[:space:]]*)?Role:'; then
+    role="$(echo "$content" | tr -d '`' | grep -E '^[[:space:]]*(-[[:space:]]*)?Role:' | head -n1 | sed -E 's/^[[:space:]]*(-[[:space:]]*)?Role:[[:space:]]*//')"
     role="$(normalize_path "$role")"
     case "$role" in
       Worker|Reviewer|Lead|Orchestrator|Sentinel) ;;
@@ -278,13 +330,26 @@ validate_single_contract() {
   fi
 
   # Optional Isolation check
-  if echo "$content" | grep -qE '^[[:space:]]*(-[[:space:]]*)?Isolation:'; then
-    isolation="$(echo "$content" | grep -E '^[[:space:]]*(-[[:space:]]*)?Isolation:' | head -n1 | sed -E 's/^[[:space:]]*(-[[:space:]]*)?Isolation:[[:space:]]*//')"
+  if echo "$content" | tr -d '`' | grep -qE '^[[:space:]]*(-[[:space:]]*)?Isolation:'; then
+    isolation="$(echo "$content" | tr -d '`' | grep -E '^[[:space:]]*(-[[:space:]]*)?Isolation:' | head -n1 | sed -E 's/^[[:space:]]*(-[[:space:]]*)?Isolation:[[:space:]]*//')"
     isolation="$(normalize_path "$isolation")"
     case "$isolation" in
       worktree|branch|inherit) ;;
       *)
         log_error "Invalid 'Isolation:' '$isolation'. Must be one of: worktree, branch, inherit"
+        errors=$((errors + 1))
+        ;;
+    esac
+  fi
+
+  # Optional Type check
+  if echo "$content" | tr -d '`' | grep -qE '^[[:space:]]*(-[[:space:]]*)?Type:'; then
+    task_type="$(echo "$content" | tr -d '`' | grep -E '^[[:space:]]*(-[[:space:]]*)?Type:' | head -n1 | sed -E 's/^[[:space:]]*(-[[:space:]]*)?Type:[[:space:]]*//')"
+    task_type="$(normalize_path "$task_type")"
+    case "$task_type" in
+      code|browser-qa|mobile-qa|preview-mockup) ;;
+      *)
+        log_error "Invalid 'Type:' '$task_type'. Must be one of: code, browser-qa, mobile-qa, preview-mockup"
         errors=$((errors + 1))
         ;;
     esac
@@ -299,13 +364,13 @@ validate_single_contract() {
 }
 
 # ------------------------------------------------------------------------------
-# Task File & Parallel Wave Validation
+# Task File, Parallel Wave & Sequential Batch Validation
 # ------------------------------------------------------------------------------
 
-# Parses tasks from a markdown file, validating micro-contracts and wave disjointness
+# Parses tasks from a markdown file, validating micro-contracts, wave disjointness, and sequential batches
 validate_task_file() {
   local task_file="${1:-}"
-  local check_waves_only="${2:-false}"
+  local mode="${2:-all}" # all | waves | batches
 
   if [ -z "$task_file" ] || [ ! -f "$task_file" ]; then
     log_error "Task file not found: $task_file"
@@ -318,11 +383,16 @@ validate_task_file() {
   local validated_contracts=0
   local errors=0
 
-  # Data storage for waves: map wave_id -> list of "task_id:path"
+  # Data storage for waves: list of "wave_id|task_id|path"
   local wave_entries=()
+
+  # Data storage for batches: list of "batch_id|task_id|task_type|layer"
+  local batch_entries=()
 
   local current_task=""
   local current_wave=""
+  local current_batch=""
+  local current_type="code"
   local in_read=false
   local in_paths=false
   local current_read=()
@@ -333,9 +403,15 @@ validate_task_file() {
     if [ -n "$current_task" ]; then
       total_tasks=$((total_tasks + 1))
 
-      # If task had micro-contract fields or was marked parallel/approved
-      if [ ${#current_paths[@]} -gt 0 ] || [ -n "$current_verify" ] || [ -n "$current_wave" ]; then
-        if [ "$check_waves_only" = "false" ]; then
+      # Cannot combine [PARALLEL: Wx] and [BATCH: Bx] on the same task
+      if [ -n "$current_wave" ] && [ -n "$current_batch" ]; then
+        log_error "Task $current_task cannot declare both [PARALLEL: $current_wave] and [BATCH: $current_batch]"
+        errors=$((errors + 1))
+      fi
+
+      # If task had micro-contract fields or was marked parallel/batch/approved
+      if [ ${#current_paths[@]} -gt 0 ] || [ -n "$current_verify" ] || [ -n "$current_wave" ] || [ -n "$current_batch" ]; then
+        if [ "$mode" = "all" ]; then
           local task_errs=0
           if [ ${#current_read[@]} -eq 0 ]; then
             log_error "Task $current_task missing or empty 'Read:' key"
@@ -349,6 +425,13 @@ validate_task_file() {
             log_error "Task $current_task missing or empty 'Verify:' key"
             task_errs=$((task_errs + 1))
           fi
+          case "$current_type" in
+            code|browser-qa|mobile-qa|preview-mockup) ;;
+            *)
+              log_error "Task $current_task has invalid 'Type:' '$current_type' (allowed: code, browser-qa, mobile-qa, preview-mockup)"
+              task_errs=$((task_errs + 1))
+              ;;
+          esac
           if [ $task_errs -eq 0 ]; then
             validated_contracts=$((validated_contracts + 1))
           else
@@ -362,11 +445,20 @@ validate_task_file() {
             wave_entries+=("${current_wave}|${current_task}|${p}")
           done
         fi
+
+        # Register task for sequential batch verification
+        if [ -n "$current_batch" ]; then
+          local task_layer
+          task_layer="$(classify_task_layer "$current_type" "${current_paths[@]}")"
+          batch_entries+=("${current_batch}|${current_task}|${current_type}|${task_layer}")
+        fi
       fi
     fi
 
     current_task=""
     current_wave=""
+    current_batch=""
+    current_type="code"
     in_read=false
     in_paths=false
     current_read=()
@@ -380,34 +472,46 @@ validate_task_file() {
       continue
     fi
 
-    # Check for new task declaration: e.g. [01.1] or Task [01.1]
-    if [[ "$line" =~ \[[0-9]{2}\.[0-9]+(\.[0-9]+)?\] ]]; then
-      local matched_task="${BASH_REMATCH[0]}"
+    local clean_line="${line//\`/}"
+
+    # Check for new task declaration only on task header lines (not prose lines like Dependencies: or Scope:)
+    # Matches: "- **Task:** [01.1]", "- [ ] **[01.1]**", "### Task [01.1]", "Task: [01.1]"
+    if [[ "$clean_line" =~ ^[[:space:]]*([-*][[:space:]]+(\[[[:space:]xX]\][[:space:]]+)?(\*\*)?(Task:?(\*\*)?[[:space:]]*)?|###+[[:space:]]*(Task[[:space:]]*)?|(Task:[[:space:]]*))(\[[0-9]{2}\.[0-9]+(\.[0-9]+)?\]) ]]; then
+      local matched_task="${BASH_REMATCH[8]}"
 
       # Finalize preceding task if any
       finalize_current_task
 
       current_task="$matched_task"
 
-      # Check for parallel wave tag e.g. [PARALLEL: W1]
-      if [[ "$line" =~ \[PARALLEL:[[:space:]]*(W[0-9]+)\] ]]; then
+      # Check for parallel wave tag e.g. [PARALLEL: W1] on the task header line
+      if [[ "$clean_line" =~ \[PARALLEL:[[:space:]]*(W[0-9]+[0-9A-Za-z_-]*)\] ]]; then
         current_wave="${BASH_REMATCH[1]}"
+      fi
+
+      # Check for sequential batch tag e.g. [BATCH: B1] or [BATCH: B1-backend] on the task header line
+      if [[ "$clean_line" =~ \[BATCH:[[:space:]]*(B[0-9]+[0-9A-Za-z_-]*)\] ]]; then
+        current_batch="${BASH_REMATCH[1]}"
       fi
       continue
     fi
 
     # Inside a task block
     if [ -n "$current_task" ]; then
-      # Check wave tag on secondary lines
-      if [ -z "$current_wave" ] && [[ "$line" =~ \[PARALLEL:[[:space:]]*(W[0-9]+)\] ]]; then
-        current_wave="${BASH_REMATCH[1]}"
+      # Check key Type:
+      if [[ "$clean_line" =~ ^[[:space:]]*(-[[:space:]]*)?Type: ]]; then
+        in_read=false
+        in_paths=false
+        local raw_type="${clean_line#*Type:}"
+        current_type="$(normalize_path "$raw_type")"
+        continue
       fi
 
       # Check key Read:
-      if [[ "$line" =~ ^[[:space:]]*(-[[:space:]]*)?Read: ]]; then
+      if [[ "$clean_line" =~ ^[[:space:]]*(-[[:space:]]*)?Read: ]]; then
         in_read=true
         in_paths=false
-        local inline="${line#*Read:}"
+        local inline="${clean_line#*Read:}"
         inline="$(normalize_path "$inline")"
         if [ -n "$inline" ] && [ "$inline" != "-" ]; then
           IFS=',' read -ra items <<< "$inline"
@@ -420,10 +524,10 @@ validate_task_file() {
       fi
 
       # Check key Paths:
-      if [[ "$line" =~ ^[[:space:]]*(-[[:space:]]*)?Paths: ]]; then
+      if [[ "$clean_line" =~ ^[[:space:]]*(-[[:space:]]*)?Paths: ]]; then
         in_read=false
         in_paths=true
-        local inline="${line#*Paths:}"
+        local inline="${clean_line#*Paths:}"
         inline="$(normalize_path "$inline")"
         if [ -n "$inline" ] && [ "$inline" != "-" ]; then
           IFS=',' read -ra items <<< "$inline"
@@ -436,40 +540,40 @@ validate_task_file() {
       fi
 
       # Check key Verify:
-      if [[ "$line" =~ ^[[:space:]]*(-[[:space:]]*)?Verify: ]]; then
+      if [[ "$clean_line" =~ ^[[:space:]]*(-[[:space:]]*)?Verify: ]]; then
         in_read=false
         in_paths=false
-        current_verify="${line#*Verify:}"
-        current_verify="$(normalize_path "$current_verify")"
+        local raw_verify="${clean_line#*Verify:}"
+        current_verify="$(normalize_path "$raw_verify")"
         continue
       fi
 
       # List items under Read:
       if [ "$in_read" = "true" ]; then
-        if [[ "$line" =~ ^[[:space:]]*-[[:space:]]+(.+) ]]; then
+        if [[ "$clean_line" =~ ^[[:space:]]*-[[:space:]]+(.+) ]]; then
           local item="${BASH_REMATCH[1]}"
           item="$(normalize_path "$item")"
           [ -n "$item" ] && current_read+=("$item")
           continue
-        elif [[ "$line" =~ ^[[:space:]]*[A-Za-z]+: ]]; then
+        elif [[ "$clean_line" =~ ^[[:space:]]*(-[[:space:]]*)?[A-Za-z]+: ]]; then
           in_read=false
         fi
       fi
 
       # List items under Paths:
       if [ "$in_paths" = "true" ]; then
-        if [[ "$line" =~ ^[[:space:]]*-[[:space:]]+(.+) ]]; then
+        if [[ "$clean_line" =~ ^[[:space:]]*-[[:space:]]+(.+) ]]; then
           local item="${BASH_REMATCH[1]}"
           item="$(normalize_path "$item")"
           [ -n "$item" ] && current_paths+=("$item")
           continue
-        elif [[ "$line" =~ ^[[:space:]]*[A-Za-z]+: ]]; then
+        elif [[ "$clean_line" =~ ^[[:space:]]*(-[[:space:]]*)?[A-Za-z]+: ]]; then
           in_paths=false
         fi
       fi
 
       # End of task block detection: horizontal rule or new heading
-      if [[ "$line" =~ ^--- ]] || [[ "$line" =~ ^##[[:space:]] ]]; then
+      if [[ "$clean_line" =~ ^--- ]] || [[ "$clean_line" =~ ^##[[:space:]] ]]; then
         finalize_current_task
       fi
     fi
@@ -478,44 +582,121 @@ validate_task_file() {
   # Finalize trailing task
   finalize_current_task
 
-  # Validate Wave Disjointness
-  log_info "Verifying parallel wave mutual disjointness..."
-  local wave_conflicts=0
+  # 1. Validate Parallel Wave Disjointness
+  if [ "$mode" = "all" ] || [ "$mode" = "waves" ]; then
+    log_info "Verifying parallel wave mutual disjointness..."
+    local wave_conflicts=0
 
-  if [ ${#wave_entries[@]} -gt 0 ]; then
-    local count=${#wave_entries[@]}
-    for (( i=0; i<count; i++ )); do
-      local entry_i="${wave_entries[$i]}"
-      local wave_i task_i path_i
-      IFS='|' read -r wave_i task_i path_i <<< "$entry_i"
+    if [ ${#wave_entries[@]} -gt 0 ]; then
+      local count=${#wave_entries[@]}
+      for (( i=0; i<count; i++ )); do
+        local entry_i="${wave_entries[$i]}"
+        local wave_i task_i path_i
+        IFS='|' read -r wave_i task_i path_i <<< "$entry_i"
 
-      for (( j=i+1; j<count; j++ )); do
-        local entry_j="${wave_entries[$j]}"
-        local wave_j task_j path_j
-        IFS='|' read -r wave_j task_j path_j <<< "$entry_j"
+        for (( j=i+1; j<count; j++ )); do
+          local entry_j="${wave_entries[$j]}"
+          local wave_j task_j path_j
+          IFS='|' read -r wave_j task_j path_j <<< "$entry_j"
 
-        # Check only if in the same wave but belonging to different tasks
-        if [ "$wave_i" = "$wave_j" ] && [ "$task_i" != "$task_j" ]; then
-          if paths_collide "$path_i" "$path_j"; then
-            log_error "Parallel Wave Conflict in [$wave_i]:"
-            echo "   Task $task_i path: '$path_i'" >&2
-            echo "   collides with" >&2
-            echo "   Task $task_j path: '$path_j'" >&2
-            wave_conflicts=$((wave_conflicts + 1))
+          # Check only if in the same wave but belonging to different tasks
+          if [ "$wave_i" = "$wave_j" ] && [ "$task_i" != "$task_j" ]; then
+            if paths_collide "$path_i" "$path_j"; then
+              log_error "Parallel Wave Conflict in [$wave_i]:"
+              echo "   Task $task_i path: '$path_i'" >&2
+              echo "   collides with" >&2
+              echo "   Task $task_j path: '$path_j'" >&2
+              wave_conflicts=$((wave_conflicts + 1))
+            fi
           fi
+        done
+      done
+    fi
+
+    if [ $wave_conflicts -gt 0 ]; then
+      log_error "Found $wave_conflicts parallel wave path collision(s) in $task_file"
+      errors=$((errors + wave_conflicts))
+    else
+      log_success "Parallel wave disjointness verified: zero overlapping mutable paths in identical waves"
+    fi
+  fi
+
+  # 2. Validate Sequential Batches ([BATCH: Bx])
+  if [ "$mode" = "all" ] || [ "$mode" = "batches" ]; then
+    log_info "Verifying sequential batch constraints ([BATCH: Bx])..."
+    local batch_errors=0
+
+    if [ ${#batch_entries[@]} -gt 0 ]; then
+      # Collect unique batch IDs
+      local unique_batches=()
+      while IFS= read -r b_id; do
+        [ -n "$b_id" ] && unique_batches+=("$b_id")
+      done < <(
+        for entry in "${batch_entries[@]}"; do
+          echo "${entry%%|*}"
+        done | sort -u
+      )
+
+      for b_id in "${unique_batches[@]}"; do
+        local b_count=0
+        local has_ui_qa=false
+        local has_backend_code=false
+        local has_frontend_ui=false
+        local first_type=""
+        local type_mismatch=false
+
+        for entry in "${batch_entries[@]}"; do
+          local e_batch e_task e_type e_layer
+          IFS='|' read -r e_batch e_task e_type e_layer <<< "$entry"
+          if [ "$e_batch" = "$b_id" ]; then
+            b_count=$((b_count + 1))
+            if [ -z "$first_type" ]; then
+              first_type="$e_type"
+            elif [ "$first_type" != "$e_type" ]; then
+              type_mismatch=true
+            fi
+
+            case "$e_layer" in
+              ui-qa)
+                has_ui_qa=true
+                ;;
+              frontend-ui)
+                has_frontend_ui=true
+                ;;
+              backend-code)
+                has_backend_code=true
+                ;;
+              mixed-stack)
+                has_frontend_ui=true
+                has_backend_code=true
+                ;;
+            esac
+          fi
+        done
+
+        # Rule 1: Batch size must be between 2 and 4 subtasks inclusive
+        if [ "$b_count" -lt 2 ] || [ "$b_count" -gt 4 ]; then
+          log_error "Sequential Batch Cardinality Violation in [BATCH: $b_id]: contains $b_count subtask(s); must group between 2 and 4 sequential subtasks."
+          batch_errors=$((batch_errors + 1))
+        fi
+
+        # Rule 2: Cannot mix different Type: values (e.g. Type: code + Type: browser-qa) or Backend + Frontend/UI in the same batch
+        if [ "$type_mismatch" = "true" ] || { [ "$has_ui_qa" = "true" ] && [ "$has_backend_code" = "true" ]; } || { [ "$has_frontend_ui" = "true" ] && [ "$has_backend_code" = "true" ]; }; then
+          log_error "Sequential Batch Layer Violation in [BATCH: $b_id]: mixes incompatible architectural layers (e.g. Backend/DB code with Frontend/UI or browser-qa/mobile-qa). Split into separate batches per layer."
+          batch_errors=$((batch_errors + 1))
         fi
       done
-    done
+    fi
+
+    if [ $batch_errors -gt 0 ]; then
+      log_error "Found $batch_errors sequential batch violation(s) in $task_file"
+      errors=$((errors + batch_errors))
+    else
+      log_success "Sequential batches verified: all [BATCH: Bx] groups respect 2-4 cardinality and single-layer boundaries"
+    fi
   fi
 
-  if [ $wave_conflicts -gt 0 ]; then
-    log_error "Found $wave_conflicts parallel wave path collision(s) in $task_file"
-    errors=$((errors + wave_conflicts))
-  else
-    log_success "Parallel wave disjointness verified: zero overlapping mutable paths in identical waves"
-  fi
-
-  if [ "$check_waves_only" = "false" ]; then
+  if [ "$mode" = "all" ]; then
     log_success "Task file validation completed ($validated_contracts micro-contract(s) audited)"
   fi
 
@@ -574,9 +755,10 @@ verify_worktree() {
   local verify_cmd=""
 
   while IFS= read -r line || [ -n "$line" ]; do
-    if [[ "$line" =~ ^[[:space:]]*(-[[:space:]]*)?Paths: ]]; then
+    local clean_line="${line//\`/}"
+    if [[ "$clean_line" =~ ^[[:space:]]*(-[[:space:]]*)?Paths: ]]; then
       in_paths=true
-      local inline="${line#*Paths:}"
+      local inline="${clean_line#*Paths:}"
       inline="$(normalize_path "$inline")"
       if [ -n "$inline" ] && [ "$inline" != "-" ]; then
         IFS=',' read -ra items <<< "$inline"
@@ -588,19 +770,19 @@ verify_worktree() {
       continue
     fi
 
-    if [[ "$line" =~ ^[[:space:]]*(-[[:space:]]*)?Verify: ]]; then
+    if [[ "$clean_line" =~ ^[[:space:]]*(-[[:space:]]*)?Verify: ]]; then
       in_paths=false
-      verify_cmd="${line#*Verify:}"
-      verify_cmd="$(normalize_path "$verify_cmd")"
+      local raw_verify="${clean_line#*Verify:}"
+      verify_cmd="$(normalize_path "$raw_verify")"
       continue
     fi
 
     if [ "$in_paths" = "true" ]; then
-      if [[ "$line" =~ ^[[:space:]]*-[[:space:]]+(.+) ]]; then
+      if [[ "$clean_line" =~ ^[[:space:]]*-[[:space:]]+(.+) ]]; then
         local it="${BASH_REMATCH[1]}"
         it="$(normalize_path "$it")"
         [ -n "$it" ] && whitelist_paths+=("$it")
-      elif [[ "$line" =~ ^[[:space:]]*[A-Za-z]+: ]]; then
+      elif [[ "$clean_line" =~ ^[[:space:]]*(-[[:space:]]*)?[A-Za-z]+: ]]; then
         in_paths=false
       fi
     fi
@@ -865,7 +1047,76 @@ EOF
   run_test_case "Parallel wave directory prefix collision fails" 1 \
     validate_task_file "$test_tmp/tasks_prefix_collision.md"
 
-  # 9. Worktree blast boundary: whitelisted modifications pass
+  # 9. Valid sequential batch ([BATCH: B1]) with 3 overlapping/dependent subtasks in same layer passes
+  cat << 'EOF' > "$test_tmp/batch_valid.md"
+## Active Task
+- [ ] **[08.02.01]** `[APPROVED]` `[BATCH: B1-backend]` Create deal schema & repository
+  - `Type:` `code`
+  - `Read:` `.agent/scratch/specs/08-02.md, prisma/schema.prisma`
+  - `Paths:` `prisma/schema.prisma, src/repos/deal.repo.ts`
+  - `Verify:` `npm test -- src/repos/deal.repo.test.ts`
+
+- [ ] **[08.02.02]** `[APPROVED]` `[BATCH: B1-backend]` Implement deal service
+  - `Type:` `code`
+  - `Read:` `.agent/scratch/specs/08-02.md`
+  - `Paths:` `src/repos/deal.repo.ts, src/services/deal.service.ts`
+  - `Verify:` `npm test -- src/services/deal.service.test.ts`
+
+- [ ] **[08.02.03]** `[APPROVED]` `[BATCH: B1-backend]` Expose REST routes
+  - `Type:` `code`
+  - `Read:` `.agent/scratch/specs/08-02.md`
+  - `Paths:` `src/routes/deals.routes.ts`
+  - `Verify:` `npm test -- src/routes/deals.routes.test.ts`
+EOF
+  run_test_case "Sequential batch with 3 same-layer subtasks and overlapping paths passes" 0 \
+    validate_task_file "$test_tmp/batch_valid.md"
+
+  # 10. Invalid sequential batch with >4 subtasks fails
+  cat << 'EOF' > "$test_tmp/batch_too_large.md"
+## Active Task
+- [ ] **[08.02.01]** `[APPROVED]` `[BATCH: B1]` Step 1
+  - Read: .agent/scratch/specs/08-02.md
+  - Paths: src/a.ts
+  - Verify: npm test
+- [ ] **[08.02.02]** `[APPROVED]` `[BATCH: B1]` Step 2
+  - Read: .agent/scratch/specs/08-02.md
+  - Paths: src/b.ts
+  - Verify: npm test
+- [ ] **[08.02.03]** `[APPROVED]` `[BATCH: B1]` Step 3
+  - Read: .agent/scratch/specs/08-02.md
+  - Paths: src/c.ts
+  - Verify: npm test
+- [ ] **[08.02.04]** `[APPROVED]` `[BATCH: B1]` Step 4
+  - Read: .agent/scratch/specs/08-02.md
+  - Paths: src/d.ts
+  - Verify: npm test
+- [ ] **[08.02.05]** `[APPROVED]` `[BATCH: B1]` Step 5
+  - Read: .agent/scratch/specs/08-02.md
+  - Paths: src/e.ts
+  - Verify: npm test
+EOF
+  run_test_case "Sequential batch exceeding 4 subtasks fails" 1 \
+    validate_task_file "$test_tmp/batch_too_large.md"
+
+  # 11. Invalid sequential batch mixing backend code and browser-qa / UI layer fails
+  cat << 'EOF' > "$test_tmp/batch_mixed_layer.md"
+## Active Task
+- [ ] **[08.02.01]** `[APPROVED]` `[BATCH: B1]` Backend repository
+  - `Type:` `code`
+  - `Read:` `.agent/scratch/specs/08-02.md`
+  - `Paths:` `src/repos/deal.repo.ts`
+  - `Verify:` `npm test`
+
+- [ ] **[08.02.02]** `[APPROVED]` `[BATCH: B1]` Frontend Kanban UI
+  - `Type:` `browser-qa`
+  - `Read:` `.agent/scratch/specs/08-02.md`
+  - `Paths:` `src/pages/DealsKanban.tsx`
+  - `Verify:` `npm run build`
+EOF
+  run_test_case "Sequential batch mixing backend code and browser-qa fails" 1 \
+    validate_task_file "$test_tmp/batch_mixed_layer.md"
+
+  # 12. Worktree blast boundary: whitelisted modifications pass
   local repo_dir="$test_tmp/repo"
   mkdir -p "$repo_dir"
   git -C "$repo_dir" init -q -b main
@@ -894,17 +1145,17 @@ EOF
   run_test_case "Worktree modifying whitelisted file passes" 0 \
     verify_worktree "$wt_dir" "$test_tmp/wt_contract.md" --base-ref HEAD
 
-  # 10. Worktree blast boundary: unauthorized modification fails
+  # 13. Worktree blast boundary: unauthorized modification fails
   echo "unauthorized" > "$wt_dir/unauthorized.txt"
   run_test_case "Worktree modifying file outside Paths whitelist fails" 1 \
     verify_worktree "$wt_dir" "$test_tmp/wt_contract.md" --base-ref HEAD
 
-  # 11. Worktree execution of Verify: command
+  # 14. Worktree execution of Verify: command
   rm -f "$wt_dir/unauthorized.txt"
   run_test_case "Worktree execution of Verify: command passes" 0 \
     verify_worktree "$wt_dir" "$test_tmp/wt_contract.md" --base-ref HEAD --run-verify
 
-  # 12. Worktree execution of failing Verify: command fails
+  # 15. Worktree execution of failing Verify: command fails
   cat << 'EOF' > "$test_tmp/failing_verify_contract.md"
 Role: Worker
 Task: [04.1]
@@ -918,7 +1169,7 @@ EOF
   run_test_case "Worktree execution with failing Verify: command fails" 1 \
     verify_worktree "$wt_dir" "$test_tmp/failing_verify_contract.md" --base-ref HEAD --run-verify
 
-  # 13. Worktree execution with hazardous Verify: command is blocked by security audit
+  # 16. Worktree execution with hazardous Verify: command is blocked by security audit
   cat << 'EOF' > "$test_tmp/hazardous_verify_contract.md"
 Role: Worker
 Task: [04.1]
@@ -932,7 +1183,7 @@ EOF
   run_test_case "Worktree with hazardous Verify: command rejected by security audit" 1 \
     verify_worktree "$wt_dir" "$test_tmp/hazardous_verify_contract.md" --base-ref HEAD --run-verify
 
-  # 14. Worktree git whitespace hygiene failure
+  # 17. Worktree git whitespace hygiene failure
   echo "export const a = 3;   " > "$wt_dir/src/a.ts"
   run_test_case "Worktree with trailing whitespace fails git diff --check" 1 \
     verify_worktree "$wt_dir" "$test_tmp/wt_contract.md" --base-ref HEAD
@@ -940,7 +1191,7 @@ EOF
   # Cleanup worktree
   git -C "$repo_dir" worktree remove --force "$wt_dir" 2>/dev/null || true
 
-  # 15. Audit actual project .agent/TASK.md if present
+  # 18. Audit actual project .agent/TASK.md if present
   local script_dir
   script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
   local hub_root
@@ -974,7 +1225,7 @@ main() {
       ;;
     verify-file)
       shift
-      validate_task_file "${1:-}"
+      validate_task_file "${1:-}" "all"
       ;;
     verify-contract)
       shift
@@ -982,7 +1233,11 @@ main() {
       ;;
     verify-waves)
       shift
-      validate_task_file "${1:-}" true
+      validate_task_file "${1:-}" "waves"
+      ;;
+    verify-batches)
+      shift
+      validate_task_file "${1:-}" "batches"
       ;;
     verify-worktree)
       shift
@@ -999,7 +1254,7 @@ main() {
     *)
       # If first argument is an existing markdown file, treat as verify-file
       if [ -f "$cmd" ] && [[ "$cmd" == *.md ]]; then
-        validate_task_file "$cmd"
+        validate_task_file "$cmd" "all"
       else
         log_error "Unknown command or option: $cmd"
         show_help
