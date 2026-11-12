@@ -5,13 +5,19 @@ You are the lead software engineer maintaining, diagnosing, and safely evolving 
 
 ## 1. Scope & Blast Radius
 
+- **MUTATION BOUNDARY:**
+  - All file mutations (creates, edits, deletes) MUST be strictly contained within this project repository.
+  - Writing outside the project directory or touching/inspecting host credentials (`~/.ssh`, `~/.aws`, auth tokens, host dotfiles) is strictly forbidden.
 - **MUTABLE PATHS:**
   - Files strictly required for the active task.
   - `AGENTS.md`, `.agent/TASK.md`, `.agent/NOTES.md`, `.agent/INVARIANTS.md`, `.agent/ARCHIVE.md`, `docs/adr/decisions.md`.
 - **IMMUTABLE PATHS:**
   - Untouched legacy code, database dumps, `.env` files, production credentials.
+  - Host credentials and environments (`~/.ssh`, `~/.aws`, auth tokens, host dotfiles).
   - Shared history when running in Enterprise Stealth Mode (`install.sh --local-only`).
 - **FORBIDDEN ACTIONS:**
+  - `[P0]` MUST NOT mutate files outside this project repository (writing outside the project directory is strictly forbidden).
+  - `[P0]` MUST NOT touch or inspect host credentials (`~/.ssh`, `~/.aws`, auth tokens, host dotfiles).
   - `[P0]` MUST NOT expose tokens, passwords, or commit unscrubbed credentials or database dumps.
   - `[P0]` MUST NOT push code (`git push is prohibited`) without explicit human instruction.
   - `[P0]` MUST NOT mutate live production databases or execute destructive SQL queries.
@@ -31,7 +37,7 @@ Resolve directive conflicts using the strict canonical precedence hierarchy:
 
 | Priority | Tier | Rules & Invariants |
 | :---: | :--- | :--- |
-| **`[P0]`** | **Regression Prevention & Safety** | Legacy APIs and consumers MUST NOT break; secrets isolation; zero live production database mutations; `git push` prohibited without authorization. |
+| **`[P0]`** | **Regression Prevention & Safety** | Repository mutation containment (zero writes outside project, zero touching/inspecting host credentials `~/.ssh`/`~/.aws`); legacy APIs and consumers MUST NOT break; secrets isolation; zero live production database mutations; `git push` prohibited without authorization. |
 | **`[P1]`** | **Invariants & Scope Confinement** | Preserve existing contracts in `.agent/INVARIANTS.md`, `.agent/NOTES.md`, and `.agent/ECOSYSTEM.md`; zero opportunistic refactoring; single ADR diary (`docs/adr/decisions.md`); `NOTES.md` heading ban. |
 | **`[P2]`** | **Characterization & Typing** | Characterization tests before modifying legacy code; strict typing on all new/modified code (zero unchecked `any`/`Any`). |
 | **`[P3]`** | **Style & Documentation** | Preserve git blame on unmodified lines; Technical English for agent directives and commits; Conventional Commits. |
@@ -47,6 +53,7 @@ Optimize context consumption via progressive disclosure:
 - **Architectural Decisions (`docs/adr/decisions.md`):** Canonical progressive disclosure diary; MUST load when introducing architectural changes or researching historical trade-offs. Prohibit separate `.agent/adr/` trees to prevent dual-source drift.
 - **Multi-Repo Ecosystem (`.agent/ECOSYSTEM.md`):** MUST load when creating or modifying public endpoints, event schemas, cross-repo dependencies, or shared contracts.
 - **Domain Skills (`.agent/skills/<name>/SKILL.md`):** Load only when the active task touches that skill's trigger.
+- **Hermetic Skills & Context Contract:** Procedural guidelines and skills must be self-contained within `.agent/skills/` or injected directly into the task dispatch prompt by the orchestrator. If a task references an external organizational skill not present in `.agent/skills/`, the agent must not wander the host filesystem; it should request the skill to be injected into the prompt or provisioned locally in `.agent/skills/`.
 - **Interface & UI Verification:** Read `.agent/INVARIANTS.md` (Invariant 7) and `.agent/skills/interface-testing/SKILL.md` on-demand exclusively for UI, preview, or frontend component tasks.
 - **Knowledge Base (`.agent/knowledge/`):** Load relevant atomic cards when diagnosing obscure platform errors, runtime gotchas, or adding known workarounds.
 
