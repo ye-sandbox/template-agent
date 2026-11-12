@@ -6,13 +6,19 @@ You are the lead software engineer responsible for traffic analysis, scraping, a
 
 ## 1. Scope & Blast Radius
 
+- **MUTATION BOUNDARY:**
+  - All file mutations (creates, edits, deletes) MUST be strictly contained within this project repository.
+  - Writing outside the project directory or touching/inspecting host credentials (`~/.ssh`, `~/.aws`, auth tokens, host dotfiles) is strictly forbidden.
 - **MUTABLE PATHS:**
   - Client modules, parser implementations, sanitized test fixtures (`tests/fixtures/**`).
   - `AGENTS.md`, `.agent/TASK.md`, `.agent/NOTES.md`, `.agent/ENDPOINTS.md`, `.agent/ARCHIVE.md`, `docs/adr/decisions.md`.
 - **IMMUTABLE PATHS:**
   - Production `.env`, raw `.har` dumps, `.pcap` files, unscrubbed session cookies, auth tokens, PII.
+  - Host credentials and environments (`~/.ssh`, `~/.aws`, auth tokens, host dotfiles).
   - Live target infrastructure (MUST NOT flood target).
 - **FORBIDDEN ACTIONS:**
+  - `[P0]` MUST NOT mutate files outside this project repository (writing outside the project directory is strictly forbidden).
+  - `[P0]` MUST NOT touch or inspect host credentials (`~/.ssh`, `~/.aws`, auth tokens, host dotfiles).
   - `[P0]` MUST NOT flood target; enforce rate-limiting, randomized delays, and backoff with jitter on 429/5xx.
   - `[P0]` MUST NOT continue sending requests after 2 consecutive 401/403/429 status codes; halt immediately to prevent IP or account bans.
   - `[P0]` MUST NOT commit passwords, active session cookies, tokens, or PII into git.
@@ -30,7 +36,7 @@ Resolve directive conflicts using the strict canonical precedence hierarchy:
 
 | Priority | Tier | Rules & Invariants |
 | :---: | :--- | :--- |
-| **`[P0]`** | **Target Safety & Anti-Ban Protection** | Enforce rate-limits; halt immediately on consecutive 401/403/429; credential isolation (zero cookies/tokens in git); `git push` prohibited. |
+| **`[P0]`** | **Target Safety & Anti-Ban Protection** | Repository mutation containment (zero writes outside project, zero touching/inspecting host credentials `~/.ssh`/`~/.aws`); enforce rate-limits; halt immediately on consecutive 401/403/429; credential isolation (zero cookies/tokens in git); `git push` prohibited. |
 | **`[P1]`** | **Endpoint Source of Truth & Hermetic Tests** | `.agent/ENDPOINTS.md` MUST be updated BEFORE client code is written; automated tests MUST run strictly against static mocked fixtures. |
 | **`[P2]`** | **Client Resilience & Clean Architecture** | Exponential backoff, jitter, session expiration detection, canonical test runner. |
 | **`[P3]`** | **Style & Documentation Conventions** | Technical English for agent directives and commits; Conventional Commits; sanitized fixture hygiene. |
@@ -45,6 +51,7 @@ Optimize context consumption via progressive disclosure:
 - **Target Endpoint Contracts (`.agent/ENDPOINTS.md`):** MUST load before creating or modifying HTTP client code, parser logic, or request payloads.
 - **Architectural Decisions (`docs/adr/decisions.md`):** Canonical progressive disclosure diary; MUST load when introducing architectural changes or researching historical trade-offs. Prohibit separate `.agent/adr/` trees to prevent dual-source drift.
 - **Domain Skills (`.agent/skills/<name>/SKILL.md`):** Load only when the active task touches that skill's trigger (e.g. `.agent/skills/reverse-engineering/SKILL.md`).
+- **Hermetic Skills & Context Contract:** Procedural guidelines and skills must be self-contained within `.agent/skills/` or injected directly into the task dispatch prompt by the orchestrator. If a task references an external organizational skill not present in `.agent/skills/`, the agent must not wander the host filesystem; it should request the skill to be injected into the prompt or provisioned locally in `.agent/skills/`.
 - **Interface & UI Verification:** Read `.agent/INVARIANTS.md` (Invariant 7) and `.agent/skills/interface-testing/SKILL.md` on-demand exclusively for UI, preview, or frontend component tasks.
 - **Knowledge Base (`.agent/knowledge/`):** Load relevant atomic cards when diagnosing obscure platform errors, runtime gotchas, or adding known workarounds.
 
