@@ -4,6 +4,9 @@ Central governance specification for maintaining and evolving the Agent-Driven D
 
 ## 1. Scope & Blast Radius
 
+- **MUTATION BOUNDARY:**
+  - All file mutations (creates, edits, deletes) MUST be strictly contained within this project repository.
+  - Writing outside the project directory or touching/inspecting host credentials (`~/.ssh`, `~/.aws`, auth tokens, host dotfiles) is strictly forbidden.
 - **MUTABLE PATHS:**
   - `AGENTS.md`
   - `.agent/TASK.md`, `.agent/NOTES.md`, `.agent/ARCHIVE.md`, `.agent/INVARIANTS.md`
@@ -13,7 +16,10 @@ Central governance specification for maintaining and evolving the Agent-Driven D
 - **IMMUTABLE PATHS:**
   - Specialized starter files on `main` (starter filetrees belong exclusively to their respective branches: `greenfield`, `brownfield`, `blackbox`, `infra`, `baremetal`).
   - `.env` files, credentials, private tokens.
+  - Host credentials and environments (`~/.ssh`, `~/.aws`, auth tokens, host dotfiles).
 - **FORBIDDEN ACTIONS:**
+  - `[P0]` MUST NOT mutate files outside this project repository (writing outside the project directory is strictly forbidden).
+  - `[P0]` MUST NOT touch or inspect host credentials (`~/.ssh`, `~/.aws`, auth tokens, host dotfiles).
   - `[P0]` MUST NOT execute `git merge` between specialized branches (`main`, `greenfield`, `brownfield`, `blackbox`, `infra`, `baremetal`).
   - `[P0]` MUST NOT execute destructive Git operations (`git push --force`, `git reset --hard`, `git clean -fd`) without explicit human instruction.
   - `[P0]` MUST NOT commit unscrubbed credentials, API keys, or private tokens.
@@ -29,7 +35,7 @@ Resolve directive conflicts using the strict canonical precedence hierarchy:
 
 | Priority | Tier | Rules & Invariants |
 | :---: | :--- | :--- |
-| **`[P0]`** | **Security & Blast Radius** | Branch isolation (zero cross-branch merges), destructive git command ban, credential scrubbing. |
+| **`[P0]`** | **Security & Blast Radius** | Repository mutation containment (zero writes outside project, zero touching/inspecting host credentials `~/.ssh`/`~/.aws`), branch isolation (zero cross-branch merges), destructive git command ban, credential scrubbing. |
 | **`[P1]`** | **Invariants & Automated Contracts** | Single ADR diary (`docs/adr/decisions.md`), `NOTES.md` heading ban, automated CI checks, falsifiable DoD assertions. |
 | **`[P2]`** | **Execution & Test Harness** | Plan-First protocol, task numbering format (`[XX.Y]`), Conventional Commits, single active task in `RUNNING`, adaptive UI verification protocol (T3 preview/device MCPs vs. headless builds/tests). |
 | **`[P3]`** | **Style & Documentation** | Markdown link validity, Technical English for agent contracts, localized human READMEs. |
@@ -61,7 +67,7 @@ Optimize context consumption via progressive disclosure:
   - Interface & UI verification: Read `.agent/skills/interface-testing/SKILL.md` (loaded on-demand exclusively for UI, preview, or frontend component tasks).
   - System invariants & rigid legacy contracts: Read `.agent/INVARIANTS.md`.
 - **Branch-Specific Context:** Checkout the target branch BEFORE inspecting its root files.
-- **Transversal Skills:** Reference external organizational playbooks (`agent-skills`) ONLY when tasks require UI porting, QA audit, task-queue wave execution, or host-level orchestration.
+- **Hermetic Skills & Context Contract:** Procedural guidelines and skills must be self-contained within `.agent/skills/` or injected directly into the task dispatch prompt by the orchestrator. If a task references an external organizational skill not present in `.agent/skills/`, the agent must not wander the host filesystem; it should request the skill to be injected into the prompt or provisioned locally in `.agent/skills/`.
 
 ## 5. Mandatory Execution Protocol
 
@@ -218,4 +224,15 @@ preview_open("http://localhost:3000") // when running outside T3 Code, during he
 preview_status -> preview_open -> preview_snapshot -> preview_act -> preview_close
 # Outside T3 Code (headless CLI runtime):
 npm run build && npm test (or headless playwright/vitest without opening graphical display)
+```
+
+### Blast Radius & External Skills
+```markdown
+// BAD: Wandering host filesystem to find external skills or inspecting host dotfiles/credentials
+cat ~/.config/agent-skills/python-dev/SKILL.md
+view_file("~/.bashrc")
+view_file("~/.ssh/id_rsa")
+
+// GOOD: Requesting skill injection into task prompt or provisioning inside .agent/skills/
+"Skill 'python-dev' is required but not present in .agent/skills/. Please inject it into the prompt or provision it locally under .agent/skills/."
 ```

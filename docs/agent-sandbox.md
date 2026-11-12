@@ -20,7 +20,7 @@ Autonomous coding subagents execute shell commands, compile source code, downloa
 1. **Host Mutation & State Drift:** Uncontrolled modification of `/etc`, system binaries, global caches, or home directory dotfiles (`~/.bashrc`, `~/.ssh`, `~/.aws`).
 2. **Credential Exfiltration & Network Leaks:** Unauthorized outbound HTTP/DNS requests leaking API keys, private repository tokens, or environment secrets.
 3. **Unbounded Resource Exhaustion:** Fork bombs, unconstrained memory consumption, or lingering background daemon processes starving host resources.
-4. **Workspace Escape:** Reading or overwriting files outside the delegated task scope (`Paths:` whitelist).
+4. **Workspace Escape:** Mutating files outside the delegated task scope (`Paths:` whitelist) or writing outside the project repository boundary.
 
 To counter these risks while preserving high developer velocity, this specification defines a **Dual-Tier Hermetic Sandbox Architecture**:
 - **Tier 1: Bubblewrap (`bwrap`) Profile:** Unprivileged user namespace virtualization for native Linux hosts and lightweight CI runners (zero daemon, sub-millisecond startup, no root privileges).

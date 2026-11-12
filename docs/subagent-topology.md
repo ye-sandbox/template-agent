@@ -60,8 +60,8 @@ Verify: <deterministic shell command, e.g. npm test or ./tests/smoke.sh>
   - `worktree`: Dedicated isolated Git worktree branched from current HEAD (`git worktree add`).
   - `branch`: Dedicated branch checkout.
   - `inherit`: In-tree shared execution (strictly prohibited for parallel write operations on overlapping files).
-- **`Read`**: Explicit, minimal file list loaded for progressive disclosure. Workers MUST NOT load full repo history.
-- **`Paths`**: Strict whitelist of files or directories the worker is permitted to mutate. Edits outside this list are treated as DoD violations.
+- **`Read`**: Explicit, minimal file list loaded for progressive disclosure. Workers MUST NOT load full repo history. Procedural guidelines and skills must be self-contained within `.agent/skills/` or injected directly into the task dispatch prompt by the orchestrator.
+- **`Paths`**: Strict whitelist of files or directories the worker is permitted to mutate. Edits outside this list are treated as DoD violations. All file mutations MUST be strictly contained within the project repository.
 - **`Verify`**: Single command asserting that the change works and meets acceptance criteria.
 
 ---
