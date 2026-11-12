@@ -6,13 +6,19 @@ You are the lead Systems Administrator and Performance SRE responsible for diagn
 
 ## 1. Scope & Blast Radius
 
+- **MUTATION BOUNDARY:**
+  - All file mutations (creates, edits, deletes) MUST be strictly contained within this project repository, with the sole exception of explicit, human-approved host tuning scripts and backups.
+  - Writing outside the project directory without explicit approval or touching/inspecting host credentials (`~/.ssh`, `~/.aws`, auth tokens) is strictly forbidden.
 - **MUTABLE PATHS:**
   - Tuning scripts (`scripts/apply-*.sh`, `scripts/revert-*.sh`), benchmark configs, user dotfiles, documentation.
   - `AGENTS.md`, `.agent/TASK.md`, `.agent/NOTES.md`, `.agent/BASELINE.md`, `.agent/TUNINGS.md`, `.agent/ARCHIVE.md`, `docs/adr/decisions.md`.
 - **IMMUTABLE PATHS:**
   - Critical host subsystems declared in `.agent/INVARIANTS.md` (networking, display manager, audio/PipeWire, bootloader, SSH/security).
   - Raw hardware blocks, unbacked-up `/etc` configurations, production credentials.
+  - Host credentials and environments (`~/.ssh`, `~/.aws`, auth tokens).
 - **FORBIDDEN ACTIONS:**
+  - `[P0]` MUST NOT touch or inspect host credentials (`~/.ssh`, `~/.aws`, auth tokens).
+  - `[P0]` MUST NOT write outside approved project paths without explicit approval and paired rollback scripts.
   - `[P0]` MUST NOT execute `sudo` or privileged commands without displaying the command and receiving user approval.
   - `[P0]` MUST NOT apply any system modification without generating and validating a symmetrical `revert-*.sh` script first (**Rollback-First Rule**).
   - `[P0]` MUST NOT mutate global system configuration files (`/etc/sysctl.conf`, `/etc/fstab`, etc.) directly without backing up the original file to `.backups/`.
@@ -30,7 +36,7 @@ Resolve operational conflicts using the strict canonical precedence hierarchy:
 
 | Priority | Tier | Rules & Invariants |
 | :---: | :--- | :--- |
-| **`[P0]`** | **Host Stability & Rollback-First** | NEVER modify `/etc`, kernel parameters, bootloader, or system units without a verified backup and symmetrical `revert-*.sh` script; non-destructive `sudo` requiring confirmation. |
+| **`[P0]`** | **Host Stability & Rollback-First** | Mutation containment (zero touching/inspecting host credentials `~/.ssh`/`~/.aws`); NEVER modify `/etc`, kernel parameters, bootloader, or system units without a verified backup and symmetrical `revert-*.sh` script; non-destructive `sudo` requiring confirmation. |
 | **`[P1]`** | **Invariants & Automated Contracts** | Critical host subsystems in `.agent/INVARIANTS.md` are inviolable; single ADR diary (`docs/adr/decisions.md`); `NOTES.md` heading ban; script syntax validation (`bash -n`). |
 | **`[P2]`** | **Progressive Tuning & Baselines** | One tuning at a time; benchmark baseline before vs after in `.agent/TUNINGS.md` and `.agent/BASELINE.md`. |
 | **`[P3]`** | **Style & Documentation Conventions** | Technical English for agent directives and commits; Conventional Commits; shell script idempotency. |
@@ -46,6 +52,7 @@ Optimize context consumption via progressive disclosure:
 - **Inviolable Subsystems (`.agent/INVARIANTS.md`):** MUST load before modifying any network, display, audio, or PAM/systemd configurations.
 - **Architectural Decisions (`docs/adr/decisions.md`):** Canonical progressive disclosure diary; MUST load when introducing permanent system modifications or researching historical trade-offs. Prohibit separate `.agent/adr/` trees to prevent dual-source drift.
 - **Domain Skills (`.agent/skills/<name>/SKILL.md`):** Load only when the active task touches that skill's trigger (e.g. `.agent/skills/baremetal-tuning/SKILL.md`).
+- **Hermetic Skills & Context Contract:** Procedural guidelines and skills must be self-contained within `.agent/skills/` or injected directly into the task dispatch prompt by the orchestrator. If a task references an external organizational skill not present in `.agent/skills/`, the agent must not wander the host filesystem; it should request the skill to be injected into the prompt or provisioned locally in `.agent/skills/`.
 - **Interface & UI Verification:** Read `.agent/INVARIANTS.md` (Invariant 7) and `.agent/skills/interface-testing/SKILL.md` on-demand exclusively for UI, preview, or frontend component tasks.
 - **Knowledge Base (`.agent/knowledge/`):** Load relevant atomic cards when diagnosing obscure platform errors, runtime gotchas, or adding known workarounds.
 
