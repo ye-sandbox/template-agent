@@ -31,7 +31,8 @@
 
 ## 3. Multi-Agent & Worktree Isolation Invariants
 
-- **Disjoint Micro-Contracts:** Subagents operating in parallel waves (`[PARALLEL: Wx]`) must operate on mutually disjoint mutable paths (`Paths:`).
+- **Disjoint Micro-Contracts (`[PARALLEL: Wx]`):** Subagents operating in parallel waves (`[PARALLEL: Wx]`) must operate on mutually disjoint mutable paths (`Paths:`).
+- **Sequential Sub-Task Batching (`[BATCH: Bx]`):** Sequential atomic subtasks (`ZZ`) within the same feature (`XX.YY`) may be grouped into batches of **2 to 4 subtasks** ONLY when they belong to the same architectural layer (`Type:`). Mixing Backend (`Type: code`) with Frontend/UI (`Type: browser-qa` / `mobile-qa` / `preview-mockup`) in a single batch is prohibited. Shared feature contracts live in untracked `.agent/scratch/specs/XX-YY.md` and are copied into isolated worktrees by `bootstrap-worktree.sh`.
 - **Fast-Link vs. Isolated-Install:** Worktree provisioning must use Fast-Link (symlink `node_modules/` or `.venv/`) when manifest files are unaltered, and Isolated-Install when dependencies change.
 - **Hermetic Lifecycle Cleanup:** Git worktrees and scratch directories (`.agent/scratch/`) must be cleanly deprovisioned post-integration without dangling locks.
 

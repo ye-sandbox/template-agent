@@ -105,6 +105,25 @@ For tasks marked `[PARALLEL: Wx]`:
    - Detailed specification and container/Bubblewrap profiles: [`docs/agent-sandbox.md`](agent-sandbox.md).
    - Worker subagents execute inside unprivileged sandboxes with read-only system binaries, ephemeral `tmpfs /tmp`, and air-gapped network namespaces to prevent host pollution and credential exfiltration.
 
+### 5.1 Sequential Sub-Task Batching & Prompt Cache Hygiene (`[BATCH: Bx]`)
+
+When a feature `[XX.YY]` decomposes into atomic sequential subtasks (`[XX.YY.01]` $\rightarrow$ `[XX.YY.02]` $\rightarrow$ `[XX.YY.03]`) that share types, schemas, or services within the same architectural layer, spawning a fresh worker or chat per subtask wastes prompt cache prefixes (90% read discount) and repeatedly pays repository discovery costs.
+
+1. **Batch Grouping (`[BATCH: Bx]`):**
+   - Group **2 to 4 sequential subtasks** belonging to the **same architectural layer** (`Type: code` for Backend/API/Domain, or `Type: browser-qa` / `mobile-qa` / `preview-mockup` for UI/Frontend).
+   - Unlike `[PARALLEL: Wx]`, subtasks inside the same `[BATCH: Bx]` MAY have overlapping or dependent `Paths:` (e.g., `ZZ.01` creates the repository, `ZZ.02` consumes it in a service, `ZZ.03` exposes the route).
+   - **Static Layer Boundary:** Mixing Backend/DB code with Frontend/UI or `browser-qa`/`mobile-qa` inside the same `[BATCH: Bx]` is strictly prohibited and rejected at lint time by `.github/scripts/verify-microcontract.sh verify-batches`.
+
+2. **Ephemeral Feature Spec Anchor (`.agent/scratch/specs/XX-YY.md`):**
+   - During `[XX.YY]` planning, author a concise (<150 lines) untracked feature specification at `.agent/scratch/specs/XX-YY.md` containing shared types/contracts, exact file paths by layer, and local business invariants.
+   - Reference `.agent/scratch/specs/XX-YY.md` in the `Read:` list of each `[XX.YY.ZZ]` subtask.
+   - `.github/scripts/bootstrap-worktree.sh` automatically copies `.agent/scratch/specs/` from the primary repository root into isolated worktrees so delegated workers immediately access the anchor without polluting `git log`.
+
+3. **Continuous Warm-Cache Execution & Atomic Commits:**
+   - **Interactive Mode (`proceed`):** The agent executes `ZZ.01` $\rightarrow$ runs `Verify:` $\rightarrow$ creates an atomic `git commit` $\rightarrow$ immediately proceeds to `ZZ.02` and `ZZ.03` in the same session, preserving 100% of the cached prompt prefix.
+   - **Delegated Worker Mode (`delegate_task`):** The Lead Orchestrator dispatches the entire `[BATCH: Bx]` to a single Worker in one isolated worktree, instructing it to execute each `ZZ` sequentially with its own `Verify:` check and atomic commit.
+   - **Zero Extra Error Counters:** Workers do NOT track separate "debug line/error counters" to decide whether to abort a batch mid-flight (avoiding goal displacement during debugging). Execution relies exclusively on the canonical Fail-Stop circuit breaker (Section 7).
+
 ---
 
 ## 6. Reviewer Quality Gate & Falsifiable Report

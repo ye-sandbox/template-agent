@@ -66,6 +66,7 @@ Optimize context consumption via progressive disclosure:
   - Platform/runtime gotchas: Read `.agent/knowledge/<card>.md`.
   - Interface & UI verification: Read `.agent/skills/interface-testing/SKILL.md` (loaded on-demand exclusively for UI, preview, or frontend component tasks).
   - System invariants & rigid legacy contracts: Read `.agent/INVARIANTS.md`.
+  - Ephemeral feature specifications (Batch Context Anchor): Read `.agent/scratch/specs/<XX-YY>.md` when executing sequential sub-task batches (`[BATCH: Bx]`) to reuse feature contracts and file maps without re-scanning the repository.
 - **Branch-Specific Context:** Checkout the target branch BEFORE inspecting its root files.
 - **Hermetic Skills & Context Contract:** Procedural guidelines and skills must be self-contained within `.agent/skills/` or injected directly into the task dispatch prompt by the orchestrator. If a task references an external organizational skill not present in `.agent/skills/`, the agent must not wander the host filesystem; it should request the skill to be injected into the prompt or provisioned locally in `.agent/skills/`.
 
@@ -84,6 +85,7 @@ Read `AGENTS.md`, `.agent/TASK.md`, and `.agent/NOTES.md` before editing files o
   Required for substantive architectural, feature, multi-file, or template changes:
   - **Standard (`READY FOR PLANNING`):** Update `Status` in `.agent/TASK.md` to `PLANNING`, present an action plan detailing affected branches and files, await explicit user approval, then transition `Status` to `RUNNING`.
   - **Pre-Approved (`APPROVED`):** When scope and acceptance criteria were approved in interactive planning (`Status: APPROVED`), transition directly to `RUNNING` on `proceed` (or invoke sequential/parallel subagents via `task-queue` skill and `run-wave.sh` on `proceed queue`). Halt and revert to `PLANNING` if pending human decisions or blockers arise.
+  - **Sequential Sub-Task Batching (`[BATCH: Bx]`):** Group 2 to 4 atomic sequential subtasks (`[XX.YY.ZZ]`) that share the same architectural layer (`Type:`) and feature spec anchor (`.agent/scratch/specs/XX-YY.md`). Execute subtasks in a single warm-cache session or worktree (`ZZ.01` -> `Verify:` -> atomic `git commit` -> `ZZ.02` -> `Verify:` -> atomic `git commit`) without intermediate planning pauses. Never mix Backend (`Type: code`) and Frontend/QA (`Type: browser-qa` / `mobile-qa`) in the same batch. Do not track extra error counters during execution; rely exclusively on the canonical Fail-Stop circuit breaker (Section 6).
 
 ### Step 3: Falsifiable Definition of Done (DoD)
 Tasks MUST NOT be marked complete until all checks pass:
@@ -235,4 +237,16 @@ view_file("~/.ssh/id_rsa")
 
 // GOOD: Requesting skill injection into task prompt or provisioning inside .agent/skills/
 "Skill 'python-dev' is required but not present in .agent/skills/. Please inject it into the prompt or provision it locally under .agent/skills/."
+```
+
+### Sequential Sub-Task Batching (`[BATCH: Bx]`)
+```markdown
+// BAD: Opening 3 separate cold-cache sessions for sequential backend subtasks or mixing Backend + UI in one batch
+[08.02.01] [BATCH: B1] Type: code (prisma/schema.prisma)
+[08.02.02] [BATCH: B1] Type: browser-qa (src/pages/Deals.tsx) // Layer violation!
+
+// GOOD: Grouping 2-4 same-layer subtasks anchored to .agent/scratch/specs/XX-YY.md with per-subtask Verify & commit
+[08.02.01] [APPROVED] [BATCH: B1-backend] Type: code | Read: .agent/scratch/specs/08-02.md | Verify -> git commit
+[08.02.02] [APPROVED] [BATCH: B1-backend] Type: code | Read: .agent/scratch/specs/08-02.md | Verify -> git commit
+[08.02.03] [APPROVED] [BATCH: B1-backend] Type: code | Read: .agent/scratch/specs/08-02.md | Verify -> git commit
 ```

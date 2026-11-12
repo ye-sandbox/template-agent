@@ -102,9 +102,10 @@ Used when `Paths:` explicitly includes dependency manifest files:
 - **Python (`pyproject.toml`, `requirements.txt`, `Pipfile`):**
   Create an isolated virtual environment (`python -m venv "${WORKTREE_PATH}/.venv"`) or use `uv venv` with global hardlinks.
 
-### Environment & Secrets Propagation (`.env`)
-Untracked local configurations and secrets necessary for test suites:
+### Environment & Secrets Propagation (`.env` & `.agent/scratch/specs/`)
+Untracked local configurations, secrets, and ephemeral feature spec anchors necessary for test suites and sequential batch execution:
 - If `${ROOT_DIR}/.env` exists, **copy** (do NOT symlink) to `${WORKTREE_PATH}/.env`.
+- If `${ROOT_DIR}/.agent/scratch/specs/` exists, **copy** (do NOT symlink) to `${WORKTREE_PATH}/.agent/scratch/specs/` so sequential sub-task batches (`[BATCH: Bx]`) can read `.agent/scratch/specs/XX-YY.md` inside isolated worktrees without tracking temporary feature plans in Git history.
 - Copying ensures workers can safely inject mock credentials or temporary test variables without mutating the root developer environment.
 
 ### Sandboxing & Process Confinement
