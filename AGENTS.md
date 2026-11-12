@@ -6,13 +6,19 @@ You are the lead SRE/DevOps engineer responsible for the services in this reposi
 
 ## 1. Scope & Blast Radius
 
+- **MUTATION BOUNDARY:**
+  - All file mutations (creates, edits, deletes) MUST be strictly contained within this project repository.
+  - Writing outside the project directory or touching/inspecting host credentials (`~/.ssh`, `~/.aws`, auth tokens, host dotfiles) is strictly forbidden.
 - **MUTABLE PATHS:**
   - Service definitions (`compose.yaml`, `stacks/**`), configs, scripts, documentation.
   - `AGENTS.md`, `.agent/TASK.md`, `.agent/NOTES.md`, `.agent/SERVICES.md`, `.agent/ARCHIVE.md`, `docs/adr/decisions.md`.
 - **IMMUTABLE PATHS:**
   - Production `.env` files, persisted storage volumes (`volumes/`, `data/`).
+  - Host credentials and environments (`~/.ssh`, `~/.aws`, auth tokens, host dotfiles).
   - Production host network without authorization.
 - **FORBIDDEN ACTIONS:**
+  - `[P0]` MUST NOT mutate files outside this project repository (writing outside the project directory is strictly forbidden).
+  - `[P0]` MUST NOT touch or inspect host credentials (`~/.ssh`, `~/.aws`, auth tokens, host dotfiles).
   - `[P0]` MUST NOT execute data destruction commands: `docker compose down -v`, `docker volume rm`, or `docker volume prune`.
   - `[P0]` MUST NOT hardcode plaintext passwords, API keys, or private tokens in YAML or commit them to git.
   - `[P0]` MUST NOT expose administrative, database, or internal telemetry ports to `0.0.0.0` without authentication or network isolation.
@@ -31,7 +37,7 @@ Resolve operational conflicts using the strict canonical precedence hierarchy:
 
 | Priority | Tier | Rules & Invariants |
 | :---: | :--- | :--- |
-| **`[P0]`** | **Security, Credentials & Blast Radius** | Data loss prevention (`down -v`, `volume rm/prune`); secret isolation per stack; avoiding unauthenticated exposure to `0.0.0.0`. |
+| **`[P0]`** | **Security, Credentials & Blast Radius** | Repository mutation containment (zero writes outside project, zero touching/inspecting host credentials `~/.ssh`/`~/.aws`); data loss prevention (`down -v`, `volume rm/prune`); secret isolation per stack; avoiding unauthenticated exposure to `0.0.0.0`. |
 | **`[P1]`** | **Invariants & Verification** | Explicit `healthcheck` (`/health` or `/healthz`); probe access log suppression; CPU/memory limits; pinned image tags (ban `:latest`); `docker compose config --quiet`. |
 | **`[P2]`** | **Architecture & Topology** | Port collision avoidance; network segregation; catalog synchronization in `.agent/SERVICES.md`, `.agent/ECOSYSTEM.md`, and single ADR diary (`docs/adr/decisions.md`). |
 | **`[P3]`** | **Style & Formatting Conventions** | Technical English for agent directives and commits; Conventional Commits; YAML formatting; documentation frontmatter. |
@@ -47,6 +53,7 @@ Optimize context consumption via progressive disclosure:
 - **Architectural Decisions (`docs/adr/decisions.md`):** Canonical progressive disclosure diary; MUST load when changing network topology, storage strategies, or proxy architecture. Prohibit separate `.agent/adr/` trees to prevent dual-source drift.
 - **Multi-Repo Ecosystem (`.agent/ECOSYSTEM.md`):** MUST load when creating or modifying public endpoints, event schemas, cross-repo dependencies, or shared contracts.
 - **Domain Skills (`.agent/skills/<name>/SKILL.md`):** Load only when the active task touches that skill's trigger (e.g. `.agent/skills/compose-service/SKILL.md`).
+- **Hermetic Skills & Context Contract:** Procedural guidelines and skills must be self-contained within `.agent/skills/` or injected directly into the task dispatch prompt by the orchestrator. If a task references an external organizational skill not present in `.agent/skills/`, the agent must not wander the host filesystem; it should request the skill to be injected into the prompt or provisioned locally in `.agent/skills/`.
 - **Interface & UI Verification:** Read `.agent/INVARIANTS.md` (Invariant 7) and `.agent/skills/interface-testing/SKILL.md` on-demand exclusively for UI, preview, or frontend component tasks.
 - **Knowledge Base (`.agent/knowledge/`):** Load relevant atomic cards when diagnosing obscure platform errors, runtime gotchas, or adding known workarounds.
 
