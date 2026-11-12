@@ -10,10 +10,10 @@
 
 ## Active Task
 
-- **Task:** `[08.1]` Next Milestone / Epic Planning
+- **Task:** `[09.1]` Next Milestone / Epic Planning
 - **Status:** READY FOR PLANNING
 - **Scope:** Review the consolidated hub and identify the next milestone with human-approved priorities and falsifiable acceptance criteria. Planning artifacts only; no feature implementation or release tagging.
-- **Dependencies:** Epic 07 is complete.
+- **Dependencies:** Epic 08 is complete.
 - **Target Branches:** `main` only; preserve specialized branch heads and external projects.
 - **Role:** Worker
 - **Isolation:** worktree
@@ -75,6 +75,8 @@
 | `[07.3]` | Ecosystem Auditor: Verify Adaptive Interface Contracts | `090ecc9` (main) | 2026-11-08 |
 | `[07.4]` | Opt-In Interface Contract Migration | `0478087` (main) | 2026-11-08 |
 | `[07.5]` | Epic 07 Consolidation, Documentation & CI Audit | `156bbbc`, `e235106` (main) | 2026-11-08 |
+| `[08.1]` | Next Milestone / Epic Planning: Sequential Sub-Task Batching & Prompt Cache Hygiene | `4d78a92` (main) | 2026-11-12 |
+| `[08.2]` | Sequential Batching (`[BATCH: Bx]`), Ephemeral Spec Anchor & Linter Integration | `8ea2991`, `0ccc138` (main) | 2026-11-12 |
 
 ---
 
