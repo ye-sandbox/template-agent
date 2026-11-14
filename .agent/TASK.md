@@ -10,30 +10,25 @@
 
 ## Active Task
 
-- **Task:** `[09.4]` Epic 09 Consolidation: Bilingual Docs, Changelog & Git Hygiene
-- **Status:** RUNNING
-- **Scope:** Document Epic 08/09 sequential batching (`[BATCH: Bx]`, `verify-batches`, `.agent/scratch/specs/` propagation), Hermetic Skills & Context Contract, and starter parity in `README.md`, `README.pt-br.md`, and `CHANGELOG.md` (`## [Unreleased]`); clarify the historical Git identity purge note in `.agent/NOTES.md`; run full CI validation suite and promote `[10.1]`.
-- **Dependencies:** `[09.3]` linter and drift hardening (`a4d561d`) is complete.
+- **Task:** `[10.1]` Next Milestone / Epic Planning
+- **Status:** READY FOR PLANNING
+- **Scope:** Analyze post-Epic 09 backlog, starter template parity, ecosystem adoption readiness, and define the roadmap, task queue, and ADRs for Epic 10 (planning-only; no runtime or script edits before approval).
+- **Dependencies:** Epic 09 (`[09.1]`–`[09.4]`) is complete.
 - **Target Branches:** `main` only.
-- **Role:** Worker
+- **Role:** Lead / Orchestrator
 - **Isolation:** worktree
 - **Acceptance Criteria:**
-  - `README.md`, `README.pt-br.md`, and `CHANGELOG.md` (`## [Unreleased]`) document `[BATCH: Bx]`, `verify-batches`, `.agent/scratch/specs/` worktree propagation, and the Hermetic Skills & Context Contract.
-  - `.agent/NOTES.md` clarifies the historical Oct 28 `git-filter-repo` purge vs. current contributor commits.
-  - Full CI validation suite (`check-branch-drift.sh`, `test-branch-drift.sh`, `verify-microcontract.sh`, `audit-command-security.sh`, `bootstrap-worktree.sh --self-test`, `verify-llm-contract.sh self-test`, `audit-ecosystem-standards.py`, `apply-governance-standards.py --self-test`, `test-all-starters.sh`, `git diff --check`) passes.
+  - Epic 10 goals, non-goals, and architectural decisions recorded in `docs/adr/decisions.md`.
+  - Next implementation task promoted and structured with explicit micro-contracts (`Read:`, `Paths:`, `Verify:`) in `.agent/TASK.md`.
 - Read:
-  - README.md
-  - README.pt-br.md
-  - CHANGELOG.md
+  - AGENTS.md
   - .agent/NOTES.md
   - docs/adr/decisions.md
-- Paths:
-  - README.md
-  - README.pt-br.md
-  - CHANGELOG.md
-  - .agent/NOTES.md
   - .agent/TASK.md
-- Verify: ./.github/scripts/verify-microcontract.sh verify-file .agent/TASK.md && python3 .github/scripts/audit-ecosystem-standards.py . --no-exclude --fail-under 90 && git diff --check
+- Paths:
+  - .agent/TASK.md
+  - docs/adr/decisions.md
+- Verify: ./.github/scripts/verify-microcontract.sh verify-file .agent/TASK.md && git diff --check
 
 ---
 
@@ -79,6 +74,7 @@
 | `[09.1]` | Next Milestone / Epic Planning: Starter Parity, Batch/Hermetic Linter Hardening & Documentation Consolidation | `c985962` (main) | 2026-11-13 |
 | `[09.2]` | Starter Parity: Synchronize `[BATCH: Bx]` & Hermetic Skills Contracts | `e2f8650` (greenfield), `852d25f` (brownfield), `ba22798` (blackbox), `7f50f78` (infra), `92a643f` (baremetal) | 2026-11-13 |
 | `[09.3]` | Harden Batch Layer Classifier & Inter-Branch Drift Checks | `a4d561d` (main) | 2026-11-13 |
+| `[09.4]` | Epic 09 Consolidation: Bilingual Docs, Changelog, SIGPIPE Fix & CI Audit | `3b283d4`, `8b9ec82` (main) | 2026-11-13 |
 
 ---
 
