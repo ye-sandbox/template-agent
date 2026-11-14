@@ -12,3 +12,7 @@ Create a new skill in this folder (`.agent/skills/<name>/SKILL.md`) when:
 3. The pattern involves specific MCP tools and local commands.
 
 Use `000-template.md` as the baseline structure when drafting new skills.
+
+## Hermetic Skills & Context Contract
+
+Procedural guidelines and skills must be self-contained within `.agent/skills/` or injected directly into the task dispatch prompt by the orchestrator. If a task references an external organizational skill not present in `.agent/skills/`, the agent must not wander the host filesystem; it should request the skill to be injected into the prompt or provisioned locally in `.agent/skills/`.
