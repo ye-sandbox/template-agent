@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Sequential sub-task batching (`[BATCH: Bx]`) for 2–4 same-layer subtasks anchored to untracked `.agent/scratch/specs/XX-YY.md` files, with isolated worktree propagation in `.github/scripts/bootstrap-worktree.sh` and `verify-batches` enforcement in `.github/scripts/verify-microcontract.sh`.
+- Explicit Blast Radius & Mutation Boundary and Hermetic Skills & Context Contract across hub governance and all five starter branches (`greenfield`, `brownfield`, `blackbox`, `infra`, `baremetal`), enforced by `.github/scripts/check-branch-drift.sh` and `.github/scripts/test-branch-drift.sh`.
 - Opt-in `--include-interface-contracts` migration installs the canonical interface skill, shared Invariants 7.1–7.4, and runtime-aware AGENTS context/DoD directives after conflict and path preflight.
 - Disposable migration fixtures cover preservation, dry-run, repeat application, custom-contract conflicts, unsafe paths, and interface audit compliance through the existing self-test entry point on the Ubuntu/macOS CI matrix.
 - Adaptive interface verification contracts and the on-demand `interface-testing` skill on all five starters, including Brownfield injection in standard and stealth modes.
@@ -17,8 +19,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- Hardened `classify_task_layer()` in `.github/scripts/verify-microcontract.sh` to recognize generic backend paths (`api/`, `handlers/`, `domain/`, `db/`, `models/`, `server/`, `*.py`, `*.go`, `*.rs`, etc.) and reject mixed backend/UI `Type: code` batches while keeping frontend-only helper batches valid.
 - Ecosystem audit reports now check canonical interface skill bytes, shared invariants, and active context/DoD directives; the existing 100-point rubric plus 20 interface points is normalized to 0–100 (83 for a legacy-perfect project without interface contracts).
-- English and Portuguese tooling documentation now describes repository selection, audit outputs and thresholds, default versus opt-in migration, preservation, and conflict recovery.
+- English and Portuguese tooling documentation now describes repository selection, audit outputs and thresholds, default versus opt-in migration, preservation, conflict recovery, sequential batching, and hermetic skills contracts.
 
 ### Fixed
 

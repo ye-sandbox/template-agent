@@ -284,6 +284,12 @@ Load the skill only for UI, preview, or frontend component work. In T3 Code, the
 
 The drift audit compares the skill byte for byte and compares only Invariant 7, preserving each starter's other fences. Generated-project assertions verify that the skill, all four guardrails, and the UI context/DoD directives reach installed projects.
 
+### Sequential Sub-Task Batching & Hermetic Skills
+
+To preserve prompt cache prefixes across dependent subtasks, group 2–4 sequential same-layer subtasks under `[BATCH: Bx]` anchored to an untracked specification in `.agent/scratch/specs/XX-YY.md`. `.github/scripts/bootstrap-worktree.sh` copies `.agent/scratch/specs/` into isolated worktrees, while `.github/scripts/verify-microcontract.sh` (`verify-batches`) enforces 2–4 cardinality and blocks mixing backend code (`Type: code` touching backend/API/database paths) with UI or `browser-qa`/`mobile-qa`/`preview-mockup` layers.
+
+Under the Hermetic Skills & Context Contract, procedural skills must reside in `.agent/skills/` or be injected into the task prompt rather than searched across the host filesystem. `.github/scripts/check-branch-drift.sh` enforces parity of both `[BATCH: Bx]` / `.agent/scratch/specs/` contracts and the Hermetic Skills directives across `main` and all five starters.
+
 ### Ecosystem Governance Tools
 
 Python 3 is required. Run these tools from a checkout of the hub's `main` branch: interface auditing and opt-in migration read the canonical skill and invariants from that checkout. The auditor reads project files without changing them; its heuristic score does not certify application behavior.

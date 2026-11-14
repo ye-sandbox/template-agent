@@ -284,6 +284,12 @@ Carregue a skill apenas para tarefas de UI, preview ou componentes frontend. No 
 
 A auditoria de deriva compara a skill byte a byte e compara somente o Invariante 7, preservando as demais restrições de cada starter. As asserções dos projetos gerados verificam a instalação da skill, das quatro restrições e das diretrizes de contexto/DoD para UI.
 
+### Agrupamento Sequencial de Subtarefas e Skills Herméticas
+
+Para preservar o prefixo do prompt cache entre subtarefas dependentes, agrupe de 2 a 4 subtarefas sequenciais da mesma camada com `[BATCH: Bx]` ancoradas a uma especificação não rastreada em `.agent/scratch/specs/XX-YY.md`. O script `.github/scripts/bootstrap-worktree.sh` copia `.agent/scratch/specs/` para worktrees isoladas, enquanto `.github/scripts/verify-microcontract.sh` (`verify-batches`) valida a cardinalidade (2–4) e impede misturar código backend (`Type: code` em caminhos de backend/API/banco) com camadas de UI ou `browser-qa`/`mobile-qa`/`preview-mockup`.
+
+Pelo Contrato de Skills Herméticas, skills procedurais devem estar contidas em `.agent/skills/` ou ser injetadas diretamente no prompt da tarefa, sem varreduras no filesystem do host. O script `.github/scripts/check-branch-drift.sh` audita a paridade dos contratos de `[BATCH: Bx]`, `.agent/scratch/specs/` e Skills Herméticas entre a `main` e os cinco starters.
+
 ### Ferramentas de Governança do Ecossistema
 
 As ferramentas exigem Python 3. Execute-as a partir de um checkout da branch `main` do hub: a auditoria de interfaces e a migração opt-in leem a skill e os invariantes canônicos desse checkout. O auditor lê os arquivos dos projetos sem alterá-los; sua pontuação heurística não certifica o comportamento da aplicação.
