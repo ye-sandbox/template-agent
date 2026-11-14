@@ -10,32 +10,28 @@
 
 ## Active Task
 
-- **Task:** `[09.2]` Starter Parity: Synchronize `[BATCH: Bx]` & Hermetic Skills Contracts
+- **Task:** `[09.3]` Harden Batch Layer Classifier & Inter-Branch Drift Checks
 - **Status:** RUNNING
-- **Scope:** Propagate Epic 08 sequential sub-task batching (`[BATCH: Bx]`, `.agent/scratch/specs/XX-YY.md` anchors) and `.agent/skills/README.md` (`## Hermetic Skills & Context Contract`) across the five specialized starter branches (`greenfield`, `brownfield`, `blackbox`, `infra`, `baremetal`) without cross-branch merges.
-- **Dependencies:** `[09.1]` Epic 09 roadmap and ADR (`c985962`) approved.
-- **Target Branches:** `greenfield`, `brownfield`, `blackbox`, `infra`, `baremetal` (starters) and `main` (`.agent/TASK.md` log update).
+- **Scope:** Expand `classify_task_layer()` in `.github/scripts/verify-microcontract.sh` to recognize generic backend paths and add hermetic tests; expand `.github/scripts/check-branch-drift.sh` and `.github/scripts/test-branch-drift.sh` to audit `[BATCH: Bx]`, `.agent/scratch/specs/`, and `Hermetic Skills & Context Contract` parity across starters.
+- **Dependencies:** `[09.2]` starter parity is complete.
+- **Target Branches:** `main` only.
 - **Role:** Worker
 - **Isolation:** worktree
 - **Acceptance Criteria:**
-  - All 5 starters document `[BATCH: Bx]` and `.agent/scratch/specs/<XX-YY>.md` in `AGENTS.md`, `.agent/NOTES.md`, and `.agent/TASK.md` (and `.agent/INVARIANTS.md` where multi-agent/worktree invariants exist or as a shared section).
-  - Starter branches with `.agent/skills/README.md` (`greenfield`, `infra`) include `## Hermetic Skills & Context Contract` matching `main`.
-  - `.github/scripts/check-branch-drift.sh` and `.github/scripts/test-all-starters.sh` pass with 0 errors across all 5 starters.
+  - `classify_task_layer()` catches mixed `Type: code` batches combining generic backend paths (e.g., `api/`, `handlers/`, `domain/`, `db/`, `models/`, `server/`, `*.py`, `*.go`, `*.rs`) with UI paths while still allowing valid frontend-only batches (`src/pages/*.tsx` + `src/hooks/*.ts`).
+  - `check-branch-drift.sh` verifies `[BATCH: Bx]` / `.agent/scratch/specs/` contracts in starter `AGENTS.md`, `.agent/NOTES.md`, and `.agent/TASK.md`, plus `## Hermetic Skills & Context Contract` where `.agent/skills/README.md` is present.
+  - `verify-microcontract.sh`, `check-branch-drift.sh`, and `test-branch-drift.sh` pass with new regression/self-test cases.
 - Read:
-  - AGENTS.md
-  - .agent/TASK.md
-  - .agent/INVARIANTS.md
-  - .agent/NOTES.md
-  - .agent/skills/README.md
+  - .github/scripts/verify-microcontract.sh
   - .github/scripts/check-branch-drift.sh
-  - .github/scripts/assert-starter-contracts.sh
-- Paths:
-  - AGENTS.md
+  - .github/scripts/test-branch-drift.sh
   - .agent/INVARIANTS.md
-  - .agent/NOTES.md
+- Paths:
+  - .github/scripts/verify-microcontract.sh
+  - .github/scripts/check-branch-drift.sh
+  - .github/scripts/test-branch-drift.sh
   - .agent/TASK.md
-  - .agent/skills/README.md
-- Verify: ./.github/scripts/check-branch-drift.sh && ./.github/scripts/test-all-starters.sh && git diff --check
+- Verify: ./.github/scripts/verify-microcontract.sh && ./.github/scripts/check-branch-drift.sh && bash .github/scripts/test-branch-drift.sh && git diff --check
 
 ---
 
@@ -79,17 +75,12 @@
 | `[08.1]` | Next Milestone / Epic Planning: Sequential Sub-Task Batching & Prompt Cache Hygiene | `4d78a92` (main) | 2026-11-12 |
 | `[08.2]` | Sequential Batching (`[BATCH: Bx]`), Ephemeral Spec Anchor & Linter Integration | `8ea2991`, `0ccc138` (main) | 2026-11-12 |
 | `[09.1]` | Next Milestone / Epic Planning: Starter Parity, Batch/Hermetic Linter Hardening & Documentation Consolidation | `c985962` (main) | 2026-11-13 |
+| `[09.2]` | Starter Parity: Synchronize `[BATCH: Bx]` & Hermetic Skills Contracts | `e2f8650` (greenfield), `852d25f` (brownfield), `ba22798` (blackbox), `7f50f78` (infra), `92a643f` (baremetal) | 2026-11-13 |
 
 ---
 
 ## Backlog (Upcoming, in priority order)
 
-- [ ] **[09.3]** `[APPROVED]` Harden Batch Layer Classifier & Inter-Branch Drift Checks — `main`
-  - `Role:` `Worker`
-  - `Isolation:` `worktree`
-  - `Read:` `.github/scripts/verify-microcontract.sh, .github/scripts/check-branch-drift.sh, .github/scripts/test-branch-drift.sh, .agent/INVARIANTS.md`
-  - `Paths:` `.github/scripts/verify-microcontract.sh, .github/scripts/check-branch-drift.sh, .github/scripts/test-branch-drift.sh, .agent/TASK.md`
-  - `Verify:` `./.github/scripts/verify-microcontract.sh && ./.github/scripts/check-branch-drift.sh && bash .github/scripts/test-branch-drift.sh`
 - [ ] **[09.4]** `[APPROVED]` Epic 09 Consolidation: Bilingual Docs, Changelog & Git Hygiene — `main`
   - `Role:` `Worker`
   - `Isolation:` `worktree`
