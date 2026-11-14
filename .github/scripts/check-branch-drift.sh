@@ -122,7 +122,7 @@ for branch in "${ALL_BRANCHES[@]}"; do
   fi
 
   for rule in "${MANDATORY_GITIGNORE_RULES[@]}"; do
-    if ! echo "$gitignore_content" | grep -Fqx "$rule"; then
+    if ! echo "$gitignore_content" | grep -Fx "$rule" >/dev/null; then
       fail "Branch '$branch' ($ref) .gitignore is missing mandatory invariant rule: '$rule'."
     fi
   done
@@ -139,7 +139,7 @@ for branch in "${ALL_BRANCHES[@]}"; do
   fi
 
   for req_var in "LLM_BASE_URL" "LLM_API_KEY" "LLM_MODEL_FAST" "LLM_MODEL_DEEP" "LLM_TIMEOUT_SECONDS"; do
-    if ! echo "$env_content" | grep -qE "^[[:space:]]*${req_var}="; then
+    if ! echo "$env_content" | grep -E "^[[:space:]]*${req_var}=" >/dev/null; then
       fail "Branch '$branch' ($ref) .env.example missing required variable: '$req_var'."
     fi
   done
@@ -164,34 +164,34 @@ for branch in "${INIT_BRANCHES[@]}"; do
   fi
 
   # Usage line standardization
-  if ! echo "$init_content" | grep -q 'Usage: init\.sh.*\[-y|--yes|-f|--force\]'; then
+  if ! echo "$init_content" | grep 'Usage: init\.sh.*\[-y|--yes|-f|--force\]' >/dev/null; then
     fail "Branch '$branch' ($ref) init.sh usage string is not standardized to [-y|--yes|-f|--force]."
   fi
 
   # Argument parsing support
-  if ! echo "$init_content" | grep -q '\-y|--yes|-f|--force)'; then
+  if ! echo "$init_content" | grep '\-y|--yes|-f|--force)' >/dev/null; then
     fail "Branch '$branch' ($ref) init.sh does not parse -y|--yes|-f|--force."
   fi
 
-  if ! echo "$init_content" | grep -q '\-h|--help)'; then
+  if ! echo "$init_content" | grep '\-h|--help)' >/dev/null; then
     fail "Branch '$branch' ($ref) init.sh does not parse -h|--help."
   fi
 
   # Portable temporary directory idioms
-  if echo "$init_content" | grep -qE 'mktemp[[:space:]]+-d[[:space:]]*$'; then
+  if echo "$init_content" | grep -E 'mktemp[[:space:]]+-d[[:space:]]*$' >/dev/null; then
     fail "Branch '$branch' ($ref) init.sh uses non-portable 'mktemp -d' without explicit template."
   fi
 
   # Onboarding flow & prompt standardization
-  if ! echo "$init_content" | grep -q '👉 Next steps:'; then
+  if ! echo "$init_content" | grep '👉 Next steps:' >/dev/null; then
     fail "Branch '$branch' ($ref) init.sh missing standardized '👉 Next steps:' header."
   fi
 
-  if ! echo "$init_content" | grep -q 'Read AGENTS\.md, \.agent/TASK\.md'; then
+  if ! echo "$init_content" | grep 'Read AGENTS\.md, \.agent/TASK\.md' >/dev/null; then
     fail "Branch '$branch' ($ref) init.sh does not instruct agent to read AGENTS.md and .agent/TASK.md."
   fi
 
-  if ! echo "$init_content" | grep -q 'Present your implementation plan for Task \[00\.1\]'; then
+  if ! echo "$init_content" | grep 'Present your implementation plan for Task \[00\.1\]' >/dev/null; then
     fail "Branch '$branch' ($ref) init.sh does not instruct agent to present plan for Task [00.1]."
   fi
 done
@@ -206,41 +206,41 @@ else
     fail "Syntax error in install.sh on branch 'brownfield' ($BROWNFIELD_REF)."
   fi
 
-  if ! echo "$install_content" | grep -q 'Usage: install\.sh.*\[-y|--yes|-f|--force\]'; then
+  if ! echo "$install_content" | grep 'Usage: install\.sh.*\[-y|--yes|-f|--force\]' >/dev/null; then
     fail "Branch 'brownfield' ($BROWNFIELD_REF) install.sh usage string is not standardized to [-y|--yes|-f|--force]."
   fi
 
-  if ! echo "$install_content" | grep -q '\[-l|--local-only|--stealth\]'; then
+  if ! echo "$install_content" | grep '\[-l|--local-only|--stealth\]' >/dev/null; then
     fail "Branch 'brownfield' ($BROWNFIELD_REF) install.sh usage string does not document stealth mode."
   fi
 
-  if ! echo "$install_content" | grep -q '\-y|--yes|-f|--force)'; then
+  if ! echo "$install_content" | grep '\-y|--yes|-f|--force)' >/dev/null; then
     fail "Branch 'brownfield' ($BROWNFIELD_REF) install.sh does not parse -y|--yes|-f|--force."
   fi
 
-  if ! echo "$install_content" | grep -q '\-l|--local-only|--stealth)'; then
+  if ! echo "$install_content" | grep '\-l|--local-only|--stealth)' >/dev/null; then
     fail "Branch 'brownfield' ($BROWNFIELD_REF) install.sh does not parse -l|--local-only|--stealth."
   fi
 
-  if ! echo "$install_content" | grep -q '\-h|--help)'; then
+  if ! echo "$install_content" | grep '\-h|--help)' >/dev/null; then
     fail "Branch 'brownfield' ($BROWNFIELD_REF) install.sh does not parse -h|--help."
   fi
 
   # Portable temporary file idioms
-  if echo "$install_content" | grep -qE 'mktemp[[:space:]]*$'; then
+  if echo "$install_content" | grep -E 'mktemp[[:space:]]*$' >/dev/null; then
     fail "Branch 'brownfield' ($BROWNFIELD_REF) install.sh uses non-portable 'mktemp' without explicit template."
   fi
 
   # Onboarding flow & prompt standardization
-  if ! echo "$install_content" | grep -q '👉 Next steps:'; then
+  if ! echo "$install_content" | grep '👉 Next steps:' >/dev/null; then
     fail "Branch 'brownfield' ($BROWNFIELD_REF) install.sh missing standardized '👉 Next steps:' header."
   fi
 
-  if ! echo "$install_content" | grep -q 'Read AGENTS\.md, \.agent/TASK\.md, and \.agent/NOTES\.md\.'; then
+  if ! echo "$install_content" | grep 'Read AGENTS\.md, \.agent/TASK\.md, and \.agent/NOTES\.md\.' >/dev/null; then
     fail "Branch 'brownfield' ($BROWNFIELD_REF) install.sh does not instruct agent to read AGENTS.md, .agent/TASK.md, and .agent/NOTES.md."
   fi
 
-  if ! echo "$install_content" | grep -q 'Present your implementation plan for Task \[00\.1\] Project Discovery and Context Mapping'; then
+  if ! echo "$install_content" | grep 'Present your implementation plan for Task \[00\.1\] Project Discovery and Context Mapping' >/dev/null; then
     fail "Branch 'brownfield' ($BROWNFIELD_REF) install.sh does not instruct agent to present plan for Task [00.1]."
   fi
 fi
@@ -255,31 +255,31 @@ for branch in "${STARTER_BRANCHES[@]}"; do
     continue
   fi
 
-  if ! echo "$task_content" | grep -qE '\[PARALLEL: W[0-9]+\]'; then
+  if ! echo "$task_content" | grep -E '\[PARALLEL: W[0-9]+\]' >/dev/null; then
     fail "Branch '$branch' ($ref) .agent/TASK.md missing standardized parallel wave tag pattern '[PARALLEL: Wx]'."
   fi
 
-  if ! echo "$task_content" | grep -qE '\[BATCH: B[0-9]+\]'; then
+  if ! echo "$task_content" | grep -E '\[BATCH: B[0-9]+\]' >/dev/null; then
     fail "Branch '$branch' ($ref) .agent/TASK.md missing standardized sequential batch tag pattern '[BATCH: Bx]'."
   fi
 
-  if ! echo "$task_content" | grep -qF '.agent/scratch/specs/'; then
+  if ! echo "$task_content" | grep -F '.agent/scratch/specs/' >/dev/null; then
     fail "Branch '$branch' ($ref) .agent/TASK.md missing '.agent/scratch/specs/' feature anchor guidance."
   fi
 
-  if ! echo "$task_content" | grep -qF 'Read:'; then
+  if ! echo "$task_content" | grep -F 'Read:' >/dev/null; then
     fail "Branch '$branch' ($ref) .agent/TASK.md missing micro-contract 'Read:' field."
   fi
 
-  if ! echo "$task_content" | grep -qF 'Paths:'; then
+  if ! echo "$task_content" | grep -F 'Paths:' >/dev/null; then
     fail "Branch '$branch' ($ref) .agent/TASK.md missing micro-contract 'Paths:' field."
   fi
 
-  if ! echo "$task_content" | grep -qF 'Verify:'; then
+  if ! echo "$task_content" | grep -F 'Verify:' >/dev/null; then
     fail "Branch '$branch' ($ref) .agent/TASK.md missing micro-contract 'Verify:' field."
   fi
 
-  if ! echo "$task_content" | grep -qF '[APPROVED]'; then
+  if ! echo "$task_content" | grep -F '[APPROVED]' >/dev/null; then
     fail "Branch '$branch' ($ref) .agent/TASK.md missing '[APPROVED]' pre-approval tag guidance."
   fi
 done
@@ -294,27 +294,27 @@ for branch in "${ALL_BRANCHES[@]}"; do
     continue
   fi
 
-  if ! echo "$notes_content" | grep -q 'Multi-Account Quota Routing & Failover Contract'; then
+  if ! echo "$notes_content" | grep 'Multi-Account Quota Routing & Failover Contract' >/dev/null; then
     fail "Branch '$branch' ($ref) .agent/NOTES.md missing 'Multi-Account Quota Routing & Failover Contract' table."
   fi
 
-  if ! echo "$notes_content" | grep -q 'Worktree Isolation & Dependency Bootstrap Contract'; then
+  if ! echo "$notes_content" | grep 'Worktree Isolation & Dependency Bootstrap Contract' >/dev/null; then
     fail "Branch '$branch' ($ref) .agent/NOTES.md missing 'Worktree Isolation & Dependency Bootstrap Contract' table."
   fi
 
-  if ! echo "$notes_content" | grep -qF '.agent/scratch/specs/'; then
+  if ! echo "$notes_content" | grep -F '.agent/scratch/specs/' >/dev/null; then
     fail "Branch '$branch' ($ref) .agent/NOTES.md missing '.agent/scratch/specs/' propagation contract."
   fi
 
-  if ! echo "$notes_content" | grep -q 'Lead / Orchestrator'; then
+  if ! echo "$notes_content" | grep 'Lead / Orchestrator' >/dev/null; then
     fail "Branch '$branch' ($ref) .agent/NOTES.md missing canonical 'Lead / Orchestrator' role."
   fi
 
-  if ! echo "$notes_content" | grep -q 'Worker / Implementer'; then
+  if ! echo "$notes_content" | grep 'Worker / Implementer' >/dev/null; then
     fail "Branch '$branch' ($ref) .agent/NOTES.md missing canonical 'Worker / Implementer' role."
   fi
 
-  if ! echo "$notes_content" | grep -q 'Reviewer / Sentinel'; then
+  if ! echo "$notes_content" | grep 'Reviewer / Sentinel' >/dev/null; then
     fail "Branch '$branch' ($ref) .agent/NOTES.md missing canonical 'Reviewer / Sentinel' role."
   fi
 done
@@ -329,19 +329,19 @@ for branch in "${ALL_BRANCHES[@]}"; do
     continue
   fi
 
-  if ! echo "$notes_content" | grep -q 'Hermetic Agent Sandbox & Container Isolation Contract'; then
+  if ! echo "$notes_content" | grep 'Hermetic Agent Sandbox & Container Isolation Contract' >/dev/null; then
     fail "Branch '$branch' ($ref) .agent/NOTES.md missing 'Hermetic Agent Sandbox & Container Isolation Contract' table."
   fi
 
-  if ! echo "$notes_content" | grep -q 'Tier 1 (Bubblewrap)'; then
+  if ! echo "$notes_content" | grep 'Tier 1 (Bubblewrap)' >/dev/null; then
     fail "Branch '$branch' ($ref) .agent/NOTES.md missing 'Tier 1 (Bubblewrap)' entry."
   fi
 
-  if ! echo "$notes_content" | grep -q 'Tier 2 (Rootless Container)'; then
+  if ! echo "$notes_content" | grep 'Tier 2 (Rootless Container)' >/dev/null; then
     fail "Branch '$branch' ($ref) .agent/NOTES.md missing 'Tier 2 (Rootless Container)' entry."
   fi
 
-  if ! echo "$notes_content" | grep -q 'audit-command-security.sh'; then
+  if ! echo "$notes_content" | grep 'audit-command-security.sh' >/dev/null; then
     fail "Branch '$branch' ($ref) .agent/NOTES.md missing 'audit-command-security.sh' fallback entry."
   fi
 done
@@ -356,7 +356,7 @@ for branch in "${ALL_BRANCHES[@]}"; do
     continue
   fi
 
-  if ! echo "$notes_content" | grep -q 'LLM Gateway & Virtual Model Routing Contract'; then
+  if ! echo "$notes_content" | grep 'LLM Gateway & Virtual Model Routing Contract' >/dev/null; then
     fail "Branch '$branch' ($ref) .agent/NOTES.md missing 'LLM Gateway & Virtual Model Routing Contract' table."
   fi
 
@@ -368,12 +368,12 @@ for branch in "${ALL_BRANCHES[@]}"; do
     alias_value="$(printf '%s\n' "$alias_value" | sed -E "s/[[:space:]]+#.*$//; s/^[[:space:]]+//; s/[[:space:]]+$//; s/^[\"']//; s/[\"']$//")"
     if [[ ! "$alias_value" =~ ^[A-Za-z0-9][A-Za-z0-9._/-]*$ ]]; then
       fail "Branch '$branch' ($ref) .env.example requires one literal $variable alias."
-    elif ! printf '%s\n' "$routing_row" | grep -Fq "\`$alias_value\`"; then
+    elif ! printf '%s\n' "$routing_row" | grep -F "\`$alias_value\`" >/dev/null; then
       fail "Branch '$branch' ($ref) .agent/NOTES.md missing declared $variable alias '$alias_value'."
     fi
   done
 
-  if ! echo "$notes_content" | grep -q 'hydra_shared_net'; then
+  if ! echo "$notes_content" | grep 'hydra_shared_net' >/dev/null; then
     fail "Branch '$branch' ($ref) .agent/NOTES.md missing 'hydra_shared_net' network boundary entry."
   fi
 done
@@ -393,7 +393,7 @@ if [ -z "$canonical_interface" ]; then
   fail "Canonical Invariant 7 missing on main ($MAIN_REF)."
 fi
 for invariant in 7.1 7.2 7.3 7.4; do
-  if ! printf '%s\n' "$canonical_interface" | grep -Fq "Invariant $invariant"; then
+  if ! printf '%s\n' "$canonical_interface" | grep -F "Invariant $invariant" >/dev/null; then
     fail "Canonical Invariant $invariant missing on main ($MAIN_REF)."
   fi
 done
@@ -410,14 +410,14 @@ for branch in "${ALL_BRANCHES[@]}"; do
   agents="$(git show "$ref:AGENTS.md" 2>/dev/null || true)"
   context="$(printf '%s\n' "$agents" | sed -n '/^## .*Modular Context Triggers/,/^## /p')"
   dod="$(printf '%s\n' "$agents" | sed -n '/^### Step 3: Falsifiable Definition of Done/,/^## /p')"
-  if ! printf '%s\n' "$context" | grep -Fq '.agent/skills/interface-testing/SKILL.md'; then
+  if ! printf '%s\n' "$context" | grep -F '.agent/skills/interface-testing/SKILL.md' >/dev/null; then
     fail "Branch '$branch' ($ref) AGENTS.md missing on-demand interface skill trigger."
   fi
-  if ! printf '%s\n' "$dod" | grep -Eq '^-[[:space:]]+\[ \].*Interface.*UI.*[Vv]erification'; then
+  if ! printf '%s\n' "$dod" | grep -E '^-[[:space:]]+\[ \].*Interface.*UI.*[Vv]erification' >/dev/null; then
     fail "Branch '$branch' ($ref) AGENTS.md missing interface verification DoD."
   fi
   for runtime in 'T3 Code' 'headless'; do
-    if ! printf '%s\n' "$dod" | grep -Fq "$runtime"; then
+    if ! printf '%s\n' "$dod" | grep -F "$runtime" >/dev/null; then
       fail "Branch '$branch' ($ref) interface DoD missing '$runtime' verification path."
     fi
   done
@@ -442,13 +442,13 @@ echo "🔍 Verifying sequential batching and hermetic skills contracts across al
 for branch in "${ALL_BRANCHES[@]}"; do
   ref="$(resolve_ref "$branch")"
   agents="$(git show "$ref:AGENTS.md" 2>/dev/null || true)"
-  if ! printf '%s\n' "$agents" | grep -Fq '[BATCH: Bx]'; then
+  if ! printf '%s\n' "$agents" | grep -F '[BATCH: Bx]' >/dev/null; then
     fail "Branch '$branch' ($ref) AGENTS.md missing sequential batching '[BATCH: Bx]' contract."
   fi
-  if ! printf '%s\n' "$agents" | grep -Fq '.agent/scratch/specs/'; then
+  if ! printf '%s\n' "$agents" | grep -F '.agent/scratch/specs/' >/dev/null; then
     fail "Branch '$branch' ($ref) AGENTS.md missing '.agent/scratch/specs/' feature anchor trigger."
   fi
-  if ! printf '%s\n' "$agents" | grep -Fq 'Hermetic Skills & Context Contract'; then
+  if ! printf '%s\n' "$agents" | grep -F 'Hermetic Skills & Context Contract' >/dev/null; then
     fail "Branch '$branch' ($ref) AGENTS.md missing 'Hermetic Skills & Context Contract' directive."
   fi
 
