@@ -48,7 +48,7 @@
 
 | Hook / Phase | Script Target | Invocation & Contract |
 |---|---|---|
-| **Fast-Link Bootstrap** | `bootstrap-worktree.sh` | Zero-copy symlinking of `node_modules/` and `.venv/`, `.env` isolation copy, `.agent/scratch/` provisioning. |
+| **Fast-Link Bootstrap** | `bootstrap-worktree.sh` | Zero-copy symlinking of `node_modules/` and `.venv/`, `.env` isolation copy, `.agent/scratch/` provisioning, and isolated copy of `.agent/scratch/specs/` anchors. |
 | **Post-Provisioning** | `.agent/hooks/post-worktree-create` | Executed post-bootstrap for test DB seeding, port binding, and ephemeral fixtures. Halts on non-zero exit. |
 | **Pre-Verification** | `.agent/hooks/pre-verify` | Executed before `Verify:` command execution to ensure clean test state and fixture validation. |
 | **Post-Teardown** | `.agent/hooks/post-worktree-teardown` | Executed prior to worktree removal (`git worktree remove`) for graceful daemon/resource teardown. |
