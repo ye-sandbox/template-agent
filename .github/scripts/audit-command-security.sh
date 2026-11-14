@@ -262,7 +262,7 @@ audit_command_string() {
     # Rule: System root removal (rm -rf / or system dirs)
     if [ "$base_bin" = "rm" ]; then
       if [[ "$scmd" =~ [[:space:]]-([a-zA-Z]*r[a-zA-Z]*|[a-zA-Z]*R[a-zA-Z]*|-[a-zA-Z]*recursive) ]]; then
-        if [[ "$scmd" =~ [[:space:]](/(|\*)|/(etc|boot|sys|proc|usr|bin|sbin|lib|lib64|dev|root)(/.*)?)([[:space:]]|$) ]]; then
+        if [[ "$scmd" =~ [[:space:]](/\*?|/(etc|boot|sys|proc|usr|bin|sbin|lib|lib64|dev|root)(/.*)?)([[:space:]]|$) ]]; then
           violations+=("P0-SYSTEM-MUTATION|Recursive removal targeting protected system path|${scmd}")
         fi
       fi
@@ -284,7 +284,7 @@ audit_command_string() {
     # Rule: System-wide destructive permission/ownership mutations
     if [[ "$base_bin" =~ ^(chmod|chown)$ ]]; then
       if [[ "$scmd" =~ [[:space:]]-([a-zA-Z]*R[a-zA-Z]*|-[a-zA-Z]*recursive) ]]; then
-        if [[ "$scmd" =~ [[:space:]](/(|\*)|/(etc|boot|sys|proc|usr|bin|sbin|lib|lib64|dev|root)(/.*)?)([[:space:]]|$) ]]; then
+        if [[ "$scmd" =~ [[:space:]](/\*?|/(etc|boot|sys|proc|usr|bin|sbin|lib|lib64|dev|root)(/.*)?)([[:space:]]|$) ]]; then
           violations+=("P0-SYSTEM-MUTATION|Recursive permission/ownership mutation of system root: ${scmd}")
         fi
       fi

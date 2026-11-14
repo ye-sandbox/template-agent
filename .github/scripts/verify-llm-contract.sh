@@ -167,10 +167,10 @@ check_code_coupling() {
   local ENDPOINT_REGEX="(generativelanguage\.googleapis\.com|api\.openai\.com|api\.groq\.com|api\.anthropic\.com)"
   
   # Upstream model identifiers pattern
-  local MODEL_REGEX="(gemini-(1|2|3)\.[0-9]|gemini-(pro|flash|ultra)|gpt-4o|gpt-4-turbo|gpt-4\b|gpt-3\.5|o1-(preview|mini)|o3-mini|claude-(1|2|3)|claude-(instant|haiku|sonnet|opus)|llama-(2|3)\b|llama-3\.[0-9]|deepseek-(r1|v3))"
+  local MODEL_REGEX="(gemini-(1|2|3)\.[0-9]|gemini-(pro|flash|ultra)|gpt-4o|gpt-4-turbo|gpt-4|gpt-3\.5|o1-(preview|mini)|o3-mini|claude-(1|2|3)|claude-(instant|haiku|sonnet|opus)|llama-(2|3)|llama-3\.[0-9]|deepseek-(r1|v3))([^A-Za-z0-9_]|$)"
 
   # Dangerous low max_tokens (reasoning token starvation)
-  local LOW_MAX_TOKENS_REGEX="max_tokens\s*[:=]\s*([1-9]|[1-5][0-9])\b"
+  local LOW_MAX_TOKENS_REGEX="max_tokens[[:space:]]*[:=][[:space:]]*([1-9]|[1-5][0-9])([^0-9]|$)"
 
   # Find all candidate source files excluding VCS, docs, build caches, and test fixtures
   local SCAN_FILES=()
