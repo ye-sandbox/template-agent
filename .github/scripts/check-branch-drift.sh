@@ -259,6 +259,14 @@ for branch in "${STARTER_BRANCHES[@]}"; do
     fail "Branch '$branch' ($ref) .agent/TASK.md missing standardized parallel wave tag pattern '[PARALLEL: Wx]'."
   fi
 
+  if ! echo "$task_content" | grep -qE '\[BATCH: B[0-9]+\]'; then
+    fail "Branch '$branch' ($ref) .agent/TASK.md missing standardized sequential batch tag pattern '[BATCH: Bx]'."
+  fi
+
+  if ! echo "$task_content" | grep -qF '.agent/scratch/specs/'; then
+    fail "Branch '$branch' ($ref) .agent/TASK.md missing '.agent/scratch/specs/' feature anchor guidance."
+  fi
+
   if ! echo "$task_content" | grep -qF 'Read:'; then
     fail "Branch '$branch' ($ref) .agent/TASK.md missing micro-contract 'Read:' field."
   fi
@@ -292,6 +300,10 @@ for branch in "${ALL_BRANCHES[@]}"; do
 
   if ! echo "$notes_content" | grep -q 'Worktree Isolation & Dependency Bootstrap Contract'; then
     fail "Branch '$branch' ($ref) .agent/NOTES.md missing 'Worktree Isolation & Dependency Bootstrap Contract' table."
+  fi
+
+  if ! echo "$notes_content" | grep -qF '.agent/scratch/specs/'; then
+    fail "Branch '$branch' ($ref) .agent/NOTES.md missing '.agent/scratch/specs/' propagation contract."
   fi
 
   if ! echo "$notes_content" | grep -q 'Lead / Orchestrator'; then
@@ -409,6 +421,44 @@ for branch in "${ALL_BRANCHES[@]}"; do
       fail "Branch '$branch' ($ref) interface DoD missing '$runtime' verification path."
     fi
   done
+done
+
+# 11. Audit Sequential Batching ([BATCH: Bx]) and Hermetic Skills & Context Contract
+hermetic_skills_section() {
+  awk '
+    /^## Hermetic Skills & Context Contract$/ { active = 1 }
+    active && /^## / && $0 !~ /^## Hermetic Skills & Context Contract$/ { exit }
+    active { print }
+  '
+}
+
+canonical_skills_readme="$(git show "$MAIN_REF:.agent/skills/README.md" 2>/dev/null || true)"
+canonical_hermetic_section="$(printf '%s\n' "$canonical_skills_readme" | hermetic_skills_section)"
+if [ -z "$canonical_hermetic_section" ]; then
+  fail "Canonical '## Hermetic Skills & Context Contract' missing in main .agent/skills/README.md ($MAIN_REF)."
+fi
+
+echo "🔍 Verifying sequential batching and hermetic skills contracts across all branches..."
+for branch in "${ALL_BRANCHES[@]}"; do
+  ref="$(resolve_ref "$branch")"
+  agents="$(git show "$ref:AGENTS.md" 2>/dev/null || true)"
+  if ! printf '%s\n' "$agents" | grep -Fq '[BATCH: Bx]'; then
+    fail "Branch '$branch' ($ref) AGENTS.md missing sequential batching '[BATCH: Bx]' contract."
+  fi
+  if ! printf '%s\n' "$agents" | grep -Fq '.agent/scratch/specs/'; then
+    fail "Branch '$branch' ($ref) AGENTS.md missing '.agent/scratch/specs/' feature anchor trigger."
+  fi
+  if ! printf '%s\n' "$agents" | grep -Fq 'Hermetic Skills & Context Contract'; then
+    fail "Branch '$branch' ($ref) AGENTS.md missing 'Hermetic Skills & Context Contract' directive."
+  fi
+
+  if git cat-file -e "$ref:.agent/skills/README.md" 2>/dev/null; then
+    skills_readme="$(git show "$ref:.agent/skills/README.md" 2>/dev/null || true)"
+    section="$(printf '%s\n' "$skills_readme" | hermetic_skills_section)"
+    if [ -z "$section" ] || [ "$section" != "$canonical_hermetic_section" ]; then
+      fail "Branch '$branch' ($ref) .agent/skills/README.md Hermetic Skills section missing or drifted from main."
+    fi
+  fi
 done
 
 echo "======================================================="

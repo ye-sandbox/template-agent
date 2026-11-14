@@ -130,4 +130,29 @@ git show origin/greenfield:.agent/NOTES.md | sed -E 's/(\| \*\*Virtual Model Rou
 publish .agent/NOTES.md
 expect 0 '0 drift detected'
 
+skills_readme='.agent/skills/README.md'
+prepare "$skills_readme"
+sed '/^## Hermetic Skills & Context Contract$/,$d' "$TEST_ROOT/content" > "$TEST_ROOT/next"
+mv "$TEST_ROOT/next" "$TEST_ROOT/content"
+publish "$skills_readme"
+expect 1 'Hermetic Skills section missing or drifted'
+
+prepare AGENTS.md
+sed '/\[BATCH: Bx\]/d' "$TEST_ROOT/content" > "$TEST_ROOT/next"
+mv "$TEST_ROOT/next" "$TEST_ROOT/content"
+publish AGENTS.md
+expect 1 "AGENTS.md missing sequential batching '[BATCH: Bx]' contract"
+
+prepare .agent/NOTES.md
+sed 's|\.agent/scratch/specs/||g' "$TEST_ROOT/content" > "$TEST_ROOT/next"
+mv "$TEST_ROOT/next" "$TEST_ROOT/content"
+publish .agent/NOTES.md
+expect 1 "NOTES.md missing '.agent/scratch/specs/' propagation contract"
+
+prepare .agent/TASK.md
+sed 's/\[BATCH: B1\]/[SEQ]/g' "$TEST_ROOT/content" > "$TEST_ROOT/next"
+mv "$TEST_ROOT/next" "$TEST_ROOT/content"
+publish .agent/TASK.md
+expect 1 "TASK.md missing standardized sequential batch tag pattern '[BATCH: Bx]'"
+
 echo "Branch drift regression tests: $PASSED passed"

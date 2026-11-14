@@ -153,10 +153,10 @@ classify_task_layer() {
 
   for p in "${paths[@]}"; do
     case "$p" in
-      *.tsx|*.jsx|*.svelte|*.vue|*.css|*.html|*pages/*|*components/*|*views/*|proto/*)
+      *.tsx|*.jsx|*.svelte|*.vue|*.css|*.scss|*.html|*pages/*|*components/*|*views/*|proto/*)
         has_ui_path=true
         ;;
-      *prisma/*|*.prisma|*migrations/*|*repos/*|*repositories/*|*controllers/*|*routes/*|*services/*|*.sql)
+      *prisma/*|*.prisma|*migrations/*|*repos/*|*repositories/*|*controllers/*|*routes/*|*services/*|*api/*|*handlers/*|*domain/*|*db/*|*models/*|*server/*|*middleware/*|*backend/*|*.sql|*.py|*.go|*.rs|*.rb|*.java|*.cs|*.php)
         has_backend_path=true
         ;;
     esac
@@ -1116,7 +1116,43 @@ EOF
   run_test_case "Sequential batch mixing backend code and browser-qa fails" 1 \
     validate_task_file "$test_tmp/batch_mixed_layer.md"
 
-  # 12. Worktree blast boundary: whitelisted modifications pass
+  # 12. Valid frontend-only sequential batch (tsx + generic ts hook) passes
+  cat << 'EOF' > "$test_tmp/batch_frontend_valid.md"
+## Active Task
+- [ ] **[09.03.01]** `[APPROVED]` `[BATCH: B2-ui]` Add useDeals hook
+  - `Type:` `code`
+  - `Read:` `.agent/scratch/specs/09-03.md`
+  - `Paths:` `src/hooks/useDeals.ts`
+  - `Verify:` `npm test -- src/hooks/useDeals.test.ts`
+
+- [ ] **[09.03.02]** `[APPROVED]` `[BATCH: B2-ui]` Wire DealsKanban page
+  - `Type:` `code`
+  - `Read:` `.agent/scratch/specs/09-03.md`
+  - `Paths:` `src/pages/DealsKanban.tsx`
+  - `Verify:` `npm run build`
+EOF
+  run_test_case "Sequential frontend-only batch with ts hook and tsx page passes" 0 \
+    validate_task_file "$test_tmp/batch_frontend_valid.md"
+
+  # 13. Invalid sequential batch mixing generic backend path (api/py) and UI path (tsx) fails
+  cat << 'EOF' > "$test_tmp/batch_generic_backend_ui_mix.md"
+## Active Task
+- [ ] **[09.03.01]** `[APPROVED]` `[BATCH: B3]` Implement deals API handler
+  - `Type:` `code`
+  - `Read:` `.agent/scratch/specs/09-03.md`
+  - `Paths:` `src/api/deals.py`
+  - `Verify:` `pytest tests/test_deals.py`
+
+- [ ] **[09.03.02]** `[APPROVED]` `[BATCH: B3]` Build deals table view
+  - `Type:` `code`
+  - `Read:` `.agent/scratch/specs/09-03.md`
+  - `Paths:` `src/pages/DealsKanban.tsx`
+  - `Verify:` `npm run build`
+EOF
+  run_test_case "Sequential batch mixing generic backend api/py path and tsx UI path fails" 1 \
+    validate_task_file "$test_tmp/batch_generic_backend_ui_mix.md"
+
+  # 14. Worktree blast boundary: whitelisted modifications pass
   local repo_dir="$test_tmp/repo"
   mkdir -p "$repo_dir"
   git -C "$repo_dir" init -q -b main
