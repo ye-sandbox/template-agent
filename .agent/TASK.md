@@ -10,31 +10,32 @@
 
 ## Active Task
 
-- **Task:** `[09.1]` Next Milestone / Epic Planning
-- **Status:** READY FOR PLANNING
-- **Scope:** Review the consolidated hub and identify the next milestone with human-approved priorities and falsifiable acceptance criteria. Planning artifacts only; no feature implementation or release tagging.
-- **Dependencies:** Epic 08 is complete.
-- **Target Branches:** `main` only; preserve specialized branch heads and external projects.
+- **Task:** `[09.2]` Starter Parity: Synchronize `[BATCH: Bx]` & Hermetic Skills Contracts
+- **Status:** RUNNING
+- **Scope:** Propagate Epic 08 sequential sub-task batching (`[BATCH: Bx]`, `.agent/scratch/specs/XX-YY.md` anchors) and `.agent/skills/README.md` (`## Hermetic Skills & Context Contract`) across the five specialized starter branches (`greenfield`, `brownfield`, `blackbox`, `infra`, `baremetal`) without cross-branch merges.
+- **Dependencies:** `[09.1]` Epic 09 roadmap and ADR (`c985962`) approved.
+- **Target Branches:** `greenfield`, `brownfield`, `blackbox`, `infra`, `baremetal` (starters) and `main` (`.agent/TASK.md` log update).
 - **Role:** Worker
 - **Isolation:** worktree
 - **Acceptance Criteria:**
-  - Candidate priorities are grounded in the current contracts, backlog, and repository evidence.
-  - The selected milestone and implementation tasks have explicit scope, dependencies, mutable paths, and verification commands.
-  - Human decisions are resolved before any implementation task is marked approved.
-  - The cumulative ADR diary records the selected milestone rationale after approval; no release is tagged.
+  - All 5 starters document `[BATCH: Bx]` and `.agent/scratch/specs/<XX-YY>.md` in `AGENTS.md`, `.agent/NOTES.md`, and `.agent/TASK.md` (and `.agent/INVARIANTS.md` where multi-agent/worktree invariants exist or as a shared section).
+  - Starter branches with `.agent/skills/README.md` (`greenfield`, `infra`) include `## Hermetic Skills & Context Contract` matching `main`.
+  - `.github/scripts/check-branch-drift.sh` and `.github/scripts/test-all-starters.sh` pass with 0 errors across all 5 starters.
 - Read:
   - AGENTS.md
   - .agent/TASK.md
-  - .agent/NOTES.md
   - .agent/INVARIANTS.md
-  - docs/adr/decisions.md
-  - README.md
-  - README.pt-br.md
-  - CHANGELOG.md
+  - .agent/NOTES.md
+  - .agent/skills/README.md
+  - .github/scripts/check-branch-drift.sh
+  - .github/scripts/assert-starter-contracts.sh
 - Paths:
+  - AGENTS.md
+  - .agent/INVARIANTS.md
+  - .agent/NOTES.md
   - .agent/TASK.md
-  - docs/adr/decisions.md
-- Verify: ./.github/scripts/verify-microcontract.sh verify-file .agent/TASK.md && git diff --check
+  - .agent/skills/README.md
+- Verify: ./.github/scripts/check-branch-drift.sh && ./.github/scripts/test-all-starters.sh && git diff --check
 
 ---
 
@@ -77,12 +78,24 @@
 | `[07.5]` | Epic 07 Consolidation, Documentation & CI Audit | `156bbbc`, `e235106` (main) | 2026-11-08 |
 | `[08.1]` | Next Milestone / Epic Planning: Sequential Sub-Task Batching & Prompt Cache Hygiene | `4d78a92` (main) | 2026-11-12 |
 | `[08.2]` | Sequential Batching (`[BATCH: Bx]`), Ephemeral Spec Anchor & Linter Integration | `8ea2991`, `0ccc138` (main) | 2026-11-12 |
+| `[09.1]` | Next Milestone / Epic Planning: Starter Parity, Batch/Hermetic Linter Hardening & Documentation Consolidation | `c985962` (main) | 2026-11-13 |
 
 ---
 
 ## Backlog (Upcoming, in priority order)
 
-*(empty)*
+- [ ] **[09.3]** `[APPROVED]` Harden Batch Layer Classifier & Inter-Branch Drift Checks — `main`
+  - `Role:` `Worker`
+  - `Isolation:` `worktree`
+  - `Read:` `.github/scripts/verify-microcontract.sh, .github/scripts/check-branch-drift.sh, .github/scripts/test-branch-drift.sh, .agent/INVARIANTS.md`
+  - `Paths:` `.github/scripts/verify-microcontract.sh, .github/scripts/check-branch-drift.sh, .github/scripts/test-branch-drift.sh, .agent/TASK.md`
+  - `Verify:` `./.github/scripts/verify-microcontract.sh && ./.github/scripts/check-branch-drift.sh && bash .github/scripts/test-branch-drift.sh`
+- [ ] **[09.4]** `[APPROVED]` Epic 09 Consolidation: Bilingual Docs, Changelog & Git Hygiene — `main`
+  - `Role:` `Worker`
+  - `Isolation:` `worktree`
+  - `Read:` `README.md, README.pt-br.md, CHANGELOG.md, .agent/NOTES.md, docs/adr/decisions.md`
+  - `Paths:` `README.md, README.pt-br.md, CHANGELOG.md, .agent/NOTES.md, docs/adr/decisions.md, .agent/TASK.md`
+  - `Verify:` `./.github/scripts/verify-microcontract.sh verify-file .agent/TASK.md && python3 .github/scripts/audit-ecosystem-standards.py . --no-exclude --fail-under 90 && git diff --check`
 
 
 
