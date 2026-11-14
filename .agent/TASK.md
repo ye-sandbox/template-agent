@@ -38,7 +38,7 @@
 
 ## Backlog (Upcoming, in priority order)
 
-> Tag pre-approved tasks having strictly disjoint file scopes with `[APPROVED]` `[PARALLEL: W1]` and `Read: / Paths: / Verify:` for concurrent `task-queue` execution.
+> Tag independent pre-approved tasks with strictly disjoint file scopes as `[APPROVED]` `[PARALLEL: W1]`, and sequential same-layer subtasks (2–4 items) as `[APPROVED]` `[BATCH: B1]` anchored to `.agent/scratch/specs/XX-YY.md`, with `Read: / Paths: / Verify:` micro-contracts.
 
 - [ ] **[01.1]** Configure reverse proxy (Traefik or Nginx) with automated SSL termination
 - [ ] **[01.2]** Implement automated backup routine for persistent volumes
