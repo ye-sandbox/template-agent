@@ -569,7 +569,7 @@ class TestAuditEcosystemStandards(unittest.TestCase):
     def test_single_repo_direct_target(self):
         repo = self.create_mock_repo("direct-repo", is_compliant=True)
         repos = find_git_repos(repo)
-        self.assertEqual(repos, [repo])
+        self.assertEqual(repos, [repo.resolve()])
 
     def test_formatters_output(self):
         repo = self.create_mock_repo("fmt-repo", is_compliant=True)
