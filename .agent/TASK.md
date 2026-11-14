@@ -10,28 +10,30 @@
 
 ## Active Task
 
-- **Task:** `[09.3]` Harden Batch Layer Classifier & Inter-Branch Drift Checks
+- **Task:** `[09.4]` Epic 09 Consolidation: Bilingual Docs, Changelog & Git Hygiene
 - **Status:** RUNNING
-- **Scope:** Expand `classify_task_layer()` in `.github/scripts/verify-microcontract.sh` to recognize generic backend paths and add hermetic tests; expand `.github/scripts/check-branch-drift.sh` and `.github/scripts/test-branch-drift.sh` to audit `[BATCH: Bx]`, `.agent/scratch/specs/`, and `Hermetic Skills & Context Contract` parity across starters.
-- **Dependencies:** `[09.2]` starter parity is complete.
+- **Scope:** Document Epic 08/09 sequential batching (`[BATCH: Bx]`, `verify-batches`, `.agent/scratch/specs/` propagation), Hermetic Skills & Context Contract, and starter parity in `README.md`, `README.pt-br.md`, and `CHANGELOG.md` (`## [Unreleased]`); clarify the historical Git identity purge note in `.agent/NOTES.md`; run full CI validation suite and promote `[10.1]`.
+- **Dependencies:** `[09.3]` linter and drift hardening (`a4d561d`) is complete.
 - **Target Branches:** `main` only.
 - **Role:** Worker
 - **Isolation:** worktree
 - **Acceptance Criteria:**
-  - `classify_task_layer()` catches mixed `Type: code` batches combining generic backend paths (e.g., `api/`, `handlers/`, `domain/`, `db/`, `models/`, `server/`, `*.py`, `*.go`, `*.rs`) with UI paths while still allowing valid frontend-only batches (`src/pages/*.tsx` + `src/hooks/*.ts`).
-  - `check-branch-drift.sh` verifies `[BATCH: Bx]` / `.agent/scratch/specs/` contracts in starter `AGENTS.md`, `.agent/NOTES.md`, and `.agent/TASK.md`, plus `## Hermetic Skills & Context Contract` where `.agent/skills/README.md` is present.
-  - `verify-microcontract.sh`, `check-branch-drift.sh`, and `test-branch-drift.sh` pass with new regression/self-test cases.
+  - `README.md`, `README.pt-br.md`, and `CHANGELOG.md` (`## [Unreleased]`) document `[BATCH: Bx]`, `verify-batches`, `.agent/scratch/specs/` worktree propagation, and the Hermetic Skills & Context Contract.
+  - `.agent/NOTES.md` clarifies the historical Oct 28 `git-filter-repo` purge vs. current contributor commits.
+  - Full CI validation suite (`check-branch-drift.sh`, `test-branch-drift.sh`, `verify-microcontract.sh`, `audit-command-security.sh`, `bootstrap-worktree.sh --self-test`, `verify-llm-contract.sh self-test`, `audit-ecosystem-standards.py`, `apply-governance-standards.py --self-test`, `test-all-starters.sh`, `git diff --check`) passes.
 - Read:
-  - .github/scripts/verify-microcontract.sh
-  - .github/scripts/check-branch-drift.sh
-  - .github/scripts/test-branch-drift.sh
-  - .agent/INVARIANTS.md
+  - README.md
+  - README.pt-br.md
+  - CHANGELOG.md
+  - .agent/NOTES.md
+  - docs/adr/decisions.md
 - Paths:
-  - .github/scripts/verify-microcontract.sh
-  - .github/scripts/check-branch-drift.sh
-  - .github/scripts/test-branch-drift.sh
+  - README.md
+  - README.pt-br.md
+  - CHANGELOG.md
+  - .agent/NOTES.md
   - .agent/TASK.md
-- Verify: ./.github/scripts/verify-microcontract.sh && ./.github/scripts/check-branch-drift.sh && bash .github/scripts/test-branch-drift.sh && git diff --check
+- Verify: ./.github/scripts/verify-microcontract.sh verify-file .agent/TASK.md && python3 .github/scripts/audit-ecosystem-standards.py . --no-exclude --fail-under 90 && git diff --check
 
 ---
 
@@ -76,17 +78,13 @@
 | `[08.2]` | Sequential Batching (`[BATCH: Bx]`), Ephemeral Spec Anchor & Linter Integration | `8ea2991`, `0ccc138` (main) | 2026-11-12 |
 | `[09.1]` | Next Milestone / Epic Planning: Starter Parity, Batch/Hermetic Linter Hardening & Documentation Consolidation | `c985962` (main) | 2026-11-13 |
 | `[09.2]` | Starter Parity: Synchronize `[BATCH: Bx]` & Hermetic Skills Contracts | `e2f8650` (greenfield), `852d25f` (brownfield), `ba22798` (blackbox), `7f50f78` (infra), `92a643f` (baremetal) | 2026-11-13 |
+| `[09.3]` | Harden Batch Layer Classifier & Inter-Branch Drift Checks | `a4d561d` (main) | 2026-11-13 |
 
 ---
 
 ## Backlog (Upcoming, in priority order)
 
-- [ ] **[09.4]** `[APPROVED]` Epic 09 Consolidation: Bilingual Docs, Changelog & Git Hygiene — `main`
-  - `Role:` `Worker`
-  - `Isolation:` `worktree`
-  - `Read:` `README.md, README.pt-br.md, CHANGELOG.md, .agent/NOTES.md, docs/adr/decisions.md`
-  - `Paths:` `README.md, README.pt-br.md, CHANGELOG.md, .agent/NOTES.md, docs/adr/decisions.md, .agent/TASK.md`
-  - `Verify:` `./.github/scripts/verify-microcontract.sh verify-file .agent/TASK.md && python3 .github/scripts/audit-ecosystem-standards.py . --no-exclude --fail-under 90 && git diff --check`
+*(empty)*
 
 
 
