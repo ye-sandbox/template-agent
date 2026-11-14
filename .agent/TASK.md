@@ -38,7 +38,7 @@
 
 ## Backlog (Upcoming, in priority order)
 
-> Tag pre-approved script/doc tasks having strictly disjoint file scopes with `[APPROVED]` `[PARALLEL: W1]` and `Read: / Paths: / Verify:` for concurrent `task-queue` execution (live host tunings remain sequential).
+> Tag independent pre-approved script/doc tasks with strictly disjoint file scopes as `[APPROVED]` `[PARALLEL: W1]`, and sequential same-layer subtasks (2–4 items) as `[APPROVED]` `[BATCH: B1]` anchored to `.agent/scratch/specs/XX-YY.md`, with `Read: / Paths: / Verify:` micro-contracts (live host tunings remain sequential).
 
 - [ ] **[01.1]** Memory subsystem tuning: optimize `vm.swappiness` and `vfs_cache_pressure` with rollback pair
 - [ ] **[01.2]** Storage and I/O scheduler tuning: verify NVMe scheduler and dirty page ratios
