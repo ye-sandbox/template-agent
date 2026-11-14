@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.4.0] - 2026-11-13
+
 ### Added
 
 - Sequential sub-task batching (`[BATCH: Bx]`) for 2–4 same-layer subtasks anchored to untracked `.agent/scratch/specs/XX-YY.md` files, with isolated worktree propagation in `.github/scripts/bootstrap-worktree.sh` and `verify-batches` enforcement in `.github/scripts/verify-microcontract.sh`.
