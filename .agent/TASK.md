@@ -90,7 +90,11 @@ Release/tag only with explicit human request. When triggered, the ID is `[99.1]`
 
 ## Future Backlog / Ideas (Unprioritized)
 
-*(empty)*
+- Align `apply-governance-standards.py` NOTES template with provider-neutral `default-tier` / `escalation-tier` (still injects `gemini-3.8-flash-medium`; drift vs hub `NOTES.md`).
+- Reconcile `test-e2e-orchestration.sh` with branch `t3/e2e-orchestration-test` (`b185ef7`, 38 assertions vs 17 on `main`).
+- Version `run-wave.sh` and the `task-queue` skill under `.agent/skills/` (hermetic skills contract), or drop the references.
+- Batch linter: require the spec anchor in each subtask `Read:`, require each subtask `Verify:`, and add an explicit `Layer:` field instead of path heuristics.
+- Batch partial-failure protocol: per-subtask checkpoint in `TASK.md` and resume from the last commit.
 
 ---
 
