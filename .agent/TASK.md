@@ -10,8 +10,26 @@
 
 ## Active Task
 
-- **Task:** None. Epic 10 complete; awaiting human instruction for next milestone or `[99.1]` release.
-- **Status:** READY FOR PLANNING
+- **Task:** `[11.1]` Align Starter Templates and Tooling with `hydra-llm-router` Canonical Contracts
+- **Status:** PLANNING
+- **Scope:** Remove residual `Hydra AI` / `hydra-ai-gateway` / `hydra.homelab.yegear.dev` / `free-fast` / `free-deep` references across `main` and all 5 starter branches (`greenfield`, `brownfield`, `blackbox`, `infra`, `baremetal`), aligning `.env.example`, `.agent/NOTES.md`, `docs/llm-gateway.md`, and `.github/scripts/verify-llm-contract.sh` with `hydra-llm-router` and operator-configured alias discovery (`/v1/models` or `/v1/hydra/models`).
+- **Target Branches:** `main`, `greenfield`, `brownfield`, `blackbox`, `infra`, `baremetal` (atomic per-branch commits; no cross-branch merges).
+- **Role:** Lead / Orchestrator
+- **Isolation:** worktree
+- Read:
+  - AGENTS.md
+  - .agent/TASK.md
+  - .agent/NOTES.md
+  - docs/llm-gateway.md
+  - .github/scripts/verify-llm-contract.sh
+- Paths:
+  - .env.example
+  - .agent/NOTES.md
+  - .agent/TASK.md
+  - docs/llm-gateway.md
+  - .github/scripts/verify-llm-contract.sh
+  - CHANGELOG.md
+- Verify: ./.github/scripts/verify-llm-contract.sh self-test && ./.github/scripts/check-branch-drift.sh && ./.github/scripts/test-all-starters.sh && git diff --check
 
 ---
 
