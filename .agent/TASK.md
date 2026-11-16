@@ -10,21 +10,20 @@
 
 ## Active Task
 
-- **Task:** `[10.3]` Wire e2e orchestration test into CI
+- **Task:** `[10.4]` Port micro-contract parser to Python behind the existing CLI
+- **Scope:** Move `TASK.md` parsing and wave/batch validation into `microcontract_parser.py`; `verify-microcontract.sh` delegates to it. CLI commands, output markers, and exit codes MUST stay identical (`[P1]` backward compatibility); `[10.2]` is the parity proof. Dependencies: `[10.3]`.
 - **Status:** APPROVED
-- **Scope:** Add one CI step running `test-e2e-orchestration.sh` on the ubuntu/macOS matrix. Dependencies: `[10.2]` is complete.
 - **Target Branches:** `main` only.
 - **Role:** Worker / Implementer
 - **Isolation:** worktree
 - **Type:** code
-- **Acceptance Criteria:**
-  - CI runs `test-e2e-orchestration.sh` on both ubuntu and macOS.
 - Read:
-  - .github/workflows/ci.yml
+  - .github/scripts/verify-microcontract.sh
   - .github/scripts/test-e2e-orchestration.sh
 - Paths:
-  - .github/workflows/ci.yml
-- Verify: bash .github/scripts/test-e2e-orchestration.sh && grep -q "test-e2e-orchestration.sh" .github/workflows/ci.yml && git diff --check
+  - .github/scripts/microcontract_parser.py
+  - .github/scripts/verify-microcontract.sh
+- Verify: ./.github/scripts/verify-microcontract.sh self-test && bash .github/scripts/test-e2e-orchestration.sh && python3 -m py_compile .github/scripts/microcontract_parser.py && git diff --check
 
 ---
 
@@ -73,24 +72,14 @@
 | `[09.4]` | Epic 09 Consolidation: Bilingual Docs, Changelog, SIGPIPE Fix & CI Audit | `3b283d4`, `8b9ec82` (main) | 2026-11-13 |
 | `[10.1]` | Next Milestone / Epic Planning (Epic 10: Orchestration Hardening) | `36be2ac` (main) | 2026-11-16 |
 | `[10.2]` | Add end-to-end orchestration lifecycle test | `3c01541` (main) | 2026-11-16 |
+| `[10.3]` | Wire e2e orchestration test into CI | `7897201` (main) | 2026-11-16 |
 
 ---
 
 ## Backlog (Upcoming, in priority order)
 
 > Epic 10: Orchestration Hardening (e2e safety net, Python parser, wave dependency/shared-file rules, integration protocol, cache observability).
-> `[10.1]` approved 2026-11-16; `[10.3]` promoted to active. Remaining order: `[10.4]` → `[PARALLEL: W1]` → `[BATCH: B1-backend]` → `[10.8]` → `[10.9]` → `[10.10]` → `[10.11]`.
-
-- **Task:** `[10.4]` Port micro-contract parser to Python behind the existing CLI
-- **Scope:** Move `TASK.md` parsing and wave/batch validation into `microcontract_parser.py`; `verify-microcontract.sh` delegates to it. CLI commands, output markers, and exit codes MUST stay identical (`[P1]` backward compatibility); `[10.2]` is the parity proof. Dependencies: `[10.3]`.
-- **Type:** code
-- Read:
-  - .github/scripts/verify-microcontract.sh
-  - .github/scripts/test-e2e-orchestration.sh
-- Paths:
-  - .github/scripts/microcontract_parser.py
-  - .github/scripts/verify-microcontract.sh
-- Verify: ./.github/scripts/verify-microcontract.sh self-test && bash .github/scripts/test-e2e-orchestration.sh && python3 -m py_compile .github/scripts/microcontract_parser.py && git diff --check
+> `[10.1]` approved 2026-11-16; `[10.4]` promoted to active. Remaining order: `[PARALLEL: W1]` → `[BATCH: B1-backend]` → `[10.8]` → `[10.9]` → `[10.10]` → `[10.11]`.
 
 - **Task:** `[10.5]` [PARALLEL: W1] Translate legacy Portuguese ADR rows to Technical English
 - **Scope:** Translate the 2026-10-31 to 2026-11-06 rows of `docs/adr/decisions.md` (Language Invariant, `AGENTS.md` §9). Meaning and dates unchanged. Dependencies: none.
