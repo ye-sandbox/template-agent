@@ -10,17 +10,18 @@
 
 ## Active Task
 
-- **Task:** `[10.5]` Translate legacy Portuguese ADR rows to Technical English
-- **Scope:** Translate the 2026-10-31 to 2026-11-06 rows of `docs/adr/decisions.md` (Language Invariant, `AGENTS.md` §9). Meaning and dates unchanged. Dependencies: none.
+- **Task:** `[10.6]` Parameterize default worker model tiers
+- **Scope:** Replace hard-coded `gemini-3.8-flash-medium` / `gemini-4-argon-medium` in the active contract with provider-neutral tier names (`default-tier`, `escalation-tier`) mapped via a documented override variable. Out of scope: `apply-governance-standards.py` (its mirrored NOTES template must be reviewed in a follow-up to avoid audit drift). Dependencies: none.
 - **Status:** APPROVED
 - **Target Branches:** `main` only.
 - **Type:** code
 - Read:
-  - AGENTS.md
-  - docs/adr/decisions.md
+  - docs/subagent-topology.md
+  - .agent/NOTES.md
 - Paths:
-  - docs/adr/decisions.md
-- Verify: ! grep -n -E "Permite|Enforça|ondas|Executor de|Codifica" docs/adr/decisions.md && git diff --check
+  - docs/subagent-topology.md
+  - .agent/NOTES.md
+- Verify: ! grep -n "gemini-" docs/subagent-topology.md .agent/NOTES.md && ./.github/scripts/verify-microcontract.sh verify-file .agent/TASK.md && git diff --check
 
 ---
 
@@ -71,24 +72,14 @@
 | `[10.2]` | Add end-to-end orchestration lifecycle test | `3c01541` (main) | 2026-11-16 |
 | `[10.3]` | Wire e2e orchestration test into CI | `7897201` (main) | 2026-11-16 |
 | `[10.4]` | Port micro-contract parser to Python behind the existing CLI | `5770037` (main) | 2026-11-16 |
+| `[10.5]` | Translate legacy Portuguese ADR rows to Technical English | `505038a` (main) | 2026-11-16 |
 
 ---
 
 ## Backlog (Upcoming, in priority order)
 
 > Epic 10: Orchestration Hardening (e2e safety net, Python parser, wave dependency/shared-file rules, integration protocol, cache observability).
-> `[10.1]` approved 2026-11-16; `[10.5]` promoted to active (sequentially; `[10.6]` follows). Remaining order: `[10.6]` → `[BATCH: B1-backend]` → `[10.8]` → `[10.9]` → `[10.10]` → `[10.11]`.
-
-- **Task:** `[10.6]` [PARALLEL: W1] Parameterize default worker model tiers
-- **Scope:** Replace hard-coded `gemini-3.8-flash-medium` / `gemini-4-argon-medium` in the active contract with provider-neutral tier names (`default-tier`, `escalation-tier`) mapped via a documented override variable. Out of scope: `apply-governance-standards.py` (its mirrored NOTES template must be reviewed in a follow-up to avoid audit drift). Dependencies: none.
-- **Type:** code
-- Read:
-  - docs/subagent-topology.md
-  - .agent/NOTES.md
-- Paths:
-  - docs/subagent-topology.md
-  - .agent/NOTES.md
-- Verify: ! grep -n "gemini-" docs/subagent-topology.md .agent/NOTES.md && ./.github/scripts/verify-microcontract.sh verify-file .agent/TASK.md && git diff --check
+> `[10.1]` approved 2026-11-16; `[10.6]` promoted to active. Remaining order: `[BATCH: B1-backend]` → `[10.8]` → `[10.9]` → `[10.10]` → `[10.11]`.
 
 - **Task:** `[10.7.1]` [BATCH: B1-backend] Add `Depends:` key with unknown-ID and cycle detection
 - **Scope:** Parse `Depends:` in the micro-contract; reject references to unknown task IDs and dependency cycles. Dependencies: `[10.4]`.
