@@ -152,7 +152,8 @@ Long `[BATCH: Bx]` sessions grow their context with every subtask. Compaction tr
 2. **Observable Metrics (verified 2026-11-16):**
    - T3 Code MCP thread and run reads (`t3_thread_read`, `task_status`) expose only: run `status`, requested and `executedModel`, `requestedAt` / `startedAt` / `completedAt` timestamps, `itemCount`, and per-item types.
    - They expose NO token counts or cache-hit fields. Do not script against them or invent values.
-   - Token and cache figures may be transcribed from the T3 Code UI or provider usage view when the human or Lead can see them; otherwise record `n/a`.
+   - Token and cache figures are available in the T3 Code **Usage** view (Tokens tab), filterable by environment, provider, and time window (24h / 7d / 30d / 90d). It reports processed tokens split into `Input` (uncached), `Cache read`, `Cache write`, and `Output`, plus cache savings. Granularity is provider and time window, NOT per thread or per batch, and some provider history (e.g. Antigravity) may be unreadable.
+   - To attribute figures to one batch, read the Usage view immediately before and after the batch on an otherwise idle provider and record the difference; if other sessions ran concurrently, record `n/a`.
 3. **Optional Per-Batch Record:**
    - Not required for DoD and never gates a commit. When kept, append one line per batch to the untracked `.agent/scratch/batch-metrics.md`:
 
@@ -160,7 +161,7 @@ Long `[BATCH: Bx]` sessions grow their context with every subtask. Compaction tr
    B1 | model=<executedModel> | subtasks=<n> | duration=<completedAt-startedAt> | compactions=<n> | input_tokens=<n|n/a> | cached_tokens=<n|n/a> | cache_hit=<pct|n/a>
    ```
 
-   - `cache_hit` = `cached_tokens / input_tokens` and is `n/a` unless both come from an observed source.
+   - `input_tokens` = `Input` + `Cache read` + `Cache write`; `cached_tokens` = `Cache read`. `cache_hit` = `cached_tokens / input_tokens` and is `n/a` unless both come from an observed source.
    - The file is scratch: it MUST NOT be committed or copied into `TASK.md`, `NOTES.md`, or `docs/adr/decisions.md`.
 
 ---
