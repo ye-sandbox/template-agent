@@ -140,6 +140,29 @@ The Lead is the sole integrator. Worker commits land on the target branch only a
    - NEVER use `--force`, `git reset --hard`, or `--strategy-option` overrides to push a commit through. A task that conflicts again after re-queue escalates via the Fail-Stop protocol (Section 7).
    - Parallel waves with disjoint `Paths:` are not expected to conflict; a conflict indicates a violated disjointness invariant and MUST be reported to the human.
 
+### 5.3 Batch Compaction Guidance & Cache Metrics Recording
+
+Long `[BATCH: Bx]` sessions grow their context with every subtask. Compaction trades cached prefix for headroom, so it is a deliberate act, not a default.
+
+1. **Compaction Guidance:**
+   - Compact only at a subtask boundary: after `ZZ.nn` passed `Verify:` and its atomic `git commit` landed, never mid-subtask.
+   - Before compacting, ensure everything the next subtask needs lives in files: the `.agent/scratch/specs/XX-YY.md` anchor, committed code, and `.agent/TASK.md`. Chat-only state is lost.
+   - Compaction rewrites the prompt prefix, so expect the next turn to be a cache miss. Prefer finishing a 2–4 item batch uncompacted; compact only when the context window is the binding constraint.
+   - If the batch still does not fit after one compaction, split it into two batches at a subtask boundary instead of compacting repeatedly.
+2. **Observable Metrics (verified 2026-11-16):**
+   - T3 Code MCP thread and run reads (`t3_thread_read`, `task_status`) expose only: run `status`, requested and `executedModel`, `requestedAt` / `startedAt` / `completedAt` timestamps, `itemCount`, and per-item types.
+   - They expose NO token counts or cache-hit fields. Do not script against them or invent values.
+   - Token and cache figures may be transcribed from the T3 Code UI or provider usage view when the human or Lead can see them; otherwise record `n/a`.
+3. **Optional Per-Batch Record:**
+   - Not required for DoD and never gates a commit. When kept, append one line per batch to the untracked `.agent/scratch/batch-metrics.md`:
+
+   ```
+   B1 | model=<executedModel> | subtasks=<n> | duration=<completedAt-startedAt> | compactions=<n> | input_tokens=<n|n/a> | cached_tokens=<n|n/a> | cache_hit=<pct|n/a>
+   ```
+
+   - `cache_hit` = `cached_tokens / input_tokens` and is `n/a` unless both come from an observed source.
+   - The file is scratch: it MUST NOT be committed or copied into `TASK.md`, `NOTES.md`, or `docs/adr/decisions.md`.
+
 ---
 
 ## 6. Reviewer Quality Gate & Falsifiable Report
