@@ -341,6 +341,46 @@ _LOCKFILE_NAMES = frozenset(
 )
 
 
+def _depends_reach(tasks: list[Task], src: str, dst: str) -> bool:
+    """True if `src` depends on `dst`, directly or transitively."""
+    graph = {t.task_id: t.depends for t in tasks}
+    seen: set[str] = set()
+    stack = [src]
+    while stack:
+        node = stack.pop()
+        for nxt in graph.get(node, []):
+            if nxt == dst:
+                return True
+            if nxt not in seen:
+                seen.add(nxt)
+                stack.append(nxt)
+    return False
+
+
+def check_batch_wave_collisions(tasks: list[Task]) -> int:
+    """Rule C: colliding Paths: between a [BATCH] and a [PARALLEL] task need Depends:."""
+    errors = 0
+    batch_tasks = [t for t in tasks if t.batch and _has_contract(t)]
+    wave_tasks = [t for t in tasks if t.wave and _has_contract(t)]
+    for b in batch_tasks:
+        for w in wave_tasks:
+            if _depends_reach(tasks, b.task_id, w.task_id) or _depends_reach(
+                tasks, w.task_id, b.task_id
+            ):
+                continue
+            for pb in b.paths:
+                hit = next((pw for pw in w.paths if paths_collide(pb, pw)), None)
+                if hit is not None:
+                    log_error(
+                        f"Task {b.task_id} [BATCH: {b.batch}] path '{pb}' collides with "
+                        f"Task {w.task_id} [PARALLEL: {w.wave}] path '{hit}' "
+                        "without a 'Depends:' link"
+                    )
+                    errors += 1
+                    break
+    return errors
+
+
 def check_waves(tasks: list[Task], task_file: str) -> int:
     log_info("Verifying parallel wave mutual disjointness...")
     entries = [
@@ -420,6 +460,7 @@ def validate_task_file(task_file: str, mode: str = "all") -> int:
 
     errors = check_tag_conflicts(tasks)
     errors += check_dependencies(tasks)
+    errors += check_batch_wave_collisions(tasks)
     if mode in ("all", "waves"):
         errors += check_serialized_files(tasks)
     validated = 0

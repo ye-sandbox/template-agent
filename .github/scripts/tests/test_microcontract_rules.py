@@ -93,5 +93,46 @@ class SerializedFilesRule(unittest.TestCase):
         self.assertEqual(run(text)[0], 0)
 
 
+def batch_task(tid: str, paths: str, depends: str | None = None) -> str:
+    dep = f"- Depends: {depends}\n" if depends is not None else ""
+    return (
+        f"- **Task:** `[{tid}]` [BATCH: B1] T\n- Type: code\n- Read: x.md\n"
+        f"- Paths: {paths}\n{dep}- Verify: true\n\n"
+    )
+
+
+class BatchWaveCollisionRule(unittest.TestCase):
+    def batch(self, depends=None):
+        return batch_task("01.1", "src/a.py", depends) + batch_task("01.2", "src/b.py")
+
+    def test_disjoint_passes(self):
+        text = self.batch() + wave_task("01.3", "docs/x.md")
+        self.assertEqual(run(text)[0], 0)
+
+    def test_collision_rejected(self):
+        code, out = run(self.batch() + wave_task("01.3", "src/a.py"))
+        self.assertEqual(code, 1)
+        self.assertIn("without a 'Depends:' link", out)
+
+    def test_directory_collision_rejected(self):
+        self.assertEqual(run(self.batch() + wave_task("01.3", "src"))[0], 1)
+
+    def test_direct_depends_allows(self):
+        self.assertEqual(run(self.batch("[01.3]") + wave_task("01.3", "src/a.py"))[0], 0)
+
+    def test_reverse_depends_allows(self):
+        wave = wave_task("01.3", "src/a.py").replace("- Verify", "- Depends: [01.1]\n- Verify")
+        self.assertEqual(run(self.batch() + wave)[0], 0)
+
+    def test_transitive_depends_allows(self):
+        mid = task("01.4", depends="[01.3]", paths="m.md")
+        text = self.batch("[01.4]") + mid + wave_task("01.3", "src/a.py")
+        self.assertEqual(run(text)[0], 0)
+
+    def test_wave_vs_wave_unaffected(self):
+        text = wave_task("01.1", "a.md", "W1") + wave_task("01.2", "b.md", "W2")
+        self.assertEqual(run(text)[0], 0)
+
+
 if __name__ == "__main__":
     unittest.main()
