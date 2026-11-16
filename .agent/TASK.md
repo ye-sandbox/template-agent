@@ -10,24 +10,21 @@
 
 ## Active Task
 
-- **Task:** `[10.2]` Add end-to-end orchestration lifecycle test
+- **Task:** `[10.3]` Wire e2e orchestration test into CI
 - **Status:** APPROVED
-- **Scope:** Hermetic script that builds a temp repo with a `TASK.md` containing a 2-subtask `[BATCH: Bx]` and a 2-task `[PARALLEL: Wx]`, provisions worktrees via `bootstrap-worktree.sh`, runs `verify-microcontract.sh verify-worktree`, and asserts atomic commits and teardown. Characterization baseline for `[10.4]`.
-- **Dependencies:** `[10.1]` is complete.
+- **Scope:** Add one CI step running `test-e2e-orchestration.sh` on the ubuntu/macOS matrix. Dependencies: `[10.2]` is complete.
 - **Target Branches:** `main` only.
 - **Role:** Worker / Implementer
 - **Isolation:** worktree
 - **Type:** code
 - **Acceptance Criteria:**
-  - Test script is hermetic (temp repo, no network, no host credentials) and exits 0 on ubuntu and macOS.
-  - Covers a 2-subtask `[BATCH: Bx]` and a 2-task `[PARALLEL: Wx]` end to end, including atomic commits and worktree teardown.
+  - CI runs `test-e2e-orchestration.sh` on both ubuntu and macOS.
 - Read:
-  - docs/subagent-topology.md
-  - .github/scripts/verify-microcontract.sh
-  - .github/scripts/bootstrap-worktree.sh
-- Paths:
+  - .github/workflows/ci.yml
   - .github/scripts/test-e2e-orchestration.sh
-- Verify: bash .github/scripts/test-e2e-orchestration.sh && git diff --check
+- Paths:
+  - .github/workflows/ci.yml
+- Verify: bash .github/scripts/test-e2e-orchestration.sh && grep -q "test-e2e-orchestration.sh" .github/workflows/ci.yml && git diff --check
 
 ---
 
@@ -75,23 +72,14 @@
 | `[09.3]` | Harden Batch Layer Classifier & Inter-Branch Drift Checks | `a4d561d` (main) | 2026-11-13 |
 | `[09.4]` | Epic 09 Consolidation: Bilingual Docs, Changelog, SIGPIPE Fix & CI Audit | `3b283d4`, `8b9ec82` (main) | 2026-11-13 |
 | `[10.1]` | Next Milestone / Epic Planning (Epic 10: Orchestration Hardening) | `36be2ac` (main) | 2026-11-16 |
+| `[10.2]` | Add end-to-end orchestration lifecycle test | `3c01541` (main) | 2026-11-16 |
 
 ---
 
 ## Backlog (Upcoming, in priority order)
 
 > Epic 10: Orchestration Hardening (e2e safety net, Python parser, wave dependency/shared-file rules, integration protocol, cache observability).
-> `[10.1]` approved 2026-11-16; `[10.2]` promoted to active. Remaining order: `[10.3]` → `[10.4]` → `[PARALLEL: W1]` → `[BATCH: B1-backend]` → `[10.8]` → `[10.9]` → `[10.10]` → `[10.11]`.
-
-- **Task:** `[10.3]` Wire e2e orchestration test into CI
-- **Scope:** Add one CI step running `test-e2e-orchestration.sh` on the ubuntu/macOS matrix. Dependencies: `[10.2]`.
-- **Type:** code
-- Read:
-  - .github/workflows/ci.yml
-  - .github/scripts/test-e2e-orchestration.sh
-- Paths:
-  - .github/workflows/ci.yml
-- Verify: bash .github/scripts/test-e2e-orchestration.sh && grep -q "test-e2e-orchestration.sh" .github/workflows/ci.yml && git diff --check
+> `[10.1]` approved 2026-11-16; `[10.3]` promoted to active. Remaining order: `[10.4]` → `[PARALLEL: W1]` → `[BATCH: B1-backend]` → `[10.8]` → `[10.9]` → `[10.10]` → `[10.11]`.
 
 - **Task:** `[10.4]` Port micro-contract parser to Python behind the existing CLI
 - **Scope:** Move `TASK.md` parsing and wave/batch validation into `microcontract_parser.py`; `verify-microcontract.sh` delegates to it. CLI commands, output markers, and exit codes MUST stay identical (`[P1]` backward compatibility); `[10.2]` is the parity proof. Dependencies: `[10.3]`.
