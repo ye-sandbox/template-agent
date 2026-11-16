@@ -290,6 +290,8 @@ Para preservar o prefixo do prompt cache entre subtarefas dependentes, agrupe de
 
 Pelo Contrato de Skills Herméticas, skills procedurais devem estar contidas em `.agent/skills/` ou ser injetadas diretamente no prompt da tarefa, sem varreduras no filesystem do host. O script `.github/scripts/check-branch-drift.sh` audita a paridade dos contratos de `[BATCH: Bx]`, `.agent/scratch/specs/` e Skills Herméticas entre a `main` e os cinco starters.
 
+A validação de waves e batches também aceita a chave `Depends:` (IDs desconhecidos e ciclos são rejeitados), proíbe lockfiles, `CHANGELOG.md`, `.agent/TASK.md` e `.agent/NOTES.md` em caminhos `[PARALLEL: Wx]` e exige dependência quando tarefas `[BATCH]` e `[PARALLEL]` compartilham caminhos. Commits de workers são integrados na ordem de dependência, um cherry-pick por vez com `Verify:` após cada um; veja [`docs/subagent-topology.md`](docs/subagent-topology.md) para integração, compactação de batches e métricas de cache.
+
 ### Ferramentas de Governança do Ecossistema
 
 As ferramentas exigem Python 3. Execute-as a partir de um checkout da branch `main` do hub: a auditoria de interfaces e a migração opt-in leem a skill e os invariantes canônicos desse checkout. O auditor lê os arquivos dos projetos sem alterá-los; sua pontuação heurística não certifica o comportamento da aplicação.

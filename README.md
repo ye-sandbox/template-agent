@@ -290,6 +290,8 @@ To preserve prompt cache prefixes across dependent subtasks, group 2–4 sequent
 
 Under the Hermetic Skills & Context Contract, procedural skills must reside in `.agent/skills/` or be injected into the task prompt rather than searched across the host filesystem. `.github/scripts/check-branch-drift.sh` enforces parity of both `[BATCH: Bx]` / `.agent/scratch/specs/` contracts and the Hermetic Skills directives across `main` and all five starters.
 
+Wave and batch validation also supports a `Depends:` key (unknown IDs and cycles are rejected), forbids lockfiles, `CHANGELOG.md`, `.agent/TASK.md`, and `.agent/NOTES.md` in `[PARALLEL: Wx]` paths, and requires a dependency when a `[BATCH]` and a `[PARALLEL]` task share paths. Worker commits are integrated in dependency order, one cherry-pick at a time with `Verify:` after each; see [`docs/subagent-topology.md`](docs/subagent-topology.md) for integration, batch compaction, and cache metrics guidance.
+
 ### Ecosystem Governance Tools
 
 Python 3 is required. Run these tools from a checkout of the hub's `main` branch: interface auditing and opt-in migration read the canonical skill and invariants from that checkout. The auditor reads project files without changing them; its heuristic score does not certify application behavior.

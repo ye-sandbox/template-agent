@@ -7,6 +7,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- End-to-end orchestration lifecycle test (`.github/scripts/test-e2e-orchestration.sh`) wired into CI.
+- `Depends:` micro-contract key with unknown-ID and cycle detection; parallel waves reject serialized shared files (lockfiles, `CHANGELOG.md`, `.agent/TASK.md`, `.agent/NOTES.md`); `[BATCH]` and `[PARALLEL]` tasks with colliding `Paths:` require a dependency.
+- Worker commit integration protocol (dependency order, one-at-a-time cherry-pick with `Verify:`, abort and re-queue on conflict) in `docs/subagent-topology.md` and `docs/worktree-isolation.md`.
+- Batch compaction guidance and an optional per-batch cache metrics record in `docs/subagent-topology.md`.
+- Epic 10 contracts propagated to all five starter branches.
+
+### Changed
+
+- Micro-contract parsing and validation moved to `.github/scripts/microcontract_parser.py` behind the unchanged `verify-microcontract.sh` CLI.
+- Default worker models are provider-neutral tiers (`WORKER_MODEL_DEFAULT_TIER`, `WORKER_MODEL_ESCALATION_TIER`).
+- Legacy Portuguese ADR rows translated to Technical English.
+
 ## [1.4.0] - 2026-11-13
 
 ### Added
