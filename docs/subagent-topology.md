@@ -176,11 +176,12 @@ When orchestrating parallel waves (`[PARALLEL: Wx]`) and autonomous worker subag
 - If all candidate profiles are below the 5% quota floor or rate-limited (`429`), the runner halts and escalates to the Lead Orchestrator with the standard diagnostic payload.
 
 ### 3. Model Tier Selection & Escalation Hierarchy
-- **Default Tier:** Autonomous workers default to `gemini-3.8-flash-medium` for low token consumption, zero unnecessary overhead, and high-throughput wave execution.
-- **Escalation Tier:** Escalation to `gemini-4-argon-medium` is permitted ONLY for:
+- **Default Tier:** Autonomous workers default to `default-tier` for low token consumption, zero unnecessary overhead, and high-throughput wave execution.
+- **Escalation Tier:** Escalation to `escalation-tier` is permitted ONLY for:
   1. Substantive architectural synthesis explicitly designated in planning.
   2. At most **1 retry** following a verification failure (`verify_failed`).
 - **Hard Stop:** If verification fails a second time under the escalated model, the runner halts immediately.
+- **Tier Mapping:** `default-tier` and `escalation-tier` are provider-neutral names. The concrete model IDs are resolved by the dispatch environment through the override variables `WORKER_MODEL_DEFAULT_TIER` and `WORKER_MODEL_ESCALATION_TIER`; the contract never hard-codes a provider model ID. If a variable is unset, the profile/provider's configured default for that tier applies.
 
 ### 4. Rate-Limit Persistence & Cooldowns
 - 429 rate limit responses and quota state changes are persisted in `<profile>/.multigravity/quota-history.jsonl` to prevent immediate re-dispatch to rate-limited accounts.
