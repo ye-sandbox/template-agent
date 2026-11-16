@@ -39,7 +39,7 @@
 
 ## Backlog (Upcoming, in priority order)
 
-> Tag independent pre-approved tasks with strictly disjoint file scopes as `[APPROVED]` `[PARALLEL: W1]`, and sequential same-layer subtasks (2–4 items) as `[APPROVED]` `[BATCH: B1]` anchored to `.agent/scratch/specs/XX-YY.md`, with `Read: / Paths: / Verify:` micro-contracts.
+> Tag independent pre-approved tasks with strictly disjoint file scopes as `[APPROVED]` `[PARALLEL: W1]`, and sequential same-layer subtasks (2–4 items) as `[APPROVED]` `[BATCH: B1]` anchored to `.agent/scratch/specs/XX-YY.md`, with `Read: / Paths: / Verify:` micro-contracts (optional `Depends: [XX.Y]` lists prerequisite task IDs).
 
 - [ ] **[01.1]** [First business task, bugfix, or feature in legacy] — `[module]`
 - [ ] **[01.2]** [Subsequent task] — `[module]`
