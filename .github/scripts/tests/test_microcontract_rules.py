@@ -63,5 +63,35 @@ class DependsRule(unittest.TestCase):
         self.assertEqual(tasks[1].depends, ["[01.1]"])
 
 
+def wave_task(tid: str, paths: str, wave: str = "W1") -> str:
+    return (
+        f"- **Task:** `[{tid}]` [PARALLEL: {wave}] Title\n- Type: code\n- Read: x.md\n"
+        f"- Paths: {paths}\n- Verify: true\n\n"
+    )
+
+
+class SerializedFilesRule(unittest.TestCase):
+    def test_clean_wave_passes(self):
+        self.assertEqual(run(wave_task("01.1", "a.md") + wave_task("01.2", "b.md"))[0], 0)
+
+    def test_denied_files_rejected(self):
+        for f in ("CHANGELOG.md", ".agent/TASK.md", ".agent/NOTES.md", "yarn.lock",
+                  "web/package-lock.json", "uv.lock"):
+            with self.subTest(f=f):
+                code, out = run(wave_task("01.1", f) + wave_task("01.2", "b.md"))
+                self.assertEqual(code, 1)
+                self.assertIn("serialized shared file", out)
+
+    def test_non_wave_task_may_list_them(self):
+        self.assertEqual(run(task("01.1", paths="CHANGELOG.md"))[0], 0)
+
+    def test_batch_task_may_list_them(self):
+        text = "".join(
+            f"- **Task:** `[01.{i}]` [BATCH: B1] T\n- Type: code\n- Read: x.md\n"
+            f"- Paths: CHANGELOG.md\n- Verify: true\n\n" for i in (1, 2)
+        )
+        self.assertEqual(run(text)[0], 0)
+
+
 if __name__ == "__main__":
     unittest.main()

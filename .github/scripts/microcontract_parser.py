@@ -314,6 +314,33 @@ def check_dependencies(tasks: list[Task]) -> int:
     return errors
 
 
+SERIALIZED_FILES = frozenset({
+    "package-lock.json", "pnpm-lock.yaml", "yarn.lock", "uv.lock", "poetry.lock",
+    "CHANGELOG.md", ".agent/TASK.md", ".agent/NOTES.md",
+})
+
+
+def check_serialized_files(tasks: list[Task]) -> int:
+    """Rule B: serialized shared files must not appear in [PARALLEL] Paths:."""
+    errors = 0
+    for t in tasks:
+        if not (t.wave and _has_contract(t)):
+            continue
+        for p in t.paths:
+            if p in SERIALIZED_FILES or p.rsplit("/", 1)[-1] in _LOCKFILE_NAMES:
+                log_error(
+                    f"Task {t.task_id} in [PARALLEL: {t.wave}] lists serialized shared "
+                    f"file '{p}' in 'Paths:' (conflicts on integration; run it outside a wave)"
+                )
+                errors += 1
+    return errors
+
+
+_LOCKFILE_NAMES = frozenset(
+    {"package-lock.json", "pnpm-lock.yaml", "yarn.lock", "uv.lock", "poetry.lock"}
+)
+
+
 def check_waves(tasks: list[Task], task_file: str) -> int:
     log_info("Verifying parallel wave mutual disjointness...")
     entries = [
@@ -393,6 +420,8 @@ def validate_task_file(task_file: str, mode: str = "all") -> int:
 
     errors = check_tag_conflicts(tasks)
     errors += check_dependencies(tasks)
+    if mode in ("all", "waves"):
+        errors += check_serialized_files(tasks)
     validated = 0
     if mode == "all":
         validated, contract_errors = check_contracts(tasks)
