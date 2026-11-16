@@ -10,25 +10,24 @@
 
 ## Active Task
 
-- **Task:** `[10.1]` Next Milestone / Epic Planning
-- **Status:** READY FOR PLANNING
-- **Scope:** Analyze post-Epic 09 backlog, starter template parity, ecosystem adoption readiness, and define the roadmap, task queue, and ADRs for Epic 10 (planning-only; no runtime or script edits before approval).
-- **Dependencies:** Epic 09 (`[09.1]`–`[09.4]`) is complete.
+- **Task:** `[10.2]` Add end-to-end orchestration lifecycle test
+- **Status:** APPROVED
+- **Scope:** Hermetic script that builds a temp repo with a `TASK.md` containing a 2-subtask `[BATCH: Bx]` and a 2-task `[PARALLEL: Wx]`, provisions worktrees via `bootstrap-worktree.sh`, runs `verify-microcontract.sh verify-worktree`, and asserts atomic commits and teardown. Characterization baseline for `[10.4]`.
+- **Dependencies:** `[10.1]` is complete.
 - **Target Branches:** `main` only.
-- **Role:** Lead / Orchestrator
+- **Role:** Worker / Implementer
 - **Isolation:** worktree
+- **Type:** code
 - **Acceptance Criteria:**
-  - Epic 10 goals, non-goals, and architectural decisions recorded in `docs/adr/decisions.md`.
-  - Next implementation task promoted and structured with explicit micro-contracts (`Read:`, `Paths:`, `Verify:`) in `.agent/TASK.md`.
+  - Test script is hermetic (temp repo, no network, no host credentials) and exits 0 on ubuntu and macOS.
+  - Covers a 2-subtask `[BATCH: Bx]` and a 2-task `[PARALLEL: Wx]` end to end, including atomic commits and worktree teardown.
 - Read:
-  - AGENTS.md
-  - .agent/NOTES.md
-  - docs/adr/decisions.md
-  - .agent/TASK.md
+  - docs/subagent-topology.md
+  - .github/scripts/verify-microcontract.sh
+  - .github/scripts/bootstrap-worktree.sh
 - Paths:
-  - .agent/TASK.md
-  - docs/adr/decisions.md
-- Verify: ./.github/scripts/verify-microcontract.sh verify-file .agent/TASK.md && git diff --check
+  - .github/scripts/test-e2e-orchestration.sh
+- Verify: bash .github/scripts/test-e2e-orchestration.sh && git diff --check
 
 ---
 
@@ -75,12 +74,134 @@
 | `[09.2]` | Starter Parity: Synchronize `[BATCH: Bx]` & Hermetic Skills Contracts | `e2f8650` (greenfield), `852d25f` (brownfield), `ba22798` (blackbox), `7f50f78` (infra), `92a643f` (baremetal) | 2026-11-13 |
 | `[09.3]` | Harden Batch Layer Classifier & Inter-Branch Drift Checks | `a4d561d` (main) | 2026-11-13 |
 | `[09.4]` | Epic 09 Consolidation: Bilingual Docs, Changelog, SIGPIPE Fix & CI Audit | `3b283d4`, `8b9ec82` (main) | 2026-11-13 |
+| `[10.1]` | Next Milestone / Epic Planning (Epic 10: Orchestration Hardening) | `36be2ac` (main) | 2026-11-16 |
 
 ---
 
 ## Backlog (Upcoming, in priority order)
 
-*(empty)*
+> Epic 10: Orchestration Hardening (e2e safety net, Python parser, wave dependency/shared-file rules, integration protocol, cache observability).
+> `[10.1]` approved 2026-11-16; `[10.2]` promoted to active. Remaining order: `[10.3]` → `[10.4]` → `[PARALLEL: W1]` → `[BATCH: B1-backend]` → `[10.8]` → `[10.9]` → `[10.10]` → `[10.11]`.
+
+- **Task:** `[10.3]` Wire e2e orchestration test into CI
+- **Scope:** Add one CI step running `test-e2e-orchestration.sh` on the ubuntu/macOS matrix. Dependencies: `[10.2]`.
+- **Type:** code
+- Read:
+  - .github/workflows/ci.yml
+  - .github/scripts/test-e2e-orchestration.sh
+- Paths:
+  - .github/workflows/ci.yml
+- Verify: bash .github/scripts/test-e2e-orchestration.sh && grep -q "test-e2e-orchestration.sh" .github/workflows/ci.yml && git diff --check
+
+- **Task:** `[10.4]` Port micro-contract parser to Python behind the existing CLI
+- **Scope:** Move `TASK.md` parsing and wave/batch validation into `microcontract_parser.py`; `verify-microcontract.sh` delegates to it. CLI commands, output markers, and exit codes MUST stay identical (`[P1]` backward compatibility); `[10.2]` is the parity proof. Dependencies: `[10.3]`.
+- **Type:** code
+- Read:
+  - .github/scripts/verify-microcontract.sh
+  - .github/scripts/test-e2e-orchestration.sh
+- Paths:
+  - .github/scripts/microcontract_parser.py
+  - .github/scripts/verify-microcontract.sh
+- Verify: ./.github/scripts/verify-microcontract.sh self-test && bash .github/scripts/test-e2e-orchestration.sh && python3 -m py_compile .github/scripts/microcontract_parser.py && git diff --check
+
+- **Task:** `[10.5]` [PARALLEL: W1] Translate legacy Portuguese ADR rows to Technical English
+- **Scope:** Translate the 2026-10-31 to 2026-11-06 rows of `docs/adr/decisions.md` (Language Invariant, `AGENTS.md` §9). Meaning and dates unchanged. Dependencies: none.
+- **Type:** code
+- Read:
+  - AGENTS.md
+  - docs/adr/decisions.md
+- Paths:
+  - docs/adr/decisions.md
+- Verify: ! grep -n -E "Permite|Enforça|ondas|Executor de|Codifica" docs/adr/decisions.md && git diff --check
+
+- **Task:** `[10.6]` [PARALLEL: W1] Parameterize default worker model tiers
+- **Scope:** Replace hard-coded `gemini-3.8-flash-medium` / `gemini-4-argon-medium` in the active contract with provider-neutral tier names (`default-tier`, `escalation-tier`) mapped via a documented override variable. Out of scope: `apply-governance-standards.py` (its mirrored NOTES template must be reviewed in a follow-up to avoid audit drift). Dependencies: none.
+- **Type:** code
+- Read:
+  - docs/subagent-topology.md
+  - .agent/NOTES.md
+- Paths:
+  - docs/subagent-topology.md
+  - .agent/NOTES.md
+- Verify: ! grep -n "gemini-" docs/subagent-topology.md .agent/NOTES.md && ./.github/scripts/verify-microcontract.sh verify-file .agent/TASK.md && git diff --check
+
+- **Task:** `[10.7.1]` [BATCH: B1-backend] Add `Depends:` key with unknown-ID and cycle detection
+- **Scope:** Parse `Depends:` in the micro-contract; reject references to unknown task IDs and dependency cycles. Dependencies: `[10.4]`.
+- **Type:** code
+- Read:
+  - .agent/scratch/specs/10-07.md
+  - .github/scripts/microcontract_parser.py
+- Paths:
+  - .github/scripts/microcontract_parser.py
+  - .github/scripts/tests/test_microcontract_rules.py
+- Verify: python3 .github/scripts/tests/test_microcontract_rules.py && ./.github/scripts/verify-microcontract.sh self-test && git diff --check
+
+- **Task:** `[10.7.2]` [BATCH: B1-backend] Reject serialized shared files in parallel waves
+- **Scope:** Deny-list (lockfiles, `CHANGELOG.md`, `.agent/TASK.md`, `.agent/NOTES.md`) that MUST NOT appear in `Paths:` of any `[PARALLEL: Wx]` task, since they conflict on integration.
+- **Type:** code
+- Read:
+  - .agent/scratch/specs/10-07.md
+  - .github/scripts/microcontract_parser.py
+- Paths:
+  - .github/scripts/microcontract_parser.py
+  - .github/scripts/tests/test_microcontract_rules.py
+- Verify: python3 .github/scripts/tests/test_microcontract_rules.py && ./.github/scripts/verify-microcontract.sh self-test && git diff --check
+
+- **Task:** `[10.7.3]` [BATCH: B1-backend] Cross-check `[BATCH]` paths against `[PARALLEL]` waves
+- **Scope:** Reject colliding `Paths:` between a batch task and a wave task unless linked by `Depends:`.
+- **Type:** code
+- Read:
+  - .agent/scratch/specs/10-07.md
+  - .github/scripts/microcontract_parser.py
+- Paths:
+  - .github/scripts/microcontract_parser.py
+  - .github/scripts/tests/test_microcontract_rules.py
+- Verify: python3 .github/scripts/tests/test_microcontract_rules.py && ./.github/scripts/verify-microcontract.sh self-test && git diff --check
+
+- **Task:** `[10.8]` Document worker commit integration protocol
+- **Scope:** Specify integration order of worker commits (by `Depends:`, then task ID), cherry-pick procedure, and conflict resolution (abort, re-queue, never force). Dependencies: `[10.7.3]`.
+- **Type:** code
+- Read:
+  - docs/subagent-topology.md
+  - docs/worktree-isolation.md
+- Paths:
+  - docs/subagent-topology.md
+  - docs/worktree-isolation.md
+- Verify: ./.github/scripts/verify-microcontract.sh verify-file .agent/TASK.md && git diff --check
+
+- **Task:** `[10.9]` Starter parity for Epic 10 contracts
+- **Scope:** Propagate the `Depends:` / shared-file / integration contracts to `greenfield`, `brownfield`, `blackbox`, `infra`, `baremetal` via cherry-pick or selective checkout only (no merges). Dependencies: `[10.8]`.
+- **Type:** code
+- Target Branches: greenfield, brownfield, blackbox, infra, baremetal
+- Read:
+  - AGENTS.md
+  - .github/scripts/check-branch-drift.sh
+- Paths:
+  - docs/subagent-topology.md
+  - docs/worktree-isolation.md
+- Verify: ./.github/scripts/check-branch-drift.sh && git diff --check
+
+- **Task:** `[10.10]` Document batch compaction guidance and T3 Code cache-metrics recording
+- **Scope:** Compaction guidance for long batches and an optional per-batch record (tokens, cache-hit rate) sourced from T3 Code's cache metrics. First step: confirm which metrics T3 Code actually exposes before specifying the format; do not assume fields. Dependencies: `[10.8]`.
+- **Type:** code
+- Read:
+  - docs/subagent-topology.md
+- Paths:
+  - docs/subagent-topology.md
+- Verify: ./.github/scripts/verify-microcontract.sh verify-file .agent/TASK.md && git diff --check
+
+- **Task:** `[10.11]` Epic 10 consolidation: bilingual docs, changelog, CI audit
+- **Scope:** Update `README.md`, `README.pt-br.md`, `CHANGELOG.md`; run full CI audit. No release tag (`[99.1]` requires explicit human instruction). Dependencies: `[10.9]`, `[10.10]`.
+- **Type:** code
+- Read:
+  - README.md
+  - README.pt-br.md
+  - CHANGELOG.md
+- Paths:
+  - README.md
+  - README.pt-br.md
+  - CHANGELOG.md
+- Verify: ./.github/scripts/verify-microcontract.sh && ./.github/scripts/check-branch-drift.sh && git diff --check
 
 
 
