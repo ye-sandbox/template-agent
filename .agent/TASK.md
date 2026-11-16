@@ -10,18 +10,18 @@
 
 ## Active Task
 
-- **Task:** `[10.7.3]` [BATCH: B1-backend] Cross-check `[BATCH]` paths against `[PARALLEL]` waves
-- **Scope:** Reject colliding `Paths:` between a batch task and a wave task unless linked by `Depends:`.
+- **Task:** `[10.8]` Document worker commit integration protocol
+- **Scope:** Specify integration order of worker commits (by `Depends:`, then task ID), cherry-pick procedure, and conflict resolution (abort, re-queue, never force).
 - **Status:** APPROVED
 - **Target Branches:** `main` only.
 - **Type:** code
 - Read:
-  - .agent/scratch/specs/10-07.md
-  - .github/scripts/microcontract_parser.py
+  - docs/subagent-topology.md
+  - docs/worktree-isolation.md
 - Paths:
-  - .github/scripts/microcontract_parser.py
-  - .github/scripts/tests/test_microcontract_rules.py
-- Verify: python3 .github/scripts/tests/test_microcontract_rules.py && ./.github/scripts/verify-microcontract.sh self-test && git diff --check
+  - docs/subagent-topology.md
+  - docs/worktree-isolation.md
+- Verify: ./.github/scripts/verify-microcontract.sh verify-file .agent/TASK.md && git diff --check
 
 ---
 
@@ -76,24 +76,14 @@
 | `[10.6]` | Parameterize default worker model tiers | `379a33f` (main) | 2026-11-16 |
 | `[10.7.1]` | Add `Depends:` key with unknown-ID and cycle detection | `edcd382` (main) | 2026-11-16 |
 | `[10.7.2]` | Reject serialized shared files in parallel waves | `2e58c39` (main) | 2026-11-16 |
+| `[10.7.3]` | Cross-check `[BATCH]` paths against `[PARALLEL]` waves | `6cd587f` (main) | 2026-11-16 |
 
 ---
 
 ## Backlog (Upcoming, in priority order)
 
 > Epic 10: Orchestration Hardening (e2e safety net, Python parser, wave dependency/shared-file rules, integration protocol, cache observability).
-> `[10.1]` approved 2026-11-16; `[10.7.3]` promoted to active. Remaining order: `[10.8]` → `[10.9]` → `[10.10]` → `[10.11]`.
-
-- **Task:** `[10.8]` Document worker commit integration protocol
-- **Scope:** Specify integration order of worker commits (by `Depends:`, then task ID), cherry-pick procedure, and conflict resolution (abort, re-queue, never force). Dependencies: `[10.7.3]`.
-- **Type:** code
-- Read:
-  - docs/subagent-topology.md
-  - docs/worktree-isolation.md
-- Paths:
-  - docs/subagent-topology.md
-  - docs/worktree-isolation.md
-- Verify: ./.github/scripts/verify-microcontract.sh verify-file .agent/TASK.md && git diff --check
+> `[10.1]` approved 2026-11-16; `[10.8]` promoted to active. Remaining order: `[10.9]` → `[10.10]` → `[10.11]`.
 
 - **Task:** `[10.9]` Starter parity for Epic 10 contracts
 - **Scope:** Propagate the `Depends:` / shared-file / integration contracts to `greenfield`, `brownfield`, `blackbox`, `infra`, `baremetal` via cherry-pick or selective checkout only (no merges). Dependencies: `[10.8]`.
