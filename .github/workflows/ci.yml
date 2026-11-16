@@ -43,6 +43,11 @@ jobs:
           chmod +x .github/scripts/verify-microcontract.sh
           .github/scripts/verify-microcontract.sh
 
+      - name: Verify End-to-End Orchestration Lifecycle
+        run: |
+          chmod +x .github/scripts/test-e2e-orchestration.sh
+          .github/scripts/test-e2e-orchestration.sh
+
       - name: Audit Command Security & Blast-Radius Guardrails
         run: |
           chmod +x .github/scripts/audit-command-security.sh
