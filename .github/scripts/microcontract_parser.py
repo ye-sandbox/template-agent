@@ -122,10 +122,12 @@ _TASK_HEADER = re.compile(
 _WAVE_TAG = re.compile(r"\[PARALLEL:\s*(W[0-9]+[0-9A-Za-z_-]*)\]")
 _BATCH_TAG = re.compile(r"\[BATCH:\s*(B[0-9]+[0-9A-Za-z_-]*)\]")
 _KEY = {
-    k: re.compile(rf"^\s*(-\s*)?{k}:") for k in ("Type", "Read", "Paths", "Verify")
+    k: re.compile(rf"^\s*(-\s*)?{k}:")
+    for k in ("Type", "Read", "Paths", "Verify", "Depends")
 }
 _LIST_ITEM = re.compile(r"^\s*-\s+(.+)")
 _ANY_KEY = re.compile(r"^\s*(-\s*)?[A-Za-z]+:")
+_BARE_ID = re.compile(r"^\[[0-9]{2}\.[0-9]+(\.[0-9]+)?\]$")
 _BLOCK_END = re.compile(r"^(---|##\s)")
 
 
@@ -138,6 +140,7 @@ class Task:
     read: list[str] = field(default_factory=list)
     paths: list[str] = field(default_factory=list)
     verify: str = ""
+    depends: list[str] = field(default_factory=list)
 
 
 def _split_inline(value: str) -> list[str]:
@@ -150,7 +153,7 @@ def _split_inline(value: str) -> list[str]:
 def parse_tasks(text: str) -> list[Task]:
     tasks: list[Task] = []
     cur: Task | None = None
-    section = ""  # "", "read" or "paths": which list items attach to
+    section = ""  # "", "read", "paths" or "depends": which list items attach to
 
     def finalize() -> None:
         nonlocal cur, section
@@ -162,6 +165,13 @@ def parse_tasks(text: str) -> list[Task]:
         if _SKIP_LINE.match(raw):
             continue
         clean = raw.replace("`", "")
+
+        # In a Depends: list, "- [XX.Y]" items look like task headers; treat as items.
+        if cur is not None and section == "depends":
+            item = _LIST_ITEM.match(clean)
+            if item and _BARE_ID.match(item.group(1).strip()):
+                cur.depends.append(item.group(1).strip())
+                continue
 
         m = _TASK_HEADER.match(clean)
         if m:
@@ -188,13 +198,17 @@ def parse_tasks(text: str) -> list[Task]:
             section = "paths"
             cur.paths.extend(_split_inline(clean.split("Paths:", 1)[1]))
             continue
+        if _KEY["Depends"].match(clean):
+            section = "depends"
+            cur.depends.extend(_split_inline(clean.split("Depends:", 1)[1]))
+            continue
         if _KEY["Verify"].match(clean):
             section = ""
             cur.verify = normalize_path(clean.split("Verify:", 1)[1])
             continue
 
         if section:
-            target = cur.read if section == "read" else cur.paths
+            target = getattr(cur, section)
             item = _LIST_ITEM.match(clean)
             if item:
                 value = normalize_path(item.group(1))
@@ -258,6 +272,46 @@ def check_contracts(tasks: list[Task]) -> tuple[int, int]:
         else:
             validated += 1
     return validated, errors
+
+
+def check_dependencies(tasks: list[Task]) -> int:
+    """Rule A: every Depends: ID exists in the task file; the graph is acyclic."""
+    errors = 0
+    ids = {t.task_id for t in tasks}
+    graph: dict[str, list[str]] = {}
+    for t in tasks:
+        if not t.depends:
+            continue
+        for dep in t.depends:
+            if dep not in ids:
+                log_error(f"Task {t.task_id} 'Depends:' references unknown task {dep}")
+                errors += 1
+        graph.setdefault(t.task_id, []).extend(d for d in t.depends if d in ids)
+
+    state: dict[str, int] = {}  # 1 = visiting, 2 = done
+    reported: set[frozenset[str]] = set()
+
+    def visit(node: str, stack: list[str]) -> None:
+        nonlocal errors
+        state[node] = 1
+        stack.append(node)
+        for nxt in graph.get(node, []):
+            if state.get(nxt) == 1:
+                cycle = stack[stack.index(nxt):]
+                key = frozenset(cycle)
+                if key not in reported:
+                    reported.add(key)
+                    log_error("Dependency cycle: " + " -> ".join(cycle + [nxt]))
+                    errors += 1
+            elif nxt not in state:
+                visit(nxt, stack)
+        stack.pop()
+        state[node] = 2
+
+    for node in list(graph):
+        if node not in state:
+            visit(node, [])
+    return errors
 
 
 def check_waves(tasks: list[Task], task_file: str) -> int:
@@ -338,6 +392,7 @@ def validate_task_file(task_file: str, mode: str = "all") -> int:
         tasks = parse_tasks(fh.read())
 
     errors = check_tag_conflicts(tasks)
+    errors += check_dependencies(tasks)
     validated = 0
     if mode == "all":
         validated, contract_errors = check_contracts(tasks)
