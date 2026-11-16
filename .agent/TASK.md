@@ -10,18 +10,18 @@
 
 ## Active Task
 
-- **Task:** `[10.8]` Document worker commit integration protocol
-- **Scope:** Specify integration order of worker commits (by `Depends:`, then task ID), cherry-pick procedure, and conflict resolution (abort, re-queue, never force).
-- **Status:** APPROVED
-- **Target Branches:** `main` only.
+- **Task:** `[10.9]` Starter parity for Epic 10 contracts
+- **Scope:** Propagate the `Depends:` / shared-file / integration contracts to `greenfield`, `brownfield`, `blackbox`, `infra`, `baremetal` via cherry-pick or selective checkout only (no merges). Dependencies: `[10.8]`.
 - **Type:** code
+- **Status:** APPROVED
+- **Target Branches:** greenfield, brownfield, blackbox, infra, baremetal
 - Read:
-  - docs/subagent-topology.md
-  - docs/worktree-isolation.md
+  - AGENTS.md
+  - .github/scripts/check-branch-drift.sh
 - Paths:
   - docs/subagent-topology.md
   - docs/worktree-isolation.md
-- Verify: ./.github/scripts/verify-microcontract.sh verify-file .agent/TASK.md && git diff --check
+- Verify: ./.github/scripts/check-branch-drift.sh && git diff --check
 
 ---
 
@@ -77,25 +77,14 @@
 | `[10.7.1]` | Add `Depends:` key with unknown-ID and cycle detection | `edcd382` (main) | 2026-11-16 |
 | `[10.7.2]` | Reject serialized shared files in parallel waves | `2e58c39` (main) | 2026-11-16 |
 | `[10.7.3]` | Cross-check `[BATCH]` paths against `[PARALLEL]` waves | `6cd587f` (main) | 2026-11-16 |
+| `[10.8]` | Document worker commit integration protocol | `351852b` (main) | 2026-11-16 |
 
 ---
 
 ## Backlog (Upcoming, in priority order)
 
 > Epic 10: Orchestration Hardening (e2e safety net, Python parser, wave dependency/shared-file rules, integration protocol, cache observability).
-> `[10.1]` approved 2026-11-16; `[10.8]` promoted to active. Remaining order: `[10.9]` → `[10.10]` → `[10.11]`.
-
-- **Task:** `[10.9]` Starter parity for Epic 10 contracts
-- **Scope:** Propagate the `Depends:` / shared-file / integration contracts to `greenfield`, `brownfield`, `blackbox`, `infra`, `baremetal` via cherry-pick or selective checkout only (no merges). Dependencies: `[10.8]`.
-- **Type:** code
-- Target Branches: greenfield, brownfield, blackbox, infra, baremetal
-- Read:
-  - AGENTS.md
-  - .github/scripts/check-branch-drift.sh
-- Paths:
-  - docs/subagent-topology.md
-  - docs/worktree-isolation.md
-- Verify: ./.github/scripts/check-branch-drift.sh && git diff --check
+> `[10.1]` approved 2026-11-16; `[10.9]` promoted to active. Remaining order: `[10.10]` → `[10.11]`.
 
 - **Task:** `[10.10]` Document batch compaction guidance and T3 Code cache-metrics recording
 - **Scope:** Compaction guidance for long batches and an optional per-batch record (tokens, cache-hit rate) sourced from T3 Code's cache metrics. First step: confirm which metrics T3 Code actually exposes before specifying the format; do not assume fields. Dependencies: `[10.8]`.
