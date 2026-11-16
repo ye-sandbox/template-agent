@@ -10,8 +10,8 @@
 
 ## Active Task
 
-- **Task:** `[10.7.2]` [BATCH: B1-backend] Reject serialized shared files in parallel waves
-- **Scope:** Deny-list (lockfiles, `CHANGELOG.md`, `.agent/TASK.md`, `.agent/NOTES.md`) that MUST NOT appear in `Paths:` of any `[PARALLEL: Wx]` task, since they conflict on integration.
+- **Task:** `[10.7.3]` [BATCH: B1-backend] Cross-check `[BATCH]` paths against `[PARALLEL]` waves
+- **Scope:** Reject colliding `Paths:` between a batch task and a wave task unless linked by `Depends:`.
 - **Status:** APPROVED
 - **Target Branches:** `main` only.
 - **Type:** code
@@ -75,24 +75,14 @@
 | `[10.5]` | Translate legacy Portuguese ADR rows to Technical English | `505038a` (main) | 2026-11-16 |
 | `[10.6]` | Parameterize default worker model tiers | `379a33f` (main) | 2026-11-16 |
 | `[10.7.1]` | Add `Depends:` key with unknown-ID and cycle detection | `edcd382` (main) | 2026-11-16 |
+| `[10.7.2]` | Reject serialized shared files in parallel waves | `2e58c39` (main) | 2026-11-16 |
 
 ---
 
 ## Backlog (Upcoming, in priority order)
 
 > Epic 10: Orchestration Hardening (e2e safety net, Python parser, wave dependency/shared-file rules, integration protocol, cache observability).
-> `[10.1]` approved 2026-11-16; `[10.7.2]` promoted to active. Remaining order: `[10.7.3]` → `[10.8]` → `[10.9]` → `[10.10]` → `[10.11]`.
-
-- **Task:** `[10.7.3]` [BATCH: B1-backend] Cross-check `[BATCH]` paths against `[PARALLEL]` waves
-- **Scope:** Reject colliding `Paths:` between a batch task and a wave task unless linked by `Depends:`.
-- **Type:** code
-- Read:
-  - .agent/scratch/specs/10-07.md
-  - .github/scripts/microcontract_parser.py
-- Paths:
-  - .github/scripts/microcontract_parser.py
-  - .github/scripts/tests/test_microcontract_rules.py
-- Verify: python3 .github/scripts/tests/test_microcontract_rules.py && ./.github/scripts/verify-microcontract.sh self-test && git diff --check
+> `[10.1]` approved 2026-11-16; `[10.7.3]` promoted to active. Remaining order: `[10.8]` → `[10.9]` → `[10.10]` → `[10.11]`.
 
 - **Task:** `[10.8]` Document worker commit integration protocol
 - **Scope:** Specify integration order of worker commits (by `Depends:`, then task ID), cherry-pick procedure, and conflict resolution (abort, re-queue, never force). Dependencies: `[10.7.3]`.
