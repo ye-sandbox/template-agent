@@ -124,6 +124,22 @@ When a feature `[XX.YY]` decomposes into atomic sequential subtasks (`[XX.YY.01]
    - **Delegated Worker Mode (`delegate_task`):** The Lead Orchestrator dispatches the entire `[BATCH: Bx]` to a single Worker in one isolated worktree, instructing it to execute each `ZZ` sequentially with its own `Verify:` check and atomic commit.
    - **Zero Extra Error Counters:** Workers do NOT track separate "debug line/error counters" to decide whether to abort a batch mid-flight (avoiding goal displacement during debugging). Execution relies exclusively on the canonical Fail-Stop circuit breaker (Section 7).
 
+### 5.2 Worker Commit Integration Protocol
+
+The Lead is the sole integrator. Worker commits land on the target branch only after their `Verify:` passed in the worktree (procedure: [`docs/worktree-isolation.md`](worktree-isolation.md), Step 5).
+
+1. **Integration Order:**
+   - Order completed worker commits by `Depends:` first (a task integrates only after every task it depends on has integrated), then by ascending task ID (`[XX.Y]`) as the deterministic tie-breaker.
+   - Commits inside a `[BATCH: Bx]` integrate in subtask order (`ZZ.01` → `ZZ.02` → ...).
+2. **Cherry-Pick Procedure:**
+   - On the target branch, run `git cherry-pick <worker-commit>` one commit at a time, preserving the worker's atomic Conventional Commit message.
+   - Re-run the task's `Verify:` on the target branch after each cherry-pick before integrating the next commit.
+3. **Conflict Resolution:**
+   - On any conflict or failed post-pick `Verify:`, run `git cherry-pick --abort` immediately; never hand-resolve conflict markers in the Lead session.
+   - Re-queue the conflicting task: re-dispatch it on a fresh worktree from the updated `HEAD`, with the integrated commits as its baseline. Dependent tasks stay queued behind it.
+   - NEVER use `--force`, `git reset --hard`, or `--strategy-option` overrides to push a commit through. A task that conflicts again after re-queue escalates via the Fail-Stop protocol (Section 7).
+   - Parallel waves with disjoint `Paths:` are not expected to conflict; a conflict indicates a violated disjointness invariant and MUST be reported to the human.
+
 ---
 
 ## 6. Reviewer Quality Gate & Falsifiable Report

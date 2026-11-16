@@ -191,6 +191,8 @@ git merge --ff-only "task-${TASK_ID}"
 ```
 *(If fast-forward is not possible due to independent parallel commits on disjoint files, lead performs a non-conflicting cherry-pick or rebase).*
 
+With multiple worker commits, integrate in `Depends:` order, then by task ID, and cherry-pick one commit at a time. On conflict: `git cherry-pick --abort`, re-queue the task on a fresh worktree from the updated `HEAD`, and never force. Full protocol: [`docs/subagent-topology.md`](subagent-topology.md#52-worker-commit-integration-protocol).
+
 ### Step 6: Teardown & Clean Garbage Collection
 Worktrees MUST be pruned immediately after integration or upon cancellation:
 ```bash
