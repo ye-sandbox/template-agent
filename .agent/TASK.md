@@ -10,15 +10,19 @@
 
 ## Active Task
 
-- **Task:** `[10.10]` Document batch compaction guidance and T3 Code cache-metrics recording
-- **Scope:** Compaction guidance for long batches and an optional per-batch record (tokens, cache-hit rate) sourced from T3 Code's cache metrics. First step: confirm which metrics T3 Code actually exposes before specifying the format; do not assume fields. Dependencies: `[10.8]`.
+- **Task:** `[10.11]` Epic 10 consolidation: bilingual docs, changelog, CI audit
+- **Scope:** Update `README.md`, `README.pt-br.md`, `CHANGELOG.md`; run full CI audit. No release tag (`[99.1]` requires explicit human instruction). Dependencies: `[10.9]`, `[10.10]`.
 - **Type:** code
 - **Status:** APPROVED
 - Read:
-  - docs/subagent-topology.md
+  - README.md
+  - README.pt-br.md
+  - CHANGELOG.md
 - Paths:
-  - docs/subagent-topology.md
-- Verify: ./.github/scripts/verify-microcontract.sh verify-file .agent/TASK.md && git diff --check
+  - README.md
+  - README.pt-br.md
+  - CHANGELOG.md
+- Verify: ./.github/scripts/verify-microcontract.sh && ./.github/scripts/check-branch-drift.sh && git diff --check
 
 ---
 
@@ -76,27 +80,14 @@
 | `[10.7.3]` | Cross-check `[BATCH]` paths against `[PARALLEL]` waves | `6cd587f` (main) | 2026-11-16 |
 | `[10.8]` | Document worker commit integration protocol | `351852b` (main) | 2026-11-16 |
 | `[10.9]` | Starter parity for Epic 10 contracts | `d4b78ef` (greenfield), `db60de0` (brownfield), `2c1f0ef` (blackbox), `2d96b5c` (infra), `10a9285` (baremetal) | 2026-11-16 |
+| `[10.10]` | Document batch compaction guidance and T3 Code cache-metrics recording | `d3dad21` (main) | 2026-11-16 |
 
 ---
 
 ## Backlog (Upcoming, in priority order)
 
 > Epic 10: Orchestration Hardening (e2e safety net, Python parser, wave dependency/shared-file rules, integration protocol, cache observability).
-> `[10.1]` approved 2026-11-16; `[10.10]` promoted to active. Remaining: `[10.11]`.
-
-- **Task:** `[10.11]` Epic 10 consolidation: bilingual docs, changelog, CI audit
-- **Scope:** Update `README.md`, `README.pt-br.md`, `CHANGELOG.md`; run full CI audit. No release tag (`[99.1]` requires explicit human instruction). Dependencies: `[10.9]`, `[10.10]`.
-- **Type:** code
-- Read:
-  - README.md
-  - README.pt-br.md
-  - CHANGELOG.md
-- Paths:
-  - README.md
-  - README.pt-br.md
-  - CHANGELOG.md
-- Verify: ./.github/scripts/verify-microcontract.sh && ./.github/scripts/check-branch-drift.sh && git diff --check
-
+> `[10.1]` approved 2026-11-16; `[10.11]` promoted to active. No remaining backlog.
 
 
 ---
