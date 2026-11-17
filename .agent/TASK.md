@@ -7,17 +7,10 @@
 
 ## Active Task
 
-### 📌 Task [00.1]: Project Bootstrap & Stack Setup
+### [00.1] Project Bootstrap & Stack Setup
 
-- **Description:** Select and configure project stack, package manager, canonical test harness (e.g., npm test, pytest, cargo test, go test), linters, formatters, and populate validation commands and guidelines in `AGENTS.md`.
-- **Systems Involved:** `bootstrap`, `tooling`, `tests`
-- **Action Type:**
-  - [x] Read-only / Documentation
-  - [x] Source code changes
-- **Status:** READY FOR PLANNING
-  *(Workflow: `READY FOR PLANNING` → `PLANNING` on presenting plan → approval/`APPROVED` → `RUNNING`)*
+Select and configure project stack, package manager, canonical test harness (e.g., npm test, pytest, cargo test, go test), linters, formatters, and populate validation commands and guidelines in `AGENTS.md`.
 
-### Acceptance Criteria
 - [ ] Language runtime, package manager, and build tooling initialized.
 - [ ] Canonical test runner configured and smoke test passes.
 - [ ] Linter, formatter, and strict typing configured.
@@ -37,8 +30,6 @@
 
 ## Backlog (Upcoming, in priority order)
 
-> Tag independent pre-approved tasks with strictly disjoint file scopes as `[APPROVED]` `[PARALLEL: W1]`, and sequential same-layer subtasks (2–4 items) as `[APPROVED]` `[BATCH: B1]` anchored to `.agent/scratch/specs/XX-YY.md`, with `Read: / Paths: / Verify:` micro-contracts (optional `Depends: [XX.Y]` lists prerequisite task IDs).
-
 - [ ] **[01.1]** [First foundation epic or domain core] — `[system]`
 - [ ] **[01.2]** [Subsequent foundation feature] — `[system]`
 
@@ -53,11 +44,3 @@ Release/tag only with explicit human request. When triggered, the ID is `[99.1]`
 ## Future Backlog / Ideas (Unprioritized)
 
 *(empty)*
-
----
-
-## How to Keep this File Lean
-
-1. Detail only in the active task. When complete $\rightarrow$ log one line and promote the next task.
-2. Backlog is a list of titles. Full spec only when an item becomes the active task.
-3. Next ID = last ID in log (or active task). Cycle wrap-up and `[99.1]`: see `AGENTS.md`.

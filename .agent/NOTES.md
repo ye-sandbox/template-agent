@@ -29,31 +29,31 @@ Contract changes require updating schemas on both sides within the same task.
 
 ### 2. Multi-Agent Collaboration Contracts (Optional)
 
-> Canonical 3-tier subagent topology, delegation micro-contracts, worktree isolation, and hermetic sandboxes. If operating single-agent, leave as default.
+> Canonical 3-tier subagent topology, Tier 2 (`dev-harness`) micro-contracts, worktree isolation, and hermetic sandboxes. If operating single-agent, leave as default.
 
 | Role | Interface / Channel | Responsibilities | Boundary & Invariants |
 |---|---|---|---|
 | **`Lead / Orchestrator`** | `.agent/TASK.md` / Interactive Prompt | Decomposes initiatives into wave-compatible tasks, manages task lifecycle, routes to model/quota tiers, interacts with human. | Sole manager of `TASK.md` and commit log. Does not run parallel worker tasks directly. |
-| **`Worker / Implementer`** | Worktree / Target Workspace | Executes atomic code/doc changes strictly adhering to delegated micro-contract (`Read:`, `Paths:`, `Verify:`). | Restricted exclusively to `Paths:`. Adheres to DoD in `AGENTS.md`. |
-| **`Reviewer / Sentinel`** | Diffs / Test Harness (`Verify:`) | Read-only inspection of diffs against task DoD, regression tests, and security blast radius. | Read-only; reports structured Pass/Fail diagnostic payload. |
+| **`Worker / Implementer`** | Worktree / Target Workspace | Executes atomic code/doc changes strictly adhering to delegated micro-contract (`files_read`, `files_edit`, `verify`). | Restricted exclusively to `files_edit`. Adheres to DoD in `AGENTS.md`. |
+| **`Reviewer / Sentinel`** | Diffs / Test Harness (`verify`) | Read-only inspection of diffs against task DoD, regression tests, and security blast radius. | Read-only; reports structured Pass/Fail diagnostic payload. |
 
 #### Worktree Isolation & Dependency Bootstrap Contract
 
 | Element | Protocol / Mechanism | Invariant / Boundary |
 |---|---|---|
 | **Workspace Provisioning** | `git worktree add -b task-<id> <path> HEAD` | Default ephemeral path (`${TMPDIR:-/tmp}/worktrees/task-<id>`) or `.worktrees/task-<id>` (`.worktrees/` in `.gitignore`). |
-| **Dependency Bootstrap** | Fast-Link vs. Isolated-Install | Fast-Link (symlink `node_modules/` or `.venv/`) when `Paths:` has no manifest changes (<50ms, zero-copy). Isolated-Install when manifests change. |
+| **Dependency Bootstrap** | Fast-Link vs. Isolated-Install | Fast-Link (symlink `node_modules/` or `.venv/`) when `files_edit` has no manifest changes (<50ms, zero-copy). Isolated-Install when manifests change. |
 | **Environment Injection** | Copy `.env` / `.env.example` to worktree | Ensures test harness execution without leaking uncommitted tokens or mutating root config. |
 | **Teardown & GC** | `git worktree remove --force` + `branch -D` + `prune` | Immediate cleanup post-integration; trap declared in runners to prevent dangling worktree locks. |
-| **Wave Dependencies & Integration** | `Depends:` key + one-at-a-time `git cherry-pick` | Parallel waves reject unknown/cyclic `Depends:` and shared serialized files; `[BATCH]` paths must not collide with `[PARALLEL]` waves without `Depends:`. Lead integrates by `Depends:` then task ID, re-runs `Verify:` after each pick; on conflict `git cherry-pick --abort` and re-queue on a fresh worktree, never force. |
+| **Wave Dependencies & Integration** | `Depends:` key + one-at-a-time `git cherry-pick` | Parallel queue items reject unknown/cyclic `Depends:` and overlapping `files_edit`. Lead integrates by `Depends:` then task ID, re-runs `verify` after each pick; on conflict `git cherry-pick --abort` and re-queue on a fresh worktree, never force. |
 
 #### Project Lifecycle Hooks & Fast-Link Bootstrap Contract
 
 | Hook / Phase | Script Target | Invocation & Contract |
 |---|---|---|
-| **Fast-Link Bootstrap** | `bootstrap-worktree.sh` | Zero-copy symlinking of `node_modules/` and `.venv/`, `.env` isolation copy, `.agent/scratch/` provisioning, and isolated copy of `.agent/scratch/specs/` anchors. |
+| **Fast-Link Bootstrap** | `bootstrap-worktree.sh` | Zero-copy symlinking of `node_modules/` and `.venv/`, `.env` isolation copy, and `.agent/scratch/` provisioning. |
 | **Post-Provisioning** | `.agent/hooks/post-worktree-create` | Executed post-bootstrap for test DB seeding, port binding, and ephemeral fixtures. Halts on non-zero exit. |
-| **Pre-Verification** | `.agent/hooks/pre-verify` | Executed before `Verify:` command execution to ensure clean test state and fixture validation. |
+| **Pre-Verification** | `.agent/hooks/pre-verify` | Executed before `verify` command execution to ensure clean test state and fixture validation. |
 | **Post-Teardown** | `.agent/hooks/post-worktree-teardown` | Executed prior to worktree removal (`git worktree remove`) for graceful daemon/resource teardown. |
 
 #### Multi-Account Quota Routing & Failover Contract
@@ -64,7 +64,7 @@ Contract changes require updating schemas on both sides within the same task.
 | **Quota Floor Circuit Breaker** | `remaining_fraction <= 0.05` | Immediate disqualification of profiles with <=5% quota; halts execution if all candidate profiles are below floor. |
 | **Model Tier Selection** | `default-tier` / `escalation-tier` (mapped via `WORKER_MODEL_DEFAULT_TIER` / `WORKER_MODEL_ESCALATION_TIER`) | Low token footprint default; escalation to `escalation-tier` permitted only for complex architecture or max 1 retry after verification failure. |
 | **Cooldown Tracking** | `<profile>/.multigravity/quota-history.jsonl` | 429 rate limit backoff and cooldown persistence to prevent immediate re-dispatch. |
-| **Worktree Recovery** | Worktree verify on timeout | Runs `Verify:` inside worktree on timeout; if code 0 and matches `Paths:`, recovers diff cleanly. |
+| **Worktree Recovery** | Worktree verify on timeout | Runs `verify` inside worktree on timeout; if code 0 and matches `files_edit`, recovers diff cleanly. |
 
 #### Hermetic Agent Sandbox & Container Isolation Contract
 
