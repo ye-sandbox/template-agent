@@ -10,26 +10,13 @@
 
 ## Active Task
 
-- **Task:** `[11.1]` Align Starter Templates and Tooling with `hydra-llm-router` Canonical Contracts
-- **Status:** PLANNING
-- **Scope:** Remove residual `Hydra AI` / `hydra-ai-gateway` / `hydra.homelab.yegear.dev` / `free-fast` / `free-deep` references across `main` and all 5 starter branches (`greenfield`, `brownfield`, `blackbox`, `infra`, `baremetal`), aligning `.env.example`, `.agent/NOTES.md`, `docs/llm-gateway.md`, and `.github/scripts/verify-llm-contract.sh` with `hydra-llm-router` and operator-configured alias discovery (`/v1/models` or `/v1/hydra/models`).
-- **Target Branches:** `main`, `greenfield`, `brownfield`, `blackbox`, `infra`, `baremetal` (atomic per-branch commits; no cross-branch merges).
-- **Role:** Lead / Orchestrator
-- **Isolation:** worktree
-- Read:
-  - AGENTS.md
-  - .agent/TASK.md
-  - .agent/NOTES.md
-  - docs/llm-gateway.md
-  - .github/scripts/verify-llm-contract.sh
-- Paths:
-  - .env.example
-  - .agent/NOTES.md
-  - .agent/TASK.md
-  - docs/llm-gateway.md
-  - .github/scripts/verify-llm-contract.sh
-  - CHANGELOG.md
-- Verify: ./.github/scripts/verify-llm-contract.sh self-test && ./.github/scripts/check-branch-drift.sh && ./.github/scripts/test-all-starters.sh && git diff --check
+### [11.1] Align Starter Templates and Tooling with `hydra-llm-router` Canonical Contracts
+
+Remove residual `Hydra AI` / `hydra-ai-gateway` / `hydra.homelab.yegear.dev` / `free-fast` / `free-deep` references across `main` and all 5 starter branches, aligning with `hydra-llm-router` and operator-configured alias discovery (`/v1/models` or `/v1/hydra/models`). Atomic per-branch commits; no cross-branch merges.
+
+- [ ] `main`: align `.env.example`, `.agent/NOTES.md`, `docs/llm-gateway.md`, `.github/scripts/verify-llm-contract.sh`, `CHANGELOG.md`
+- [ ] `greenfield`, `brownfield`, `blackbox`, `infra`, `baremetal`: align `.env.example` and `.agent/NOTES.md`
+- [ ] Validate: `./.github/scripts/verify-llm-contract.sh self-test && ./.github/scripts/check-branch-drift.sh && ./.github/scripts/test-all-starters.sh && git diff --check`
 
 ---
 
@@ -89,6 +76,7 @@
 | `[10.9]` | Starter parity for Epic 10 contracts | `d4b78ef` (greenfield), `db60de0` (brownfield), `2c1f0ef` (blackbox), `2d96b5c` (infra), `10a9285` (baremetal) | 2026-11-16 |
 | `[10.10]` | Document batch compaction guidance and T3 Code cache-metrics recording | `d3dad21` (main) | 2026-11-16 |
 | `[10.11]` | Epic 10 consolidation: bilingual docs, changelog, CI audit | `6235754` (main) | 2026-11-16 |
+| `[11.2]` | Adopt 2-tier progressive rigor; preserve swarm workflow in `ye-sandbox/template-agent-swarm` | `18dd7aa`, `9ef671d`, `876c69e`, `eb1a348`, `be14085`, `2684fb8`, `467e26b`, `1036294` (main), `addfb6c` (greenfield), `cf10328` (brownfield), `ed77ce7` (blackbox), `ac3e312` (infra), `4a233b9` (baremetal) | 2026-11-17 |
 
 ---
 
@@ -108,10 +96,8 @@ Release/tag only with explicit human request. When triggered, the ID is `[99.1]`
 
 ## Future Backlog / Ideas (Unprioritized)
 
+- Retire `verify-microcontract.sh`, `bootstrap-worktree.sh`, and the swarm topology docs from `main` once `dev-harness` fully covers Tier 2.
 - Align `apply-governance-standards.py` NOTES template with provider-neutral `default-tier` / `escalation-tier` (still injects `gemini-3.8-flash-medium`; drift vs hub `NOTES.md`).
-- Version `run-wave.sh` and the `task-queue` skill under `.agent/skills/` (hermetic skills contract), or drop the references.
-- Batch linter: require the spec anchor in each subtask `Read:`, require each subtask `Verify:`, and add an explicit `Layer:` field instead of path heuristics.
-- Batch partial-failure protocol: per-subtask checkpoint in `TASK.md` and resume from the last commit.
 
 ---
 
