@@ -26,7 +26,7 @@ O starter resolve os principais modos de falha no desenvolvimento orientado a ag
 flowchart TD
     Task["TASK.md (Tarefa Ativa)"] --> Plan["Plano de Implementação do Agente"]
     Plan --> Review{"Aprovação Humana"}
-    Review -->|"Aprovado"| Running["Status: RUNNING"]
+    Review -->|"Aprovado"| Running["Execute TASK.md checklist"]
     Review -->|"Ajustes Solicitados"| Plan
     Running --> Code["Implementação e Testes"]
     Code --> DoD["Definition of Done (100% dos Testes Passam)"]
@@ -112,7 +112,7 @@ O template fornece esquemas de configuração padronizados através do `.env.exa
 
 ### Protocolo de Ciclo de Vida da Tarefa
 
-1. **Definição da Tarefa:** Especifique o objetivo em `Active Task` no `.agent/TASK.md` com critérios claros de aceite.
+1. **Definição da Tarefa:** Especifique o objetivo em `Active Task` no `.agent/TASK.md` como checklist enxuto `- [ ]` (Tier 1; contratos autônomos do `dev-harness` ficam em `.harness/queue/`).
 2. **Revisão Plan-First:** O agente define o status como `PLANNING` e apresenta um plano de implementação. Aguarde aprovação humana antes de alterar código.
 3. **Execução e Validação:** Atualize o status para `RUNNING`. Execute a implementação executando validações até 100% de sucesso.
 4. **Conclusão:** Faça o commit com Conventional Commit atômico (`feat(...)`, `fix(...)`), registre a conclusão no log do `.agent/TASK.md` e promova a próxima tarefa.

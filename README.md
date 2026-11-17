@@ -26,7 +26,7 @@ The starter resolves key failure modes in agent-driven development:
 flowchart TD
     Task["TASK.md (Active Task)"] --> Plan["Agent Implementation Plan"]
     Plan --> Review{"Human Approval"}
-    Review -->|"Approved"| Running["Status: RUNNING"]
+    Review -->|"Approved"| Running["Execute TASK.md checklist"]
     Review -->|"Revisions Requested"| Plan
     Running --> Code["Implementation & Tests"]
     Code --> DoD["Definition of Done (100% Tests Pass)"]
@@ -112,7 +112,7 @@ The template provides canonical configuration schemas via `.env.example`:
 
 ### Task Lifecycle Protocol
 
-1. **Task Definition:** Define the target objective in `Active Task` inside `.agent/TASK.md` with explicit acceptance criteria.
+1. **Task Definition:** Define the target objective in `Active Task` inside `.agent/TASK.md` as a lean `- [ ]` checklist (Tier 1; autonomous `dev-harness` contracts live in `.harness/queue/`).
 2. **Plan-First Review:** The agent sets status to `PLANNING` and presents an implementation plan. Await user confirmation before code modification.
 3. **Execution & Validation:** Update status to `RUNNING`. Execute implementation, running validation commands until 100% passing.
 4. **Completion:** Commit changes with an atomic Conventional Commit (`feat(...)`, `fix(...)`), log completion in `.agent/TASK.md`, and promote the next task.
