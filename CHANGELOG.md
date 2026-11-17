@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Removed
+
+- Mandatory `[BATCH: Bx]`, `[PARALLEL: Wx]`, `Status` state machine, `Type:` / `Read:` / `Paths:` per-subtask ceremony, and `.agent/scratch/specs/<XX-YY>.md` anchors from default `AGENTS.md` and `.agent/TASK.md` on `main` and all five starter branches. The full workflow is preserved in `ye-sandbox/template-agent-swarm`.
+
 ### Added
 
 - End-to-end orchestration lifecycle test (`.github/scripts/test-e2e-orchestration.sh`) wired into CI.
@@ -17,6 +21,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- 2-tier progressive rigor: Tier 1 lean `- [ ]` `.agent/TASK.md` checklist (`Task | Title | Commit(s) | Date` log, concise backlog); Tier 2 `files_read` / `files_edit` / `verify` micro-contracts in `.harness/queue/` or `harness:ready` issues for `dev-harness`.
+- Drift audit, starter contract assertions, and drift regression tests now enforce the Tier 1/Tier 2 markers and lean `TASK.md` structure.
+- `.gitignore` on every branch ignores `.harness/queue/done/`, `.harness/queue/escalated/`, and `.harness/worktrees/`.
 - Micro-contract parsing and validation moved to `.github/scripts/microcontract_parser.py` behind the unchanged `verify-microcontract.sh` CLI.
 - Default worker models are provider-neutral tiers (`WORKER_MODEL_DEFAULT_TIER`, `WORKER_MODEL_ESCALATION_TIER`).
 - Legacy Portuguese ADR rows translated to Technical English.

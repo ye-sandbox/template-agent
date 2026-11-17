@@ -255,7 +255,7 @@ git checkout baremetal && git merge upstream/baremetal
 
 ```text
 ├── .agent/
-│   ├── TASK.md               # Active task, execution status, and roadmap log
+│   ├── TASK.md               # Active task checklist, completed log, and backlog
 │   ├── NOTES.md              # Architectural contracts and runtime gotchas
 │   ├── ARCHIVE.md            # Archived completed tasks from past releases
 │   ├── hooks/                # Standardized project lifecycle hooks (post-worktree-create, pre-verify)
@@ -284,13 +284,13 @@ Load the skill only for UI, preview, or frontend component work. In T3 Code, the
 
 The drift audit compares the skill byte for byte and compares only Invariant 7, preserving each starter's other fences. Generated-project assertions verify that the skill, all four guardrails, and the UI context/DoD directives reach installed projects.
 
-### Sequential Sub-Task Batching & Hermetic Skills
+### 2-Tier Progressive Rigor & Hermetic Skills
 
-To preserve prompt cache prefixes across dependent subtasks, group 2–4 sequential same-layer subtasks under `[BATCH: Bx]` anchored to an untracked specification in `.agent/scratch/specs/XX-YY.md`. `.github/scripts/bootstrap-worktree.sh` copies `.agent/scratch/specs/` into isolated worktrees, while `.github/scripts/verify-microcontract.sh` (`verify-batches`) enforces 2–4 cardinality and blocks mixing backend code (`Type: code` touching backend/API/database paths) with UI or `browser-qa`/`mobile-qa`/`preview-mockup` layers.
+Interactive work (Tier 1, default) tracks the active task as a lean `- [ ]` checklist in `.agent/TASK.md`, validated by the repository's canonical validation commands and the Definition of Done in `AGENTS.md`. Autonomous work (Tier 2) uses strict micro-contracts (`files_read`, `files_edit`, `verify`) stored in `.harness/queue/<id>.{md,yaml}` or `harness:ready` GitHub Issues consumed by `dev-harness`. The lifecycle hooks in `.agent/hooks/` (`post-worktree-create`, `pre-verify`, `post-worktree-teardown`) keep every starter compatible with `dev-harness`, and every starter `.gitignore` ignores `.harness/queue/done/`, `.harness/queue/escalated/`, and `.harness/worktrees/`.
 
-Under the Hermetic Skills & Context Contract, procedural skills must reside in `.agent/skills/` or be injected into the task prompt rather than searched across the host filesystem. `.github/scripts/check-branch-drift.sh` enforces parity of both `[BATCH: Bx]` / `.agent/scratch/specs/` contracts and the Hermetic Skills directives across `main` and all five starters.
+The previous `[BATCH: Bx]` / `[PARALLEL: Wx]` / `.agent/scratch/specs/` workflow for heavy T3 Code swarm projects is preserved in [`ye-sandbox/template-agent-swarm`](https://github.com/ye-sandbox/template-agent-swarm). The hub scripts `verify-microcontract.sh` and `bootstrap-worktree.sh` and the guides in [`docs/subagent-topology.md`](docs/subagent-topology.md) and [`docs/worktree-isolation.md`](docs/worktree-isolation.md) remain for that workflow.
 
-Wave and batch validation also supports a `Depends:` key (unknown IDs and cycles are rejected), forbids lockfiles, `CHANGELOG.md`, `.agent/TASK.md`, and `.agent/NOTES.md` in `[PARALLEL: Wx]` paths, and requires a dependency when a `[BATCH]` and a `[PARALLEL]` task share paths. Worker commits are integrated in dependency order, one cherry-pick at a time with `Verify:` after each; see [`docs/subagent-topology.md`](docs/subagent-topology.md) for integration, batch compaction, and cache metrics guidance.
+Under the Hermetic Skills & Context Contract, procedural skills must reside in `.agent/skills/` or be injected into the task prompt rather than searched across the host filesystem. `.github/scripts/check-branch-drift.sh` enforces the Tier 1/Tier 2 markers, the lean `TASK.md` structure (`Task | Title | Commit(s) | Date` log, `- [ ]` checklist, no orchestration ceremony), the `.harness/` ignore rules, and the Hermetic Skills directives across `main` and all five starters.
 
 ### Ecosystem Governance Tools
 
