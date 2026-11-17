@@ -7,17 +7,10 @@
 
 ## Active Task
 
-### 📌 Task [00.1]: Map Topology and Provision Baseline Services
+### [00.1] Map Topology and Provision Baseline Services
 
-- **Description:** Map infrastructure requirements, configure environment variables in `.env.example`, record host ports and volumes in `.agent/SERVICES.md`, and author baseline services in `compose.yaml` (e.g. VictoriaLogs, Uptime Kuma, reverse proxy).
-- **Systems Involved:** `infra`, `docker-compose`, `services`
-- **Action Type:**
-  - [x] Read-only / Documentation
-  - [x] Source code changes
-- **Status:** READY FOR PLANNING
-  *(Workflow: `READY FOR PLANNING` → `PLANNING` on presenting plan → approval/`APPROVED` → `RUNNING`)*
+Map infrastructure requirements, configure environment variables in `.env.example`, record host ports and volumes in `.agent/SERVICES.md`, and author baseline services in `compose.yaml` (e.g. VictoriaLogs, Uptime Kuma, reverse proxy).
 
-### Acceptance Criteria
 - [ ] `compose.yaml` created and validated with `docker compose config`.
 - [ ] Ports recorded in `.agent/SERVICES.md` without collisions.
 - [ ] Persistent storage volumes declared with appropriate permissions and host directories.
@@ -38,8 +31,6 @@
 
 ## Backlog (Upcoming, in priority order)
 
-> Tag independent pre-approved tasks with strictly disjoint file scopes as `[APPROVED]` `[PARALLEL: W1]`, and sequential same-layer subtasks (2–4 items) as `[APPROVED]` `[BATCH: B1]` anchored to `.agent/scratch/specs/XX-YY.md`, with `Read: / Paths: / Verify:` micro-contracts (optional `Depends: [XX.Y]` lists prerequisite task IDs).
-
 - [ ] **[01.1]** Configure reverse proxy (Traefik or Nginx) with automated SSL termination
 - [ ] **[01.2]** Implement automated backup routine for persistent volumes
 
@@ -55,10 +46,3 @@ Release/tag only with explicit human request. When triggered, the ID is `[99.1]`
 
 - [ ] Integrate Uptime Kuma alerts with webhooks (Discord / Telegram)
 - [ ] Add unified observability dashboard with Grafana and VictoriaMetrics
-
----
-
-## How to Keep this File Lean
-
-1. Detail only in the active task. When complete $\rightarrow$ log one line and promote the next task.
-2. Next ID = last ID in log (or active task). Cycle wrap-up and `[99.1]`: see `AGENTS.md`.
