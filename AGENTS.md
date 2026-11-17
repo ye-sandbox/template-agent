@@ -133,7 +133,7 @@ Triggered exclusively by human instruction to tag a release:
 1. **Archive:** Move completed task log from `TASK.md` to `ARCHIVE.md` under `## [vX.Y.Z] - YYYY-MM-DD`.
 2. **Consolidate:** Record discovered invariants into `.agent/INVARIANTS.md`; prune ephemeral scratch notes in `.agent/NOTES.md`.
 3. **Perimeter:** Sync `.env.example`, `README.md`, and `README.pt-br.md` (following `readme-standard`) to the release tag.
-4. **Reset:** Reset task numbering; promote next milestone to `READY FOR PLANNING`; restore closing checklist in `TASK.md`.
+4. **Reset:** Reset task numbering; promote next milestone to the active task; restore closing checklist in `TASK.md`.
 
 ## 8. Stack, Skills & Validation Contracts
 
