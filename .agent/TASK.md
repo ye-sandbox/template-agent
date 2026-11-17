@@ -7,17 +7,10 @@
 
 ## Active Task
 
-### 📌 Task [00.1]: Baseline System Audit & Performance Discovery
+### [00.1] Baseline System Audit & Performance Discovery
 
-- **Description:** Run non-destructive host diagnostics to audit hardware capabilities (CPU, RAM, storage, GPU), capture baseline OS/kernel parameters (swappiness, dirty ratios, I/O schedulers), record active systemd services, and populate `.agent/BASELINE.md` and `.agent/INVARIANTS.md`.
-- **Systems Involved:** `baremetal`, `os-audit`, `baseline`
-- **Action Type:**
-  - [x] Read-only / Documentation
-  - [ ] Source code changes
-- **Status:** READY FOR PLANNING
-  *(Workflow: `READY FOR PLANNING` → `PLANNING` on presenting plan → approval/`APPROVED` → `RUNNING`)*
+Run non-destructive host diagnostics to audit hardware capabilities (CPU, RAM, storage, GPU), capture baseline OS/kernel parameters (swappiness, dirty ratios, I/O schedulers), record active systemd services, and populate `.agent/BASELINE.md` and `.agent/INVARIANTS.md`.
 
-### Acceptance Criteria
 - [ ] Hardware topology recorded in `.agent/BASELINE.md` (`lscpu`, `free -h`, `lsblk`).
 - [ ] Operating system and kernel version documented.
 - [ ] Baseline memory metrics and swap/zram configuration recorded.
@@ -38,8 +31,6 @@
 
 ## Backlog (Upcoming, in priority order)
 
-> Tag independent pre-approved script/doc tasks with strictly disjoint file scopes as `[APPROVED]` `[PARALLEL: W1]`, and sequential same-layer subtasks (2–4 items) as `[APPROVED]` `[BATCH: B1]` anchored to `.agent/scratch/specs/XX-YY.md`, with `Read: / Paths: / Verify:` micro-contracts (optional `Depends: [XX.Y]` lists prerequisite task IDs) (live host tunings remain sequential).
-
 - [ ] **[01.1]** Memory subsystem tuning: optimize `vm.swappiness` and `vfs_cache_pressure` with rollback pair
 - [ ] **[01.2]** Storage and I/O scheduler tuning: verify NVMe scheduler and dirty page ratios
 - [ ] **[02.1]** Background systemd unit audit: identify and disable redundant startup services
@@ -57,10 +48,3 @@ Release/tag only with explicit human request. When triggered, the ID is `[99.1]`
 - [ ] Configure zram compressed swap with zstd algorithm
 - [ ] CPU governor optimization for developer workstations (performance vs powersave)
 - [ ] Periodic TRIM automation for NVMe SSD drives
-
----
-
-## How to Keep this File Lean
-
-1. Detail only in the active task. When complete $\rightarrow$ log one line and promote the next task.
-2. Next ID = last ID in log (or active task). Cycle wrap-up and `[99.1]`: see `AGENTS.md`.

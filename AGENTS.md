@@ -53,7 +53,6 @@ Optimize context consumption via progressive disclosure:
 - **Architectural Decisions (`docs/adr/decisions.md`):** Canonical progressive disclosure diary; MUST load when introducing permanent system modifications or researching historical trade-offs. Prohibit separate `.agent/adr/` trees to prevent dual-source drift.
 - **Domain Skills (`.agent/skills/<name>/SKILL.md`):** Load only when the active task touches that skill's trigger (e.g. `.agent/skills/baremetal-tuning/SKILL.md`).
 - **Hermetic Skills & Context Contract:** Procedural guidelines and skills must be self-contained within `.agent/skills/` or injected directly into the task dispatch prompt by the orchestrator. If a task references an external organizational skill not present in `.agent/skills/`, the agent must not wander the host filesystem; it should request the skill to be injected into the prompt or provisioned locally in `.agent/skills/`.
-- **Ephemeral Feature Specs (`.agent/scratch/specs/<XX-YY>.md`):** Load when executing sequential sub-task batches (`[BATCH: Bx]`) to reuse shared feature contracts and file maps without re-scanning the repository.
 - **Interface & UI Verification:** Read `.agent/INVARIANTS.md` (Invariant 7) and `.agent/skills/interface-testing/SKILL.md` on-demand exclusively for UI, preview, or frontend component tasks.
 - **Knowledge Base (`.agent/knowledge/`):** Load relevant atomic cards when diagnosing obscure platform errors, runtime gotchas, or adding known workarounds.
 
@@ -70,9 +69,9 @@ Read `AGENTS.md`, `.agent/TASK.md`, `.agent/NOTES.md`, `.agent/BASELINE.md`, and
   - Does NOT alter any system file or execute privileged `sudo` commands.
 - **Plan-First Workflow (Tracked Roadmap Tasks):**
   Required for all system tunings, script authoring, package installations, or configuration changes:
-  - **Standard (`READY FOR PLANNING`):** Update `Status` in `.agent/TASK.md` to `PLANNING`, present an action plan detailing baseline benchmarks, target configs, pre-change backup paths, paired `apply-*.sh` / `revert-*.sh` scripts, await explicit user approval, then transition `Status` to `RUNNING`.
-  - **Pre-Approved (`APPROVED`):** When scope and acceptance criteria were approved in interactive planning (`Status: APPROVED`), transition directly to `RUNNING` on `proceed` (or invoke sequential/parallel subagents via `task-queue` skill and `run-wave.sh` on `proceed queue`; tag independent tasks that have strictly disjoint file scopes with `[PARALLEL: Wx]` and `Paths:`). Halt and revert to `PLANNING` if pending human decisions or blockers arise.
-  - **Sequential Sub-Task Batching (`[BATCH: Bx]`):** Group 2 to 4 atomic sequential subtasks (`[XX.YY.ZZ]`) that share the same architectural layer (`Type:`) and feature spec anchor (`.agent/scratch/specs/XX-YY.md`). Execute subtasks in a single warm-cache session or worktree (`ZZ.01` -> `Verify:` -> atomic `git commit` -> `ZZ.02` -> `Verify:` -> atomic `git commit`) without intermediate planning pauses. Never mix Backend (`Type: code`) and Frontend/QA (`Type: browser-qa` / `mobile-qa` / `preview-mockup`) in the same batch. Rely exclusively on the canonical Fail-Stop circuit breaker without extra error counters.
+  - **Plan approval:** Present an action plan detailing baseline benchmarks, target configs, pre-change backup paths, paired `apply-*.sh` / `revert-*.sh` scripts, await explicit user approval, then execute the active task's `- [ ]` checklist in `.agent/TASK.md`.
+  - **Tier 1 — Interactive (Default):** Lean `.agent/TASK.md` checklist (`- [ ]` atomic subtasks) validated by the canonical validation commands in Section 8. No `Status` state machine, `Type:`, `Read:`, `Paths:`, `[BATCH: Bx]`, or spec-anchor ceremony.
+  - **Tier 2 — Autonomous (`dev-harness` / Parallel Worktrees):** Strict micro-contracts (`files_read`, `files_edit`, `verify`) live inside `.harness/queue/<id>.{md,yaml}` or `harness:ready` GitHub Issues consumed by `dev-harness`, never in `.agent/TASK.md`. Lifecycle hooks in `.agent/hooks/` (`post-worktree-create`, `pre-verify`, `post-worktree-teardown`) apply to both tiers.
 
 ### Step 3: Falsifiable Definition of Done (DoD)
 A task MUST NOT be marked complete until all checks pass:
@@ -121,7 +120,7 @@ MUST document non-obvious kernel quirks, hardware timing constraints, sysfs side
 
 ## 7. Task Lifecycle & Numbering (`[XX.Y]`)
 
-Format: `[Epic].[Sequence]` with two-digit epics. Exactly **one** task active in `RUNNING` status.
+Format: `[Epic].[Sequence]` with two-digit epics. Exactly **one** active task in `.agent/TASK.md`.
 
 | Prefix | Phase | Focus |
 | :---: | :--- | :--- |
@@ -190,14 +189,15 @@ echo 1 > /proc/sys/vm/drop_caches
 # INVARIANT: sync is required before drop_caches to flush dirty pages and prevent high I/O stall spikes
 sync && echo 1 > /proc/sys/vm/drop_caches
 ```
-### Sequential Sub-Task Batching (`[BATCH: Bx]`)
+### Task Tracking (Tier 1 vs Tier 2)
 ```markdown
-// BAD: Opening 3 separate cold-cache sessions for sequential backend subtasks or mixing Backend + UI in one batch
-[08.02.01] [BATCH: B1] Type: code (prisma/schema.prisma)
-[08.02.02] [BATCH: B1] Type: browser-qa (src/pages/Deals.tsx) // Layer violation!
+// BAD: Orchestration ceremony inside the interactive checklist
+### [08.2] Add deals schema
+- Status: APPROVED | Type: code | Read: .agent/scratch/specs/08-02.md | Paths: prisma/schema.prisma | Verify: npm test
 
-// GOOD: Grouping 2-4 same-layer subtasks anchored to .agent/scratch/specs/XX-YY.md with per-subtask Verify & commit
-[08.02.01] [APPROVED] [BATCH: B1-backend] Type: code | Read: .agent/scratch/specs/08-02.md | Verify -> git commit
-[08.02.02] [APPROVED] [BATCH: B1-backend] Type: code | Read: .agent/scratch/specs/08-02.md | Verify -> git commit
-[08.02.03] [APPROVED] [BATCH: B1-backend] Type: code | Read: .agent/scratch/specs/08-02.md | Verify -> git commit
+// GOOD: Lean Tier 1 checklist; micro-contract (files_read / files_edit / verify) lives in .harness/queue/08-02.yaml for dev-harness
+### [08.2] Add deals schema
+Objective: persist deals with a versioned migration.
+- [ ] Add `Deal` model and migration
+- [ ] Add repository tests (`npm test` exits 0)
 ```
