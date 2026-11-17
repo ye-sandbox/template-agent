@@ -42,3 +42,8 @@ Thumbs.db
 .maestri/
 .multigravity/
 *.tsbuildinfo
+
+# dev-harness local-first state (queue contracts live in git; runtime state does not)
+.harness/queue/done/
+.harness/queue/escalated/
+.harness/worktrees/
