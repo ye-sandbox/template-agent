@@ -54,7 +54,6 @@ Optimize context consumption via progressive disclosure:
 - **Multi-Repo Ecosystem (`.agent/ECOSYSTEM.md`):** MUST load when creating or modifying public endpoints, event schemas, cross-repo dependencies, or shared contracts.
 - **Domain Skills (`.agent/skills/<name>/SKILL.md`):** Load only when the active task touches that skill's trigger.
 - **Hermetic Skills & Context Contract:** Procedural guidelines and skills must be self-contained within `.agent/skills/` or injected directly into the task dispatch prompt by the orchestrator. If a task references an external organizational skill not present in `.agent/skills/`, the agent must not wander the host filesystem; it should request the skill to be injected into the prompt or provisioned locally in `.agent/skills/`.
-- **Ephemeral Feature Specs (`.agent/scratch/specs/<XX-YY>.md`):** Load when executing sequential sub-task batches (`[BATCH: Bx]`) to reuse shared feature contracts and file maps without re-scanning the repository.
 - **Interface & UI Verification:** Read `.agent/INVARIANTS.md` (Invariant 7) and `.agent/skills/interface-testing/SKILL.md` on-demand exclusively for UI, preview, or frontend component tasks.
 - **Knowledge Base (`.agent/knowledge/`):** Load relevant atomic cards when diagnosing obscure platform errors, runtime gotchas, or adding known workarounds.
 
@@ -71,9 +70,9 @@ Read `AGENTS.md`, `.agent/TASK.md`, `.agent/NOTES.md`, and `.agent/INVARIANTS.md
   - Is investigatory, conversational, or read-only (e.g., questions, diff review).
 - **Plan-First Workflow (Tracked Roadmap Tasks):**
   Required for substantive fixes, characterization test additions, or feature integrations:
-  - **Standard (`READY FOR PLANNING`):** Update `Status` in `.agent/TASK.md` to `PLANNING`, present an action plan detailing affected legacy files, characterization tests, and invariants, await explicit user approval, then transition `Status` to `RUNNING`.
-  - **Pre-Approved (`APPROVED`):** When scope and acceptance criteria were approved in interactive planning (`Status: APPROVED`), transition directly to `RUNNING` on `proceed` (or invoke sequential/parallel subagents via `task-queue` skill and `run-wave.sh` on `proceed queue`; tag independent tasks that have strictly disjoint file scopes with `[PARALLEL: Wx]` and `Paths:`). Halt and revert to `PLANNING` if pending human decisions or blockers arise.
-  - **Sequential Sub-Task Batching (`[BATCH: Bx]`):** Group 2 to 4 atomic sequential subtasks (`[XX.YY.ZZ]`) that share the same architectural layer (`Type:`) and feature spec anchor (`.agent/scratch/specs/XX-YY.md`). Execute subtasks in a single warm-cache session or worktree (`ZZ.01` -> `Verify:` -> atomic `git commit` -> `ZZ.02` -> `Verify:` -> atomic `git commit`) without intermediate planning pauses. Never mix Backend (`Type: code`) and Frontend/QA (`Type: browser-qa` / `mobile-qa` / `preview-mockup`) in the same batch. Rely exclusively on the canonical Fail-Stop circuit breaker without extra error counters.
+  - **Plan approval:** Present an action plan detailing affected legacy files, characterization tests, and invariants, await explicit user approval, then execute the active task's `- [ ]` checklist in `.agent/TASK.md`.
+  - **Tier 1 — Interactive (Default):** Lean `.agent/TASK.md` checklist (`- [ ]` atomic subtasks) validated by the canonical validation commands in Section 8. No `Status` state machine, `Type:`, `Read:`, `Paths:`, `[BATCH: Bx]`, or spec-anchor ceremony.
+  - **Tier 2 — Autonomous (`dev-harness` / Parallel Worktrees):** Strict micro-contracts (`files_read`, `files_edit`, `verify`) live inside `.harness/queue/<id>.{md,yaml}` or `harness:ready` GitHub Issues consumed by `dev-harness`, never in `.agent/TASK.md`. Lifecycle hooks in `.agent/hooks/` (`post-worktree-create`, `pre-verify`, `post-worktree-teardown`) apply to both tiers.
 
 ### Step 3: Falsifiable Definition of Done (DoD)
 A task MUST NOT be marked complete until all checks pass:
@@ -119,7 +118,7 @@ MUST document non-obvious legacy constraints, ordering quirks, and defensive wor
 
 ## 7. Task Lifecycle & Numbering (`[XX.Y]`)
 
-Format: `[Epic].[Sequence]` with two-digit epics. Exactly **one** task active in `RUNNING` status.
+Format: `[Epic].[Sequence]` with two-digit epics. Exactly **one** active task in `.agent/TASK.md`.
 
 | Prefix | Phase | Focus |
 | :---: | :--- | :--- |
@@ -191,14 +190,15 @@ retry_call()
 time.sleep(2)
 retry_call()
 ```
-### Sequential Sub-Task Batching (`[BATCH: Bx]`)
+### Task Tracking (Tier 1 vs Tier 2)
 ```markdown
-// BAD: Opening 3 separate cold-cache sessions for sequential backend subtasks or mixing Backend + UI in one batch
-[08.02.01] [BATCH: B1] Type: code (prisma/schema.prisma)
-[08.02.02] [BATCH: B1] Type: browser-qa (src/pages/Deals.tsx) // Layer violation!
+// BAD: Orchestration ceremony inside the interactive checklist
+### [08.2] Add deals schema
+- Status: APPROVED | Type: code | Read: .agent/scratch/specs/08-02.md | Paths: prisma/schema.prisma | Verify: npm test
 
-// GOOD: Grouping 2-4 same-layer subtasks anchored to .agent/scratch/specs/XX-YY.md with per-subtask Verify & commit
-[08.02.01] [APPROVED] [BATCH: B1-backend] Type: code | Read: .agent/scratch/specs/08-02.md | Verify -> git commit
-[08.02.02] [APPROVED] [BATCH: B1-backend] Type: code | Read: .agent/scratch/specs/08-02.md | Verify -> git commit
-[08.02.03] [APPROVED] [BATCH: B1-backend] Type: code | Read: .agent/scratch/specs/08-02.md | Verify -> git commit
+// GOOD: Lean Tier 1 checklist; micro-contract (files_read / files_edit / verify) lives in .harness/queue/08-02.yaml for dev-harness
+### [08.2] Add deals schema
+Objective: persist deals with a versioned migration.
+- [ ] Add `Deal` model and migration
+- [ ] Add repository tests (`npm test` exits 0)
 ```

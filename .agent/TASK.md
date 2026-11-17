@@ -8,17 +8,10 @@
 
 ## Active Task
 
-### 📌 Task [00.1]: Project Discovery and Context Mapping (Discovery)
+### [00.1] Project Discovery and Context Mapping (Discovery)
 
-- **Description:** Audit the existing repository to map the real stack, build/run scripts, test suite, application entrypoints, and environment variables, populating `AGENTS.md` with accurate data.
-- **Systems Involved:** `discovery`, `docs`, `setup`
-- **Action Type:**
-  - [x] Read-only / Documentation
-  - [ ] Source code changes
-- **Status:** READY FOR PLANNING
-  *(Workflow: `READY FOR PLANNING` → `PLANNING` on presenting plan → approval/`APPROVED` → `RUNNING`)*
+Audit the existing repository to map the real stack, build/run scripts, test suite, application entrypoints, and environment variables, populating `AGENTS.md` with accurate data.
 
-### Acceptance Criteria
 - [ ] Inspect dependency manifests (`package.json`, `pyproject.toml`, `go.mod`, `pom.xml`, etc.) and update `AGENTS.md` with languages, versions, and official package managers.
 - [ ] Identify and verify actual validation commands (local test runner, linter, build) and record them in `AGENTS.md`.
 - [ ] Inspect test suite status (whether existing tests pass 100% or have known failures).
@@ -39,8 +32,6 @@
 
 ## Backlog (Upcoming, in priority order)
 
-> Tag independent pre-approved tasks with strictly disjoint file scopes as `[APPROVED]` `[PARALLEL: W1]`, and sequential same-layer subtasks (2–4 items) as `[APPROVED]` `[BATCH: B1]` anchored to `.agent/scratch/specs/XX-YY.md`, with `Read: / Paths: / Verify:` micro-contracts (optional `Depends: [XX.Y]` lists prerequisite task IDs).
-
 - [ ] **[01.1]** [First business task, bugfix, or feature in legacy] — `[module]`
 - [ ] **[01.2]** [Subsequent task] — `[module]`
 
@@ -56,10 +47,3 @@ Release/tag only with explicit human request. When triggered, the ID is `[99.1]`
 
 - [ ] [Map priority technical debt for characterization test coverage]
 - [ ] [Expand test coverage across critical legacy modules]
-
----
-
-## How to Keep this File Lean
-
-1. Detail only in the active task. When complete $\rightarrow$ log one line and promote the next task.
-2. Backlog is a list of titles. Next ID = last ID in log (or active task). Cycle wrap-up and `[99.1]`: see `AGENTS.md`.
