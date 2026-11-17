@@ -110,6 +110,9 @@ MANDATORY_GITIGNORE_RULES=(
   ".maestri/"
   ".multigravity/"
   "*.tsbuildinfo"
+  ".harness/queue/done/"
+  ".harness/queue/escalated/"
+  ".harness/worktrees/"
 )
 
 echo "🔍 Verifying mandatory .gitignore invariants across all branches..."
@@ -245,8 +248,8 @@ else
   fi
 fi
 
-# 6. Audit Multi-Agent Micro-Contract & Parallel Wave Invariants in .agent/TASK.md
-echo "🔍 Verifying multi-agent micro-contract and wave invariants in .agent/TASK.md across all branches..."
+# 6. Audit lean Tier 1 task checklist contract in .agent/TASK.md
+echo "🔍 Verifying lean Tier 1 task checklist format in .agent/TASK.md across all branches..."
 for branch in "${STARTER_BRANCHES[@]}"; do
   ref="$(resolve_ref "$branch")"
   task_content="$(git show "$ref:.agent/TASK.md" 2>/dev/null || true)"
@@ -255,32 +258,22 @@ for branch in "${STARTER_BRANCHES[@]}"; do
     continue
   fi
 
-  if ! echo "$task_content" | grep -E '\[PARALLEL: W[0-9]+\]' >/dev/null; then
-    fail "Branch '$branch' ($ref) .agent/TASK.md missing standardized parallel wave tag pattern '[PARALLEL: Wx]'."
+  for heading in '## Active Task' '## Completed Tasks Log' '## Backlog'; do
+    if ! echo "$task_content" | grep -F "$heading" >/dev/null; then
+      fail "Branch '$branch' ($ref) .agent/TASK.md missing '$heading' section."
+    fi
+  done
+
+  if ! echo "$task_content" | grep -E '^- \[ \]' >/dev/null; then
+    fail "Branch '$branch' ($ref) .agent/TASK.md missing '- [ ]' checklist items."
   fi
 
-  if ! echo "$task_content" | grep -E '\[BATCH: B[0-9]+\]' >/dev/null; then
-    fail "Branch '$branch' ($ref) .agent/TASK.md missing standardized sequential batch tag pattern '[BATCH: Bx]'."
+  if ! echo "$task_content" | grep -E '^\| Task \| Title \| Commit\(s\) \| Date \|' >/dev/null; then
+    fail "Branch '$branch' ($ref) .agent/TASK.md missing 'Task | Title | Commit(s) | Date' log table."
   fi
 
-  if ! echo "$task_content" | grep -F '.agent/scratch/specs/' >/dev/null; then
-    fail "Branch '$branch' ($ref) .agent/TASK.md missing '.agent/scratch/specs/' feature anchor guidance."
-  fi
-
-  if ! echo "$task_content" | grep -F 'Read:' >/dev/null; then
-    fail "Branch '$branch' ($ref) .agent/TASK.md missing micro-contract 'Read:' field."
-  fi
-
-  if ! echo "$task_content" | grep -F 'Paths:' >/dev/null; then
-    fail "Branch '$branch' ($ref) .agent/TASK.md missing micro-contract 'Paths:' field."
-  fi
-
-  if ! echo "$task_content" | grep -F 'Verify:' >/dev/null; then
-    fail "Branch '$branch' ($ref) .agent/TASK.md missing micro-contract 'Verify:' field."
-  fi
-
-  if ! echo "$task_content" | grep -F '[APPROVED]' >/dev/null; then
-    fail "Branch '$branch' ($ref) .agent/TASK.md missing '[APPROVED]' pre-approval tag guidance."
+  if echo "$task_content" | grep -E '\[(BATCH|PARALLEL): [A-Z][0-9x]+\]|^- \*\*(Status|Systems Involved|Action Type):\*\*|READY FOR PLANNING|\.agent/scratch/specs/' >/dev/null; then
+    fail "Branch '$branch' ($ref) .agent/TASK.md contains Tier 2 orchestration ceremony (belongs in .harness/queue/ for dev-harness)."
   fi
 done
 
@@ -302,8 +295,8 @@ for branch in "${ALL_BRANCHES[@]}"; do
     fail "Branch '$branch' ($ref) .agent/NOTES.md missing 'Worktree Isolation & Dependency Bootstrap Contract' table."
   fi
 
-  if ! echo "$notes_content" | grep -F '.agent/scratch/specs/' >/dev/null; then
-    fail "Branch '$branch' ($ref) .agent/NOTES.md missing '.agent/scratch/specs/' propagation contract."
+  if echo "$notes_content" | grep -F '.agent/scratch/specs/' >/dev/null; then
+    fail "Branch '$branch' ($ref) .agent/NOTES.md still references removed '.agent/scratch/specs/' anchors."
   fi
 
   if ! echo "$notes_content" | grep 'Lead / Orchestrator' >/dev/null; then
@@ -423,7 +416,7 @@ for branch in "${ALL_BRANCHES[@]}"; do
   done
 done
 
-# 11. Audit Sequential Batching ([BATCH: Bx]) and Hermetic Skills & Context Contract
+# 11. Audit 2-tier progressive rigor and Hermetic Skills & Context Contract
 hermetic_skills_section() {
   awk '
     /^## Hermetic Skills & Context Contract$/ { active = 1 }
@@ -438,15 +431,17 @@ if [ -z "$canonical_hermetic_section" ]; then
   fail "Canonical '## Hermetic Skills & Context Contract' missing in main .agent/skills/README.md ($MAIN_REF)."
 fi
 
-echo "🔍 Verifying sequential batching and hermetic skills contracts across all branches..."
+echo "🔍 Verifying 2-tier rigor and hermetic skills contracts across all branches..."
 for branch in "${ALL_BRANCHES[@]}"; do
   ref="$(resolve_ref "$branch")"
   agents="$(git show "$ref:AGENTS.md" 2>/dev/null || true)"
-  if ! printf '%s\n' "$agents" | grep -F '[BATCH: Bx]' >/dev/null; then
-    fail "Branch '$branch' ($ref) AGENTS.md missing sequential batching '[BATCH: Bx]' contract."
-  fi
-  if ! printf '%s\n' "$agents" | grep -F '.agent/scratch/specs/' >/dev/null; then
-    fail "Branch '$branch' ($ref) AGENTS.md missing '.agent/scratch/specs/' feature anchor trigger."
+  for marker in 'Tier 1' 'Tier 2' 'dev-harness' '.harness/queue/' 'files_read' 'files_edit'; do
+    if ! printf '%s\n' "$agents" | grep -F -- "$marker" >/dev/null; then
+      fail "Branch '$branch' ($ref) AGENTS.md missing 2-tier rigor marker '$marker'."
+    fi
+  done
+  if printf '%s\n' "$agents" | grep -E 'Ephemeral Feature Specs|\*\*Sequential Sub-Task Batching|\*\*Pre-Approved' >/dev/null; then
+    fail "Branch '$branch' ($ref) AGENTS.md still carries removed batch/spec-anchor/pre-approved workflow rules."
   fi
   if ! printf '%s\n' "$agents" | grep -F 'Hermetic Skills & Context Contract' >/dev/null; then
     fail "Branch '$branch' ($ref) AGENTS.md missing 'Hermetic Skills & Context Contract' directive."

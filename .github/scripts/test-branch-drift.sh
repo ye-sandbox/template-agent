@@ -138,21 +138,25 @@ publish "$skills_readme"
 expect 1 'Hermetic Skills section missing or drifted'
 
 prepare AGENTS.md
-sed '/\[BATCH: Bx\]/d' "$TEST_ROOT/content" > "$TEST_ROOT/next"
+sed 's/dev-harness/harness-x/g' "$TEST_ROOT/content" > "$TEST_ROOT/next"
 mv "$TEST_ROOT/next" "$TEST_ROOT/content"
 publish AGENTS.md
-expect 1 "AGENTS.md missing sequential batching '[BATCH: Bx]' contract"
+expect 1 "AGENTS.md missing 2-tier rigor marker 'dev-harness'"
 
 prepare .agent/NOTES.md
-sed 's|\.agent/scratch/specs/||g' "$TEST_ROOT/content" > "$TEST_ROOT/next"
-mv "$TEST_ROOT/next" "$TEST_ROOT/content"
+printf '\nSee .agent/scratch/specs/00-00.md\n' >> "$TEST_ROOT/content"
 publish .agent/NOTES.md
-expect 1 "NOTES.md missing '.agent/scratch/specs/' propagation contract"
+expect 1 "NOTES.md still references removed '.agent/scratch/specs/' anchors"
 
 prepare .agent/TASK.md
-sed 's/\[BATCH: B1\]/[SEQ]/g' "$TEST_ROOT/content" > "$TEST_ROOT/next"
+printf '\n- [ ] **[01.9]** `[BATCH: B1]` ceremony\n' >> "$TEST_ROOT/content"
+publish .agent/TASK.md
+expect 1 "TASK.md contains Tier 2 orchestration ceremony"
+
+prepare .agent/TASK.md
+sed 's/^- \[ \]/- /' "$TEST_ROOT/content" > "$TEST_ROOT/next"
 mv "$TEST_ROOT/next" "$TEST_ROOT/content"
 publish .agent/TASK.md
-expect 1 "TASK.md missing standardized sequential batch tag pattern '[BATCH: Bx]'"
+expect 1 "TASK.md missing '- [ ]' checklist items"
 
 echo "Branch drift regression tests: $PASSED passed"

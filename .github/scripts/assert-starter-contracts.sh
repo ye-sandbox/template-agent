@@ -66,13 +66,17 @@ assert_product_readme() {
 }
 
 assert_task_microcontracts() {
+  # Tier 1 lean checklist; Tier 2 micro-contracts live in .harness/queue/ (dev-harness).
   need_grep .agent/TASK.md 'readme-standard' -qF
-  need_grep .agent/TASK.md 'APPROVED' -qF
-  need_grep .agent/TASK.md 'PARALLEL' -qF
-  need_grep .agent/TASK.md '\[PARALLEL: W[0-9]+\]' -qE
-  need_grep .agent/TASK.md 'Read:' -qF
-  need_grep .agent/TASK.md 'Paths:' -qF
-  need_grep .agent/TASK.md 'Verify:' -qF
+  need_grep .agent/TASK.md '^- \[ \]' -qE
+  need_grep .agent/TASK.md 'Task | Title | Commit(s) | Date' -qF
+  need_grep .agent/TASK.md '## Backlog' -qF
+  if grep -qE '\[(BATCH|PARALLEL): |READY FOR PLANNING|Action Type|Systems Involved' "$ROOT/.agent/TASK.md"; then
+    fail "orchestration ceremony leaked into .agent/TASK.md"
+  fi
+  need_grep .gitignore '.harness/queue/done/' -qF
+  need_grep .gitignore '.harness/queue/escalated/' -qF
+  need_grep .gitignore '.harness/worktrees/' -qF
 }
 
 assert_interface_contracts() {
@@ -90,8 +94,8 @@ assert_interface_contracts() {
 
 assert_multiagent_contracts() {
   assert_interface_contracts
-  need_grep AGENTS.md 'task-queue' -qF
-  need_grep AGENTS.md 'APPROVED' -qF
+  need_grep AGENTS.md 'dev-harness' -qF
+  need_grep AGENTS.md '.harness/queue/' -qF
   need_grep .agent/NOTES.md 'Lead / Orchestrator' -qF
   need_grep .agent/NOTES.md 'Worker / Implementer' -qF
   need_grep .agent/NOTES.md 'Reviewer / Sentinel' -qF
@@ -152,7 +156,7 @@ assert_greenfield_base() {
   need_grep AGENTS.md 'cognitive complexity' -qiF
   need_grep AGENTS.md 'readme-standard' -qF
   need_grep AGENTS.md 'APPROVED' -qF
-  need_grep AGENTS.md 'task-queue' -qF
+  need_grep AGENTS.md 'dev-harness' -qF
   assert_task_microcontracts
   assert_multiagent_contracts
   assert_product_readme
@@ -221,7 +225,7 @@ assert_brownfield() {
   need_grep AGENTS.md 'Stable & LTS Versioning' -qiF
   need_grep AGENTS.md 'readme-standard' -qF
   need_grep AGENTS.md 'APPROVED' -qF
-  need_grep AGENTS.md 'task-queue' -qF
+  need_grep AGENTS.md 'dev-harness' -qF
   assert_task_microcontracts
   assert_multiagent_contracts
   need_grep .agent/INVARIANTS.md 'Chesterton' -qF
@@ -280,7 +284,7 @@ assert_blackbox() {
   need_grep AGENTS.md 'fixture' -qiE
   need_grep AGENTS.md 'readme-standard' -qF
   need_grep AGENTS.md 'APPROVED' -qF
-  need_grep AGENTS.md 'task-queue' -qF
+  need_grep AGENTS.md 'dev-harness' -qF
   assert_task_microcontracts
   assert_multiagent_contracts
   assert_product_readme
@@ -359,7 +363,7 @@ assert_infra() {
   need_grep AGENTS.md 'healthcheck' -qF
   need_grep AGENTS.md 'readme-standard' -qF
   need_grep AGENTS.md 'APPROVED' -qF
-  need_grep AGENTS.md 'task-queue' -qF
+  need_grep AGENTS.md 'dev-harness' -qF
   assert_task_microcontracts
   assert_multiagent_contracts
   assert_product_readme
@@ -431,7 +435,7 @@ assert_baremetal() {
   need_grep AGENTS.md 'sudo' -qiF
   need_grep AGENTS.md 'readme-standard' -qF
   need_grep AGENTS.md 'APPROVED' -qF
-  need_grep AGENTS.md 'task-queue' -qF
+  need_grep AGENTS.md 'dev-harness' -qF
   assert_task_microcontracts
   assert_multiagent_contracts
   assert_product_readme
