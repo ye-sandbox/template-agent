@@ -37,7 +37,7 @@ Resolve directive conflicts using the strict canonical precedence hierarchy:
 | :---: | :--- | :--- |
 | **`[P0]`** | **Security & Blast Radius** | Repository mutation containment (zero writes outside project, zero touching/inspecting host credentials `~/.ssh`/`~/.aws`), branch isolation (zero cross-branch merges), destructive git command ban, credential scrubbing. |
 | **`[P1]`** | **Invariants & Automated Contracts** | Single ADR diary (`docs/adr/decisions.md`), `NOTES.md` heading ban, automated CI checks, falsifiable DoD assertions. |
-| **`[P2]`** | **Execution & Test Harness** | Plan-First protocol, task numbering format (`[XX.Y]`), Conventional Commits, single active task in `RUNNING`, adaptive UI verification protocol (T3 preview/device MCPs vs. headless builds/tests). |
+| **`[P2]`** | **Execution & Test Harness** | Plan-First protocol, task numbering format (`[XX.Y]`), Conventional Commits, single active task in `.agent/TASK.md`, adaptive UI verification protocol (T3 preview/device MCPs vs. headless builds/tests). |
 | **`[P3]`** | **Style & Documentation** | Markdown link validity, Technical English for agent contracts, localized human READMEs. |
 
 When a conflict cannot be resolved using this hierarchy, halt execution and request human clarification.
@@ -66,7 +66,6 @@ Optimize context consumption via progressive disclosure:
   - Platform/runtime gotchas: Read `.agent/knowledge/<card>.md`.
   - Interface & UI verification: Read `.agent/skills/interface-testing/SKILL.md` (loaded on-demand exclusively for UI, preview, or frontend component tasks).
   - System invariants & rigid legacy contracts: Read `.agent/INVARIANTS.md`.
-  - Ephemeral feature specifications (Batch Context Anchor): Read `.agent/scratch/specs/<XX-YY>.md` when executing sequential sub-task batches (`[BATCH: Bx]`) to reuse feature contracts and file maps without re-scanning the repository.
 - **Branch-Specific Context:** Checkout the target branch BEFORE inspecting its root files.
 - **Hermetic Skills & Context Contract:** Procedural guidelines and skills must be self-contained within `.agent/skills/` or injected directly into the task dispatch prompt by the orchestrator. If a task references an external organizational skill not present in `.agent/skills/`, the agent must not wander the host filesystem; it should request the skill to be injected into the prompt or provisioned locally in `.agent/skills/`.
 
@@ -83,9 +82,9 @@ Read `AGENTS.md`, `.agent/TASK.md`, and `.agent/NOTES.md` before editing files o
   - Is investigatory, conversational, or read-only (e.g., questions, diff review, log checks).
 - **Plan-First Workflow (Tracked Roadmap Tasks):**
   Required for substantive architectural, feature, multi-file, or template changes:
-  - **Standard (`READY FOR PLANNING`):** Update `Status` in `.agent/TASK.md` to `PLANNING`, present an action plan detailing affected branches and files, await explicit user approval, then transition `Status` to `RUNNING`.
-  - **Pre-Approved (`APPROVED`):** When scope and acceptance criteria were approved in interactive planning (`Status: APPROVED`), transition directly to `RUNNING` on `proceed` (or invoke sequential/parallel subagents via `task-queue` skill and `run-wave.sh` on `proceed queue`). Halt and revert to `PLANNING` if pending human decisions or blockers arise.
-  - **Sequential Sub-Task Batching (`[BATCH: Bx]`):** Group 2 to 4 atomic sequential subtasks (`[XX.YY.ZZ]`) that share the same architectural layer (`Type:`) and feature spec anchor (`.agent/scratch/specs/XX-YY.md`). Execute subtasks in a single warm-cache session or worktree (`ZZ.01` -> `Verify:` -> atomic `git commit` -> `ZZ.02` -> `Verify:` -> atomic `git commit`) without intermediate planning pauses. Never mix Backend (`Type: code`) and Frontend/QA (`Type: browser-qa` / `mobile-qa`) in the same batch. Do not track extra error counters during execution; rely exclusively on the canonical Fail-Stop circuit breaker (Section 6).
+  - **Plan approval:** Present an action plan detailing affected branches and files, await explicit user approval, then execute the active task's `- [ ]` checklist in `.agent/TASK.md`.
+  - **Tier 1 — Interactive (Default):** Lean `.agent/TASK.md` checklist (`- [ ]` atomic subtasks) validated by the Definition of Done below (`git diff --check`, CI scripts in `.github/scripts/`). No `Status` state machine, `Type:`, `Read:`, `Paths:`, `[BATCH: Bx]`, or spec-anchor ceremony.
+  - **Tier 2 — Autonomous (`dev-harness` / Parallel Worktrees):** Strict micro-contracts (`files_read`, `files_edit`, `verify`) live inside `.harness/queue/<id>.{md,yaml}` or `harness:ready` GitHub Issues consumed by `dev-harness`, never in `.agent/TASK.md`. Lifecycle hooks in `.agent/hooks/` (`post-worktree-create`, `pre-verify`, `post-worktree-teardown`) apply to both tiers. The heavy `[BATCH: Bx]` / `[PARALLEL: Wx]` swarm workflow is preserved in `ye-sandbox/template-agent-swarm`.
 
 ### Step 3: Falsifiable Definition of Done (DoD)
 Tasks MUST NOT be marked complete until all checks pass:
@@ -116,7 +115,7 @@ pending_decision: "<clarification or choice required from human>"
 
 ## 7. Task Lifecycle & Numbering (`[XX.Y]`)
 
-Format: `[Epic].[Sequence]` with two-digit epics. Subtasks: `[XX.Y.Z]`. Exactly **one** task active in `RUNNING` status. Derive next ID exclusively from active task + completed log.
+Format: `[Epic].[Sequence]` with two-digit epics. Subtasks: `[XX.Y.Z]`. Exactly **one** active task in `.agent/TASK.md`. Derive next ID exclusively from active task + completed log.
 
 | Prefix | Phase | Hub Scope |
 | :---: | :--- | :--- |
@@ -131,7 +130,7 @@ Triggered exclusively by human instruction to tag a release:
 1. **Archive:** Move completed task log from `TASK.md` to `ARCHIVE.md` under `## [vX.Y.Z] - YYYY-MM-DD`.
 2. **Consolidate:** Promote definitive architectural decisions to `docs/adr/decisions.md`; prune scratch notes from `.agent/NOTES.md`.
 3. **Perimeter:** Sync `.env.example` and `README.md` to the release tag.
-4. **Reset:** Reset task numbering; promote next milestone to `READY FOR PLANNING`; restore closing checklist.
+4. **Reset:** Reset task numbering; promote next milestone to the active task; restore closing checklist.
 
 ## 8. Inter-Branch Synchronization Protocol
 
@@ -210,10 +209,10 @@ git cherry-pick 88eddd8
 ### Task Lifecycle Progression
 ```markdown
 // BAD: Silently executing substantive architectural changes without plan approval
-[01.6] Status: READY FOR PLANNING -> Directly edited 10 files without plan approval
+[01.6] Directly edited 10 files without presenting a plan
 
 // GOOD: Standard Plan-First progression
-[01.6] Status: READY FOR PLANNING -> Status: PLANNING (present plan) -> Human Approval -> Status: RUNNING
+[01.6] Present plan -> Human Approval -> execute `- [ ]` checklist -> verify -> atomic commit
 ```
 
 ### Interface & UI Verification
@@ -239,14 +238,15 @@ view_file("~/.ssh/id_rsa")
 "Skill 'python-dev' is required but not present in .agent/skills/. Please inject it into the prompt or provision it locally under .agent/skills/."
 ```
 
-### Sequential Sub-Task Batching (`[BATCH: Bx]`)
+### Task Tracking (Tier 1 vs Tier 2)
 ```markdown
-// BAD: Opening 3 separate cold-cache sessions for sequential backend subtasks or mixing Backend + UI in one batch
-[08.02.01] [BATCH: B1] Type: code (prisma/schema.prisma)
-[08.02.02] [BATCH: B1] Type: browser-qa (src/pages/Deals.tsx) // Layer violation!
+// BAD: Orchestration ceremony inside the interactive checklist
+### [08.2] Add deals schema
+- Status: APPROVED | Type: code | Read: .agent/scratch/specs/08-02.md | Paths: prisma/schema.prisma | Verify: npm test
 
-// GOOD: Grouping 2-4 same-layer subtasks anchored to .agent/scratch/specs/XX-YY.md with per-subtask Verify & commit
-[08.02.01] [APPROVED] [BATCH: B1-backend] Type: code | Read: .agent/scratch/specs/08-02.md | Verify -> git commit
-[08.02.02] [APPROVED] [BATCH: B1-backend] Type: code | Read: .agent/scratch/specs/08-02.md | Verify -> git commit
-[08.02.03] [APPROVED] [BATCH: B1-backend] Type: code | Read: .agent/scratch/specs/08-02.md | Verify -> git commit
+// GOOD: Lean Tier 1 checklist; micro-contract (files_read / files_edit / verify) lives in .harness/queue/08-02.yaml for dev-harness
+### [08.2] Add deals schema
+Objective: persist deals with a versioned migration.
+- [ ] Add `Deal` model and migration
+- [ ] Add repository tests (`npm test` exits 0)
 ```
