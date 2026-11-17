@@ -26,20 +26,20 @@ Active contracts and live gotchas stay below.
 
 ### Multi-Agent Collaboration Contracts
 
-Canonical 3-tier subagent topology, delegation micro-contracts, worktree isolation, and hermetic sandboxes (specifications: [`docs/subagent-topology.md`](../docs/subagent-topology.md), [`docs/worktree-isolation.md`](../docs/worktree-isolation.md), and [`docs/agent-sandbox.md`](../docs/agent-sandbox.md)):
+Canonical 3-tier subagent topology, Tier 2 (`dev-harness`) micro-contracts, worktree isolation, and hermetic sandboxes (specifications: [`docs/subagent-topology.md`](../docs/subagent-topology.md), [`docs/worktree-isolation.md`](../docs/worktree-isolation.md), and [`docs/agent-sandbox.md`](../docs/agent-sandbox.md)):
 
 | Role | Interface / Channel | Responsibilities | Boundary & Invariants |
 |---|---|---|---|
 | **`Lead / Orchestrator`** | `.agent/TASK.md` / Interactive Prompt | Decomposes initiatives into wave-compatible tasks, manages task lifecycle, routes to model/quota tiers, interacts with human. | Sole manager of `TASK.md` and commit log. Does not run parallel worker tasks directly. |
-| **`Worker / Implementer`** | Worktree / Target Workspace | Executes atomic code/doc changes strictly adhering to delegated micro-contract (`Read:`, `Paths:`, `Verify:`). | Restricted exclusively to `Paths:`. Adheres to DoD in `AGENTS.md`. |
-| **`Reviewer / Sentinel`** | Diffs / Test Harness (`Verify:`) | Read-only inspection of diffs against task DoD, regression tests, and security blast radius. | Read-only; reports structured Pass/Fail diagnostic payload. |
+| **`Worker / Implementer`** | Worktree / Target Workspace | Executes atomic code/doc changes strictly adhering to delegated micro-contract (`files_read`, `files_edit`, `verify`). | Restricted exclusively to `files_edit`. Adheres to DoD in `AGENTS.md`. |
+| **`Reviewer / Sentinel`** | Diffs / Test Harness (`verify`) | Read-only inspection of diffs against task DoD, regression tests, and security blast radius. | Read-only; reports structured Pass/Fail diagnostic payload. |
 
 #### Worktree Isolation & Dependency Bootstrap Contract
 
 | Element | Protocol / Mechanism | Invariant / Boundary |
 |---|---|---|
 | **Workspace Provisioning** | `git worktree add -b task-<id> <path> HEAD` | Default ephemeral path (`${TMPDIR:-/tmp}/worktrees/task-<id>`) or `.worktrees/task-<id>` (`.worktrees/` in `.gitignore`). |
-| **Dependency Bootstrap** | Fast-Link vs. Isolated-Install | Fast-Link (symlink `node_modules/` or `.venv/`) when `Paths:` has no manifest changes (<50ms, zero-copy). Isolated-Install when manifests change. |
+| **Dependency Bootstrap** | Fast-Link vs. Isolated-Install | Fast-Link (symlink `node_modules/` or `.venv/`) when `files_edit` has no manifest changes (<50ms, zero-copy). Isolated-Install when manifests change. |
 | **Environment Injection** | Copy `.env` / `.env.example` to worktree | Ensures test harness execution without leaking uncommitted tokens or mutating root config. |
 | **Teardown & GC** | `git worktree remove --force` + `branch -D` + `prune` | Immediate cleanup post-integration; trap declared in runners to prevent dangling worktree locks. |
 
@@ -47,9 +47,9 @@ Canonical 3-tier subagent topology, delegation micro-contracts, worktree isolati
 
 | Hook / Phase | Script Target | Invocation & Contract |
 |---|---|---|
-| **Fast-Link Bootstrap** | `bootstrap-worktree.sh` | Zero-copy symlinking of `node_modules/` and `.venv/`, `.env` isolation copy, `.agent/scratch/` provisioning, and isolated copy of `.agent/scratch/specs/` anchors. |
+| **Fast-Link Bootstrap** | `bootstrap-worktree.sh` | Zero-copy symlinking of `node_modules/` and `.venv/`, `.env` isolation copy, and `.agent/scratch/` provisioning. |
 | **Post-Provisioning** | `.agent/hooks/post-worktree-create` | Executed post-bootstrap for test DB seeding, port binding, and ephemeral fixtures. Halts on non-zero exit. |
-| **Pre-Verification** | `.agent/hooks/pre-verify` | Executed before `Verify:` command execution to ensure clean test state and fixture validation. |
+| **Pre-Verification** | `.agent/hooks/pre-verify` | Executed before `verify` command execution to ensure clean test state and fixture validation. |
 | **Post-Teardown** | `.agent/hooks/post-worktree-teardown` | Executed prior to worktree removal (`git worktree remove`) for graceful daemon/resource teardown. |
 
 #### Multi-Account Quota Routing & Failover Contract
@@ -60,7 +60,7 @@ Canonical 3-tier subagent topology, delegation micro-contracts, worktree isolati
 | **Quota Floor Circuit Breaker** | `remaining_fraction <= 0.05` | Immediate disqualification of profiles with <=5% quota; halts execution if all candidate profiles are below floor. |
 | **Model Tier Selection** | `default-tier` / `escalation-tier` (mapped via `WORKER_MODEL_DEFAULT_TIER` / `WORKER_MODEL_ESCALATION_TIER`) | Low token footprint default; escalation to `escalation-tier` permitted only for complex architecture or max 1 retry after verification failure. |
 | **Cooldown Tracking** | `<profile>/.multigravity/quota-history.jsonl` | 429 rate limit backoff and cooldown persistence to prevent immediate re-dispatch. |
-| **Worktree Recovery** | Worktree verify on timeout | Runs `Verify:` inside worktree on timeout; if code 0 and matches `Paths:`, recovers diff cleanly. |
+| **Worktree Recovery** | Worktree verify on timeout | Runs `verify` inside worktree on timeout; if code 0 and matches `files_edit`, recovers diff cleanly. |
 
 #### Hermetic Agent Sandbox & Container Isolation Contract
 
@@ -94,5 +94,5 @@ Canonical OpenAI v1 compatible gateway integration, virtual model aliases, netwo
 - **Healthcheck Probe Log Suppression:** Do not allow periodic HTTP 200 healthcheck pings to flood access logs or VictoriaLogs; suppress successful `/health` and `/healthz` access logs at the proxy or application layer (see `infra:k-002`).
 - **Git History Purge & Identity Neutralization:** Historical purge executed across pre-existing branches on 2026-10-28 using `git-filter-repo` with canonical generic identity `Antigravity Lead <lead@template-hub.internal>` (any re-application requires `git push --force-with-lease --all --tags`); subsequent hub development commits use the active contributor identity configured in Git.
 - **Circuit Breaker Threshold:** General development starters (`main`, `greenfield`, `brownfield`) use 3 consecutive failures with identical root cause to allow hypothesis exploration. Sensitive starters (`blackbox`, `infra`, `baremetal`) enforce 2 consecutive failures to prevent IP bans or host/daemon disruption.
-- **Pre-Approved Tasks (`APPROVED`), Parallel Waves (`[PARALLEL: Wx]`), Sequential Batches (`[BATCH: Bx]`) & `task-queue` Skill:** Tasks finalized during interactive planning use `Status: APPROVED` in `.agent/TASK.md` (with independent disjoint-file tasks tagged `[PARALLEL: Wx]`, sequential same-layer subtasks grouped in 2–4 item `[BATCH: Bx]` chains anchored to `.agent/scratch/specs/XX-YY.md`, and structured with the `Read: / Paths: / Verify:` micro-contract), allowing fresh sessions (`proceed`) or isolated worker subagents (`delegate_task` via `task-queue`) to transition directly to `RUNNING` without intermediate planning pauses.
+- **2-Tier Progressive Rigor (supersedes `APPROVED` / `[PARALLEL: Wx]` / `[BATCH: Bx]` task tags):** Tier 1 (interactive, default) uses a lean `- [ ]` checklist in `.agent/TASK.md` validated by the repository's canonical commands. Tier 2 (autonomous) uses strict `files_read` / `files_edit` / `verify` micro-contracts in `.harness/queue/<id>.{md,yaml}` or `harness:ready` GitHub Issues consumed by `dev-harness`. `.agent/hooks/{post-worktree-create,pre-verify,post-worktree-teardown}` remain the compatibility surface for both. The full wave/batch/spec-anchor workflow lives in `ye-sandbox/template-agent-swarm`.
 - **LLM Gateway Reasoning Tokens & Timeouts:** When calling thinking-enabled models via `deep`, always set client HTTP timeouts $\ge 180$ seconds. Test assertions and smoke probes must allocate `max_tokens >= 60`; very low caps (e.g. 5 tokens) cause reasoning tokens to consume the entire budget, returning an empty response body. Consumer containers must never attach to `hydra_ai_net` (use `hydra_shared_net`).
