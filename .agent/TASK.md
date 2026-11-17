@@ -7,17 +7,10 @@
 
 ## Active Task
 
-### 📌 Task [00.1]: Environment Setup and Authentication/Session Mapping
+### [00.1] Environment Setup and Authentication/Session Mapping
 
-- **Description:** Perform initial reconnaissance on the target system, isolate the session/auth mechanism, define required environment variables in `.env`, and document global attributes in `.agent/ENDPOINTS.md`.
-- **Systems Involved:** `[auth]`, `[env]`, `[endpoints]`
-- **Action Type:**
-  - [x] Read-only / Documentation
-  - [ ] Source code changes
-- **Status:** READY FOR PLANNING
-  *(Workflow: `READY FOR PLANNING` → `PLANNING` on presenting plan → approval/`APPROVED` → `RUNNING`)*
+Perform initial reconnaissance on the target system, isolate the session/auth mechanism, define required environment variables in `.env`, and document global attributes in `.agent/ENDPOINTS.md`.
 
-### Acceptance Criteria
 - [ ] Authentication mechanism and session lifecycle identified (cookies, CSRF tokens, required headers).
 - [ ] `.env.example` populated with necessary credentials and connection endpoints.
 - [ ] Section 1 (Global Context) of `.agent/ENDPOINTS.md` completed.
@@ -37,8 +30,6 @@
 
 ## Backlog (Upcoming, in priority order)
 
-> Tag independent pre-approved tasks with strictly disjoint file scopes as `[APPROVED]` `[PARALLEL: W1]`, and sequential same-layer subtasks (2–4 items) as `[APPROVED]` `[BATCH: B1]` anchored to `.agent/scratch/specs/XX-YY.md`, with `Read: / Paths: / Verify:` micro-contracts (optional `Depends: [XX.Y]` lists prerequisite task IDs).
-
 - [ ] **[00.2]** Map and dissect the first business endpoint in `.agent/ENDPOINTS.md` — `[endpoints]`
 - [ ] **[01.1]** Implement resilient HTTP client with session, retry, and backoff — `[client]`
 - [ ] **[01.2]** Create mocked fixtures and hermetic test suite — `[tests]`
@@ -57,10 +48,3 @@ Release/tag only with explicit human request. When triggered, the ID is `[99.1]`
 - [ ] In-memory/Redis session caching
 - [ ] Proxy rotation and rate-limit mitigation
 - [ ] Export pipeline to PostgreSQL or message queue
-
----
-
-## How to Keep this File Lean
-
-1. Detail only in the active task. When complete $\rightarrow$ log one line and promote the next task.
-2. Backlog is a list of titles. Next ID = last ID in log (or active task). Cycle wrap-up and `[99.1]`: see `AGENTS.md`.
