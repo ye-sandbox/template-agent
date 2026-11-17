@@ -74,9 +74,15 @@ assert_task_microcontracts() {
   if grep -qE '\[(BATCH|PARALLEL): |READY FOR PLANNING|Action Type|Systems Involved' "$ROOT/.agent/TASK.md"; then
     fail "orchestration ceremony leaked into .agent/TASK.md"
   fi
-  need_grep .gitignore '.harness/queue/done/' -qF
-  need_grep .gitignore '.harness/queue/escalated/' -qF
-  need_grep .gitignore '.harness/worktrees/' -qF
+  # Brownfield injects into a legacy repo and never rewrites its .gitignore.
+  case "$KIND" in
+    brownfield*) ;;
+    *)
+      need_grep .gitignore '.harness/queue/done/' -qF
+      need_grep .gitignore '.harness/queue/escalated/' -qF
+      need_grep .gitignore '.harness/worktrees/' -qF
+      ;;
+  esac
 }
 
 assert_interface_contracts() {
@@ -128,7 +134,7 @@ assert_greenfield_base() {
   need_file .agent/hooks/README.md
   need_file docs/adr/decisions.md
   need_file .agent/TASK.md
-  need_grep .agent/TASK.md 'Task \[00\.1\]: Project Bootstrap & Stack Setup' -qE
+  need_grep .agent/TASK.md '### \[00\.1\] Project Bootstrap & Stack Setup' -qE
   if grep -qF 'Task [XX.Y]' "$ROOT/.agent/TASK.md"; then
     fail "unresolved Task [XX.Y] placeholder found in .agent/TASK.md"
   fi
@@ -205,7 +211,7 @@ assert_brownfield() {
   need_file .agent/TASK.md
   need_file .agent/NOTES.md
   need_file .agent/ARCHIVE.md
-  need_grep .agent/TASK.md 'Task \[00\.1\]: Project Discovery and Context Mapping' -qE
+  need_grep .agent/TASK.md '### \[00\.1\] Project Discovery and Context Mapping' -qE
   need_absent .agent/adr
   need_grep AGENTS.md '.agent/INVARIANTS.md' -qF
   need_grep AGENTS.md '.agent/ECOSYSTEM.md' -qF
@@ -256,7 +262,7 @@ assert_blackbox() {
   need_file .agent/TASK.md
   need_file .agent/NOTES.md
   need_file .agent/ARCHIVE.md
-  need_grep .agent/TASK.md 'Task \[00\.1\]: Environment Setup and Authentication/Session Mapping' -qE
+  need_grep .agent/TASK.md '### \[00\.1\] Environment Setup and Authentication/Session Mapping' -qE
   need_absent package.json
   need_absent tests/smoke.test.js
   need_file tests/smoke.sh
@@ -318,7 +324,7 @@ assert_infra() {
   need_file .agent/TASK.md
   need_file .agent/NOTES.md
   need_file .agent/ARCHIVE.md
-  need_grep .agent/TASK.md 'Task \[00\.1\]: Map Topology and Provision Baseline Services' -qE
+  need_grep .agent/TASK.md '### \[00\.1\] Map Topology and Provision Baseline Services' -qE
   need_file .env.example
   need_grep .env.example 'LLM_BASE_URL' -qF
   need_grep .env.example 'LLM_MODEL_FAST' -qF
@@ -394,7 +400,7 @@ assert_baremetal() {
   need_file .agent/TASK.md
   need_file .agent/NOTES.md
   need_file .agent/ARCHIVE.md
-  need_grep .agent/TASK.md 'Task \[00\.1\]: Baseline System Audit & Performance Discovery' -qE
+  need_grep .agent/TASK.md '### \[00\.1\] Baseline System Audit & Performance Discovery' -qE
   need_absent package.json
   need_absent tests/smoke.test.js
   need_file tests/smoke.sh
