@@ -9,6 +9,8 @@ type: architectural-specification
 
 # Isolated Worktree & Sandbox Runner Integration Specification
 
+> **Tier 2 / swarm reference:** This guide describes the `[BATCH: Bx]` / `[PARALLEL: Wx]` micro-contract workflow. The default interactive workflow is a lean `- [ ]` checklist in `.agent/TASK.md` (Tier 1); autonomous runs use `files_read` / `files_edit` / `verify` contracts in `.harness/queue/` consumed by `dev-harness`. The full swarm template is preserved in `ye-sandbox/template-agent-swarm`.
+
 Canonical specification and operational recipes for Git worktree isolation, automated dependency bootstrapping, sandbox execution, and deterministic lifecycle management within the Agent-Driven Development (ADD) Template Hub.
 
 ---

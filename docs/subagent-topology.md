@@ -9,6 +9,8 @@ type: architectural-specification
 
 # Subagent Role Taxonomy & Delegation Specification
 
+> **Tier 2 / swarm reference:** This guide describes the `[BATCH: Bx]` / `[PARALLEL: Wx]` micro-contract workflow. The default interactive workflow is a lean `- [ ]` checklist in `.agent/TASK.md` (Tier 1); autonomous runs use `files_read` / `files_edit` / `verify` contracts in `.harness/queue/` consumed by `dev-harness`. The full swarm template is preserved in `ye-sandbox/template-agent-swarm`.
+
 Canonical specification for multi-agent collaboration, subagent delegation micro-contracts, workspace isolation, and fail-stop escalation within the Agent-Driven Development (ADD) Template Hub.
 
 ---
