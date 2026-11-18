@@ -9,7 +9,7 @@ type: architectural-specification
 
 # LLM Gateway & Virtual Model Routing Specification
 
-Canonical specification for consumer applications integrating with the central LLM Gateway (Hydra LLM Router / New API) via OpenAI v1 compatible protocols, resilient virtual model routing, Docker network boundaries, client timeout invariants, and token tier management.
+Canonical specification for consumer applications integrating with the central LLM Gateway (`hydra-llm-router`) via OpenAI v1 compatible protocols, operator-configured virtual model routing, Docker network boundaries, client timeout invariants, and token tier management.
 
 ---
 
@@ -17,17 +17,17 @@ Canonical specification for consumer applications integrating with the central L
 
 In Agent-Driven Development (ADD) and homelab microservice ecosystems, consumer applications must never hardcode proprietary upstream LLM providers (e.g., Google AI Studio, OpenAI, Anthropic, Groq) or brittle provider-specific model strings (`gemini-2.5-flash`, `gpt-4o-2024-08-06`). Upstream model lifecycles, deprecation schedules, API version shifts, and quota pool exhaustion create systemic failure points across distributed repositories.
 
-The central LLM Gateway acts as a reverse proxy, routing fabric, quota arbiter, and compatibility adapter:
-1. **OpenAI v1 Standard Interface:** Exposes standard `/v1/chat/completions` and `/v1/models` endpoints supporting JSON schema mode, streaming SSE (`text/event-stream`), tool/function calling, and multi-turn conversations.
-2. **Virtual Model Abstraction:** Maps semantic routing tags (`fast`, `deep`) to optimal upstream providers dynamically, isolating consumer code from upstream API deprecations.
-3. **Hermetic Docker Topology:** Restricts internal inter-container traffic to dedicated bridge networks (`hydra_shared_net`), isolating stateful backend tiers (Redis, database).
+The central LLM Gateway (`hydra-llm-router`) acts as a reverse proxy, routing fabric, quota arbiter, and compatibility adapter:
+1. **OpenAI v1 Standard Interface & Alias Discovery:** Exposes standard `/v1/chat/completions` and `/v1/models` endpoints plus Hydra-native `/v1/hydra/models` discovery (capabilities, modalities, availability, and pricing), supporting JSON schema mode, streaming SSE (`text/event-stream`), tool/function calling, and multi-turn conversations.
+2. **Virtual Model Abstraction:** Maps operator-configured semantic routing aliases (`fast` by default, `deep` on explicit opt-in) to optimal upstream providers dynamically, isolating consumer code from upstream API deprecations.
+3. **Hermetic Docker Topology:** Restricts internal co-located inter-container traffic to dedicated bridge networks (`hydra_shared_net`), isolating stateful backend tiers (Redis, SQLite) on `hydra_router_internal` (legacy `hydra_ai_net`).
 4. **Deterministic Token Tiers:** Enforces quota budgets and token ceilings per application tier to protect upstream shared budgets.
 
 ---
 
 ## 2. Virtual Model Routing Hierarchy
 
-Consumer applications must route inference requests using semantic virtual model aliases rather than explicit provider models:
+Consumer applications must discover operator-configured virtual model aliases via `GET /v1/models` or `GET /v1/hydra/models` and route inference requests using semantic aliases (defaulting to `fast`; opting into `deep` only when explicitly required) rather than explicit provider models:
 
 | Virtual Model | Primary Workload Profile | Upstream Provider Target (Dynamic) | Context Window | Latency Profile |
 | :--- | :--- | :--- | :--- | :--- |
@@ -47,10 +47,10 @@ Consumer applications access the gateway across three distinct deployment topolo
 ```mermaid
 flowchart TD
     subgraph CoreHost["Host / Core Infrastructure"]
-        subgraph HydraStack["Hydra LLM Router Stack"]
+        subgraph HydraStack["hydra-llm-router Stack"]
             Gateway["hydra-llm-router:3000"]
             Redis[("Redis Cache")]
-            Gateway -.->|hydra_ai_net (isolated)| Redis
+            Gateway -.->|hydra_router_internal (isolated)| Redis
         end
 
         subgraph SiblingApps["Sibling Microservices"]
@@ -77,13 +77,13 @@ flowchart TD
 
 | Topology | Target Endpoint URL | Network / Interface | Routing & Authentication Contract |
 | :--- | :--- | :--- | :--- |
-| **1. Sibling Container (Same Host)** | `http://hydra-llm-router:3000/v1` | `hydra_shared_net` (`external: true`) | Direct internal Docker DNS resolution; zero TLS/NAT hairpinning. Redis remains isolated on `hydra_ai_net`. |
-| **2. Remote Host / Dev Workstation** | `https://hydra-router.homelab.yegear.dev/v1` | Traefik v3 (`proxy_public`) | TLS terminated by Traefik with Cloudflare DNS challenge. `/v1` routes bypass Authelia interactive SSO and authenticate via `Authorization: Bearer <token>`. |
-| **3. Local Host Script / CLI** | `http://127.0.0.1:3000/v1` | Loopback (`127.0.0.1`) | Bound to host loopback interface (`GATEWAY_BIND_IP=127.0.0.1`). |
+| **1. Sibling Container (Same Host)** | `http://hydra-llm-router:3000/v1` | `hydra_shared_net` (`external: true`) | Direct internal Docker DNS resolution; zero TLS/NAT hairpinning. Redis remains isolated on `hydra_router_internal` (legacy `hydra_ai_net`). |
+| **2. Remote Host / Dev Workstation** | `https://hydra-router.homelab.yegear.dev/v1` | Traefik v3 (`proxy_public`) | TLS terminated by Traefik with Cloudflare DNS challenge; do NOT declare `hydra_shared_net` on remote/external Compose stacks. `/v1` routes bypass Authelia interactive SSO and authenticate via `Authorization: Bearer <token>`. |
+| **3. Local Host Script / CLI** | `http://127.0.0.1:3000/v1` | Loopback (`127.0.0.1`) | Bound to host loopback interface (`ROUTER_BIND_IP=127.0.0.1`). |
 
 ### Network Boundary Invariants
-- `[P0]` **FORBIDDEN NETWORK ATTACHMENT:** Consumer applications MUST NOT attach to `hydra_ai_net`. The `hydra_ai_net` bridge is strictly private to the gateway and its Redis instance.
-- `[P1]` **SIBLING ATTACHMENT:** Consumer applications running in Docker Compose on the core host MUST join the external bridge network `hydra_shared_net`.
+- `[P0]` **FORBIDDEN NETWORK ATTACHMENT:** Consumer applications MUST NOT attach to `hydra_router_internal` (or legacy `hydra_ai_net`). That bridge is strictly private to `hydra-llm-router` and its Redis instance.
+- `[P1]` **SIBLING ATTACHMENT:** Consumer applications running in Docker Compose on the same Docker host as `hydra-llm-router` MUST join the external bridge network `hydra_shared_net` (remote/external hosts MUST omit `hydra_shared_net`).
 
 ---
 
@@ -94,10 +94,11 @@ Every template starter and consumer application repository MUST declare the foll
 
 ```dotenv
 # ==============================================================================
-# LLM Gateway Integration (Hydra LLM Router - OpenAI v1 Compatible)
+# LLM Gateway Integration (hydra-llm-router - OpenAI v1 Compatible)
 # Sibling Container: http://hydra-llm-router:3000/v1
 # Remote Traefik HTTPS: https://hydra-router.homelab.yegear.dev/v1
 # Localhost CLI: http://127.0.0.1:3000/v1
+# Discover operator-configured virtual model aliases via GET /v1/models or GET /v1/hydra/models
 # ==============================================================================
 LLM_BASE_URL=http://hydra-llm-router:3000/v1
 LLM_API_KEY=sk-replace-with-hydra-tier-token
@@ -261,9 +262,9 @@ resp = await client.chat.completions.create(
 services:
   app:
     networks:
-      - hydra_ai_net  # CRITICAL SECURITY RISK: Exposes internal Redis database
+      - hydra_router_internal  # CRITICAL SECURITY RISK: Exposes internal Redis database (also legacy hydra_ai_net)
 
-# GOOD: Attaching application strictly to hydra_shared_net bridge
+# GOOD: Attaching co-located application strictly to hydra_shared_net bridge
 services:
   app:
     networks:
@@ -301,13 +302,14 @@ Before declaring an application compliant with the LLM Gateway specification, ve
    *Expected result: Zero occurrences.*
 
 2. **Environment Variable Hygiene:**
-   Ensure `.env.example` contains canonical variables (`LLM_BASE_URL`, `LLM_API_KEY`, `LLM_MODEL_FAST=fast`, `LLM_MODEL_DEEP=deep`, `LLM_TIMEOUT_SECONDS=180`).
+   Ensure `.env.example` contains canonical variables (`LLM_BASE_URL`, `LLM_API_KEY`, `LLM_MODEL_FAST=fast`, `LLM_MODEL_DEEP=deep`, `LLM_TIMEOUT_SECONDS=180`), or operator-configured non-upstream aliases matching `GET /v1/models` / `GET /v1/hydra/models`.
 
 3. **Network Boundary Audit:**
-   Ensure `compose.yaml` (if present) references `hydra_shared_net` as `external: true` and contains zero references to `hydra_ai_net`.
+   Ensure `compose.yaml` (when running on the same Docker host) references `hydra_shared_net` as `external: true` and contains zero references to `hydra_router_internal` or legacy `hydra_ai_net`.
 
 4. **Gateway Smoke Probe Assertion:**
-   Ensure gateway health and virtual model availability can be verified via standard CLI probes:
+   Ensure gateway health and operator-configured virtual model availability can be verified via standard CLI probes against `/v1/models` or `/v1/hydra/models`:
    ```bash
-   curl -sf "${LLM_BASE_URL}/models" -H "Authorization: Bearer ${LLM_API_KEY}" | grep -q "fast"
+   curl -sf "${LLM_BASE_URL}/models" -H "Authorization: Bearer ${LLM_API_KEY}" | grep -q '"list"'
+   curl -sf "${LLM_BASE_URL}/hydra/models?available=true" -H "Authorization: Bearer ${LLM_API_KEY}" | grep -q "\"${LLM_MODEL_FAST:-fast}\""
    ```
