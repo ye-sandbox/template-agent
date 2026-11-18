@@ -79,9 +79,9 @@ Canonical OpenAI v1 compatible gateway integration, virtual model aliases, netwo
 
 | Element | Protocol / Mechanism | Invariant / Boundary |
 |---|---|---|
-| **API Protocol** | OpenAI v1 (`/v1/chat/completions`, `/v1/models`) | Standard JSON schema, streaming SSE, tool calling; zero provider-specific SDK lock-in. |
-| **Virtual Model Routing** | `free-fast` vs. `free-deep` | `free-fast` for low-latency (<1.5s) intent/extractions; `free-deep` for complex reasoning/synthesis (up to 1M tokens). Upstream provider drift handled dynamically at gateway. |
-| **Network Isolation** | `hydra_shared_net` (`external: true`) | Consumer containers join `hydra_shared_net` for direct DNS `http://hydra-ai-gateway:3000/v1`. Joining `hydra_ai_net` is strictly forbidden (protects Redis/DB). |
+| **API Protocol** | OpenAI v1 (`/v1/chat/completions`, `/v1/models`, `/v1/hydra/models`) | Standard JSON schema, streaming SSE, tool calling via `hydra-llm-router`; discover operator-configured virtual aliases via `/v1/models` or `/v1/hydra/models` with zero provider-specific SDK lock-in. |
+| **Virtual Model Routing** | `fast` vs. `deep` | Operator-configured virtual aliases (`fast` default for low-latency <1.5s intent/extractions; `deep` opt-in for complex reasoning/synthesis up to 1M tokens). Upstream provider drift handled dynamically at `hydra-llm-router`. |
+| **Network Isolation** | `hydra_shared_net` (`external: true`) | Co-located sibling containers join `hydra_shared_net` for direct DNS `http://hydra-llm-router:3000/v1` (external hosts use `https://hydra-router.homelab.yegear.dev/v1` without `hydra_shared_net`). Joining `hydra_router_internal` or legacy `hydra_ai_net` is strictly forbidden (protects Redis/DB). |
 | **Client Timeout & Budget** | `LLM_TIMEOUT_SECONDS >= 180` | Minimum 180s timeout for deep reasoning calls; minimum `max_tokens >= 60` on test probes to prevent empty completions caused by reasoning token consumption. |
 | **Token Tiers** | Tier 1 (5M), Tier 2 (1M), Tier 3 (unlimited) | Tier 1 for production pipelines, Tier 2 for interactive/dev, Tier 3 for smoke/health checks. |
 
@@ -89,7 +89,7 @@ Canonical OpenAI v1 compatible gateway integration, virtual model aliases, netwo
 
 ## Gotchas & Pitfalls
 
-- **LLM Gateway Reasoning Tokens & Timeouts:** When calling thinking-enabled models via `free-deep`, always set client HTTP timeouts $\ge 180$ seconds. Test assertions and smoke probes must allocate `max_tokens >= 60`; very low caps (e.g. 5 tokens) cause reasoning tokens to consume the entire budget, returning an empty response body. Consumer containers must never attach to `hydra_ai_net` (use `hydra_shared_net`).
+- **LLM Gateway Reasoning Tokens & Timeouts:** When calling thinking-enabled models via `deep`, always set client HTTP timeouts $\ge 180$ seconds. Test assertions and smoke probes must allocate `max_tokens >= 60`; very low caps (e.g. 5 tokens) cause reasoning tokens to consume the entire budget, returning an empty response body. Consumer containers must never attach to `hydra_router_internal` or legacy `hydra_ai_net` (use `hydra_shared_net` only for co-located sibling containers on the same Docker host).
 
 ---
 
