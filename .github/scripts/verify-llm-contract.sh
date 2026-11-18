@@ -3,7 +3,7 @@
 # Deterministic LLM Gateway Contract Linter & Pre-Flight Probe Runner
 # Statically asserts zero upstream provider coupling in consumer codebases,
 # validates canonical environment keys, enforces Docker network boundaries
-# (hydra_shared_net vs hydra_ai_net), and executes pre-flight gateway probes.
+# (hydra_shared_net vs hydra_router_internal / hydra_ai_net), and executes pre-flight gateway probes.
 #
 # Usage:
 #   verify-llm-contract.sh [command] [options] [target-dir]
@@ -89,18 +89,18 @@ Commands:
 
   check-env <file-path> [--json]
       Validate environment file against canonical schema:
-      LLM_BASE_URL, LLM_API_KEY, LLM_MODEL_FAST=fast,
-      LLM_MODEL_DEEP=deep, LLM_TIMEOUT_SECONDS >= 180.
+      LLM_BASE_URL, LLM_API_KEY, LLM_MODEL_FAST (virtual alias, default: fast),
+      LLM_MODEL_DEEP (virtual alias, default: deep), LLM_TIMEOUT_SECONDS >= 180.
       Enforces [P1-LLM-ENV-HYGIENE].
 
   check-compose <file-path> [--json]
       Validate Docker Compose definitions for network boundaries.
-      Prohibits attachment to hydra_ai_net ([P0-LLM-NETWORK-ISOLATION])
-      and enforces external: true on hydra_shared_net.
+      Prohibits attachment to hydra_router_internal or legacy hydra_ai_net
+      ([P0-LLM-NETWORK-ISOLATION]) and enforces external: true on hydra_shared_net.
 
   probe [gateway-base-url] [--api-key <key>] [--json] [--allow-offline] [--timeout <secs>]
-      Execute pre-flight HTTP probe against /v1/models and verify virtual models
-      (fast, deep) are exposed.
+      Execute pre-flight HTTP probe against /v1/models (with /v1/hydra/models
+      fallback) and verify configured virtual models (default: fast, deep) are exposed.
 
 Options:
   --json             Output results formatted as JSON.
@@ -113,12 +113,12 @@ Options:
 
 Invariants & Rules Checked:
   • [P0-LLM-NETWORK-ISOLATION]:
-      compose.yaml MUST NOT attach to hydra_ai_net (protects Redis cache and backend).
-      External consumer bridge MUST be hydra_shared_net with external: true.
+      compose.yaml MUST NOT attach to hydra_router_internal or legacy hydra_ai_net (protects Redis cache and backend).
+      External consumer bridge MUST be hydra_shared_net with external: true (same-host sibling containers only).
   • [P1-LLM-UPSTREAM-COUPLING]:
       Source code MUST NOT hardcode upstream provider endpoints (generativelanguage.googleapis,
       api.openai.com, api.groq.com) or proprietary model names (gemini-*, gpt-4*, claude-*).
-      Must route strictly through virtual model aliases (fast, deep).
+      Must route strictly through operator-configured virtual model aliases (default: fast, deep).
   • [P1-LLM-ENV-HYGIENE]:
       Environment manifests MUST declare canonical keys with valid defaults and
       LLM_TIMEOUT_SECONDS >= 180.
@@ -148,6 +148,9 @@ ${violations_json}
 EOF
 }
 
+# Shared upstream provider model identifier pattern
+UPSTREAM_MODEL_REGEX="(gemini-(1|2|3)\.[0-9]|gemini-(pro|flash|ultra)|gpt-4o|gpt-4-turbo|gpt-4|gpt-3\.5|o1-(preview|mini)|o3-mini|claude-(1|2|3)|claude-(instant|haiku|sonnet|opus)|llama-(2|3)|llama-3\.[0-9]|deepseek-(r1|v3))([^A-Za-z0-9_]|$)"
+
 # ------------------------------------------------------------------------------
 # Audit Codebase for Upstream Coupling
 # ------------------------------------------------------------------------------
@@ -167,7 +170,7 @@ check_code_coupling() {
   local ENDPOINT_REGEX="(generativelanguage\.googleapis\.com|api\.openai\.com|api\.groq\.com|api\.anthropic\.com)"
   
   # Upstream model identifiers pattern
-  local MODEL_REGEX="(gemini-(1|2|3)\.[0-9]|gemini-(pro|flash|ultra)|gpt-4o|gpt-4-turbo|gpt-4|gpt-3\.5|o1-(preview|mini)|o3-mini|claude-(1|2|3)|claude-(instant|haiku|sonnet|opus)|llama-(2|3)|llama-3\.[0-9]|deepseek-(r1|v3))([^A-Za-z0-9_]|$)"
+  local MODEL_REGEX="$UPSTREAM_MODEL_REGEX"
 
   # Dangerous low max_tokens (reasoning token starvation)
   local LOW_MAX_TOKENS_REGEX="max_tokens[[:space:]]*[:=][[:space:]]*([1-9]|[1-5][0-9])([^0-9]|$)"
@@ -222,7 +225,7 @@ check_code_coupling() {
         local matched_token="${BASH_REMATCH[1]}"
         VIOLATION_COUNT=$((VIOLATION_COUNT + 1))
         local rel_path="${file#"$TARGET_DIR"/}"
-        VIOLATIONS+=("{\"rule\":\"P1-LLM-UPSTREAM-COUPLING\",\"file\":\"${rel_path}\",\"line\":${line_no},\"token\":\"${matched_token}\",\"message\":\"Hardcoded upstream provider endpoint detected. Consumer applications must route via LLM_BASE_URL (Hydra AI gateway).\"}")
+        VIOLATIONS+=("{\"rule\":\"P1-LLM-UPSTREAM-COUPLING\",\"file\":\"${rel_path}\",\"line\":${line_no},\"token\":\"${matched_token}\",\"message\":\"Hardcoded upstream provider endpoint detected. Consumer applications must route via LLM_BASE_URL (hydra-llm-router).\"}")
         if [ "$JSON_MODE" != "true" ]; then
           log_error "[P1-LLM-UPSTREAM-COUPLING] ${rel_path}:${line_no} -> Hardcoded upstream endpoint '${matched_token}'"
         fi
@@ -233,7 +236,7 @@ check_code_coupling() {
         local matched_model="${BASH_REMATCH[1]}"
         VIOLATION_COUNT=$((VIOLATION_COUNT + 1))
         local rel_path="${file#"$TARGET_DIR"/}"
-        VIOLATIONS+=("{\"rule\":\"P1-LLM-UPSTREAM-COUPLING\",\"file\":\"${rel_path}\",\"line\":${line_no},\"token\":\"${matched_model}\",\"message\":\"Hardcoded upstream proprietary model identifier detected. Consumer applications must use virtual model aliases (fast, deep).\"}")
+        VIOLATIONS+=("{\"rule\":\"P1-LLM-UPSTREAM-COUPLING\",\"file\":\"${rel_path}\",\"line\":${line_no},\"token\":\"${matched_model}\",\"message\":\"Hardcoded upstream proprietary model identifier detected. Consumer applications must use operator-configured virtual model aliases (default: fast, deep).\"}")
         if [ "$JSON_MODE" != "true" ]; then
           log_error "[P1-LLM-UPSTREAM-COUPLING] ${rel_path}:${line_no} -> Hardcoded proprietary model '${matched_model}'"
         fi
@@ -368,20 +371,32 @@ check_env_hygiene() {
     fi
   fi
 
-  if [ "$HAS_MODEL_FAST" = "true" ]; then
-    if [ "$MODEL_FAST_VAL" != "fast" ]; then
+  validate_virtual_model_alias() {
+    local key_name="$1"
+    local raw_val="$2"
+    local clean_val
+    clean_val="$(printf '%s' "$raw_val" | sed -E "s/[[:space:]]+#.*$//; s/^[[:space:]]+//; s/[[:space:]]+$//; s/^[\"']//; s/[\"']$//")"
+    if [[ ! "$clean_val" =~ ^[A-Za-z0-9][A-Za-z0-9._/-]*$ ]]; then
       VIOLATION_COUNT=$((VIOLATION_COUNT + 1))
-      VIOLATIONS+=("{\"rule\":\"P1-LLM-ENV-HYGIENE\",\"file\":\"${ENV_FILE}\",\"key\":\"LLM_MODEL_FAST\",\"message\":\"LLM_MODEL_FAST must be set to canonical virtual alias 'fast', got '${MODEL_FAST_VAL}'\"}")
-      [ "$JSON_MODE" != "true" ] && log_error "[P1-LLM-ENV-HYGIENE] ${ENV_FILE}: LLM_MODEL_FAST must be 'fast', got '${MODEL_FAST_VAL}'"
+      VIOLATIONS+=("{\"rule\":\"P1-LLM-ENV-HYGIENE\",\"file\":\"${ENV_FILE}\",\"key\":\"${key_name}\",\"message\":\"${key_name} must be a non-empty virtual model alias token, got '${clean_val}'\"}")
+      [ "$JSON_MODE" != "true" ] && log_error "[P1-LLM-ENV-HYGIENE] ${ENV_FILE}: ${key_name} invalid virtual alias '${clean_val}'"
+    elif [[ "$clean_val" =~ ^(free-fast|free-deep)$ ]]; then
+      VIOLATION_COUNT=$((VIOLATION_COUNT + 1))
+      VIOLATIONS+=("{\"rule\":\"P1-LLM-ENV-HYGIENE\",\"file\":\"${ENV_FILE}\",\"key\":\"${key_name}\",\"message\":\"${key_name} uses legacy alias '${clean_val}'. Align with hydra-llm-router virtual model aliases (e.g. fast, deep).\"}")
+      [ "$JSON_MODE" != "true" ] && log_error "[P1-LLM-ENV-HYGIENE] ${ENV_FILE}: ${key_name} uses legacy alias '${clean_val}'"
+    elif [[ "$clean_val" =~ $UPSTREAM_MODEL_REGEX ]]; then
+      VIOLATION_COUNT=$((VIOLATION_COUNT + 1))
+      VIOLATIONS+=("{\"rule\":\"P1-LLM-ENV-HYGIENE\",\"file\":\"${ENV_FILE}\",\"key\":\"${key_name}\",\"message\":\"${key_name} must be a gateway virtual alias (not upstream model '${clean_val}')\"}")
+      [ "$JSON_MODE" != "true" ] && log_error "[P1-LLM-ENV-HYGIENE] ${ENV_FILE}: ${key_name} cannot bind upstream model '${clean_val}'"
     fi
+  }
+
+  if [ "$HAS_MODEL_FAST" = "true" ]; then
+    validate_virtual_model_alias "LLM_MODEL_FAST" "$MODEL_FAST_VAL"
   fi
 
   if [ "$HAS_MODEL_DEEP" = "true" ]; then
-    if [ "$MODEL_DEEP_VAL" != "deep" ]; then
-      VIOLATION_COUNT=$((VIOLATION_COUNT + 1))
-      VIOLATIONS+=("{\"rule\":\"P1-LLM-ENV-HYGIENE\",\"file\":\"${ENV_FILE}\",\"key\":\"LLM_MODEL_DEEP\",\"message\":\"LLM_MODEL_DEEP must be set to canonical virtual alias 'deep', got '${MODEL_DEEP_VAL}'\"}")
-      [ "$JSON_MODE" != "true" ] && log_error "[P1-LLM-ENV-HYGIENE] ${ENV_FILE}: LLM_MODEL_DEEP must be 'deep', got '${MODEL_DEEP_VAL}'"
-    fi
+    validate_virtual_model_alias "LLM_MODEL_DEEP" "$MODEL_DEEP_VAL"
   fi
 
   if [ "$HAS_TIMEOUT" = "true" ]; then
@@ -430,19 +445,21 @@ check_compose_hygiene() {
   local VIOLATIONS=()
   local VIOLATION_COUNT=0
 
-  # 1. P0 Check: Prohibited network hydra_ai_net
-  if grep -qE "hydra_ai_net" "$COMPOSE_FILE"; then
-    local line_no
-    line_no="$(grep -nE "hydra_ai_net" "$COMPOSE_FILE" | head -n 1 | cut -d: -f1)"
+  # 1. P0 Check: Prohibited internal networks (hydra_router_internal or legacy hydra_ai_net)
+  if grep -qE "(hydra_router_internal|hydra_ai_net)" "$COMPOSE_FILE"; then
+    local line_match line_no bad_net
+    line_match="$(grep -nE "(hydra_router_internal|hydra_ai_net)" "$COMPOSE_FILE" | head -n 1)"
+    line_no="$(echo "$line_match" | cut -d: -f1)"
+    bad_net="$(echo "$line_match" | grep -oE "(hydra_router_internal|hydra_ai_net)" | head -n 1)"
     VIOLATION_COUNT=$((VIOLATION_COUNT + 1))
-    VIOLATIONS+=("{\"rule\":\"P0-LLM-NETWORK-ISOLATION\",\"file\":\"${COMPOSE_FILE}\",\"line\":${line_no},\"token\":\"hydra_ai_net\",\"message\":\"CRITICAL SECURITY VIOLATION: Consumer services MUST NOT attach to internal network 'hydra_ai_net' (exposes internal Redis/database). Use 'hydra_shared_net' instead.\"}")
+    VIOLATIONS+=("{\"rule\":\"P0-LLM-NETWORK-ISOLATION\",\"file\":\"${COMPOSE_FILE}\",\"line\":${line_no},\"token\":\"${bad_net}\",\"message\":\"CRITICAL SECURITY VIOLATION: Consumer services MUST NOT attach to internal network '${bad_net}' (exposes internal Redis/database). Use 'hydra_shared_net' instead.\"}")
     if [ "$JSON_MODE" != "true" ]; then
-      log_error "[P0-LLM-NETWORK-ISOLATION] ${COMPOSE_FILE}:${line_no} -> Prohibited internal network 'hydra_ai_net' detected!"
+      log_error "[P0-LLM-NETWORK-ISOLATION] ${COMPOSE_FILE}:${line_no} -> Prohibited internal network '${bad_net}' detected!"
     fi
   fi
 
   # 2. Check if LLM gateway container or network is referenced
-  if grep -qE "(hydra-ai-gateway|hydra_shared_net|LLM_BASE_URL)" "$COMPOSE_FILE"; then
+  if grep -qE "(hydra-llm-router|hydra_shared_net|LLM_BASE_URL)" "$COMPOSE_FILE"; then
     # Must declare hydra_shared_net as external: true
     if ! grep -qE "hydra_shared_net" "$COMPOSE_FILE"; then
       VIOLATION_COUNT=$((VIOLATION_COUNT + 1))
@@ -497,14 +514,18 @@ run_probe() {
   # Normalize base URL (strip trailing slash)
   BASE_URL="${BASE_URL%/}"
   local MODELS_URL="${BASE_URL}/models"
-  # If base URL doesn't contain /v1, and /models returned 404, check /v1/models
+  local HYDRA_MODELS_URL="${BASE_URL}/hydra/models"
   if [[ "$BASE_URL" != */v1 ]]; then
     MODELS_URL="${BASE_URL}/v1/models"
+    HYDRA_MODELS_URL="${BASE_URL}/v1/hydra/models"
   fi
+
+  local EXPECTED_FAST="${LLM_MODEL_FAST:-fast}"
+  local EXPECTED_DEEP="${LLM_MODEL_DEEP:-deep}"
 
   [ "$JSON_MODE" != "true" ] && log_info "Probing LLM gateway models at: ${MODELS_URL} (timeout: ${TIMEOUT}s)..."
 
-  # Perform curl probe
+  # Perform curl probe (try /v1/models, falling back to /v1/hydra/models on 404)
   local HTTP_RESP=""
   local HTTP_CODE="000"
   local CURL_OUT=""
@@ -553,6 +574,18 @@ EOF
   HTTP_CODE="$(echo "$CURL_OUT" | tail -n 1)"
   HTTP_RESP="$(echo "$CURL_OUT" | sed '$d')"
 
+  if [ "$HTTP_CODE" = "404" ]; then
+    [ "$JSON_MODE" != "true" ] && log_info "Endpoint ${MODELS_URL} returned 404; trying Hydra discovery at ${HYDRA_MODELS_URL}..."
+    MODELS_URL="${HYDRA_MODELS_URL}"
+    if CURL_OUT="$(curl -sS -m "$TIMEOUT" -w "\n%{http_code}" \
+      -H "Authorization: Bearer ${API_KEY}" \
+      -H "Accept: application/json" \
+      "${MODELS_URL}" 2>&1)"; then
+      HTTP_CODE="$(echo "$CURL_OUT" | tail -n 1)"
+      HTTP_RESP="$(echo "$CURL_OUT" | sed '$d')"
+    fi
+  fi
+
   if [ "$HTTP_CODE" != "200" ]; then
     [ "$JSON_MODE" != "true" ] && log_error "Gateway probe returned unexpected HTTP status ${HTTP_CODE}: ${HTTP_RESP}"
     if [ "$JSON_MODE" = "true" ]; then
@@ -571,18 +604,18 @@ EOF
     return 1
   fi
 
-  # Verify virtual model aliases are present in the response
+  # Verify configured virtual model aliases are present in the response
   local HAS_FAST="false"
   local HAS_DEEP="false"
-  if echo "$HTTP_RESP" | grep -q "fast"; then
+  if echo "$HTTP_RESP" | grep -Fq "\"${EXPECTED_FAST}\""; then
     HAS_FAST="true"
   fi
-  if echo "$HTTP_RESP" | grep -q "deep"; then
+  if echo "$HTTP_RESP" | grep -Fq "\"${EXPECTED_DEEP}\""; then
     HAS_DEEP="true"
   fi
 
   if [ "$HAS_FAST" = "true" ] && [ "$HAS_DEEP" = "true" ]; then
-    [ "$JSON_MODE" != "true" ] && log_success "Gateway probe verified: virtual models 'fast' and 'deep' are active."
+    [ "$JSON_MODE" != "true" ] && log_success "Gateway probe verified: virtual models '${EXPECTED_FAST}' and '${EXPECTED_DEEP}' are active."
     if [ "$JSON_MODE" = "true" ]; then
       cat << EOF
 {
@@ -591,14 +624,14 @@ EOF
   "probe": {
     "target_url": "${MODELS_URL}",
     "status": "PASS",
-    "models": ["fast", "deep"]
+    "models": ["${EXPECTED_FAST}", "${EXPECTED_DEEP}"]
   }
 }
 EOF
     fi
     return 0
   else
-    [ "$JSON_MODE" != "true" ] && log_error "Gateway probe missing required virtual models. fast: ${HAS_FAST}, deep: ${HAS_DEEP}"
+    [ "$JSON_MODE" != "true" ] && log_error "Gateway probe missing required virtual models. ${EXPECTED_FAST}: ${HAS_FAST}, ${EXPECTED_DEEP}: ${HAS_DEEP}"
     if [ "$JSON_MODE" = "true" ]; then
       cat << EOF
 {
@@ -607,8 +640,8 @@ EOF
   "probe": {
     "target_url": "${MODELS_URL}",
     "status": "FAIL",
-    "free_fast": ${HAS_FAST},
-    "free_deep": ${HAS_DEEP}
+    "fast": ${HAS_FAST},
+    "deep": ${HAS_DEEP}
   }
 }
 EOF
@@ -717,7 +750,7 @@ client = AsyncOpenAI(
 
 async def ask():
     return await client.chat.completions.create(
-        model=os.getenv("LLM_MODEL_FAST", "free-fast"),
+        model=os.getenv("LLM_MODEL_FAST", "fast"),
         messages=[{"role": "user", "content": "ping"}],
         max_tokens=100,
     )
@@ -791,7 +824,7 @@ EOF
 
   cat << 'EOF' > "${DIR_BAD_TOKENS}/src/probe.py"
 response = client.chat.completions.create(
-    model="free-deep",
+    model="deep",
     max_tokens=5, # Starves thinking models!
 )
 EOF
@@ -836,22 +869,32 @@ LLM_MODEL_DEEP=deep
 LLM_TIMEOUT_SECONDS=30
 EOF
 
+  # Bad 4d: Legacy free-fast alias
+  cat << 'EOF' > "${DIR_BAD_ENV}/env_legacy_alias.env"
+LLM_BASE_URL=http://hydra-llm-router:3000/v1
+LLM_API_KEY=test
+LLM_MODEL_FAST=free-fast
+LLM_MODEL_DEEP=deep
+LLM_TIMEOUT_SECONDS=180
+EOF
+
   local env_checks_passed=0
   check_env_hygiene "${DIR_BAD_ENV}/env_missing.env" "false" >/dev/null 2>&1 || env_checks_passed=$((env_checks_passed + 1))
   check_env_hygiene "${DIR_BAD_ENV}/env_bad_model.env" "false" >/dev/null 2>&1 || env_checks_passed=$((env_checks_passed + 1))
   check_env_hygiene "${DIR_BAD_ENV}/env_bad_timeout.env" "false" >/dev/null 2>&1 || env_checks_passed=$((env_checks_passed + 1))
+  check_env_hygiene "${DIR_BAD_ENV}/env_legacy_alias.env" "false" >/dev/null 2>&1 || env_checks_passed=$((env_checks_passed + 1))
 
-  if [ $env_checks_passed -eq 3 ]; then
+  if [ $env_checks_passed -eq 4 ]; then
     log_success "Self-Test 4 passed: All environment schema violations correctly caught."
   else
-    log_error "Self-Test 4 failed: Expected 3 env failures, got ${env_checks_passed}."
+    log_error "Self-Test 4 failed: Expected 4 env failures, got ${env_checks_passed}."
     SUITE_FAILURES=$((SUITE_FAILURES + 1))
   fi
 
   # ----------------------------------------------------------------------------
-  # Self-Test 5: Compose Isolation Breach (hydra_ai_net Prohibited)
+  # Self-Test 5: Compose Isolation Breach (hydra_router_internal / hydra_ai_net)
   # ----------------------------------------------------------------------------
-  log_info "Self-Test 5: Compose Network Isolation (hydra_ai_net P0 Violation)..."
+  log_info "Self-Test 5: Compose Network Isolation (P0 Violation)..."
   local DIR_BAD_COMPOSE="${TEST_TMP}/bad-compose"
   mkdir -p "${DIR_BAD_COMPOSE}"
 
@@ -863,11 +906,23 @@ services:
       - hydra_ai_net # CRITICAL SECURITY RISK
 EOF
 
-  if check_compose_hygiene "${DIR_BAD_COMPOSE}/compose.yaml" "false" >/dev/null 2>&1; then
-    log_error "Self-Test 5 failed: Prohibited hydra_ai_net network was not flagged!"
-    SUITE_FAILURES=$((SUITE_FAILURES + 1))
+  cat << 'EOF' > "${DIR_BAD_COMPOSE}/compose_router_internal.yaml"
+services:
+  app:
+    image: my-service:latest
+    networks:
+      - hydra_router_internal # CRITICAL SECURITY RISK
+EOF
+
+  local compose_isolation_failures=0
+  check_compose_hygiene "${DIR_BAD_COMPOSE}/compose.yaml" "false" >/dev/null 2>&1 || compose_isolation_failures=$((compose_isolation_failures + 1))
+  check_compose_hygiene "${DIR_BAD_COMPOSE}/compose_router_internal.yaml" "false" >/dev/null 2>&1 || compose_isolation_failures=$((compose_isolation_failures + 1))
+
+  if [ $compose_isolation_failures -eq 2 ]; then
+    log_success "Self-Test 5 passed: hydra_ai_net and hydra_router_internal attachments strictly rejected."
   else
-    log_success "Self-Test 5 passed: hydra_ai_net attachment strictly rejected."
+    log_error "Self-Test 5 failed: Prohibited internal network was not flagged!"
+    SUITE_FAILURES=$((SUITE_FAILURES + 1))
   fi
 
   # ----------------------------------------------------------------------------
@@ -907,7 +962,7 @@ import json
 
 class Handler(http.server.BaseHTTPRequestHandler):
     def do_GET(self):
-        if self.path in ('/models', '/v1/models'):
+        if self.path in ('/models', '/v1/models', '/hydra/models', '/v1/hydra/models', '/hydra-only/v1/hydra/models'):
             self.send_response(200)
             self.send_header('Content-Type', 'application/json')
             self.end_headers()
@@ -934,6 +989,7 @@ with socketserver.TCPServer(('127.0.0.1', ${MOCK_PORT}), Handler) as httpd:
 
   local probe_result=0
   run_probe "http://127.0.0.1:${MOCK_PORT}/v1" "sk-test" "false" "false" 2 || probe_result=1
+  run_probe "http://127.0.0.1:${MOCK_PORT}/hydra-only/v1" "sk-test" "false" "false" 2 || probe_result=1
 
   # Terminate mock server
   if [ -n "$MOCK_PID" ] && kill -0 "$MOCK_PID" 2>/dev/null; then
