@@ -21,6 +21,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- Aligned `.env.example`, `.agent/NOTES.md`, `docs/llm-gateway.md`, and `.github/scripts/verify-llm-contract.sh` across `main` and all five starter branches with `hydra-llm-router` canonical contracts (`fast` / `deep` defaults, `https://hydra-router.homelab.yegear.dev/v1`, `/v1/models` and `/v1/hydra/models` alias discovery, and `hydra_router_internal` network isolation).
 - 2-tier progressive rigor: Tier 1 lean `- [ ]` `.agent/TASK.md` checklist (`Task | Title | Commit(s) | Date` log, concise backlog); Tier 2 `files_read` / `files_edit` / `verify` micro-contracts in `.harness/queue/` or `harness:ready` issues for `dev-harness`.
 - Drift audit, starter contract assertions, and drift regression tests now enforce the Tier 1/Tier 2 markers and lean `TASK.md` structure.
 - `.gitignore` on every branch ignores `.harness/queue/done/`, `.harness/queue/escalated/`, and `.harness/worktrees/`.
