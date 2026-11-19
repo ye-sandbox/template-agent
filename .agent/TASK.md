@@ -97,7 +97,6 @@ Release/tag only with explicit human request. When triggered, the ID is `[99.1]`
 ## Future Backlog / Ideas (Unprioritized)
 
 - Retire `verify-microcontract.sh`, `bootstrap-worktree.sh`, and the swarm topology docs from `main` once `dev-harness` fully covers Tier 2.
-- Align `apply-governance-standards.py` NOTES template with provider-neutral `default-tier` / `escalation-tier` (still injects `gemini-3.8-flash-medium`; drift vs hub `NOTES.md`).
 
 ---
 

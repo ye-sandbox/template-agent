@@ -24,6 +24,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Aligned `.env.example`, `.agent/NOTES.md`, `docs/llm-gateway.md`, and `.github/scripts/verify-llm-contract.sh` across `main` and all five starter branches with `hydra-llm-router` canonical contracts (`fast` / `deep` defaults, `https://hydra-router.homelab.yegear.dev/v1`, `/v1/models` and `/v1/hydra/models` alias discovery, and `hydra_router_internal` network isolation).
 - 2-tier progressive rigor: Tier 1 lean `- [ ]` `.agent/TASK.md` checklist (`Task | Title | Commit(s) | Date` log, concise backlog); Tier 2 `files_read` / `files_edit` / `verify` micro-contracts in `.harness/queue/` or `harness:ready` issues for `dev-harness`.
 - Drift audit, starter contract assertions, and drift regression tests now enforce the Tier 1/Tier 2 markers and lean `TASK.md` structure.
+- Ecosystem governance auditor (`.github/scripts/audit-ecosystem-standards.py`) now scores 2-Tier Progressive Rigor, Hermetic Skills, lean `TASK.md`, `.harness/` gitignore rules, and `hydra-llm-router` alignment across a 140-point normalized rubric.
+- Ecosystem governance migrator (`.github/scripts/apply-governance-standards.py`) updated to canonical `default-tier`/`escalation-tier`, `files_read`/`files_edit`/`verify`, and `hydra-llm-router` contracts, plus opt-in `--include-two-tier` and `--all-standards` migration flags.
 - `.gitignore` on every branch ignores `.harness/queue/done/`, `.harness/queue/escalated/`, and `.harness/worktrees/`.
 - Micro-contract parsing and validation moved to `.github/scripts/microcontract_parser.py` behind the unchanged `verify-microcontract.sh` CLI.
 - Default worker models are provider-neutral tiers (`WORKER_MODEL_DEFAULT_TIER`, `WORKER_MODEL_ESCALATION_TIER`).
