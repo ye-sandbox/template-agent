@@ -58,11 +58,12 @@ INTERFACE_WEIGHTS = {
     "interface_dod_dual_runtime": 3,
 }
 TWO_TIER_WEIGHTS = {
-    "agents_two_tier_rigor": 6,
-    "task_lean_format": 5,
+    "agents_two_tier_rigor": 5,
+    "task_lean_format": 4,
     "harness_in_gitignore": 4,
     "llm_gateway_aligned": 3,
     "agents_hermetic_skills": 2,
+    "agents_no_attribution_trailers": 2,
 }
 
 
@@ -342,6 +343,10 @@ def audit_repository(repo_path: Path) -> Dict[str, Any]:
     ))
     checks["agents_two_tier_rigor"] = has_two_tier_markers and not has_removed_batch_rules
     checks["agents_hermetic_skills"] = "Hermetic Skills & Context Contract" in agents_active
+    checks["agents_no_attribution_trailers"] = (
+        "No Agent Attribution Trailers" in agents_active
+        and "Co-Authored-By" in agents_active
+    )
 
     task_text = ""
     if checks["has_task_md"]:
@@ -446,7 +451,7 @@ def format_table(results: List[Dict[str, Any]]) -> str:
     header = (
         f"{'Repositório':<33} | {'Tier':<31} | {'Score':<5} | "
         f"{'AGENTS':<6} | {'HD/P0':<5} | {'ADR':<5} | {'NoLegADR':<8} | "
-        f"{'CleanNts':<8} | {'WkTree':<6} | {'2Tier':<5} | {'LeanTk':<6} | {'HarGI':<5} | {'Router':<6}"
+        f"{'CleanNts':<8} | {'WkTree':<6} | {'2Tier':<5} | {'LeanTk':<6} | {'HarGI':<5} | {'Router':<6} | {'NoAttr':<6}"
     )
     divider = "-" * len(header)
     lines = [divider, header, divider]
@@ -463,11 +468,12 @@ def format_table(results: List[Dict[str, Any]]) -> str:
         p_lt = "SIM" if c.get("task_lean_format") else "não"
         p_hg = "SIM" if c.get("harness_in_gitignore") else "não"
         p_rt = "SIM" if c.get("llm_gateway_aligned") else "não"
+        p_na = "SIM" if c.get("agents_no_attribution_trailers") else "não"
 
         line = (
             f"{r['name']:<33} | {r['tier']:<31} | {r['score']:>4}% | "
             f"{p_ag:<6} | {p_hd:<5} | {p_adr:<5} | {p_no_leg:<8} | "
-            f"{p_cln_nts:<8} | {p_wkt:<6} | {p_2t:<5} | {p_lt:<6} | {p_hg:<5} | {p_rt:<6}"
+            f"{p_cln_nts:<8} | {p_wkt:<6} | {p_2t:<5} | {p_lt:<6} | {p_hg:<5} | {p_rt:<6} | {p_na:<6}"
         )
         lines.append(line)
 
@@ -481,8 +487,8 @@ def format_table(results: List[Dict[str, Any]]) -> str:
 def format_markdown(results: List[Dict[str, Any]]) -> str:
     """Format audit results as a GitHub-flavored Markdown table."""
     md = [
-        "| Repositório | Nível / Tier | Score | AGENTS.md | HD (P0-P3) | Single ADR | Sem ADR Legado | NOTES.md Limpo | .worktrees | 2-Tier | TASK Enxuto | .harness GI | Router |",
-        "| :--- | :--- | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |"
+        "| Repositório | Nível / Tier | Score | AGENTS.md | HD (P0-P3) | Single ADR | Sem ADR Legado | NOTES.md Limpo | .worktrees | 2-Tier | TASK Enxuto | .harness GI | Router | NoAttr |",
+        "| :--- | :--- | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |"
     ]
     for r in results:
         c = r["checks"]
@@ -496,9 +502,10 @@ def format_markdown(results: List[Dict[str, Any]]) -> str:
         p_lt = "✅" if c.get("task_lean_format") else "⚪"
         p_hg = "✅" if c.get("harness_in_gitignore") else "⚪"
         p_rt = "✅" if c.get("llm_gateway_aligned") else "⚪"
+        p_na = "✅" if c.get("agents_no_attribution_trailers") else "⚪"
 
         md.append(
-            f"| `{r['name']}` | {r['tier']} | **{r['score']}%** | {p_ag} | {p_hd} | {p_adr} | {p_no_leg} | {p_cln_nts} | {p_wkt} | {p_2t} | {p_lt} | {p_hg} | {p_rt} |"
+            f"| `{r['name']}` | {r['tier']} | **{r['score']}%** | {p_ag} | {p_hd} | {p_adr} | {p_no_leg} | {p_cln_nts} | {p_wkt} | {p_2t} | {p_lt} | {p_hg} | {p_rt} | {p_na} |"
         )
     diagnostics = [f"- `{result['name']}`: {message}" for result in results for message in result["violations"]
                    if message.startswith("Interface contract:")]
@@ -562,6 +569,8 @@ class TestAuditEcosystemStandards(unittest.TestCase):
                 "- Tier 2 (Autonomous / `dev-harness`): micro-contracts (`files_read`, `files_edit`, `verify`) in `.harness/queue/`.\n"
                 "### Step 3: Falsifiable Definition of Done (DoD)\n"
                 "- [ ] Interface & UI Verification: T3 Code preview/device checks; headless component/build tests.\n"
+                "## Git & Commit Standards\n"
+                "- **No Agent Attribution Trailers:** NEVER append `Co-Authored-By`, `Generated with ...`, or similar AI/agent attribution trailers to commit messages or PR descriptions.\n"
                 "## Fail-Stop Protocol\n// BAD: git commit -m 'fix'\n// GOOD: git commit -m 'feat: add'",
                 encoding="utf-8"
             )
@@ -787,6 +796,20 @@ class TestAuditEcosystemStandards(unittest.TestCase):
         (repo / ".env.example").write_text("LLM_BASE_URL=https://hydra.homelab.yegear.dev/v1\nLLM_MODEL_FAST=free-fast\n", encoding="utf-8")
         self.assertFalse(audit_repository(repo)["checks"]["llm_gateway_aligned"])
 
+        # Missing or fenced-only No Agent Attribution Trailers fails agents_no_attribution_trailers
+        agents_path = repo / "AGENTS.md"
+        agents_orig = agents_path.read_text(encoding="utf-8")
+        self.assertTrue(audit_repository(repo)["checks"]["agents_no_attribution_trailers"])
+        agents_path.write_text(
+            agents_orig.replace(
+                "- **No Agent Attribution Trailers:** NEVER append `Co-Authored-By`, `Generated with ...`, or similar AI/agent attribution trailers to commit messages or PR descriptions.",
+                "```markdown\n- **No Agent Attribution Trailers:** NEVER append `Co-Authored-By`.\n```",
+            ),
+            encoding="utf-8",
+        )
+        self.assertFalse(audit_repository(repo)["checks"]["agents_no_attribution_trailers"])
+        agents_path.write_text(agents_orig, encoding="utf-8")
+
     def test_missing_canonical_references_are_explicit_failures(self) -> None:
         repo = self.create_mock_repo("no-references")
         with patch(__name__ + ".CANONICAL_ROOT", self.root / "unavailable-reference"):
@@ -957,7 +980,7 @@ def main():
 
     if args.verbose and args.format != "json":
         details = [f"{r['name']}: {key}={passed}" for r in results
-                   for key, passed in r["checks"].items() if key in INTERFACE_WEIGHTS]
+                   for key, passed in r["checks"].items() if key in INTERFACE_WEIGHTS or key in TWO_TIER_WEIGHTS]
         output_text += "\n\n" + "\n".join(details)
 
     if args.output:

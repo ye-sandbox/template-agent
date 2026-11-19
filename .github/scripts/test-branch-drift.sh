@@ -159,4 +159,10 @@ mv "$TEST_ROOT/next" "$TEST_ROOT/content"
 publish .agent/TASK.md
 expect 1 "TASK.md missing '- [ ]' checklist items"
 
+prepare AGENTS.md
+sed '/No Agent Attribution Trailers/d' "$TEST_ROOT/content" > "$TEST_ROOT/next"
+mv "$TEST_ROOT/next" "$TEST_ROOT/content"
+publish AGENTS.md
+expect 1 "AGENTS.md missing 'No Agent Attribution Trailers' directive"
+
 echo "Branch drift regression tests: $PASSED passed"

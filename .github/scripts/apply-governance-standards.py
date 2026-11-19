@@ -167,6 +167,18 @@ TWO_TIER_AGENTS_SECTION = """## 2-Tier Execution & Hermetic Skills Contract
 - **Hermetic Skills & Context Contract:** Procedural guidelines and skills must be self-contained within `.agent/skills/` or injected directly into the task dispatch prompt by the orchestrator; never wander the host filesystem for missing skills.
 """
 
+NO_ATTRIBUTION_TRAILERS_RULE = (
+    "- **No Agent Attribution Trailers:** NEVER append `Co-Authored-By`, `Generated with ...`, "
+    "or similar AI/agent attribution trailers to commit messages or PR descriptions."
+)
+
+NO_ATTRIBUTION_CONTRAST_SNIPPET = """// BAD: Appending AI/agent attribution trailers to commit messages or PR descriptions
+git commit -m "feat(auth): add session refresh" -m "Co-Authored-By: <Agent> <noreply@example.com>"
+// Or PR body containing: "Generated with <Agent>"
+
+// GOOD: Clean commit message and PR description without attribution trailers
+git commit -m "feat(auth): add session refresh\""""
+
 GITIGNORE_INVARIANTS = [
     ".agent/scratch/",
     ".agent/.cache/",
@@ -803,8 +815,138 @@ def ensure_hooks_readme(repo: Path, dry_run: bool) -> List[str]:
     return ["Provisioned canonical .agent/hooks/README.md"]
 
 
+def _append_section_block(segment: str, block: str, newline: str, bullet_mode: bool = False) -> str:
+    """Insert block before any trailing horizontal rule in a Markdown section."""
+    sep_match = re.search(r"(?:\r?\n)+---[ \t]*(?:\r?\n)*\Z", segment)
+    head = segment[:sep_match.start()] if sep_match else segment
+    tail = segment[sep_match.start():] if sep_match else ""
+    trimmed = head.rstrip("\r\n")
+    trailing_ws = head[len(trimmed):]
+    last_line = trimmed.splitlines()[-1] if trimmed else ""
+    if bullet_mode and re.match(r"^[ \t]*[-*] ", last_line):
+        gap = newline
+    else:
+        gap = newline * 2
+    return trimmed + gap + block + (trailing_ws or newline) + tail
+
+
+def _find_first_fenced_block_end(segment: str) -> int | None:
+    """Return index of the closing fence line start for the first fenced code block in segment."""
+    fence = ""
+    offset = 0
+    for line in segment.splitlines(keepends=True):
+        match = re.match(r"^ {0,3}(`{3,}|~{3,})(.*)$", line.rstrip("\r\n"))
+        if not fence and match:
+            fence = match[1]
+        elif fence and match and match[1][0] == fence[0] and len(match[1]) >= len(fence) and not match[2].strip():
+            return offset
+        offset += len(line)
+    return None
+
+
+def _inject_no_attribution_rule(text: str, newline: str) -> str:
+    """Idempotently inject No Agent Attribution Trailers directive into active AGENTS.md."""
+    masked = masked_markdown(text)
+    if "No Agent Attribution Trailers" in masked:
+        return text
+
+    rule = NO_ATTRIBUTION_TRAILERS_RULE
+    headings = list(re.finditer(r"^(#{1,6})[ \t]+([^\r\n]+)", masked, re.MULTILINE))
+
+    git_heading = next(
+        (h for h in headings if len(h[1]) == 2 and re.search(r"\b(?:Git|Padrão de Commits)\b", h[2], re.I)),
+        None,
+    )
+    if git_heading is not None:
+        sec_end = next((h.start() for h in headings if h.start() > git_heading.start() and len(h[1]) <= 2), len(text))
+        body = text[git_heading.end():sec_end]
+        masked_body = masked[git_heading.end():sec_end]
+        lang_match = re.search(r"^[ \t]*-[ \t]+\*\*Language Invariant:\*\*", masked_body, re.MULTILINE)
+        if lang_match:
+            pos = git_heading.end() + lang_match.start()
+            return text[:pos] + rule + newline + text[pos:]
+        sub_headings = [h for h in headings if git_heading.start() < h.start() < sec_end]
+        commit_sub = next((h for h in sub_headings if re.search(r"Commit Messages", h[2], re.I)), None)
+        if commit_sub is not None:
+            sub_end = next((h.start() for h in headings if h.start() > commit_sub.start() and len(h[1]) <= len(commit_sub[1])), sec_end)
+            updated_sub = _append_section_block(text[commit_sub.end():sub_end], rule, newline, bullet_mode=True)
+            return text[:commit_sub.end()] + updated_sub + text[sub_end:]
+        target_end = sub_headings[0].start() if sub_headings else sec_end
+        updated_body = _append_section_block(text[git_heading.end():target_end], rule, newline, bullet_mode=True)
+        return text[:git_heading.end()] + updated_body + text[target_end:]
+
+    two_tier_heading = next(
+        (h for h in headings if len(h[1]) == 2 and "2-Tier Execution" in h[2]),
+        None,
+    )
+    if two_tier_heading is not None:
+        sec_end = next((h.start() for h in headings if h.start() > two_tier_heading.start() and len(h[1]) <= 2), len(text))
+        updated_body = _append_section_block(text[two_tier_heading.end():sec_end], rule, newline, bullet_mode=True)
+        return text[:two_tier_heading.end()] + updated_body + text[sec_end:]
+
+    sep = "" if text.endswith((newline * 2, "\n\n", "\r\n\r\n")) else (newline if text.endswith(("\n", "\r\n")) else newline * 2)
+    return text + sep + "## Git & Commit Standards" + newline * 2 + rule + newline
+
+
+def _inject_no_attribution_contrast(text: str, newline: str) -> str:
+    """Idempotently inject BAD/GOOD contrast pair for agent attribution trailers."""
+    if re.search(r"Co-Authored-By:|Appending AI/agent attribution trailers", text):
+        return text
+
+    snippet = NO_ATTRIBUTION_CONTRAST_SNIPPET.replace("\n", newline)
+    masked = masked_markdown(text)
+    headings = list(re.finditer(r"^(#{1,6})[ \t]+([^\r\n]+)", masked, re.MULTILINE))
+
+    # 1. Existing ### Commit Messages (or ### Contrast Pairs (Commit Messages)) with a fenced block
+    for h in headings:
+        if len(h[1]) == 3 and re.search(r"Commit Messages", h[2], re.I):
+            sec_end = next((x.start() for x in headings if x.start() > h.start() and len(x[1]) <= 3), len(text))
+            fence_end = _find_first_fenced_block_end(text[h.end():sec_end])
+            if fence_end is not None:
+                pos = h.end() + fence_end
+                prefix = text[:pos].rstrip("\r\n")
+                return prefix + newline * 2 + snippet + newline + text[pos:]
+
+    # 2. Existing H2 Contrast Pairs section -> add ### Commit Messages subsection
+    contrast_h2 = next((h for h in headings if len(h[1]) == 2 and re.search(r"Contrast Pairs", h[2], re.I)), None)
+    if contrast_h2 is not None:
+        sec_end = next((x.start() for x in headings if x.start() > contrast_h2.start() and len(x[1]) <= 2), len(text))
+        subsection = (
+            "### Commit Messages" + newline
+            + "```markdown" + newline
+            + snippet + newline
+            + "```"
+        )
+        updated_body = _append_section_block(text[contrast_h2.end():sec_end], subsection, newline, bullet_mode=False)
+        return text[:contrast_h2.end()] + updated_body + text[sec_end:]
+
+    # 3. H3 Contrast Pairs inside an H2 Git section (e.g. stock-alert)
+    git_h2 = next((h for h in headings if len(h[1]) == 2 and re.search(r"\bGit\b", h[2], re.I)), None)
+    if git_h2 is not None:
+        git_end = next((x.start() for x in headings if x.start() > git_h2.start() and len(x[1]) <= 2), len(text))
+        for h in headings:
+            if git_h2.start() < h.start() < git_end and len(h[1]) == 3 and re.search(r"Contrast Pairs", h[2], re.I):
+                sec_end = next((x.start() for x in headings if x.start() > h.start() and len(x[1]) <= 3), git_end)
+                fence_end = _find_first_fenced_block_end(text[h.end():sec_end])
+                if fence_end is not None:
+                    pos = h.end() + fence_end
+                    prefix = text[:pos].rstrip("\r\n")
+                    return prefix + newline * 2 + snippet + newline + text[pos:]
+
+    # 4. Fallback: append Contrast Pairs section
+    sep = "" if text.endswith((newline * 2, "\n\n", "\r\n\r\n")) else (newline if text.endswith(("\n", "\r\n")) else newline * 2)
+    return (
+        text + sep
+        + "## Contrast Pairs" + newline * 2
+        + "### Commit Messages" + newline
+        + "```markdown" + newline
+        + snippet + newline
+        + "```" + newline
+    )
+
+
 def upgrade_agents_two_tier(repo: Path, dry_run: bool) -> List[str]:
-    """Upgrade AGENTS.md with 2-Tier rigor and Hermetic Skills while removing obsolete batch/spec rules."""
+    """Upgrade AGENTS.md with 2-Tier rigor, Hermetic Skills, and attribution trailer ban while removing obsolete batch/spec rules."""
     agents_file = repo / "AGENTS.md"
     if not agents_file.is_file() or agents_file.is_symlink():
         return []
@@ -869,11 +1011,14 @@ def upgrade_agents_two_tier(repo: Path, dry_run: bool) -> List[str]:
         sep = "" if updated.endswith((newline * 2, "\n\n", "\r\n\r\n")) else (newline if updated.endswith(("\n", "\r\n")) else newline * 2)
         updated = updated + sep + hermetic_section
 
+    updated = _inject_no_attribution_rule(updated, newline)
+    updated = _inject_no_attribution_contrast(updated, newline)
+
     actions: List[str] = []
     if updated != content:
         if not dry_run:
             write_adr_diary(agents_file, updated.encode("utf-8"))
-        actions.append("Upgraded AGENTS.md to 2-Tier Progressive Rigor & Hermetic Skills")
+        actions.append("Upgraded AGENTS.md to 2-Tier Progressive Rigor, Hermetic Skills & No Attribution Trailers")
 
     remaining_legacy = re.search(
         r"Ephemeral Feature Specs|\*\*Sequential Sub-Task Batching|\*\*Pre-Approved",
@@ -1364,7 +1509,10 @@ class TestApplyGovernanceStandards(unittest.TestCase):
         self.assertGreater(len(actions), 0)
 
         agents_text = (repo / "AGENTS.md").read_text(encoding="utf-8")
-        for marker in ("Tier 1", "Tier 2", "dev-harness", ".harness/queue/", "files_read", "files_edit", "Hermetic Skills & Context Contract"):
+        for marker in (
+            "Tier 1", "Tier 2", "dev-harness", ".harness/queue/", "files_read", "files_edit",
+            "Hermetic Skills & Context Contract", "No Agent Attribution Trailers", "Co-Authored-By:",
+        ):
             self.assertIn(marker, agents_text)
         self.assertNotIn("Ephemeral feature specifications", agents_text)
         self.assertNotIn("**Pre-Approved", agents_text)
@@ -1397,6 +1545,39 @@ class TestApplyGovernanceStandards(unittest.TestCase):
         # Idempotent on second run
         second_actions = apply_standards_to_repo(repo, dry_run=False, include_two_tier=True)
         self.assertEqual(second_actions, [])
+
+    def test_no_attribution_trailers_injection_variants(self) -> None:
+        # Variant A: Git section with Language Invariant + Contrast Pairs without ### Commit Messages
+        repo_a = self.create_mock_legacy_repo("attr-variant-a")
+        (repo_a / "AGENTS.md").write_text(
+            "# Rules\n\n[P0] Keep data.\n\n## Fail-Stop\n\nStop.\n\n"
+            "## 9. Git & Commit Standards\n\n"
+            "- **Conventional Commits:** `<type>(<scope>): <summary>`\n"
+            "- **Language Invariant:** English only.\n\n"
+            "## 10. Contrast Pairs\n\n"
+            "### Code Quality\n```python\n# BAD: pass\n# GOOD: raise\n```\n",
+            encoding="utf-8",
+        )
+        upgrade_agents_two_tier(repo_a, dry_run=False)
+        text_a = (repo_a / "AGENTS.md").read_text(encoding="utf-8")
+        self.assertLess(text_a.index("No Agent Attribution Trailers"), text_a.index("- **Language Invariant:**"))
+        self.assertIn("### Commit Messages", text_a)
+        self.assertIn("Co-Authored-By:", text_a)
+        self.assertEqual(upgrade_agents_two_tier(repo_a, dry_run=False), [])
+
+        # Variant B: Existing ### Commit Messages fenced block without Git H2 section
+        repo_b = self.create_mock_legacy_repo("attr-variant-b")
+        (repo_b / "AGENTS.md").write_text(
+            "# Rules\n\n[P0] Keep data.\n\n## Fail-Stop\n\nStop.\n\n"
+            "## Contrast Pairs\n\n### Commit Messages\n```markdown\n// BAD: vague\n// GOOD: specific\n```\n",
+            encoding="utf-8",
+        )
+        upgrade_agents_two_tier(repo_b, dry_run=False)
+        text_b = (repo_b / "AGENTS.md").read_text(encoding="utf-8")
+        self.assertIn("No Agent Attribution Trailers", masked_markdown(text_b))
+        self.assertIn("Co-Authored-By:", text_b)
+        self.assertEqual(text_b.count("### Commit Messages"), 1)
+        self.assertEqual(upgrade_agents_two_tier(repo_b, dry_run=False), [])
 
 
 def run_self_tests() -> int:

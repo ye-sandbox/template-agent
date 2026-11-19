@@ -456,6 +456,19 @@ for branch in "${ALL_BRANCHES[@]}"; do
   fi
 done
 
+# 12. Audit No Agent Attribution Trailers policy across all branches
+echo "🔍 Verifying No Agent Attribution Trailers policy across all branches..."
+for branch in "${ALL_BRANCHES[@]}"; do
+  ref="$(resolve_ref "$branch")"
+  agents="$(git show "$ref:AGENTS.md" 2>/dev/null || true)"
+  if ! printf '%s\n' "$agents" | grep -F 'No Agent Attribution Trailers' >/dev/null; then
+    fail "Branch '$branch' ($ref) AGENTS.md missing 'No Agent Attribution Trailers' directive."
+  fi
+  if ! printf '%s\n' "$agents" | grep -F 'Co-Authored-By' >/dev/null; then
+    fail "Branch '$branch' ($ref) AGENTS.md missing attribution trailer BAD/GOOD contrast pair."
+  fi
+done
+
 echo "======================================================="
 if [ $ERRORS -gt 0 ]; then
   echo "❌ Drift audit failed with $ERRORS error(s)." >&2
