@@ -24,11 +24,17 @@ Options:
                           conflicts block this repository without writes (exit 1).
                           Requires this script to remain in the hub checkout with
                           the canonical skill and invariants. Omit this flag for legacy behavior.
+    --include-two-tier    Opt in to 2-Tier Progressive Rigor (AGENTS.md 2-tier &
+                          hermetic skills, lean TASK.md cleanup, .harness/ in
+                          .gitignore, .agent/hooks/README.md, and hydra-llm-router
+                          .env.example alignment). Omit for legacy behavior.
+    --all-standards       Enable both --include-interface-contracts and
+                          --include-two-tier.
     --self-test           Run hermetic unit and verification test suite
 
 Opt-in example (preview first):
-    python3 apply-governance-standards.py /path/to/project --include-interface-contracts --dry-run
-    python3 apply-governance-standards.py /path/to/project --include-interface-contracts
+    python3 apply-governance-standards.py /path/to/project --all-standards --dry-run
+    python3 apply-governance-standards.py /path/to/project --all-standards
 
 Dry-run writes nothing. Reapplying complete contracts produces no changes.
 Conflicts require manual reconciliation at the diagnostic path, then a retry.
@@ -57,24 +63,33 @@ DEFAULT_EXCLUDED_NAMES = {
     "template-agent", "agent-skills", ".github", "yegear1", "org-ye-sandbox"
 }
 
-CANONICAL_MULTI_AGENT_CONTRACT = """### 2. Multi-Agent Collaboration Contracts (Optional)
+CANONICAL_MULTI_AGENT_CONTRACT = """### Multi-Agent Collaboration Contracts
 
-> Canonical 3-tier subagent topology, delegation micro-contracts, and worktree isolation. If operating single-agent, leave as default.
+> Canonical 3-tier subagent topology, Tier 2 (`dev-harness`) micro-contracts, worktree isolation, and hermetic sandboxes.
 
 | Role | Interface / Channel | Responsibilities | Boundary & Invariants |
 |---|---|---|---|
-| **`Lead / Orchestrator`** | `.agent/TASK.md` / Interactive Prompt | Decomposes initiatives into wave-compatible tasks, manages task lifecycle, routes to model/quota tiers, interacts with human. | Sole manager of `TASK.md` and commit log. Does not run parallel worker tasks directly. |
-| **`Worker / Implementer`** | Worktree / Target Workspace | Executes atomic code/doc changes strictly adhering to delegated micro-contract (`Read:`, `Paths:`, `Verify:`). | Restricted exclusively to `Paths:`. Adheres to DoD in `AGENTS.md`. |
-| **`Reviewer / Sentinel`** | Diffs / Test Harness (`Verify:`) | Read-only inspection of diffs against task DoD, regression tests, and security blast radius. | Read-only; reports structured Pass/Fail diagnostic payload. |
+| **`Lead / Orchestrator`** | `.agent/TASK.md` / Interactive Prompt | Decomposes initiatives into tasks, manages task lifecycle, routes to model/quota tiers, interacts with human. | Sole manager of `TASK.md` and commit log. Does not run parallel worker tasks directly. |
+| **`Worker / Implementer`** | Worktree / Target Workspace | Executes atomic code/doc changes strictly adhering to delegated micro-contract (`files_read`, `files_edit`, `verify`). | Restricted exclusively to `files_edit`. Adheres to DoD in `AGENTS.md`. |
+| **`Reviewer / Sentinel`** | Diffs / Test Harness (`verify`) | Read-only inspection of diffs against task DoD, regression tests, and security blast radius. | Read-only; reports structured Pass/Fail diagnostic payload. |
 
 #### Worktree Isolation & Dependency Bootstrap Contract
 
 | Element | Protocol / Mechanism | Invariant / Boundary |
 |---|---|---|
 | **Workspace Provisioning** | `git worktree add -b task-<id> <path> HEAD` | Default ephemeral path (`${TMPDIR:-/tmp}/worktrees/task-<id>`) or `.worktrees/task-<id>` (`.worktrees/` in `.gitignore`). |
-| **Dependency Bootstrap** | Fast-Link vs. Isolated-Install | Fast-Link (symlink `node_modules/` or `.venv/`) when `Paths:` has no manifest changes (<50ms, zero-copy). Isolated-Install when manifests change. |
+| **Dependency Bootstrap** | Fast-Link vs. Isolated-Install | Fast-Link (symlink `node_modules/` or `.venv/`) when `files_edit` has no manifest changes (<50ms, zero-copy). Isolated-Install when manifests change. |
 | **Environment Injection** | Copy `.env` / `.env.example` to worktree | Ensures test harness execution without leaking uncommitted tokens or mutating root config. |
 | **Teardown & GC** | `git worktree remove --force` + `branch -D` + `prune` | Immediate cleanup post-integration; trap declared in runners to prevent dangling worktree locks. |
+
+#### Project Lifecycle Hooks & Fast-Link Bootstrap Contract
+
+| Hook / Phase | Script Target | Invocation & Contract |
+|---|---|---|
+| **Fast-Link Bootstrap** | `bootstrap-worktree.sh` | Zero-copy symlinking of `node_modules/` and `.venv/`, `.env` isolation copy, and `.agent/scratch/` provisioning. |
+| **Post-Provisioning** | `.agent/hooks/post-worktree-create` | Executed post-bootstrap for test DB seeding, port binding, and ephemeral fixtures. Halts on non-zero exit. |
+| **Pre-Verification** | `.agent/hooks/pre-verify` | Executed before `verify` command execution to ensure clean test state and fixture validation. |
+| **Post-Teardown** | `.agent/hooks/post-worktree-teardown` | Executed prior to worktree removal (`git worktree remove`) for graceful daemon/resource teardown. |
 
 #### Multi-Account Quota Routing & Failover Contract
 
@@ -82,9 +97,27 @@ CANONICAL_MULTI_AGENT_CONTRACT = """### 2. Multi-Agent Collaboration Contracts (
 |---|---|---|
 | **Profile Routing Priority** | `select-profile.sh --exclude-current` | Autonomous workers route to secondary accounts with highest quota; active IDE profile reserved for Lead Orchestrator. |
 | **Quota Floor Circuit Breaker** | `remaining_fraction <= 0.05` | Immediate disqualification of profiles with <=5% quota; halts execution if all candidate profiles are below floor. |
-| **Model Tier Selection** | `gemini-3.8-flash-medium` | Low token footprint default; escalation to `gemini-4-argon-medium` permitted only for complex architecture or max 1 retry after verification failure. |
+| **Model Tier Selection** | `default-tier` / `escalation-tier` (mapped via `WORKER_MODEL_DEFAULT_TIER` / `WORKER_MODEL_ESCALATION_TIER`) | Low token footprint default; escalation to `escalation-tier` permitted only for complex architecture or max 1 retry after verification failure. |
 | **Cooldown Tracking** | `<profile>/.multigravity/quota-history.jsonl` | 429 rate limit backoff and cooldown persistence to prevent immediate re-dispatch. |
-| **Worktree Recovery** | Worktree verify on timeout | Runs `Verify:` inside worktree on timeout; if code 0 and matches `Paths:`, recovers diff cleanly. |
+| **Worktree Recovery** | Worktree verify on timeout | Runs `verify` inside worktree on timeout; if code 0 and matches `files_edit`, recovers diff cleanly. |
+
+#### Hermetic Agent Sandbox & Container Isolation Contract
+
+| Element | Protocol / Mechanism | Invariant / Boundary |
+|---|---|---|
+| **Tier 1 (Bubblewrap)** | `bwrap --unshare-all --ro-bind /usr ...` | Rootless user namespace, read-only system binaries, ephemeral tmpfs `/tmp`, worktree read-write bind, `--die-with-parent`. |
+| **Tier 2 (Rootless Container)** | `podman run --read-only --cap-drop=ALL` | Rootless OCI container, read-only rootfs, `no-new-privileges`, memory (2G) and CPU (2.0) limits, tmpfs `/tmp` with `noexec`. |
+| **Network Namespacing** | `--unshare-net` / `--network none` | Hermetic air-gap by default; egress permitted exclusively for explicit external API or dependency fetching tasks. |
+| **Fallback & Escalation** | `audit-command-security.sh` | Static pre-execution audit for hazardous commands (`sudo`, `/etc` writes, curl pipes) when namespaces unavailable. |
+
+#### LLM Gateway & Virtual Model Routing Contract
+
+| Element | Protocol / Mechanism | Invariant / Boundary |
+|---|---|---|
+| **API Protocol** | OpenAI v1 (`/v1/chat/completions`, `/v1/models`, `/v1/hydra/models`) | Standard JSON schema, streaming SSE, tool calling via `hydra-llm-router`; discover operator-configured virtual aliases via `/v1/models` or `/v1/hydra/models` with zero provider-specific SDK lock-in. |
+| **Virtual Model Routing** | `fast` vs. `deep` | Operator-configured virtual aliases (`fast` default for low-latency <1.5s intent/extractions; `deep` opt-in for complex reasoning/synthesis up to 1M tokens). |
+| **Network Isolation** | `hydra_shared_net` (`external: true`) | Co-located sibling containers join `hydra_shared_net` for direct DNS `http://hydra-llm-router:3000/v1` (external hosts use `https://hydra-router.homelab.yegear.dev/v1`). Joining `hydra_router_internal` or legacy `hydra_ai_net` is strictly forbidden. |
+| **Client Timeout & Budget** | `LLM_TIMEOUT_SECONDS >= 180` | Minimum 180s timeout for deep reasoning calls; minimum `max_tokens >= 60` on test probes to prevent empty completions caused by reasoning token consumption. |
 """
 
 FAIL_STOP_SECTION = """## Fail-Stop Protocol & Escalation Hierarchy
@@ -120,12 +153,30 @@ git commit -m "fix(installer): resolve remote execution flag parsing"
 ### Task Lifecycle Progression
 ```markdown
 // BAD: Silently executing substantive architectural changes without plan approval
-[01.6] Status: READY FOR PLANNING -> Directly edited 10 files without plan approval
+[01.6] Directly edited 10 files without presenting a plan
 
 // GOOD: Standard Plan-First progression
-[01.6] Status: READY FOR PLANNING -> Status: PLANNING (present plan) -> Human Approval -> Status: RUNNING
+[01.6] Present plan -> Human Approval -> execute `- [ ]` checklist -> verify -> atomic commit
 ```
 """
+
+TWO_TIER_AGENTS_SECTION = """## 2-Tier Execution & Hermetic Skills Contract
+
+- **Tier 1 — Interactive (Default):** Lean `.agent/TASK.md` checklist (`- [ ]` atomic subtasks) validated by the repository's canonical test and build commands.
+- **Tier 2 — Autonomous (`dev-harness` / Parallel Worktrees):** Strict micro-contracts (`files_read`, `files_edit`, `verify`) live inside `.harness/queue/<id>.{md,yaml}` or `harness:ready` GitHub Issues consumed by `dev-harness`, never in `.agent/TASK.md`. Lifecycle hooks in `.agent/hooks/` (`post-worktree-create`, `pre-verify`, `post-worktree-teardown`) apply to both tiers.
+- **Hermetic Skills & Context Contract:** Procedural guidelines and skills must be self-contained within `.agent/skills/` or injected directly into the task dispatch prompt by the orchestrator; never wander the host filesystem for missing skills.
+"""
+
+GITIGNORE_INVARIANTS = [
+    ".agent/scratch/",
+    ".agent/.cache/",
+    ".worktrees/",
+    ".maestri/",
+    ".multigravity/",
+    ".harness/queue/done/",
+    ".harness/queue/escalated/",
+    ".harness/worktrees/",
+]
 
 
 def find_git_repos(root_dir: Path, max_depth: int = 4) -> List[Path]:
@@ -388,38 +439,62 @@ def inject_multi_agent_contracts(repo: Path, dry_run: bool) -> List[str]:
     """Point 3: Inject or upgrade Multi-Agent Subagent Topology & Micro-Contracts in NOTES.md."""
     actions: List[str] = []
     notes_file = repo / ".agent" / "NOTES.md"
-    if not notes_file.is_file():
+    if not notes_file.is_file() or notes_file.is_symlink():
         return actions
 
     content = notes_file.read_text(encoding="utf-8", errors="ignore")
 
-    # If already has full v1.3.0 contracts, skip
-    if "Lead / Orchestrator" in content and "Fast-Link" in content and "Quota Floor Circuit Breaker" in content:
+    has_current_multi_agent = (
+        "Lead / Orchestrator" in content
+        and "Fast-Link" in content
+        and "Quota Floor Circuit Breaker" in content
+        and "files_read" in content
+        and "default-tier" in content
+        and "Hermetic Agent Sandbox" in content
+        and "hydra-llm-router" in content
+        and "hydra_shared_net" in content
+        and not re.search(
+            r"free-fast|free-deep|hydra-ai-gateway|hydra\.homelab\.yegear\.dev|gemini-3\.8-flash-medium",
+            content,
+        )
+        and ("hydra_ai_net" not in content or "hydra_router_internal" in content)
+    )
+    if has_current_multi_agent:
         return actions
 
-    # If has older Multi-Agent section, replace it
-    multi_agent_regex = r"### 2\. Multi-Agent Collaboration Contracts[\s\S]*?(?=---\n|## Gotchas|\Z)"
-    if re.search(multi_agent_regex, content):
-        updated = re.sub(multi_agent_regex, CANONICAL_MULTI_AGENT_CONTRACT + "\n", content)
+    multi_agent_regex = re.compile(
+        r"^#{2,3}\s+(?:\d+\.\s*)?Multi-Agent Collaboration Contracts\b[\s\S]*?(?=\n---|\n## |\n### (?!\s*(?:Multi-Agent|Worktree|Project Lifecycle|Multi-Account|Hermetic|LLM Gateway))|\Z)",
+        re.MULTILINE,
+    )
+    if multi_agent_regex.search(content):
+        updated = multi_agent_regex.sub(CANONICAL_MULTI_AGENT_CONTRACT.rstrip() + "\n", content, count=1)
         if not dry_run:
             notes_file.write_text(updated, encoding="utf-8")
-        actions.append("Upgraded Multi-Agent Collaboration Contracts to v1.3.0 in NOTES.md")
+        actions.append("Upgraded Multi-Agent Collaboration Contracts to 2-Tier / hydra-llm-router in NOTES.md")
     else:
         if "## Gotchas & Pitfalls" in content:
-            updated = content.replace("## Gotchas & Pitfalls", CANONICAL_MULTI_AGENT_CONTRACT + "\n---\n\n## Gotchas & Pitfalls")
+            updated = content.replace(
+                "## Gotchas & Pitfalls",
+                CANONICAL_MULTI_AGENT_CONTRACT + "\n---\n\n## Gotchas & Pitfalls",
+                1,
+            )
             if not dry_run:
                 notes_file.write_text(updated, encoding="utf-8")
-            actions.append("Injected Multi-Agent Collaboration Contracts (v1.3.0) into NOTES.md")
+            actions.append("Injected Multi-Agent Collaboration Contracts into NOTES.md")
         elif "## Pitfalls & Gotchas" in content:
-            updated = content.replace("## Pitfalls & Gotchas", CANONICAL_MULTI_AGENT_CONTRACT + "\n---\n\n## Pitfalls & Gotchas")
+            updated = content.replace(
+                "## Pitfalls & Gotchas",
+                CANONICAL_MULTI_AGENT_CONTRACT + "\n---\n\n## Pitfalls & Gotchas",
+                1,
+            )
             if not dry_run:
                 notes_file.write_text(updated, encoding="utf-8")
-            actions.append("Injected Multi-Agent Collaboration Contracts (v1.3.0) into NOTES.md")
+            actions.append("Injected Multi-Agent Collaboration Contracts into NOTES.md")
         else:
             updated = content.rstrip() + "\n\n---\n\n" + CANONICAL_MULTI_AGENT_CONTRACT
             if not dry_run:
                 notes_file.write_text(updated, encoding="utf-8")
-            actions.append("Appended Multi-Agent Collaboration Contracts (v1.3.0) to NOTES.md")
+            actions.append("Appended Multi-Agent Collaboration Contracts to NOTES.md")
 
     return actions
 
@@ -665,8 +740,246 @@ def plan_interface_contracts(repo: Path) -> dict[Path, bytes]:
     return {path: content for path, content in desired.items() if content != existing[path]}
 
 
-def apply_standards_to_repo(repo: Path, dry_run: bool = False, include_interface_contracts: bool = False) -> List[str]:
-    """Apply legacy governance, with optional preflighted interface adoption."""
+def ensure_gitignore_two_tier(repo: Path, dry_run: bool) -> List[str]:
+    """Ensure .gitignore ignores worktrees and dev-harness ephemeral directories."""
+    if not (repo / ".agent").is_dir() and not (repo / "AGENTS.md").is_file():
+        return []
+    gi_file = repo / ".gitignore"
+    if gi_file.is_symlink():
+        return ["Skipped .gitignore two-tier rules: symlinked .gitignore"]
+    if gi_file.exists() and not gi_file.is_file():
+        return ["Skipped .gitignore two-tier rules: .gitignore is not a regular file"]
+
+    existing = gi_file.read_text(encoding="utf-8", errors="ignore") if gi_file.is_file() else ""
+    newline = "\r\n" if "\r\n" in existing else "\n"
+    existing_lines = {line.strip() for line in existing.splitlines()}
+
+    missing: List[str] = []
+    for rule in GITIGNORE_INVARIANTS:
+        if rule == ".worktrees/" and (".worktrees/" in existing_lines or ".worktrees" in existing_lines):
+            continue
+        if rule not in existing_lines:
+            missing.append(rule)
+
+    if not missing:
+        return []
+
+    block_lines = (
+        (["# Agent & dev-harness ephemeral state"] if "# Agent & dev-harness ephemeral state" not in existing_lines else [])
+        + missing
+    )
+    if existing:
+        sep = "" if existing.endswith(("\n", "\r\n")) else newline
+        updated = existing + sep + newline + newline.join(block_lines) + newline
+    else:
+        updated = newline.join(block_lines) + newline
+
+    if not dry_run:
+        write_adr_diary(gi_file, updated.encode("utf-8"))
+    return [f"Added {len(missing)} runtime/harness ignore rule(s) to .gitignore: {', '.join(missing)}"]
+
+
+def ensure_hooks_readme(repo: Path, dry_run: bool) -> List[str]:
+    """Provision canonical .agent/hooks/README.md when .agent/ exists and hooks dir is missing or empty."""
+    agent_dir = repo / ".agent"
+    if not agent_dir.is_dir() or agent_dir.is_symlink():
+        return []
+
+    hooks_dir = agent_dir / "hooks"
+    if hooks_dir.is_symlink():
+        return ["Skipped .agent/hooks/README.md: symlinked .agent/hooks directory"]
+    if hooks_dir.exists() and not hooks_dir.is_dir():
+        return ["Skipped .agent/hooks/README.md: .agent/hooks is not a directory"]
+    if hooks_dir.exists() and any(hooks_dir.iterdir()):
+        return []
+
+    canonical = safe_interface_read(CANONICAL_ROOT, Path(".agent/hooks/README.md"))
+    if not canonical:
+        return []
+
+    if not dry_run:
+        hooks_dir.mkdir(parents=True, exist_ok=True)
+        write_adr_diary(hooks_dir / "README.md", canonical)
+    return ["Provisioned canonical .agent/hooks/README.md"]
+
+
+def upgrade_agents_two_tier(repo: Path, dry_run: bool) -> List[str]:
+    """Upgrade AGENTS.md with 2-Tier rigor and Hermetic Skills while removing obsolete batch/spec rules."""
+    agents_file = repo / "AGENTS.md"
+    if not agents_file.is_file() or agents_file.is_symlink():
+        return []
+
+    content = agents_file.read_text(encoding="utf-8", errors="ignore")
+    try:
+        masked = masked_markdown(content)
+    except InterfaceConflict:
+        return ["Skipped AGENTS.md 2-Tier upgrade: unterminated Markdown fence or comment"]
+
+    newline = "\r\n" if "\r\n" in content else "\n"
+    raw_lines = content.splitlines(keepends=True)
+    masked_lines = masked.splitlines(keepends=True)
+
+    new_lines: List[str] = []
+    for raw_line, masked_line in zip(raw_lines, masked_lines):
+        # Only strip/rewrite active markdown lines (preserve examples inside code fences/comments).
+        if not masked_line.strip() and raw_line.strip():
+            new_lines.append(raw_line)
+            continue
+
+        stripped = raw_line.rstrip("\r\n")
+        ending = raw_line[len(stripped):] or newline
+
+        if re.match(r"^[ \t]*-[ \t]+(?:\*\*)?Ephemeral [Ff]eature [Ss]pec", stripped):
+            continue
+        if re.match(r"^[ \t]*-[ \t]+\*\*(?:Pre-Approved \(`APPROVED`\)|Sequential Sub-Task Batching \(`\[BATCH: Bx\]`\)):", stripped):
+            continue
+        std_match = re.match(r"^([ \t]*)-[ \t]+\*\*Standard \(`READY FOR PLANNING`\):", stripped)
+        if std_match:
+            indent = std_match.group(1)
+            new_lines.append(
+                f"{indent}- **Plan approval:** Present an action plan detailing affected files, "
+                f"await explicit user approval, then execute the active task's `- [ ]` checklist in `.agent/TASK.md`.{ending}"
+            )
+            continue
+
+        line_updated = stripped.replace("to `READY FOR PLANNING`", "to the active task")
+        line_updated = line_updated.replace("active in `RUNNING` status", "active in `.agent/TASK.md`")
+        new_lines.append(line_updated + (raw_line[len(stripped):]))
+
+    updated = "".join(new_lines)
+    active_after = masked_markdown(updated)
+
+    has_two_tier = all(
+        marker in active_after
+        for marker in ("Tier 1", "Tier 2", "dev-harness", ".harness/queue/", "files_read", "files_edit")
+    )
+    has_hermetic = "Hermetic Skills & Context Contract" in active_after
+
+    if not has_two_tier:
+        section = TWO_TIER_AGENTS_SECTION.strip().replace("\n", newline)
+        sep = "" if updated.endswith((newline * 2, "\n\n", "\r\n\r\n")) else (newline if updated.endswith(("\n", "\r\n")) else newline * 2)
+        updated = updated + sep + section + newline
+    elif not has_hermetic:
+        hermetic_section = (
+            "## Hermetic Skills & Context Contract" + newline * 2
+            + "- **Hermetic Skills & Context Contract:** Procedural guidelines and skills must be self-contained "
+            + "within `.agent/skills/` or injected directly into the task dispatch prompt by the orchestrator; "
+            + "never wander the host filesystem for missing skills." + newline
+        )
+        sep = "" if updated.endswith((newline * 2, "\n\n", "\r\n\r\n")) else (newline if updated.endswith(("\n", "\r\n")) else newline * 2)
+        updated = updated + sep + hermetic_section
+
+    actions: List[str] = []
+    if updated != content:
+        if not dry_run:
+            write_adr_diary(agents_file, updated.encode("utf-8"))
+        actions.append("Upgraded AGENTS.md to 2-Tier Progressive Rigor & Hermetic Skills")
+
+    remaining_legacy = re.search(
+        r"Ephemeral Feature Specs|\*\*Sequential Sub-Task Batching|\*\*Pre-Approved",
+        masked_markdown(updated),
+    )
+    if remaining_legacy:
+        actions.append(f"Warning: AGENTS.md retains custom legacy directive ({remaining_legacy.group(0)}); review manually")
+    return actions
+
+
+def sanitize_task_md_two_tier(repo: Path, dry_run: bool) -> List[str]:
+    """Strip legacy batch/status/spec-anchor ceremony from active sections of .agent/TASK.md."""
+    task_file = repo / ".agent" / "TASK.md"
+    if not task_file.is_file() or task_file.is_symlink():
+        return []
+
+    content = task_file.read_text(encoding="utf-8", errors="ignore")
+    try:
+        masked = masked_markdown(content)
+    except InterfaceConflict:
+        return ["Skipped .agent/TASK.md cleanup: unterminated Markdown fence or comment"]
+
+    newline = "\r\n" if "\r\n" in content else "\n"
+    raw_lines = content.splitlines(keepends=True)
+    masked_lines = masked.splitlines(keepends=True)
+
+    new_lines: List[str] = []
+    in_completed_log = False
+    for raw_line, masked_line in zip(raw_lines, masked_lines):
+        if re.match(r"^##\s+Completed Tasks Log\b", masked_line):
+            in_completed_log = True
+        elif re.match(r"^##\s+", masked_line):
+            in_completed_log = False
+
+        if in_completed_log or (not masked_line.strip() and raw_line.strip()):
+            new_lines.append(raw_line)
+            continue
+
+        stripped = raw_line.rstrip("\r\n")
+        ending = raw_line[len(stripped):]
+
+        if re.match(r"^[ \t]*-\s*\*\*(?:Status|Systems Involved|Action Type|Spec Anchor):\*\*", stripped):
+            continue
+        if re.match(r"^[ \t]*-\s*(?:\*\*)?Read:(?:\*\*)?[ \t]+.*\.agent/scratch/specs/", stripped):
+            continue
+
+        line_updated = re.sub(r"[ \t]*\[(?:BATCH|PARALLEL): [A-Za-z0-9x-]+\]", "", stripped)
+        line_updated = re.sub(r"[ \t]*\[(?:APPROVED|READY FOR PLANNING)\]", "", line_updated)
+        line_updated = line_updated.replace("to `READY FOR PLANNING`", "to the active task")
+        line_updated = re.sub(r"\bREADY FOR PLANNING\b", "Active Task", line_updated)
+        line_updated = line_updated.rstrip()
+        new_lines.append(line_updated + ending)
+
+    updated = "".join(new_lines)
+    if "Task | Title | Commit(s) | Date" not in updated and "## Backlog" not in updated:
+        sep = "" if updated.endswith((newline * 2, "\n\n", "\r\n\r\n")) else (newline if updated.endswith(("\n", "\r\n")) else newline * 2)
+        updated = (
+            updated + sep
+            + "## Completed Tasks Log" + newline * 2
+            + "| Task | Title | Commit(s) | Date |" + newline
+            + "|---|---|---|---|" + newline
+        )
+
+    if updated == content:
+        return []
+    if not dry_run:
+        write_adr_diary(task_file, updated.encode("utf-8"))
+    return ["Sanitized .agent/TASK.md to lean Tier 1 format (removed batch/status ceremony)"]
+
+
+def align_env_example_hydra(repo: Path, dry_run: bool) -> List[str]:
+    """Align .env.example and residual NOTES.md references with hydra-llm-router contracts."""
+    actions: List[str] = []
+    replacements = [
+        (re.compile(r"hydra-ai-gateway"), "hydra-llm-router"),
+        (re.compile(r"hydra\.homelab\.yegear\.dev"), "hydra-router.homelab.yegear.dev"),
+        (re.compile(r"\bfree-fast\b"), "fast"),
+        (re.compile(r"\bfree-deep\b"), "deep"),
+    ]
+
+    for rel_path, label in (
+        (Path(".env.example"), "Aligned .env.example with hydra-llm-router contracts"),
+        (Path(".agent/NOTES.md"), "Aligned residual gateway references in .agent/NOTES.md with hydra-llm-router"),
+    ):
+        target = repo / rel_path
+        if not target.is_file() or target.is_symlink():
+            continue
+        content = target.read_text(encoding="utf-8", errors="ignore")
+        updated = content
+        for pattern, replacement in replacements:
+            updated = pattern.sub(replacement, updated)
+        if updated != content:
+            if not dry_run:
+                write_adr_diary(target, updated.encode("utf-8"))
+            actions.append(label)
+
+    return actions
+
+
+def apply_standards_to_repo(
+    repo: Path,
+    dry_run: bool = False,
+    include_interface_contracts: bool = False,
+    include_two_tier: bool = False,
+) -> List[str]:
+    """Apply legacy governance, with optional preflighted interface and 2-Tier adoption."""
     actions: List[str] = []
     if include_interface_contracts:
         try:
@@ -681,6 +994,12 @@ def apply_standards_to_repo(repo: Path, dry_run: bool = False, include_interface
     actions.extend(sanitize_notes_md(repo, dry_run))
     actions.extend(inject_multi_agent_contracts(repo, dry_run))
     actions.extend(upgrade_agents_md(repo, dry_run))
+    if include_two_tier:
+        actions.extend(ensure_gitignore_two_tier(repo, dry_run))
+        actions.extend(ensure_hooks_readme(repo, dry_run))
+        actions.extend(upgrade_agents_two_tier(repo, dry_run))
+        actions.extend(sanitize_task_md_two_tier(repo, dry_run))
+        actions.extend(align_env_example_hydra(repo, dry_run))
     return actions
 
 
@@ -994,6 +1313,91 @@ class TestApplyGovernanceStandards(unittest.TestCase):
         self.assertEqual(original.read_bytes(), b"# Changed after inventory\nNew content.")
         self.assertIn(b"Decision details", diary.read_bytes())
 
+    def test_two_tier_opt_in_migration_and_idempotency(self) -> None:
+        repo = self.create_mock_legacy_repo("two-tier-repo")
+        (repo / ".gitignore").write_text(".env\n.worktrees/\n", encoding="utf-8")
+        (repo / ".env.example").write_text(
+            "LLM_BASE_URL=https://hydra.homelab.yegear.dev/v1\n"
+            "LLM_MODEL_FAST=free-fast\n"
+            "LLM_MODEL_DEEP=free-deep\n",
+            encoding="utf-8",
+        )
+        (repo / "AGENTS.md").write_text(
+            "# Rules\n\n[P0] Keep data.\n\n## Fail-Stop\n\nStop.\n\n## Contrast Pairs\n\nBAD: break\n\n"
+            "## Modular Context Triggers\n"
+            "  - Ephemeral feature specifications (Batch Context Anchor): Read `.agent/scratch/specs/<XX-YY>.md`.\n\n"
+            "## Mandatory Execution Protocol\n"
+            "  - **Standard (`READY FOR PLANNING`):** Wait.\n"
+            "  - **Pre-Approved (`APPROVED`):** Go.\n"
+            "  - **Sequential Sub-Task Batching (`[BATCH: Bx]`):** Batch.\n",
+            encoding="utf-8",
+        )
+        (repo / ".agent" / "TASK.md").write_text(
+            "# TASK.md\n\n## Active Task\n\n### [02.1] Build feature [BATCH: B1]\n"
+            "- **Status:** READY FOR PLANNING\n"
+            "- **Action Type:** code\n"
+            "- **Read:** `.agent/scratch/specs/02-01.md`\n"
+            "- [ ] Implement endpoint [PARALLEL: W1]\n\n"
+            "## Completed Tasks Log\n\n"
+            "| Task | Title | Commit(s) | Date |\n|---|---|---|---|\n"
+            "| `[01.1]` | Legacy [BATCH: B0] | `abc123` | 2026-11-01 |\n",
+            encoding="utf-8",
+        )
+        (repo / ".agent" / "NOTES.md").write_text(
+            "# NOTES.md\n\n## Active Contracts\n\n"
+            "### 2. Multi-Agent Collaboration Contracts\n\n"
+            "| Role | Channel | Responsibilities | Boundary |\n|---|---|---|---|\n"
+            "| `Worker` | Worktree | `gemini-3.8-flash-medium` | `Read:` / `Paths:` |\n\n"
+            "#### LLM Gateway\nUse `hydra-ai-gateway`, `free-fast`, and `hydra_ai_net`.\n\n"
+            "---\n\n## Pitfalls & Gotchas\n\n- Keep probes on `free-deep` >= 60 tokens.\n",
+            encoding="utf-8",
+        )
+
+        # Dry-run leaves everything untouched
+        before = self.snapshot(repo)
+        dry_actions = apply_standards_to_repo(repo, dry_run=True, include_two_tier=True)
+        self.assertGreater(len(dry_actions), 0)
+        self.assertEqual(self.snapshot(repo), before)
+
+        # Apply 2-Tier standards
+        actions = apply_standards_to_repo(repo, dry_run=False, include_two_tier=True)
+        self.assertGreater(len(actions), 0)
+
+        agents_text = (repo / "AGENTS.md").read_text(encoding="utf-8")
+        for marker in ("Tier 1", "Tier 2", "dev-harness", ".harness/queue/", "files_read", "files_edit", "Hermetic Skills & Context Contract"):
+            self.assertIn(marker, agents_text)
+        self.assertNotIn("Ephemeral feature specifications", agents_text)
+        self.assertNotIn("**Pre-Approved", agents_text)
+        self.assertNotIn("**Sequential Sub-Task Batching", agents_text)
+
+        task_text = (repo / ".agent" / "TASK.md").read_text(encoding="utf-8")
+        self.assertNotIn("[BATCH: B1]", task_text)
+        self.assertNotIn("[PARALLEL: W1]", task_text)
+        self.assertNotIn("- **Status:**", task_text)
+        self.assertNotIn(".agent/scratch/specs/02-01.md", task_text)
+        self.assertIn("[BATCH: B0]", task_text)  # Historical Completed Tasks Log preserved
+
+        gi_text = (repo / ".gitignore").read_text(encoding="utf-8")
+        self.assertIn(".harness/queue/done/", gi_text)
+        self.assertIn(".harness/queue/escalated/", gi_text)
+        self.assertIn(".harness/worktrees/", gi_text)
+        self.assertTrue((repo / ".agent" / "hooks" / "README.md").is_file())
+
+        env_text = (repo / ".env.example").read_text(encoding="utf-8")
+        self.assertIn("hydra-router.homelab.yegear.dev", env_text)
+        self.assertIn("LLM_MODEL_FAST=fast", env_text)
+        self.assertIn("LLM_MODEL_DEEP=deep", env_text)
+
+        notes_text = (repo / ".agent" / "NOTES.md").read_text(encoding="utf-8")
+        self.assertIn("hydra-llm-router", notes_text)
+        self.assertIn("hydra_shared_net", notes_text)
+        self.assertNotIn("free-deep", notes_text)
+        self.assertNotIn("gemini-3.8-flash-medium", notes_text)
+
+        # Idempotent on second run
+        second_actions = apply_standards_to_repo(repo, dry_run=False, include_two_tier=True)
+        self.assertEqual(second_actions, [])
+
 
 def run_self_tests() -> int:
     """Execute hermetic unit and verification test suite."""
@@ -1019,6 +1423,10 @@ def main():
     parser.add_argument("--no-exclude", action="store_true", help="Desabilita filtros padrão de exclusão")
     parser.add_argument("--include-interface-contracts", action="store_true",
                         help="Opt in to canonical interface contracts; conflicts leave the repository unchanged (exit 1)")
+    parser.add_argument("--include-two-tier", action="store_true",
+                        help="Opt in to 2-Tier Progressive Rigor, .harness/ gitignore, hooks README, lean TASK.md, and hydra-llm-router alignment")
+    parser.add_argument("--all-standards", action="store_true",
+                        help="Enable both --include-interface-contracts and --include-two-tier")
     parser.add_argument("--self-test", action="store_true", help="Executa suíte de testes unitários herméticos")
 
     args = parser.parse_args()
@@ -1053,11 +1461,14 @@ def main():
 
     print(f"Total de repositórios candidatos: {len(repos)}\n")
 
+    include_interface = args.include_interface_contracts or args.all_standards
+    include_two_tier = args.include_two_tier or args.all_standards
+
     total_changes = 0
     blocked = False
     for repo in repos:
         repo_name = f"{repo.parent.name}/{repo.name}" if repo.parent.name else repo.name
-        actions = apply_standards_to_repo(repo, args.dry_run, args.include_interface_contracts)
+        actions = apply_standards_to_repo(repo, args.dry_run, include_interface, include_two_tier)
         blocked |= any(action.startswith("Blocked interface migration:") for action in actions)
         if actions:
             total_changes += len(actions)

@@ -57,6 +57,13 @@ INTERFACE_WEIGHTS = {
     "interface_context_on_demand": 3,
     "interface_dod_dual_runtime": 3,
 }
+TWO_TIER_WEIGHTS = {
+    "agents_two_tier_rigor": 6,
+    "task_lean_format": 5,
+    "harness_in_gitignore": 4,
+    "llm_gateway_aligned": 3,
+    "agents_hermetic_skills": 2,
+}
 
 
 def active_markdown(text: str) -> str:
@@ -255,6 +262,7 @@ def audit_repository(repo_path: Path) -> Dict[str, Any]:
     # Rule: ban on task headings inside NOTES.md
     notes_bad_heading = False
     notes_subagents = False
+    notes_text = ""
     if checks["has_notes_md"]:
         try:
             notes_lines = notes_file.read_text(encoding="utf-8", errors="ignore").splitlines()
@@ -284,6 +292,7 @@ def audit_repository(repo_path: Path) -> Dict[str, Any]:
 
     # 4. v1.3.0 Standards: Worktree Isolation & Lifecycle Hooks
     gitignore_file = repo_path / ".gitignore"
+    gi_content = ""
     has_worktree_ignore = False
     if gitignore_file.is_file():
         try:
@@ -299,6 +308,7 @@ def audit_repository(repo_path: Path) -> Dict[str, Any]:
 
     # 5. v1.3.0 Standards: LLM Gateway Contract
     env_example_file = repo_path / ".env.example"
+    env_content = ""
     has_llm_gateway = False
     if env_example_file.is_file():
         try:
@@ -320,9 +330,64 @@ def audit_repository(repo_path: Path) -> Dict[str, Any]:
     checks.update(interface_checks)
     violations.extend(interface_violations)
 
-    # Keep the legacy 100 points; add 20 interface points and normalize over 120.
-    # A legacy-perfect project missing every interface check now scores 83%.
+    # 7. Post-v1.4.0 Standards: 2-Tier Progressive Rigor & hydra-llm-router Alignment
+    agents_active = active_markdown(agents_content)
+    has_two_tier_markers = all(
+        marker in agents_active
+        for marker in ("Tier 1", "Tier 2", "dev-harness", ".harness/queue/", "files_read", "files_edit")
+    )
+    has_removed_batch_rules = bool(re.search(
+        r"Ephemeral Feature Specs|\*\*Sequential Sub-Task Batching|\*\*Pre-Approved",
+        agents_active,
+    ))
+    checks["agents_two_tier_rigor"] = has_two_tier_markers and not has_removed_batch_rules
+    checks["agents_hermetic_skills"] = "Hermetic Skills & Context Contract" in agents_active
 
+    task_text = ""
+    if checks["has_task_md"]:
+        try:
+            task_text = task_file.read_text(encoding="utf-8", errors="ignore")
+        except Exception:
+            pass
+    active_task_md = active_markdown(task_text)
+    completed_span = re.search(
+        r"^##\s+Completed Tasks Log\b.*?(?=^##\s+|\Z)",
+        active_task_md,
+        re.MULTILINE | re.DOTALL,
+    )
+    task_active_body = (
+        active_task_md[:completed_span.start()] + active_task_md[completed_span.end():]
+        if completed_span else active_task_md
+    )
+    has_lean_task_headers = (
+        ("## Active Task" in active_task_md or "## Tarefa Ativa" in active_task_md)
+        and ("Task | Title | Commit(s) | Date" in task_text or "## Backlog" in task_text)
+    )
+    has_task_ceremony = bool(re.search(
+        r"\[(BATCH|PARALLEL): [A-Za-z0-9x]+\]|^-\s*\*\*(?:Status|Systems Involved|Action Type):\*\*|READY FOR PLANNING|\.agent/scratch/specs/",
+        task_active_body,
+        re.MULTILINE,
+    ))
+    checks["task_lean_format"] = checks["has_task_md"] and has_lean_task_headers and not has_task_ceremony
+
+    gi_lines = {line.strip() for line in gi_content.splitlines()}
+    checks["harness_in_gitignore"] = all(
+        rule in gi_lines
+        for rule in (".harness/queue/done/", ".harness/queue/escalated/", ".harness/worktrees/")
+    )
+
+    legacy_gateway_refs = bool(re.search(
+        r"free-fast|free-deep|hydra-ai-gateway|hydra\.homelab\.yegear\.dev",
+        env_content + "\n" + notes_text,
+    ))
+    has_router_notes = (
+        "hydra-llm-router" in notes_text
+        and "hydra_shared_net" in notes_text
+        and ("hydra_ai_net" not in notes_text or "hydra_router_internal" in notes_text)
+    )
+    checks["llm_gateway_aligned"] = has_router_notes and not legacy_gateway_refs
+
+    # Legacy 100 pts + 20 interface pts + 20 2-tier/router pts = 140 normalized to 0-100.
     weights = {
         "has_agents_md": 15,
         "agents_high_density": 10,
@@ -343,6 +408,7 @@ def audit_repository(repo_path: Path) -> Dict[str, Any]:
     }
 
     weights.update(INTERFACE_WEIGHTS)
+    weights.update(TWO_TIER_WEIGHTS)
     score = 0
     max_score = sum(weights.values())
     for k, w in weights.items():
@@ -356,8 +422,10 @@ def audit_repository(repo_path: Path) -> Dict[str, Any]:
         tier = "Tier 4 (Sem Padrão / Legado)"
     elif not checks["no_legacy_adr_dir"] or not checks["notes_no_task_headings"]:
         tier = "Tier 3 (Com Débito Técnico)"
+    elif percentage >= 80 and checks["agents_two_tier_rigor"] and checks["task_lean_format"] and checks["harness_in_gitignore"]:
+        tier = "Tier 1 (Vanguarda / 2-Tier Ready)"
     elif percentage >= 80:
-        tier = "Tier 1 (Vanguarda / v1.3.0 Ready)"
+        tier = "Tier 1 (v1.4 / Pré-2-Tier)"
     elif percentage >= 55:
         tier = "Tier 2 (Conforme v1.1 / v1.2)"
     else:
@@ -376,9 +444,9 @@ def audit_repository(repo_path: Path) -> Dict[str, Any]:
 def format_table(results: List[Dict[str, Any]]) -> str:
     """Format audit results as a readable ANSI/ASCII terminal table."""
     header = (
-        f"{'Repositório':<33} | {'Tier':<28} | {'Score':<5} | "
+        f"{'Repositório':<33} | {'Tier':<31} | {'Score':<5} | "
         f"{'AGENTS':<6} | {'HD/P0':<5} | {'ADR':<5} | {'NoLegADR':<8} | "
-        f"{'CleanNts':<8} | {'WkTree':<6} | {'LLM':<4} | {'Hooks':<5}"
+        f"{'CleanNts':<8} | {'WkTree':<6} | {'2Tier':<5} | {'LeanTk':<6} | {'HarGI':<5} | {'Router':<6}"
     )
     divider = "-" * len(header)
     lines = [divider, header, divider]
@@ -391,13 +459,15 @@ def format_table(results: List[Dict[str, Any]]) -> str:
         p_no_leg = "ok" if c.get("no_legacy_adr_dir") else "DEBITO"
         p_cln_nts = "ok" if c.get("notes_no_task_headings") else "DEBITO"
         p_wkt = "SIM" if c.get("worktrees_in_gitignore") else "não"
-        p_llm = "SIM" if c.get("llm_gateway_in_env_example") else "não"
-        p_hks = "SIM" if c.get("has_agent_hooks") else "não"
+        p_2t = "SIM" if c.get("agents_two_tier_rigor") else "não"
+        p_lt = "SIM" if c.get("task_lean_format") else "não"
+        p_hg = "SIM" if c.get("harness_in_gitignore") else "não"
+        p_rt = "SIM" if c.get("llm_gateway_aligned") else "não"
 
         line = (
-            f"{r['name']:<33} | {r['tier']:<28} | {r['score']:>4}% | "
+            f"{r['name']:<33} | {r['tier']:<31} | {r['score']:>4}% | "
             f"{p_ag:<6} | {p_hd:<5} | {p_adr:<5} | {p_no_leg:<8} | "
-            f"{p_cln_nts:<8} | {p_wkt:<6} | {p_llm:<4} | {p_hks:<5}"
+            f"{p_cln_nts:<8} | {p_wkt:<6} | {p_2t:<5} | {p_lt:<6} | {p_hg:<5} | {p_rt:<6}"
         )
         lines.append(line)
 
@@ -411,8 +481,8 @@ def format_table(results: List[Dict[str, Any]]) -> str:
 def format_markdown(results: List[Dict[str, Any]]) -> str:
     """Format audit results as a GitHub-flavored Markdown table."""
     md = [
-        "| Repositório | Nível / Tier | Score | AGENTS.md | HD (P0-P3) | Single ADR | Sem ADR Legado | NOTES.md Limpo | .worktrees | LLM Gateway | Hooks |",
-        "| :--- | :--- | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |"
+        "| Repositório | Nível / Tier | Score | AGENTS.md | HD (P0-P3) | Single ADR | Sem ADR Legado | NOTES.md Limpo | .worktrees | 2-Tier | TASK Enxuto | .harness GI | Router |",
+        "| :--- | :--- | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |"
     ]
     for r in results:
         c = r["checks"]
@@ -422,11 +492,13 @@ def format_markdown(results: List[Dict[str, Any]]) -> str:
         p_no_leg = "✅" if c.get("no_legacy_adr_dir") else "⚠️ Débito"
         p_cln_nts = "✅" if c.get("notes_no_task_headings") else "⚠️ Débito"
         p_wkt = "✅" if c.get("worktrees_in_gitignore") else "⚪"
-        p_llm = "✅" if c.get("llm_gateway_in_env_example") else "⚪"
-        p_hks = "✅" if c.get("has_agent_hooks") else "⚪"
+        p_2t = "✅" if c.get("agents_two_tier_rigor") else "⚪"
+        p_lt = "✅" if c.get("task_lean_format") else "⚪"
+        p_hg = "✅" if c.get("harness_in_gitignore") else "⚪"
+        p_rt = "✅" if c.get("llm_gateway_aligned") else "⚪"
 
         md.append(
-            f"| `{r['name']}` | {r['tier']} | **{r['score']}%** | {p_ag} | {p_hd} | {p_adr} | {p_no_leg} | {p_cln_nts} | {p_wkt} | {p_llm} | {p_hks} |"
+            f"| `{r['name']}` | {r['tier']} | **{r['score']}%** | {p_ag} | {p_hd} | {p_adr} | {p_no_leg} | {p_cln_nts} | {p_wkt} | {p_2t} | {p_lt} | {p_hg} | {p_rt} |"
         )
     diagnostics = [f"- `{result['name']}`: {message}" for result in results for message in result["violations"]
                    if message.startswith("Interface contract:")]
@@ -479,17 +551,30 @@ class TestAuditEcosystemStandards(unittest.TestCase):
         (repo_dir / ".git").mkdir()
 
         if is_compliant:
-            # Fully compliant repo
+            # Fully compliant repo (2-Tier Ready + v1.4 Interface + hydra-llm-router)
             (repo_dir / "AGENTS.md").write_text(
                 "# Agent Guidelines\n[P0] Security & Blast Radius\n## Priority Ranking & Precedence\n"
+                "## Modular Context Triggers\n"
+                "- Interface & UI Verification: Read `.agent/skills/interface-testing/SKILL.md` on-demand for UI work.\n"
+                "- Hermetic Skills & Context Contract: skills stay inside `.agent/skills/`.\n"
+                "## Mandatory Execution Protocol\n"
+                "- Tier 1 (Interactive): lean checklist in `.agent/TASK.md`.\n"
+                "- Tier 2 (Autonomous / `dev-harness`): micro-contracts (`files_read`, `files_edit`, `verify`) in `.harness/queue/`.\n"
+                "### Step 3: Falsifiable Definition of Done (DoD)\n"
+                "- [ ] Interface & UI Verification: T3 Code preview/device checks; headless component/build tests.\n"
                 "## Fail-Stop Protocol\n// BAD: git commit -m 'fix'\n// GOOD: git commit -m 'feat: add'",
                 encoding="utf-8"
             )
             agent_dir = repo_dir / ".agent"
             agent_dir.mkdir()
-            (agent_dir / "TASK.md").write_text("# TASK.md\n## Active Task", encoding="utf-8")
+            (agent_dir / "TASK.md").write_text(
+                "# TASK.md\n\n## Active Task\n\n### [01.1] Bootstrap\n- [ ] Verify setup\n\n"
+                "## Completed Tasks Log\n\n| Task | Title | Commit(s) | Date |\n|---|---|---|---|\n\n"
+                "## Backlog\n",
+                encoding="utf-8"
+            )
             (agent_dir / "NOTES.md").write_text(
-                "# NOTES.md\nLead / Orchestrator\nFast-Link\nMicro-Contract",
+                "# NOTES.md\nLead / Orchestrator\nFast-Link\nMicro-Contract\nhydra-llm-router\nhydra_shared_net\n",
                 encoding="utf-8"
             )
             (agent_dir / "ARCHIVE.md").write_text("# ARCHIVE.md", encoding="utf-8")
@@ -502,7 +587,10 @@ class TestAuditEcosystemStandards(unittest.TestCase):
             docs_adr.mkdir(parents=True)
             (docs_adr / "decisions.md").write_text("# Architecture Decisions", encoding="utf-8")
 
-            (repo_dir / ".gitignore").write_text(".worktrees/\nnode_modules/\n", encoding="utf-8")
+            (repo_dir / ".gitignore").write_text(
+                ".worktrees/\n.harness/queue/done/\n.harness/queue/escalated/\n.harness/worktrees/\nnode_modules/\n",
+                encoding="utf-8"
+            )
             (repo_dir / ".env.example").write_text(
                 "LLM_BASE_URL=http://hydra-llm-router:3000/v1\nLLM_MODEL_FAST=fast\nLLM_MODEL_DEEP=deep\n",
                 encoding="utf-8"
@@ -513,14 +601,6 @@ class TestAuditEcosystemStandards(unittest.TestCase):
             skill = repo_dir / INTERFACE_SKILL
             skill.parent.mkdir(parents=True)
             skill.write_bytes((CANONICAL_ROOT / INTERFACE_SKILL).read_bytes())
-            agents = repo_dir / "AGENTS.md"
-            agents.write_text(agents.read_text(encoding="utf-8") + (
-                "\n## Modular Context Triggers\n"
-                "- Interface & UI Verification: Read `.agent/skills/interface-testing/SKILL.md` on-demand for UI work.\n"
-                "\n## Mandatory Execution Protocol\n"
-                "### Step 3: Falsifiable Definition of Done (DoD)\n"
-                "- [ ] Interface & UI Verification: T3 Code preview/device checks; headless component/build tests.\n"
-            ), encoding="utf-8")
         else:
             # Legacy repo with violations
             (repo_dir / "AGENTS.md").write_text("# Agent Guidelines\nNo P0 here\n", encoding="utf-8")
@@ -541,7 +621,7 @@ class TestAuditEcosystemStandards(unittest.TestCase):
         repo = self.create_mock_repo("compliant-app", is_compliant=True)
         res = audit_repository(repo)
         self.assertEqual(res["score"], 100)
-        self.assertIn("Tier 1", res["tier"])
+        self.assertIn("2-Tier Ready", res["tier"])
         self.assertEqual(len(res["violations"]), 0)
 
     def test_legacy_repo_violations(self):
@@ -598,11 +678,12 @@ class TestAuditEcosystemStandards(unittest.TestCase):
                                     if "Interface & UI Verification" not in line), encoding="utf-8")
         return repo
 
-    def test_legacy_perfect_score_is_83_with_new_checks(self) -> None:
+    def test_legacy_perfect_score_is_86_with_new_checks(self) -> None:
         result = audit_repository(self.legacy_perfect_fixture())
-        self.assertEqual(result["score"], 83)
+        self.assertEqual(result["score"], 86)
         self.assertTrue(all(not result["checks"][key] for key in INTERFACE_WEIGHTS))
         self.assertEqual(sum(INTERFACE_WEIGHTS.values()), 20)
+        self.assertEqual(sum(TWO_TIER_WEIGHTS.values()), 20)
         self.assertTrue(all(any(key in message for message in result["violations"]) for key in INTERFACE_WEIGHTS))
 
     def test_missing_and_altered_skill_have_distinct_checks(self) -> None:
@@ -618,7 +699,7 @@ class TestAuditEcosystemStandards(unittest.TestCase):
         result = audit_repository(repo)
         self.assertFalse(result["checks"]["interface_skill_installed"])
         self.assertFalse(result["checks"]["interface_skill_canonical"])
-        self.assertEqual(result["score"], 95)
+        self.assertEqual(result["score"], 96)
 
     def test_each_guardrail_drift_fails_only_its_check(self) -> None:
         repo = self.create_mock_repo("guardrail-drift")
@@ -630,7 +711,7 @@ class TestAuditEcosystemStandards(unittest.TestCase):
                 result = audit_repository(repo)
                 failed = {key for key in INTERFACE_WEIGHTS if not result["checks"][key]}
                 self.assertEqual(failed, {f"interface_invariant_7_{number}"})
-                self.assertEqual(result["score"], 98)
+                self.assertEqual(result["score"], 99)
 
     def test_missing_duplicate_and_fenced_guardrails_fail(self) -> None:
         repo = self.create_mock_repo("fake-guardrails")
@@ -674,6 +755,37 @@ class TestAuditEcosystemStandards(unittest.TestCase):
         self.assertFalse(audit_repository(repo)["checks"]["interface_dod_dual_runtime"])
         path.write_text(original.replace("on-demand", "always"), encoding="utf-8")
         self.assertFalse(audit_repository(repo)["checks"]["interface_context_on_demand"])
+
+    def test_two_tier_and_router_checks(self) -> None:
+        repo = self.create_mock_repo("two-tier-checks")
+        # Historical [BATCH: Bx] in Completed Tasks Log must NOT fail task_lean_format
+        task_path = repo / ".agent/TASK.md"
+        task_path.write_text(
+            "# TASK.md\n\n## Active Task\n\n### [11.3] Lean task\n- [ ] Check\n\n"
+            "## Completed Tasks Log\n\n| Task | Title | Commit(s) | Date |\n|---|---|---|---|\n"
+            "| `[08.2]` | Sequential Batching (`[BATCH: Bx]`) | `abc` | 2026-11-12 |\n\n"
+            "## Backlog\n",
+            encoding="utf-8"
+        )
+        self.assertTrue(audit_repository(repo)["checks"]["task_lean_format"])
+
+        # Active [PARALLEL: W1] or READY FOR PLANNING MUST fail task_lean_format
+        task_path.write_text(
+            "# TASK.md\n\n## Active Task\n\n### [11.3] [PARALLEL: W1] Heavy\n- **Status:** READY FOR PLANNING\n\n"
+            "## Completed Tasks Log\n\n| Task | Title | Commit(s) | Date |\n|---|---|---|---|\n",
+            encoding="utf-8"
+        )
+        self.assertFalse(audit_repository(repo)["checks"]["task_lean_format"])
+
+        # Missing .harness rules downgrades Tier 1 label from 2-Tier Ready to Pré-2-Tier
+        (repo / ".gitignore").write_text(".worktrees/\n", encoding="utf-8")
+        res = audit_repository(repo)
+        self.assertFalse(res["checks"]["harness_in_gitignore"])
+        self.assertIn("Pré-2-Tier", res["tier"])
+
+        # Legacy gateway references fail llm_gateway_aligned
+        (repo / ".env.example").write_text("LLM_BASE_URL=https://hydra.homelab.yegear.dev/v1\nLLM_MODEL_FAST=free-fast\n", encoding="utf-8")
+        self.assertFalse(audit_repository(repo)["checks"]["llm_gateway_aligned"])
 
     def test_missing_canonical_references_are_explicit_failures(self) -> None:
         repo = self.create_mock_repo("no-references")
@@ -743,12 +855,13 @@ class TestAuditEcosystemStandards(unittest.TestCase):
         self.assertEqual(set(result), {"name", "path", "score", "tier", "checks", "violations"})
         self.assertTrue(all(isinstance(value, bool) for value in result["checks"].values()))
         self.assertTrue(all(result["checks"][key] for key in INTERFACE_WEIGHTS))
+        self.assertTrue(all(result["checks"][key] for key in TWO_TIER_WEIGHTS))
         expected_legacy = {"has_agents_md", "agents_high_density", "agents_fail_stop", "agents_contrast_pairs",
                            "has_agent_dir", "has_task_md", "has_notes_md", "has_archive_md", "has_invariants_md",
                            "notes_no_task_headings", "notes_has_subagent_contract", "has_single_adr", "no_legacy_adr_dir",
                            "worktrees_in_gitignore", "has_agent_hooks", "llm_gateway_in_env_example",
                            "has_bilingual_readme", "has_changelog"}
-        self.assertEqual(set(result["checks"]) - set(INTERFACE_WEIGHTS), expected_legacy)
+        self.assertEqual(set(result["checks"]) - set(INTERFACE_WEIGHTS) - set(TWO_TIER_WEIGHTS), expected_legacy)
 
     def test_interface_diagnostics_appear_in_text_reports(self) -> None:
         result = audit_repository(self.legacy_perfect_fixture("report-details"))
@@ -761,18 +874,18 @@ class TestAuditEcosystemStandards(unittest.TestCase):
         repo = self.legacy_perfect_fixture("cli-audit")
         before = self.snapshot(repo)
         base = [sys.executable, str(Path(__file__).resolve()), str(repo), "--no-exclude"]
-        for threshold, expected in [(83, 0), (84, 1), (90, 1)]:
+        for threshold, expected in [(86, 0), (87, 1), (90, 1)]:
             result = subprocess.run(base + ["--format", "json", "--verbose", "--fail-under", str(threshold)],
                                     capture_output=True, text=True, check=False)
             self.assertEqual(result.returncode, expected, result.stderr)
             payload = json.loads(result.stdout)
-            self.assertEqual(payload[0]["score"], 83)
+            self.assertEqual(payload[0]["score"], 86)
             self.assertIn("interface_skill_canonical", payload[0]["checks"])
         output = self.root / "audit.json"
         result = subprocess.run(base + ["--format", "json", "--output", str(output)],
                                 capture_output=True, text=True, check=False)
         self.assertEqual(result.returncode, 0, result.stderr)
-        self.assertEqual(json.loads(output.read_text(encoding="utf-8"))[0]["score"], 83)
+        self.assertEqual(json.loads(output.read_text(encoding="utf-8"))[0]["score"], 86)
         result = subprocess.run(base + ["--verbose"], capture_output=True, text=True, check=False)
         self.assertEqual(result.returncode, 0, result.stderr)
         self.assertIn("interface_context_on_demand=False", result.stdout)
