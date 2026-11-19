@@ -162,6 +162,7 @@ git commit -m "chore(sync): sync <file> from <source-branch>"
 - **Conventional Commits:** All commit messages MUST follow `<type>(<scope>): <imperative summary>` in Technical English.
 - **Subject Artifact Focus:** The subject line MUST describe the concrete change to repository files/artifacts. NEVER leak agent orchestration metadata or queue scheduling jargon into the subject (e.g., do NOT write `docs(task): queue wave W13 tasks [10.11]-[10.15] for execution`; DO write `docs(task): add micro-contracts for tasks [10.11]-[10.15]`).
 - **Commit Body Requirement:** Commits introducing batches of tasks (`docs(task)`), architectural decisions, or non-trivial multi-file changes MUST include an explanatory body (separated by an empty line) summarizing the affected tasks, scope, or rationale. Never rely exclusively on a one-line subject for complex multi-task operations.
+- **No Agent Attribution Trailers:** NEVER append `Co-Authored-By`, `Generated with ...`, or similar AI/agent attribution trailers to commit messages or PR descriptions.
 - **Language Invariant:** Author all agent-facing directives, contracts, skills, and logs (`AGENTS.md`, `.agent/*`) in Technical English. Human-facing documentation (`README.pt-br.md`) MAY be localized.
 
 | Type | Purpose | Hub Scope Example |
@@ -193,6 +194,13 @@ git commit -m "docs(task): add micro-contracts for tasks [10.11]-[10.15]" -m "Qu
 - [10.13]: Synchronize .env.example with gatekeeper-ts variables
 - [10.14]: Align NOTES.md and migration blueprint
 - [10.15]: Synchronize README perimeter for cycle v0.5.0"
+
+// BAD: Appending AI/agent attribution trailers to commit messages or PR descriptions
+git commit -m "feat(auth): add session refresh" -m "Co-Authored-By: <Agent> <noreply@example.com>"
+// Or PR body containing: "Generated with <Agent>"
+
+// GOOD: Clean commit message and PR description without attribution trailers
+git commit -m "feat(auth): add session refresh"
 ```
 
 ### Inter-Branch Synchronization
