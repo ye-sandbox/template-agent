@@ -151,6 +151,7 @@ During **Phase 00.1 (Discovery & Session)**, configure the official, reproducibl
   - `docs(endpoints): document process tree POST`
   - `test(fixtures): add mocked protocol search`
   - `feat(client): implement safe backoff on 429`
+- **No Agent Attribution Trailers:** NEVER append `Co-Authored-By`, `Generated with ...`, or similar AI/agent attribution trailers to commit messages or PR descriptions.
 - **Language Invariant:** Author all agent-facing directives, skills, endpoint maps, and task logs (`AGENTS.md`, `.agent/*`) in concise Technical English.
 - **Safety:** Local commits allowed when approved. `git push` is prohibited without explicit human authorization.
 
@@ -189,6 +190,17 @@ fetch_next_page()
 time.sleep(3.5)
 fetch_next_page()
 ```
+
+### Commit Messages
+```markdown
+// BAD: Appending AI/agent attribution trailers to commit messages or PR descriptions
+git commit -m "feat(auth): add session refresh" -m "Co-Authored-By: <Agent> <noreply@example.com>"
+// Or PR body containing: "Generated with <Agent>"
+
+// GOOD: Clean commit message and PR description without attribution trailers
+git commit -m "feat(auth): add session refresh"
+```
+
 ### Task Tracking (Tier 1 vs Tier 2)
 ```markdown
 // BAD: Orchestration ceremony inside the interactive checklist
