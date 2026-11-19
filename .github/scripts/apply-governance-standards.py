@@ -854,7 +854,12 @@ def _inject_no_attribution_rule(text: str, newline: str) -> str:
     headings = list(re.finditer(r"^(#{1,6})[ \t]+([^\r\n]+)", masked, re.MULTILINE))
 
     git_heading = next(
-        (h for h in headings if len(h[1]) == 2 and re.search(r"\b(?:Git|Padrão de Commits)\b", h[2], re.I)),
+        (
+            h for h in headings
+            if len(h[1]) == 2
+            and not re.search(r"Post-Release|Higiene|Trigger:|gatilho:", h[2], re.I)
+            and re.search(r"\b(?:Git|Padrão de Commits)\b", h[2], re.I)
+        ),
         None,
     )
     if git_heading is not None:
@@ -1565,11 +1570,14 @@ class TestApplyGovernanceStandards(unittest.TestCase):
         self.assertIn("Co-Authored-By:", text_a)
         self.assertEqual(upgrade_agents_two_tier(repo_a, dry_run=False), [])
 
-        # Variant B: Existing ### Commit Messages fenced block without Git H2 section
+        # Variant B: Existing ### Commit Messages fenced block without Git H2 section, plus Post-Release Hygiene trigger
         repo_b = self.create_mock_legacy_repo("attr-variant-b")
         (repo_b / "AGENTS.md").write_text(
-            "# Rules\n\n[P0] Keep data.\n\n## Fail-Stop\n\nStop.\n\n"
-            "## Contrast Pairs\n\n### Commit Messages\n```markdown\n// BAD: vague\n// GOOD: specific\n```\n",
+            "# Rules\n\n[P0] Keep data.\n\n## Post-Release Hygiene (Trigger: Git tag on any phase)\n\n"
+            "- Archive completed tasks.\n\n"
+            "## Fail-Stop\n\nStop.\n\n"
+            "## Contrast Pairs\n\n### Commit Messages\n```markdown\n// BAD: vague\n// GOOD: specific\n```\n\n"
+            "## Git Conventions\n\n- **Conventional Commits:** `<type>(<scope>): <summary>`\n",
             encoding="utf-8",
         )
         upgrade_agents_two_tier(repo_b, dry_run=False)
@@ -1577,6 +1585,7 @@ class TestApplyGovernanceStandards(unittest.TestCase):
         self.assertIn("No Agent Attribution Trailers", masked_markdown(text_b))
         self.assertIn("Co-Authored-By:", text_b)
         self.assertEqual(text_b.count("### Commit Messages"), 1)
+        self.assertGreater(text_b.index("No Agent Attribution Trailers"), text_b.index("## Git Conventions"))
         self.assertEqual(upgrade_agents_two_tier(repo_b, dry_run=False), [])
 
 
