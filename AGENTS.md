@@ -152,6 +152,7 @@ Triggered exclusively by human instruction to tag a release:
 - **Conventional Commits:** MUST follow `<type>(<scope>): <summary in Technical English imperative>`.
   - `feat(service): add victorialogs with healthcheck and limits`
   - `fix(network): isolate redis to internal backend network`
+- **No Agent Attribution Trailers:** NEVER append `Co-Authored-By`, `Generated with ...`, or similar AI/agent attribution trailers to commit messages or PR descriptions.
 - **Language Invariant:** Author all agent-facing directives, service catalogs, skills, and task logs (`AGENTS.md`, `.agent/*`) in concise Technical English.
 - **Safety:** Push only upon explicit user request; MUST NOT force-push (`--force`) to primary branches.
 
@@ -201,6 +202,17 @@ depends_on:
   redis:
     condition: service_healthy
 ```
+
+### Commit Messages
+```markdown
+// BAD: Appending AI/agent attribution trailers to commit messages or PR descriptions
+git commit -m "feat(auth): add session refresh" -m "Co-Authored-By: <Agent> <noreply@example.com>"
+// Or PR body containing: "Generated with <Agent>"
+
+// GOOD: Clean commit message and PR description without attribution trailers
+git commit -m "feat(auth): add session refresh"
+```
+
 ### Task Tracking (Tier 1 vs Tier 2)
 ```markdown
 // BAD: Orchestration ceremony inside the interactive checklist
