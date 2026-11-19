@@ -153,6 +153,7 @@ Record commands for dependency sync, tests, lint, build. Exit code MUST equal 0 
   - `fix(billing): handle null pointer in legacy invoice parser`
   - `test(auth): add characterization test for session validation`
   - `docs(invariants): document undocumented legacy query parameter`
+- **No Agent Attribution Trailers:** NEVER append `Co-Authored-By`, `Generated with ...`, or similar AI/agent attribution trailers to commit messages or PR descriptions.
 - **Language Invariant:** Author all agent-facing directives, skills, invariants, and logs (`AGENTS.md`, `.agent/*`) in concise Technical English.
 - **Safety:** Local commits allowed upon user confirmation. `git push` is prohibited without explicit human instruction.
 
@@ -190,6 +191,17 @@ retry_call()
 time.sleep(2)
 retry_call()
 ```
+
+### Commit Messages
+```markdown
+// BAD: Appending AI/agent attribution trailers to commit messages or PR descriptions
+git commit -m "feat(auth): add session refresh" -m "Co-Authored-By: <Agent> <noreply@example.com>"
+// Or PR body containing: "Generated with <Agent>"
+
+// GOOD: Clean commit message and PR description without attribution trailers
+git commit -m "feat(auth): add session refresh"
+```
+
 ### Task Tracking (Tier 1 vs Tier 2)
 ```markdown
 // BAD: Orchestration ceremony inside the interactive checklist
