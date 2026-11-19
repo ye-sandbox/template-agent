@@ -183,6 +183,7 @@ During **Phase 00.1 (Bootstrap & Setup)**, configure the official, reproducible 
   - `test`: test suite addition/update
   - `chore`: maintenance, dependencies, configs
   - `docs`: documentation only
+- **No Agent Attribution Trailers:** NEVER append `Co-Authored-By`, `Generated with ...`, or similar AI/agent attribution trailers to commit messages or PR descriptions.
 - **Language Invariant:** Author all agent-facing directives, contracts, skills, and logs (`AGENTS.md`, `.agent/*`) in Technical English.
 - **Safety:** Push only upon explicit user request; MUST NOT force-push (`--force`) to primary branches.
 
@@ -257,6 +258,16 @@ await lockResources();
 // INVARIANT: Sequential await required; concurrent execution exhausts socket pool on upstream gateway (Issue #142)
 await syncSession();
 await lockResources();
+```
+
+### Commit Messages
+```markdown
+// BAD: Appending AI/agent attribution trailers to commit messages or PR descriptions
+git commit -m "feat(auth): add session refresh" -m "Co-Authored-By: <Agent> <noreply@example.com>"
+// Or PR body containing: "Generated with <Agent>"
+
+// GOOD: Clean commit message and PR description without attribution trailers
+git commit -m "feat(auth): add session refresh"
 ```
 
 ### Task Tracking (Tier 1 vs Tier 2)
