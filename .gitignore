@@ -31,18 +31,17 @@ Thumbs.db
 .harness/queue/escalated/
 .harness/worktrees/
 
-# Uncomment extras for your stack:
 # --- Python ---
-# *.py[cod]
-# .pytest_cache/
-# .mypy_cache/
-# .ruff_cache/
-# htmlcov/
-# .coverage
-# *.egg-info/
-# --- Node ---
-# .next/
-# .nuxt/
-# .turbo/
-# .parcel-cache/
-# npm-debug.log*
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+htmlcov/
+.coverage
+*.egg-info/
+
+# --- Local Data & Models ---
+data/
+models/
+*.sqlite
+*.db

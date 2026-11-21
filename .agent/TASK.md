@@ -1,90 +1,36 @@
 # TASK.md — Current Task and Roadmap
 
-> Defines WHAT needs to be done. Detailed history lives in `git log`.
-> User requests during conversation take precedence — report discrepancies before acting.
-> 
-> **Golden rule of this file:** It stores WHAT TO DO, not WHAT WAS DONE.
-> Implementation details of completed tasks live in `git log`, not here.
+> WHAT to do now. Detailed history lives in `git log`. User requests during conversation
+> take precedence — report discrepancies before acting.
 
 ---
 
 ## Active Task
 
-### [11.1] Align Starter Templates and Tooling with `hydra-llm-router` Canonical Contracts
+### [00.1] Project Bootstrap & Python/FastAPI Stack Setup
 
-Remove residual `Hydra AI` / `hydra-ai-gateway` / `hydra.homelab.yegear.dev` / `free-fast` / `free-deep` references across `main` and all 5 starter branches, aligning with `hydra-llm-router` and operator-configured alias discovery (`/v1/models` or `/v1/hydra/models`). Atomic per-branch commits; no cross-branch merges.
+Initialize the Python 3.12+ (`uv`) workspace, `pyproject.toml`, canonical test harness (`pytest`), linter/formatter (`ruff`), strict typing (`mypy`), and `/health` endpoint skeleton for `offgrid-voice`.
 
-- [ ] `main`: align `.env.example`, `.agent/NOTES.md`, `docs/llm-gateway.md`, `.github/scripts/verify-llm-contract.sh`, `CHANGELOG.md`
-- [ ] `greenfield`, `brownfield`, `blackbox`, `infra`, `baremetal`: align `.env.example` and `.agent/NOTES.md`
-- [ ] Validate: `./.github/scripts/verify-llm-contract.sh self-test && ./.github/scripts/check-branch-drift.sh && ./.github/scripts/test-all-starters.sh && git diff --check`
+- [ ] Initialize `pyproject.toml` (`uv`, Python 3.12+, `fastapi`, `pydantic>=2`, `httpx`, `pipecat-ai`, `wyoming`, `pytest`, `ruff`, `mypy`).
+- [ ] Create minimal `src/offgrid_voice/` package with `/health` endpoint (probe access log suppression enabled) and smoke test.
+- [ ] Verify `uv run pytest`, `uv run ruff check .`, `uv run mypy src tests`, and `git diff --check` exit 0.
 
 ---
 
 ## Completed Tasks Log
 
-> Cycles 00–01 archived in `.agent/ARCHIVE.md` (up to `[v1.2.0]`). Detail: `git log`.
-
 | Task | Title | Commit(s) | Date |
 |---|---|---|---|
-| `[02.1]` | Next Milestone / Epic Planning (Epic 02: Multi-Agent Orchestration) | `f948d2b` (main) | 2026-11-06 |
-| `[02.2]` | Subagent Role Taxonomy & Delegation Specifications | `4b29226` (main), `00938fa` (greenfield), `a2f8753` (brownfield) | 2026-11-06 |
-| `[02.3]` | Isolated Worktree & Sandbox Runner Integration | `d1753a6` (main), `2b55129` (greenfield), `6bf2819` (brownfield) | 2026-11-06 |
-| `[02.4]` | Micro-Contract & Parallel Wave Validation in CI | `8a0d4b9` (main) | 2026-11-06 |
-| `[02.5]` | Multi-Account Quota Failover Guidance & Starter Parity | `fad418d` (main), `0be4bb8` (greenfield), `674cabc` (brownfield), `6a1b9be` (blackbox), `f4b17b4` (infra), `2aa114e` (baremetal) | 2026-11-06 |
-| `[03.1]` | Milestone 03 Roadmap: Starter Parity & End-to-End Test Harness | `6f84831` (main) | 2026-11-06 |
-| `[03.2]` | Starter Branch Parity: Synchronize Multi-Agent & Quota Contracts | `3e06e6e` (greenfield), `7ac084a` (brownfield), `ed98cb8` (blackbox), `365af38` (infra), `9248fe8` (baremetal) | 2026-11-06 |
-| `[03.3]` | Automated Scaffolding & CLI Contract E2E Validation in CI | `e6ac4d6` (main) | 2026-11-06 |
-| `[03.4]` | Subagent Execution & Micro-Contract Validation Runner | `b89c49c`, `07eaaf7` (main) | 2026-11-06 |
-| `[03.5]` | Epic 03 Milestone Consolidation & Audit | `71b3eab`, `6c5104d` (main) | 2026-11-06 |
-| `[04.1]` | Next Milestone / Epic Planning (Epic 04: Dynamic Agent Sandbox & Security Hardening) | `cbe426d` (main) | 2026-11-06 |
-| `[04.2]` | Hermetic Ephemeral Container & Bubblewrap Sandbox Specification | `35816cf` (main) | 2026-11-06 |
-| `[04.3]` | Pre-Execution Security Scanner & Command Blast-Radius Audit Runner | `bade493`, `1a9c7e1` (main) | 2026-11-07 |
-| `[04.4]` | Multi-Starter Parity: Propagate Sandbox & Security Isolation Contracts | `cd54c82` (greenfield), `d7e696b` (brownfield), `934ecd6` (blackbox), `55a625f` (infra), `2abaab2` (baremetal), `0e34b0c` (main) | 2026-11-07 |
-| `[04.5]` | Epic 04 Milestone Consolidation & End-to-End Security Validation | `a4d2ddd`, `2dd4c15` (main) | 2026-11-07 |
-| `[04.6]` | T3 Code Worktree Fast-Link Bootstrap & Project Lifecycle Hook Parity | `ff0e3ff`, `7069689`, `4d45aa2`, `010f689`, `b77cfd1`, `5758919` (main), `a4b56cf` (greenfield), `0c3996a` (brownfield), `788ea43` (blackbox), `b7909ed` (infra), `2ebb795` (baremetal) | 2026-11-07 |
-| `[05.1]` | Next Milestone / Epic Planning (Epic 05: LLM Gateway & Virtual Model Routing) | `cd7f3c8` (main) | 2026-11-07 |
-| `[05.2]` | LLM Gateway & Virtual Model Specification | `3197f9f` (main) | 2026-11-07 |
-| `[05.3]` | Deterministic LLM Gateway Contract Linter & Pre-Flight Probe Runner | `ed9a166`, `3ab211c` (main) | 2026-11-07 |
-| `[05.4]` | Starter Template Parity: Propagate LLM Gateway Contracts & `.env.example` | `cf6bbb9`, `b6470aa` (main), `06093c6` (greenfield), `688c59e` (brownfield), `dc6e47f` (blackbox), `e454f8b` (infra), `558e6d2` (baremetal) | 2026-11-07 |
-| `[05.5]` | Epic 05 Milestone Consolidation, Documentation & Multi-Branch CI Audit | `0f63c18`, `0f036b0`, `dda3d0e` (main) | 2026-11-07 |
-| `[06.1]` | Next Milestone / Epic Planning (Epic 06: Adaptive Interface Verification & Governance Automation) | `9ba6bb1` (main) | 2026-11-08 |
-| `[06.2]` | Standardize Adaptive Interface Verification & On-Demand Skill | `fbc114b` (main) | 2026-11-08 |
-| `[06.3]` | Ecosystem Governance Audit & Migration Tooling | `389b739` (main) | 2026-11-08 |
-| `[06.4]` | Starter Template Parity: Propagate Interface Verification & Invariants | `2284fd2`, `400af02` (greenfield); `41bd28f`, `6dd7837`, `358db7e` (brownfield); `cc3c3b7`, `2ee9d2f` (blackbox); `8c4d19f`, `7d05bb3` (infra); `a707839`, `9e700a0` (baremetal); `84c47a5` (main) | 2026-11-08 |
-| `[06.5]` | Epic 06 Milestone Consolidation, Documentation & Multi-Branch CI Audit | `ce88799`, `ed72284` (main) | 2026-11-08 |
-| `[07.1]` | Next Milestone / Epic Planning: Safe Ecosystem Adoption & Interface Compliance | `7175590`, `9083747` (main) | 2026-11-08 |
-| `[07.2]` | Lossless Governance Migration: Preserve ADR Assets & Decision Content | `d3c3623` (main) | 2026-11-08 |
-| `[07.3]` | Ecosystem Auditor: Verify Adaptive Interface Contracts | `090ecc9` (main) | 2026-11-08 |
-| `[07.4]` | Opt-In Interface Contract Migration | `0478087` (main) | 2026-11-08 |
-| `[07.5]` | Epic 07 Consolidation, Documentation & CI Audit | `156bbbc`, `e235106` (main) | 2026-11-08 |
-| `[08.1]` | Next Milestone / Epic Planning: Sequential Sub-Task Batching & Prompt Cache Hygiene | `4d78a92` (main) | 2026-11-12 |
-| `[08.2]` | Sequential Batching (`[BATCH: Bx]`), Ephemeral Spec Anchor & Linter Integration | `8ea2991`, `0ccc138` (main) | 2026-11-12 |
-| `[09.1]` | Next Milestone / Epic Planning: Starter Parity, Batch/Hermetic Linter Hardening & Documentation Consolidation | `c985962` (main) | 2026-11-13 |
-| `[09.2]` | Starter Parity: Synchronize `[BATCH: Bx]` & Hermetic Skills Contracts | `e2f8650` (greenfield), `852d25f` (brownfield), `ba22798` (blackbox), `7f50f78` (infra), `92a643f` (baremetal) | 2026-11-13 |
-| `[09.3]` | Harden Batch Layer Classifier & Inter-Branch Drift Checks | `a4d561d` (main) | 2026-11-13 |
-| `[09.4]` | Epic 09 Consolidation: Bilingual Docs, Changelog, SIGPIPE Fix & CI Audit | `3b283d4`, `8b9ec82` (main) | 2026-11-13 |
-| `[10.1]` | Next Milestone / Epic Planning (Epic 10: Orchestration Hardening) | `36be2ac` (main) | 2026-11-16 |
-| `[10.2]` | Add end-to-end orchestration lifecycle test | `3c01541` (main) | 2026-11-16 |
-| `[10.3]` | Wire e2e orchestration test into CI | `7897201` (main) | 2026-11-16 |
-| `[10.4]` | Port micro-contract parser to Python behind the existing CLI | `5770037` (main) | 2026-11-16 |
-| `[10.5]` | Translate legacy Portuguese ADR rows to Technical English | `505038a` (main) | 2026-11-16 |
-| `[10.6]` | Parameterize default worker model tiers | `379a33f` (main) | 2026-11-16 |
-| `[10.7.1]` | Add `Depends:` key with unknown-ID and cycle detection | `edcd382` (main) | 2026-11-16 |
-| `[10.7.2]` | Reject serialized shared files in parallel waves | `2e58c39` (main) | 2026-11-16 |
-| `[10.7.3]` | Cross-check `[BATCH]` paths against `[PARALLEL]` waves | `6cd587f` (main) | 2026-11-16 |
-| `[10.8]` | Document worker commit integration protocol | `351852b` (main) | 2026-11-16 |
-| `[10.9]` | Starter parity for Epic 10 contracts | `d4b78ef` (greenfield), `db60de0` (brownfield), `2c1f0ef` (blackbox), `2d96b5c` (infra), `10a9285` (baremetal) | 2026-11-16 |
-| `[10.10]` | Document batch compaction guidance and T3 Code cache-metrics recording | `d3dad21` (main) | 2026-11-16 |
-| `[10.11]` | Epic 10 consolidation: bilingual docs, changelog, CI audit | `6235754` (main) | 2026-11-16 |
-| `[11.2]` | Adopt 2-tier progressive rigor; preserve swarm workflow in `ye-sandbox/template-agent-swarm` | `18dd7aa`, `9ef671d`, `876c69e`, `eb1a348`, `be14085`, `2684fb8`, `467e26b`, `1036294` (main), `addfb6c` (greenfield), `cf10328` (brownfield), `ed77ce7` (blackbox), `ac3e312` (infra), `4a233b9` (baremetal) | 2026-11-17 |
+| `[00.0]` | Initial repository scaffolding (`template-agent:greenfield` + architecture) | *(initial)* | 2026-11-21 |
 
 ---
 
 ## Backlog (Upcoming, in priority order)
 
-> Epic 10: Orchestration Hardening (e2e safety net, Python parser, wave dependency/shared-file rules, integration protocol, cache observability).
-> `[10.1]` approved 2026-11-16; all Epic 10 tasks complete. No remaining backlog.
-
+- [ ] **[01.1]** **Phase 1: Core Voice Server & Audio Pipeline** — FastAPI WebSocket + Wyoming protocol server + `Pipecat` pipeline with `barge-in`, `Silero VAD` + `Smart Turn`, CPU `whisper-large-v3-turbo` (`INT8`/`Q8_0`) / `Qwen3-ASR-1.7B-gguf` STT, `hydra-llm-router` (`fast` alias), and CPU `Piper TTS` (`pt_BR-faber-medium`) / `Kokoro-82M` TTS, validated with local Linux Wyoming / Android client.
+- [ ] **[02.1]** **Phase 2: Tools & `sqlite-vec` Memory** — `Pydantic v2` modular tool registry (Home Assistant / MQTT control, homelab status, `whatsapp-api` via Redis / `POST /send`) + `sqlite-vec` semantic memory (`bge-m3` / `Qwen3-Embedding-0.6B` on CPU).
+- [ ] **[03.1]** **Phase 3: Hardware Acquisition & Satellite Jailbreak** — Verify Echo board/bootloader revisions before purchase; provision Echo Show 5/8 (`amonet 2` + LineageOS/`View Assist`) and Echo Dot 2/3 (`Firebreak`/Wyoming bridge) satellites.
+- [ ] **[04.1]** **Phase 4: 24/7 HA & CPU Fallback on Mini PC `i5-11400`** — Deploy 24/7 on Mini PC `i5-11400` (`32 GB RAM`) and verify automatic CPU fallback (`Qwen3-4B` / `Gemma-3-4B`) via `hydra-llm-router` when the `RTX 5060 Ti 16 GB` workstation is busy (`--parallel 1` coding jobs) or powered off.
 
 ---
 
@@ -96,14 +42,4 @@ Release/tag only with explicit human request. When triggered, the ID is `[99.1]`
 
 ## Future Backlog / Ideas (Unprioritized)
 
-- Retire `verify-microcontract.sh`, `bootstrap-worktree.sh`, and the swarm topology docs from `main` once `dev-harness` fully covers Tier 2.
-
----
-
-## How to Keep this File Lean
-
-1. Detail only in the active task. When complete $\rightarrow$ log one line (title + hash) and promote next task.
-2. Backlog is a list of titles. Full spec only when an item becomes the active task.
-3. Large scope $\rightarrow$ issue in tracker; link only here.
-4. Next ID = last ID in log (or active task). Cycle wrap-up and `[99.1]`: see `AGENTS.md`.
-5. Do not paste full commit messages into this file. Deep history: `git log` / `.agent/NOTES.md`.
+*(empty)*
