@@ -40,7 +40,7 @@ Resolve directive conflicts using the strict canonical precedence hierarchy:
 | **`[P0]`** | **Security & Secrets Isolation** | Repository mutation containment (zero writes outside project, zero touching/inspecting host credentials `~/.ssh`/`~/.aws`), NEVER expose tokens, passwords, or commit unscrubbed credentials; prohibit destructive git and docker volume operations. |
 | **`[P1]`** | **Payload Invariants & Automated Contracts** | Single ADR diary (`docs/adr/decisions.md`), `NOTES.md` heading ban, payload/schema contracts in `.agent/NOTES.md` or `.agent/ECOSYSTEM.md`, strict typing (zero unchecked `any`/`Any`). |
 | **`[P2]`** | **Architecture & Test Harness** | Domain logic in service layer; canonical test runner (`npm test`, `pytest`, etc.); consultative dependencies and stable/LTS versioning. |
-| **`[P3]`** | **Code Style & Complexity** | Concise functions (typically ≤ 50 LOC) with low cognitive complexity; formatters pass; Technical English for agent directives and commits. |
+| **`[P3]`** | **Code Style & Complexity** | Concise single-purpose functions (heuristic ≤ 50 LOC; ~80 LOC acceptable for linear DTO/query/config mapping; refactor > 100 LOC or deep nesting) with low cognitive complexity; formatters pass; Technical English for agent directives and commits. |
 
 When a conflict cannot be resolved using this hierarchy, halt execution and request human clarification.
 
@@ -189,7 +189,7 @@ During **Phase 00.1 (Bootstrap & Setup)**, configure the official, reproducible 
 
 ## 10. Contrast Pairs
 
-Functions SHOULD remain concise (typically ≤ 50 lines of code) with low cognitive complexity and no more than 2–3 levels of indentation (use early returns and guard clauses). Purely declarative constructs are exempt from arbitrary line limits. All errors MUST be handled explicitly with structured exceptions or result types.
+Functions SHOULD remain concise (heuristic ≤ 50 lines of code; ~80 lines acceptable for linear DTO, query, or config mapping; refactor when > 100 lines or > 2–3 levels of indentation using early returns and guard clauses) with low cognitive complexity. Purely declarative constructs are exempt from arbitrary line limits. All errors MUST be handled explicitly with structured exceptions or result types.
 
 ### Code Structure
 ```typescript
