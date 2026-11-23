@@ -1,17 +1,19 @@
-# Project Skills Guide
+# Skills in this Hub
 
-This directory contains procedural skills tailored specifically to this project's architecture and domain.
+Branch `main` is **not** the organization playbook library. Cross-cutting procedures (UI, QA, host infrastructure) live in the organization playbook catalog (`agent-skills`) and are loaded into your AI agent environment (e.g., local project `.agent/skills/` or user-level skills directory across Cursor, Antigravity, Claude Code, Windsurf, etc.).
 
-Organizational cross-cutting procedures (UI design, QA playbooks, host infrastructure) belong in your organization's centralized playbook catalog (`agent-skills`) or global agent skills configuration across supported IDEs/CLIs (e.g., `.agent/skills/`, Cursor, Antigravity, Claude Code).
+In this branch and folder, there are no product `SKILL.md` files. **Starter template skills** (shipped inside the starter) live exclusively in their respective template branches:
 
-## When to Create a Local Skill
+| Branch | Starter Skills |
+| :--- | :--- |
+| `greenfield` | *(none — language-agnostic template baseline)* |
+| `blackbox` | `reverse-engineering` |
+| `infra` | `compose-service` |
+| `baremetal` | `baremetal-tuning` |
 
-Create a new skill in this folder (`.agent/skills/<name>/SKILL.md`) when:
-1. A multi-step procedure (>3 steps) is repeated frequently across tasks.
-2. An architectural convention requires strict sequencing (e.g., migrations, complex domain mutations).
-3. The pattern involves specific MCP tools and local commands.
+`brownfield` injects governance; it does not duplicate the organizational playbook.
 
-Use `000-template.md` as the baseline structure when drafting new skills.
+Do not list playbooks in `AGENTS.md` of this hub. New organizational skill $\rightarrow$ `agent-skills`. New starter skill $\rightarrow$ that starter's template branch.
 
 ## Hermetic Skills & Context Contract
 
