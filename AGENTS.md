@@ -52,6 +52,7 @@ Optimize context consumption via progressive disclosure:
 - **Architectural Decisions (`docs/adr/decisions.md`):** Canonical progressive disclosure diary; MUST load when creating new services, researching historical trade-offs, or changing system boundaries. Prohibit separate `.agent/adr/` trees to prevent dual-source drift.
 - **Multi-Repo Ecosystem (`.agent/ECOSYSTEM.md`):** .agent/ECOSYSTEM.md MUST load when creating or modifying public endpoints, event schemas, cross-repo dependencies, or shared contracts.
 - **Domain Skills (`.agent/skills/<name>/SKILL.md`):** Load only when the active task touches that skill's trigger.
+- **Visual Alignment (`.agent/skills/doop-canvas/SKILL.md`):** Load on-demand ONLY when creating new screens or making structural layout changes where visual alignment is needed (never for pure backend changes or trivial 1-line fixes).
 - **Hermetic Skills & Context Contract:** Procedural guidelines and skills must be self-contained within `.agent/skills/` or injected directly into the task dispatch prompt by the orchestrator. If a task references an external organizational skill not present in `.agent/skills/`, the agent must not wander the host filesystem; it should request the skill to be injected into the prompt or provisioned locally in `.agent/skills/`.
 - **Interface & UI Verification:** Read `.agent/INVARIANTS.md` (Invariant 7) and `.agent/skills/interface-testing/SKILL.md` on-demand exclusively for UI, preview, or frontend component tasks.
 - **Knowledge Base (`.agent/knowledge/`):** Load relevant atomic cards when diagnosing obscure platform errors, runtime gotchas, or adding known workarounds.
@@ -161,6 +162,7 @@ Read `.agent/skills/<name>/SKILL.md` when a task matches the skill domain.
 
 | Skill | Trigger |
 | :--- | :--- |
+| `doop-canvas` | Creating new screens or structural layout changes requiring visual alignment (never for pure backend changes or trivial 1-line fixes) |
 | `[skill-name]` | [Workflow trigger and scope (e.g., domain mutations, external sync)] |
 
 ### Validation Commands

@@ -87,6 +87,16 @@ Canonical OpenAI v1 compatible gateway integration, virtual model aliases, netwo
 | **Client Timeout & Budget** | `LLM_TIMEOUT_SECONDS >= 180` | Minimum 180s timeout for deep reasoning calls; minimum `max_tokens >= 60` on test probes to prevent empty completions caused by reasoning token consumption. |
 | **Token Tiers** | Tier 1 (5M), Tier 2 (1M), Tier 3 (unlimited) | Tier 1 for production pipelines, Tier 2 for interactive/dev, Tier 3 for smoke/health checks. |
 
+### 3. Doop Canvas Contract (Optional)
+
+> Uncomment and populate when using `.agent/skills/doop-canvas/SKILL.md` for visual alignment. Single `Canvas ID` per repository.
+
+<!--
+- **Canvas ID:** `/c/<canvas-id>`
+- **Anchor Frames (Design Memory):** `Dashboard`, `ListView`, `StandardModal`
+- **Token Source:** `src/app.css`
+-->
+
 ---
 
 ## Gotchas & Pitfalls
