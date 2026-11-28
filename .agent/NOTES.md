@@ -91,6 +91,16 @@ Canonical OpenAI v1 compatible gateway integration, virtual model aliases, netwo
 
 - **LLM Gateway Reasoning Tokens & Timeouts:** When calling thinking-enabled models via `deep`, always set client HTTP timeouts $\ge 180$ seconds. Test assertions and smoke probes must allocate `max_tokens >= 60`; very low caps (e.g. 5 tokens) cause reasoning tokens to consume the entire budget, returning an empty response body. Consumer containers must never attach to `hydra_router_internal` or legacy `hydra_ai_net` (use `hydra_shared_net` only for co-located sibling containers on the same Docker host).
 
+### 3. Doop Canvas Contract (Optional)
+
+> Uncomment and populate when using `.agent/skills/doop-canvas/SKILL.md` for visual alignment. Single `Canvas ID` per repository.
+
+<!--
+- **Canvas ID:** `/c/<canvas-id>`
+- **Anchor Frames (Design Memory):** `Dashboard`, `ListView`, `StandardModal`
+- **Token Source:** `src/app.css`
+-->
+
 ---
 
 ## Assumed Technical Debt

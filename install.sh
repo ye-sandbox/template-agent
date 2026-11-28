@@ -202,6 +202,25 @@ for file in "${HOOK_FILES[@]}"; do
     fi
 done
 
+# 4c. Install starter skills into .agent/skills
+mkdir -p "$RESOLVED_TARGET/.agent/skills/doop-canvas"
+SKILL_FILES=("doop-canvas/SKILL.md")
+
+for file in "${SKILL_FILES[@]}"; do
+    dest="$RESOLVED_TARGET/.agent/skills/$file"
+    if [ -f "$dest" ]; then
+        if [ "$FORCE_YES" = true ]; then
+            fetch_file ".agent/skills/$file" "$dest"
+            echo "✅ .agent/skills/$file updated (--force)."
+        else
+            echo "ℹ️  $file already exists in .agent/skills/. Retaining existing file."
+        fi
+    else
+        fetch_file ".agent/skills/$file" "$dest"
+        echo "✅ .agent/skills/$file installed."
+    fi
+done
+
 # 5. Apply Local-Only / Stealth Mode configurations if requested
 if [ "$LOCAL_ONLY" = true ]; then
     # 4.1 Exclude files in .git/info/exclude
