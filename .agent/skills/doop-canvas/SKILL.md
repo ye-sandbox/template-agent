@@ -17,6 +17,7 @@ Standard operational playbook for preventing visual drift when prototyping new s
 - **IMMUTABLE PATHS:** `.env`, secrets/credentials, backend API contracts unless explicitly in scope.
 - **FORBIDDEN ACTIONS:**
   - MUST NOT create a duplicate canvas when a `Canvas ID` is already declared in `.agent/NOTES.md` or `.agent/INTERFACE.md`.
+  - MUST NOT overwrite an existing anchor or baseline frame in-place during `propose`; always preserve the `Before` state and place the `After` proposal side-by-side.
   - MUST NOT dump raw HTML/CSS copied verbatim from a Doop frame into production React/Svelte/Compose files when equivalent repository components already exist.
   - MUST NOT ask the human to review a Doop frame before calling `get_frame_screenshot` to visually self-verify alignment against anchor frames.
   - MUST NOT commit or log MCP authentication tokens or credentials.
@@ -66,20 +67,21 @@ Run once per repository (or after a major visual redesign) so agents have real v
    - Render each anchor screen as an HTML/CSS frame (`create_frame` / `set_frame_html`) faithfully reflecting the app's tokens and layout proportions.
    - Call `get_frame_screenshot` on each anchor frame to confirm rendering fidelity, then pin them as **Design Memory / Exemplars**.
 
-### Mode B: `propose` (New Feature / Screen Alignment)
+### Mode B: `propose` (New Feature / Existing Screen Evolution)
 
-Use BEFORE editing production UI files whenever a new screen or substantive layout change is requested:
+Use BEFORE editing production UI files whenever a new screen or substantive layout change to an existing screen is requested:
 
 1. **Resolve Context:** Read `Canvas ID` and `Anchor Frames` from `.agent/NOTES.md`. Never guess or create a duplicate canvas.
 2. **Load Playbook & Inspect Anchors:** Call `get_guide` and inspect the pinned anchor frames/tokens on the canvas.
-3. **Build Candidate Frame(s) Beside Anchors:**
-   - Place the proposed new screen **directly adjacent to the anchor frames** so spacing, header height, card radius, typography weight, and color contrast can be compared side by side.
-   - If the layout direction is ambiguous, generate at most **2 clearly labeled variants** (`Variant A`, `Variant B`) instead of guessing silently.
+3. **Build Candidate Frame(s) Side-by-Side:**
+   - **New Screen / Modal / Flow:** Place the proposed new screen **directly adjacent to the anchor frames** so spacing, header height, card radius, typography weight, and color contrast can be compared side by side.
+   - **Existing Screen Change (`Before / After`):** Never overwrite the current frame in-place. If the target screen is not already an anchor on the canvas, first mirror its current production UI as `<Screen> (Before)`. Then place `<Screen> (After)` directly side-by-side with the `(Before)` / anchor frame so the exact visual delta is immediately clear.
+   - If the layout direction is ambiguous, generate at most **2 clearly labeled variants** (`Variant A` / `Variant B`, or `(After - A)` / `(After - B)`) instead of guessing silently.
 4. **Mandatory Visual Self-Audit:**
-   - Call `get_frame_screenshot` on the proposed frame(s).
-   - Check explicitly for: header/sidebar mismatch, inconsistent border radii, overcrowded density, contrast issues, or unaligned buttons/inputs relative to the anchors. Fix defects before handing over.
+   - Call `get_frame_screenshot` on the proposed frame(s) (and on `<Screen> (Before)` if newly created).
+   - Check explicitly for: header/sidebar mismatch, inconsistent border radii, overcrowded density, contrast issues, unaligned buttons/inputs, and (for Before/After pairs) unintended regressions in unchanged regions. Fix defects before handing over.
 5. **Human Sign-Off Gate:**
-   - Share the direct canvas URL (`/c/<canvas-id>`) with the user and summarize what was placed beside which anchor frame.
+   - Share the direct canvas URL (`/c/<canvas-id>`) with the user and summarize what was placed beside which anchor or `(Before)` frame.
    - Wait for human approval, canvas comments, or direct visual inspector edits before starting Mode C.
 
 ### Mode C: `implement` (Component-Mapped Code Integration)
@@ -93,6 +95,8 @@ Run AFTER the human approves (or edits) the proposed frame on Doop:
 3. **Verify Live UI:**
    - Run the repository's build/typecheck/tests.
    - Verify the rendered app via interactive preview (`preview_*` or `agent-browser` with zero console errors), comparing visually against the approved Doop frame.
+4. **Promote / Tidy Canvas:**
+   - Once shipped and verified, update the corresponding anchor frame to reflect the new production state (or remove a temporary one-off `(Before)` frame) so the canvas stays clean and free of stale duplicates.
 
 ---
 
@@ -104,11 +108,11 @@ Run AFTER the human approves (or edits) the proposed frame on Doop:
 2. Agent skips get_frame_screenshot and asks user to review broken overflow
 3. After approval, agent pastes raw iframe HTML + inline <style> directly into src/pages/Settings.tsx
 
-// GOOD: Anchored side-by-side proposal + component-mapped implementation
+// GOOD: Anchored side-by-side proposal (or Before/After pair) + component-mapped implementation
 1. Agent reads Canvas ID `/c/proj-alpha` from .agent/NOTES.md and calls get_guide
-2. Agent renders "Settings v2" beside pinned anchor frames, verifies parity with get_frame_screenshot
-3. Human tweaks card padding directly in Doop inspector and approves
-4. Agent reads updated frame via MCP and implements Settings.tsx using existing <PageHeader>, <Card>, and <Button> primitives
+2. For an existing screen redesign, agent preserves `Settings (Before)` and renders `Settings (After)` beside it, verifying parity with get_frame_screenshot
+3. Human compares Before/After, tweaks card padding directly in Doop inspector, and approves
+4. Agent reads updated frame via MCP, implements Settings.tsx using existing <PageHeader>, <Card>, and <Button> primitives, and promotes the shipped state on the canvas
 ```
 
 ---
@@ -124,7 +128,8 @@ Run AFTER the human approves (or edits) the proposed frame on Doop:
 
 - [ ] `Doop Canvas Contract` (`Canvas ID`, `Anchor Frames`, `Token Source`) present in `.agent/NOTES.md`
 - [ ] `get_guide` invoked before frame mutations
-- [ ] Proposed frame visually verified via `get_frame_screenshot` beside anchor frames
+- [ ] Proposed frame visually verified via `get_frame_screenshot` beside anchor frames (or as a `Before / After` pair for existing screens)
 - [ ] Human approval / inspector edits synced via MCP prior to code implementation
 - [ ] Production code maps frame layout to existing repository components (zero raw prototype HTML dumps)
 - [ ] Build, tests, and live UI check pass
+- [ ] Canvas tidied after implementation (anchor updated / temporary `Before` frame promoted)
