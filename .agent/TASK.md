@@ -77,7 +77,7 @@ Remove residual `Hydra AI` / `hydra-ai-gateway` / `hydra.homelab.yegear.dev` / `
 | `[10.10]` | Document batch compaction guidance and T3 Code cache-metrics recording | `d3dad21` (main) | 2026-11-16 |
 | `[10.11]` | Epic 10 consolidation: bilingual docs, changelog, CI audit | `6235754` (main) | 2026-11-16 |
 | `[11.2]` | Adopt 2-tier progressive rigor; preserve swarm workflow in `ye-sandbox/template-agent-swarm` | `18dd7aa`, `9ef671d`, `876c69e`, `eb1a348`, `be14085`, `2684fb8`, `467e26b`, `1036294` (main), `addfb6c` (greenfield), `cf10328` (brownfield), `ed77ce7` (blackbox), `ac3e312` (infra), `4a233b9` (baremetal) | 2026-11-17 |
-| `[11.3]` | Integrate host-agnostic `doop-canvas` visual alignment skill into `greenfield`, `brownfield`, and `main` | `0dd33e4` (greenfield), `1e46a7c` (brownfield) | 2026-11-28 |
+| `[11.3]` | Integrate host-agnostic `doop-canvas` visual alignment skill into `greenfield`, `brownfield`, and `main` | `bbd20c1` (greenfield), `e6c1bbc` (brownfield) | 2026-11-28 |
 
 ---
 
