@@ -6,12 +6,13 @@ In this branch and folder, there are no product `SKILL.md` files. **Starter temp
 
 | Branch | Starter Skills |
 | :--- | :--- |
-| `greenfield` | *(none — language-agnostic template baseline)* |
+| `greenfield` | `doop-canvas` |
+| `brownfield` | `doop-canvas` (installed via `install.sh`) |
 | `blackbox` | `reverse-engineering` |
 | `infra` | `compose-service` |
 | `baremetal` | `baremetal-tuning` |
 
-`brownfield` injects governance; it does not duplicate the organizational playbook.
+`brownfield` injects governance and `doop-canvas`; it does not duplicate the organizational playbook.
 
 Do not list playbooks in `AGENTS.md` of this hub. New organizational skill $\rightarrow$ `agent-skills`. New starter skill $\rightarrow$ that starter's template branch.
 
